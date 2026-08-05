@@ -70,6 +70,7 @@ class OpenAICompatibleClient:
             "model": model,
             "messages": wire_messages,
             "tools": [{"type": "function", "function": schema} for schema in tools],
+            "thinking": {"type": "disabled"},
         }
         payload.update(kwargs)
         request = Request(

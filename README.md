@@ -20,11 +20,10 @@ Task → Agent → Prompt / Tools / Output Format → LLMClient → Trace → Ty
 
 ```powershell
 python -m pip install -e ".[dev]"
-python -m codeharness
-pytest
+CodeHarness
 ```
 
-演示不会调用外网或真实模型：它调用 `inspect_task` 后，调用临时 `submit_text_output` 工具提交最终结果。运行后可在 `traces/` 查看完整事实记录。
+`CodeHarness` 启动终端交互会话。输入问题与当前 Agent 持续对话，输入 `exit` 或 `quit` 退出；完整会话 Trace 写入 `traces/`。
 
 ## 用它创建新领域 Harness
 

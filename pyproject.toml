@@ -9,6 +9,9 @@ description = "A small, domain-neutral learning template for agent harnesses."
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2.11,<3"]
 
+[project.scripts]
+CodeHarness = "codeharness.cli:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 

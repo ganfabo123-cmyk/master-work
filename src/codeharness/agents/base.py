@@ -4,13 +4,15 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+import json
 from pathlib import Path
+from time import perf_counter
 from typing import Any
 
 from pydantic import BaseModel
 
-from ..llm import LLMClient
-from ..models import Message, Prompt, Task
+from ..llm import LLMClient, ModelResult
+from ..models import Message, Prompt, Task, ToolCall
 from ..tools import ToolRegistry, registry
 from ..trace import TraceRecorder
 
@@ -62,6 +64,7 @@ class Agent:
         max_turns: int = 8,
         trace: TraceRecorder | None = None,
         session_id: str | None = None,
+        record_initial_messages: bool = True,
         **llm_kwargs: Any,
     ) -> BaseModel:
         """Run this Agent's complete LLM and tool loop, returning only its typed output."""
@@ -74,11 +77,9 @@ class Agent:
         selected_tools = self.tools if tools is None else tools
         selected_format = self.output_format if output_format is None else output_format
         submission_name, submission_schema = self._submission_tool(selected_format)
-        if not self._has_submission_instruction(history, submission_name):
-            history = self._append_submission_instruction(history, submission_name, selected_format)
         schemas = [*(self.tool_schemas(selected_tools) if tool_schemas is None else tool_schemas), submission_schema]
-        if trace is not None and session_id is not None:
-            self._record_initial_trace(trace, session_id, history, task)
+        if record_initial_messages and trace is not None and session_id is not None:
+            self._record_initial_trace(trace, session_id, history)
 
         for _ in range(max_turns):
             sent_messages = tuple(history)
@@ -88,52 +89,46 @@ class Agent:
                 tools=schemas,
                 **llm_kwargs,
             )
-            if trace is not None and session_id is not None:
-                trace.record(session_id, self.name, "model_response", messages=[message.as_dict() for message in sent_messages], result=result)
             if result.parse_error:
-                history.append(Message("user", f"Model parse error: {result.parse_error}"))
+                self._append_feedback(history, trace, session_id, f"Model parse error: {result.parse_error}")
                 continue
             if not result.tool_calls:
-                history.append(Message("assistant", result.parsed_content))
-                history.append(Message("user", f"Final output must call {submission_name}."))
-                continue
+                assistant_message = Message("assistant", result.parsed_content)
+                history.append(assistant_message)
+                self._record_assistant_message(trace, session_id, assistant_message, result)
+                return self._wrap_direct_output(selected_format, result.parsed_content)
 
-            history.append(Message("assistant", result.parsed_content or "", tool_calls=result.tool_calls))
+            wire_tool_calls = tuple(
+                ToolCall(call.id, call.name, json.dumps(call.arguments, ensure_ascii=False))
+                for call in result.tool_calls
+            )
+            assistant_message = Message("assistant", result.parsed_content or "", tool_calls=wire_tool_calls)
+            history.append(assistant_message)
+            self._record_assistant_message(trace, session_id, assistant_message, result)
             if any(call.name == submission_name for call in result.tool_calls):
                 if len(result.tool_calls) != 1:
                     raise ValueError("a final submission cannot be combined with other tool calls")
                 call = result.tool_calls[0]
                 output = selected_format.model_validate(call.arguments)
-                history.append(Message("tool", output.model_dump_json(), name=call.name, tool_call_id=call.id))
-                if trace is not None and session_id is not None:
-                    trace.record(session_id, self.name, "tool_call", tool_call=call)
-                    trace.record(
-                        session_id,
-                        self.name,
-                        "tool_result",
-                        tool_call_id=call.id,
-                        tool_name=call.name,
-                        success=True,
-                        result=output,
-                        messages=[message.as_dict() for message in history],
-                    )
+                tool_message = Message("tool", output.model_dump_json(), name=call.name, tool_call_id=call.id)
+                history.append(tool_message)
+                self._record_tool_message(trace, session_id, tool_message, duration_ms=0.0)
                 return output
 
             for call in result.tool_calls:
                 if call.name not in {tool.__name__ for tool in selected_tools}:
                     raise ValueError(f"tool is not allowed for agent '{self.name}': {call.name}")
-                if trace is not None and session_id is not None:
-                    trace.record(session_id, self.name, "tool_call", tool_call=call)
+                started = perf_counter()
                 try:
                     value = self.tool_registry.invoke(call.name, call.arguments)
-                    history.append(Message("tool", value, name=call.name, tool_call_id=call.id))
-                    if trace is not None and session_id is not None:
-                        trace.record(session_id, self.name, "tool_result", tool_call_id=call.id, tool_name=call.name, success=True, result=value)
+                    tool_message = Message("tool", value, name=call.name, tool_call_id=call.id)
+                    history.append(tool_message)
+                    self._record_tool_message(trace, session_id, tool_message, duration_ms=round((perf_counter() - started) * 1000, 2))
                 except Exception as error:
-                    history.append(Message("tool", str(error), name=call.name, tool_call_id=call.id))
-                    if trace is not None and session_id is not None:
-                        trace.record(session_id, self.name, "tool_result", tool_call_id=call.id, tool_name=call.name, success=False, result=str(error))
-        raise RuntimeError(f"Agent '{self.name}' exceeded max_turns={max_turns} without submitting output")
+                    tool_message = Message("tool", str(error), name=call.name, tool_call_id=call.id)
+                    history.append(tool_message)
+                    self._record_tool_message(trace, session_id, tool_message, duration_ms=round((perf_counter() - started) * 1000, 2), success=False)
+        raise RuntimeError(f"Agent '{self.name}' exceeded max_turns={max_turns} without producing output")
 
     def _submission_tool(self, output_format: type[BaseModel]) -> tuple[str, dict[str, Any]]:
         import re
@@ -149,21 +144,54 @@ class Agent:
         }
 
     @staticmethod
-    def _has_submission_instruction(messages: list[Message], submission_name: str) -> bool:
-        return any(message.role == "developer" and submission_name in str(message.content) for message in messages)
+    def _wrap_direct_output(output_format: type[BaseModel], content: Any) -> BaseModel:
+        """Validate a direct model answer without adding an output-format prompt."""
+        if isinstance(content, str):
+            try:
+                return output_format.model_validate_json(content)
+            except ValueError:
+                fields = tuple(output_format.model_fields)
+                if len(fields) == 1:
+                    return output_format.model_validate({fields[0]: content})
+        return output_format.model_validate(content)
 
-    @staticmethod
-    def _append_submission_instruction(messages: list[Message], submission_name: str, output_format: type[BaseModel]) -> list[Message]:
-        instruction = Message(
-            "developer",
-            f"When the task is complete, call `{submission_name}` with arguments matching the {output_format.__name__} schema. "
-            "This tool call is the final result; do not provide a final answer as plain text.",
-        )
-        developer_indexes = [index for index, message in enumerate(messages) if message.role == "developer"]
-        messages.insert(developer_indexes[-1] + 1 if developer_indexes else 0, instruction)
-        return messages
+    def _record_initial_trace(self, trace: TraceRecorder, session_id: str, messages: list[Message]) -> None:
+        for message in messages:
+            if message.role not in {"developer", "user"}:
+                continue
+            trace_message = message.as_dict()
+            trace_message["role"] = "system" if message.role == "developer" else "user"
+            trace.record(session_id, self.name, trace_message["role"], message=trace_message)
 
-    def _record_initial_trace(self, trace: TraceRecorder, session_id: str, messages: list[Message], task: Task | None) -> None:
-        system_prompt = "\n\n".join(str(message.content) for message in messages if message.role == "developer")
-        trace.record(session_id, self.name, "system_prompt", raw_content=system_prompt)
-        trace.record(session_id, self.name, "user_prompt", raw_content=task.description if task is not None else "explicit messages")
+    def _record_assistant_message(self, trace: TraceRecorder | None, session_id: str | None, message: Message, result: ModelResult) -> None:
+        if trace is not None and session_id is not None:
+            trace.record(
+                session_id,
+                self.name,
+                "assistant",
+                message=message.as_dict(),
+                model=result.model,
+                input_tokens=result.input_tokens,
+                output_tokens=result.output_tokens,
+                total_tokens=result.total_tokens,
+                duration_ms=result.duration_ms,
+                finish_reason=result.finish_reason,
+            )
+
+    def _record_tool_message(
+        self,
+        trace: TraceRecorder | None,
+        session_id: str | None,
+        message: Message,
+        *,
+        duration_ms: float,
+        success: bool = True,
+    ) -> None:
+        if trace is not None and session_id is not None:
+            trace.record(session_id, self.name, "tool", message=message.as_dict(), success=success, duration_ms=duration_ms)
+
+    def _append_feedback(self, history: list[Message], trace: TraceRecorder | None, session_id: str | None, content: str) -> None:
+        message = Message("user", content)
+        history.append(message)
+        if trace is not None and session_id is not None:
+            trace.record(session_id, self.name, "user", message=message.as_dict())
