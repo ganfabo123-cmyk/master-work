@@ -90,16 +90,34 @@ def _knowledge_terms(text: str) -> set[str]:
     return words
 
 
-@tool
-def search_customer_knowledge(query: str) -> str:
-    """Search the local customer-service knowledge base and return relevant Markdown excerpts."""
+def _search_markdown(query: str, root: Path, *, no_match: str) -> str:
     query_terms = _knowledge_terms(query)
     scored: list[tuple[int, Path, str]] = []
-    for path in _DATA_ROOT.glob("*.md"):
+    for path in root.glob("*.md"):
         text = path.read_text(encoding="utf-8")
         score = len(query_terms & _knowledge_terms(text))
         if score:
             scored.append((score, path, text))
     if not scored:
-        return "No matching customer-service material was found. Do not invent policy details."
+        return no_match
     return "\n\n".join(f"# Source: {path.name}\n\n{text}" for _, path, text in sorted(scored, reverse=True)[:3])
+
+
+@tool
+def search_customer_knowledge(query: str) -> str:
+    """Search the local customer-service knowledge base and return relevant Markdown excerpts."""
+    return _search_markdown(
+        query,
+        _DATA_ROOT,
+        no_match="No matching customer-service material was found. Do not invent policy details.",
+    )
+
+
+@tool
+def search_release_runbooks(query: str) -> str:
+    """Search local production-release runbooks and return relevant Markdown excerpts."""
+    return _search_markdown(
+        query,
+        _DATA_ROOT / "release_incident",
+        no_match="No matching release runbook was found. Do not invent an operational procedure.",
+    )

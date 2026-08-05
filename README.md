@@ -13,7 +13,7 @@ Task → Agent → Prompt / Tools / Output Format → LLMClient → Trace → Ty
 - `tools.py`：每个工具只定义为一个 `@tool` 函数，注册、schema、校验从函数推导。
 - `skills/`：按需加载的工作流和验证说明；示例 Skill 不绑定任何业务领域。
 - `llm.py`：模型协议的统一边界；内置 `DemoLLMClient` 用于学习与测试。
-- `runtime.py`：只调度 `agent.run()`、创建 Trace Session 并返回类型化结果。
+- `orchestrator.py`：只调度 `agent.run()`、创建 Trace Session 并返回类型化结果。
 - `trace.py`：JSONL 是事实源，同时生成便于查看的 Markdown。
 
 ## 快速开始

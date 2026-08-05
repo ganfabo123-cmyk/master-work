@@ -14,13 +14,13 @@ from . import agents as agents_package
 from .agents import Agent
 from .llm import OpenAICompatibleClient
 from .models import Message, Task
-from .runtime import AgentRuntime
+from .orchestrator import Orchestrator
 
 
 def main() -> None:
     agent = _select_agent()
-    runtime = AgentRuntime(traces_root=Path("traces"))
-    session_id = runtime.start_session(agent=agent, task=Task("Interactive CodeHarness session"))
+    orchestrator = Orchestrator(traces_root=Path("traces"))
+    session_id = orchestrator.start_session(agent=agent, task=Task("Interactive CodeHarness session"))
     history: list[Message] = []
     is_first_turn = True
 
@@ -43,7 +43,7 @@ def main() -> None:
             else:
                 history.append(_user_message(agent, task))
             try:
-                output = runtime.run_turn(
+                output = orchestrator.run_turn(
                     agent=agent,
                     task=task,
                     session_id=session_id,
@@ -61,7 +61,7 @@ def main() -> None:
     except KeyboardInterrupt:
         print()
     finally:
-        runtime.finish_session(session_id, "completed")
+        orchestrator.finish_session(session_id, "completed")
         print(f"Trace: traces/{session_id}")
 
 

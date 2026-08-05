@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .agents import Agent
 from pydantic import BaseModel
 
+from .agents import Agent
 from .models import AgentResult, Message, Task
 from .trace import TraceRecorder
 
 
-class AgentRuntime:
-    """Schedules generic Agent.run calls and never calls an LLM directly."""
+class Orchestrator:
+    """Schedules an Agent run and owns its Trace session lifecycle."""
 
     def __init__(self, *, traces_root: Path = Path("traces"), max_turns: int = 8) -> None:
         self.trace = TraceRecorder(traces_root)

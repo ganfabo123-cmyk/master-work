@@ -4,7 +4,7 @@ from .agents import Agent
 from .llm import DemoLLMClient
 from .models import Task
 from .prompts.learning import LearningPromptBuilder
-from .runtime import AgentRuntime
+from .orchestrator import Orchestrator
 
 
 def main() -> None:
@@ -14,7 +14,7 @@ def main() -> None:
         llm=DemoLLMClient(),
         prompt_builder=LearningPromptBuilder().build,
     )
-    result = AgentRuntime(traces_root=Path("traces")).run(
+    result = Orchestrator(traces_root=Path("traces")).run(
         agent=agent,
         task=Task("Explain the task after inspecting it."),
     )
