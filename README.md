@@ -5,10 +5,10 @@
 ## 已有闭环
 
 ```text
-Task → Agent → Prompt / Tools / Output Format → LLMClient → Trace → Typed Output
+Task → Agent → Prompt / Tools → LLMClient → Trace → Assistant Message
 ```
 
-- `agents/`：每个 Agent 声明自己的 Prompt Builder、工具、Skill 候选、模型与 Pydantic 输出格式。
+- `agents/`：每个 Agent 声明自己的 Prompt Builder、工具、Skill 候选和模型。
 - `prompts/`：Prompt as Code；每个领域 Builder 自己构造系统提示词与用户提示词。
 - `tools.py`：每个工具只定义为一个 `@tool` 函数，注册、schema、校验从函数推导。
 - `skills/`：按需加载的工作流和验证说明；示例 Skill 不绑定任何业务领域。
@@ -24,6 +24,14 @@ CodeHarness
 ```
 
 `CodeHarness` 启动终端交互会话。输入问题与当前 Agent 持续对话，输入 `exit` 或 `quit` 退出；完整会话 Trace 写入 `traces/`。
+
+恢复已有会话：
+
+```powershell
+CodeHarness /resume session_YYYYMMDD_HHMMSS_xxxxxx
+```
+
+恢复会加载该 session 已记录的 Agent 消息历史，并继续追加到同一个 Trace。
 
 ## 用它创建新领域 Harness
 

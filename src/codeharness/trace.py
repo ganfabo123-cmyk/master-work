@@ -7,6 +7,8 @@ from pathlib import Path
 from time import perf_counter
 from uuid import uuid4
 
+from .models import Message, ToolCall
+
 
 def _json_default(value: object) -> object:
     return asdict(value) if is_dataclass(value) else str(value)
@@ -18,6 +20,7 @@ class TraceRecorder:
     def __init__(self, root: Path) -> None:
         self.root = root
         self._starts: dict[str, float] = {}
+        self._elapsed_ms: dict[str, float] = {}
         self._token_totals: dict[str, dict[str, int]] = {}
 
     def create_session(self, task: str, agent_name: str) -> str:
@@ -25,6 +28,7 @@ class TraceRecorder:
         directory = self.root / session_id
         directory.mkdir(parents=True, exist_ok=False)
         self._starts[session_id] = perf_counter()
+        self._elapsed_ms[session_id] = 0.0
         self._token_totals[session_id] = {"input": 0, "output": 0, "total": 0}
         self._write_json(
             directory / "session.json",
@@ -37,6 +41,50 @@ class TraceRecorder:
             },
         )
         return session_id
+
+    def session_data(self, session_id: str) -> dict:
+        """Load session metadata without changing its lifecycle state."""
+        path = self.root / session_id / "session.json"
+        if not path.exists():
+            raise KeyError(f"Trace session does not exist: {session_id}")
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def resume_session(self, session_id: str, agent_name: str) -> tuple[Message, ...]:
+        """Reopen one Agent trace session and restore its canonical message history."""
+        data = self.session_data(session_id)
+        if agent_name not in data.get("agents", []):
+            raise ValueError(f"Agent '{agent_name}' does not belong to trace session '{session_id}'")
+        self._starts[session_id] = perf_counter()
+        self._elapsed_ms[session_id] = float(data.get("duration_ms") or 0)
+        stored_tokens = data.get("tokens") or {}
+        self._token_totals[session_id] = {
+            "input": _token_value(stored_tokens.get("input")),
+            "output": _token_value(stored_tokens.get("output")),
+            "total": _token_value(stored_tokens.get("total")),
+        }
+        data.update(
+            {
+                "status": "running",
+                "error": None,
+                "resumed_at": datetime.now().astimezone().isoformat(),
+                "resume_count": int(data.get("resume_count") or 0) + 1,
+            }
+        )
+        self._write_json(self.root / session_id / "session.json", data)
+        return self.messages(session_id, agent_name)
+
+    def messages(self, session_id: str, agent_name: str) -> tuple[Message, ...]:
+        """Restore the message stream recorded for one Agent, in append order."""
+        path = self.root / session_id / f"{agent_name}.jsonl"
+        if not path.exists():
+            raise KeyError(f"No trace messages exist for agent '{agent_name}' in session '{session_id}'")
+        messages: list[Message] = []
+        for line in path.read_text(encoding="utf-8").splitlines():
+            event = json.loads(line)
+            raw_message = event.get("message")
+            if isinstance(raw_message, dict):
+                messages.append(_message_from_trace(raw_message))
+        return tuple(messages)
 
     def record(self, session_id: str, agent_name: str, event_type: str, **payload: object) -> None:
         directory = self.root / session_id
@@ -59,7 +107,7 @@ class TraceRecorder:
                 "status": status,
                 "error": error,
                 "end_time": datetime.now().astimezone().isoformat(),
-                "duration_ms": round((perf_counter() - self._starts[session_id]) * 1000, 2),
+                "duration_ms": round(self._elapsed_ms[session_id] + (perf_counter() - self._starts[session_id]) * 1000, 2),
                 "tokens": self._token_totals[session_id],
             }
         )
@@ -72,3 +120,22 @@ class TraceRecorder:
 
 def _token_value(value: object) -> int:
     return value if isinstance(value, int) and value >= 0 else 0
+
+
+def _message_from_trace(raw: dict) -> Message:
+    role = "developer" if raw.get("role") == "system" else raw.get("role")
+    tool_calls = tuple(
+        ToolCall(
+            call["id"],
+            call["function"]["name"],
+            call["function"].get("arguments", "{}"),
+        )
+        for call in raw.get("tool_calls") or []
+    )
+    return Message(
+        role=role,
+        content=raw.get("content"),
+        name=raw.get("name"),
+        tool_call_id=raw.get("tool_call_id"),
+        tool_calls=tool_calls,
+    )

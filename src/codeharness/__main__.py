@@ -5,6 +5,7 @@ from .llm import DemoLLMClient
 from .models import Task
 from .prompts.learning import LearningPromptBuilder
 from .orchestrator import Orchestrator
+from .tools import inspect_task
 
 
 def main() -> None:
@@ -13,6 +14,7 @@ def main() -> None:
         model="demo-model",
         llm=DemoLLMClient(),
         prompt_builder=LearningPromptBuilder().build,
+        tools=(inspect_task,),
     )
     result = Orchestrator(traces_root=Path("traces")).run(
         agent=agent,

@@ -45,7 +45,7 @@ class Task:
 class ToolCall:
     id: str
     name: str
-    arguments: dict[str, Any]
+    arguments: dict[str, Any] | str
 
 
 @dataclass(frozen=True, slots=True)

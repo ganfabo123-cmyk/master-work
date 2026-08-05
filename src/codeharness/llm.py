@@ -32,12 +32,11 @@ class DemoLLMClient:
             task = next(message.content for message in messages if message.role == "user")
             return ModelResult(raw_content={"tool": "inspect_task"}, tool_calls=(ToolCall("demo-call-1", "inspect_task", {"task": task}),), model=model, finish_reason="tool_calls")
         observation = next(message.content for message in reversed(messages) if message.role == "tool")
-        submission = next(schema for schema in tools if schema["name"].startswith("submit_"))
         return ModelResult(
-            raw_content={"tool": submission["name"]},
-            tool_calls=(ToolCall("demo-call-2", submission["name"], {"content": f"Completed demo run. {observation}"}),),
+            raw_content={"content": f"Completed demo run. {observation}"},
+            parsed_content=f"Completed demo run. {observation}",
             model=model,
-            finish_reason="tool_calls",
+            finish_reason="stop",
         )
 
 

@@ -1,15 +1,9 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
-
 from .base import Agent
 from ..llm import LLMClient
 from ..prompts.release_incident import ReleaseIncidentPromptBuilder
 from ..tools import search_release_runbooks
-
-
-class ReleaseIncidentOutput(BaseModel):
-    recommendation: str
 
 
 class ReleaseIncidentAgent(Agent):
@@ -22,5 +16,4 @@ class ReleaseIncidentAgent(Agent):
             llm=llm,
             prompt_builder=ReleaseIncidentPromptBuilder().build,
             tools=(search_release_runbooks,),
-            output_format=ReleaseIncidentOutput,
         )

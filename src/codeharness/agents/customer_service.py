@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import BaseModel
-
 from .base import Agent, SkillSpec
 from ..llm import LLMClient
 from ..prompts.customer_service import CustomerServicePromptBuilder
@@ -16,10 +14,6 @@ CUSTOMER_SERVICE_SKILL = SkillSpec(
     path=_ROOT / "skills" / "customer-service" / "SKILL.md",
     description="Answer customer questions accurately using local knowledge when facts are needed.",
 )
-
-
-class CustomerServiceOutput(BaseModel):
-    answer: str
 
 
 class CustomerServiceAgent(Agent):
@@ -36,5 +30,4 @@ class CustomerServiceAgent(Agent):
             ).build,
             tools=(search_customer_knowledge,),
             skills=(CUSTOMER_SERVICE_SKILL,),
-            output_format=CustomerServiceOutput,
         )

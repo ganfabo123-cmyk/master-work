@@ -4,7 +4,7 @@ Run after installing the project and configuring DEEPSEEK_API_KEY (or PRO_API):
 
     python tests/compare_tool_contexts.py
 
-The default executes 10 attempts per mode.  It makes real model calls and writes
+The default executes 10 attempts per mode. It makes real model calls and writes
 canonical per-attempt traces plus a summary under tests/tool_context_benchmark_results/.
 """
 
@@ -26,7 +26,6 @@ from codeharness.tools import ToolRegistry
 
 
 RELEASE_REF = "rel-2026.08.05.17"
-SUBMISSION_TOOL = "submit_release_assessment"
 MAX_MODEL_TURNS = 6
 
 
@@ -54,12 +53,6 @@ class RollbackGate(BaseModel):
     decision: Literal["rollback_now", "hold_and_investigate"]
     required_pre_actions: list[str]
     follow_up: str
-
-
-class ReleaseAssessment(BaseModel):
-    decision: Literal["rollback_now", "hold_and_investigate"]
-    immediate_actions: list[str]
-    reasoning: str
 
 
 tools = ToolRegistry()
@@ -181,7 +174,7 @@ You must complete this workflow in order and use the exact values returned by ea
 2. Call analyze_service_signals using the release_id and service returned by the snapshot, with lookback_minutes=3.
 3. Call evaluate_rollback_gate using the metrics and evidence conclusion returned by signal analysis.
 
-Do not skip, reorder, parallelize, or invent any step. After all three tools have succeeded, decide whether to provide a direct final response or call the available submission tool.""",
+Do not skip, reorder, parallelize, or invent any step. After all three tools have succeeded, return a direct final response.""",
     )
     user = Message(
         "user",
@@ -194,7 +187,7 @@ Do not skip, reorder, parallelize, or invent any step. After all three tools hav
     input_tokens = output_tokens = total_tokens = 0
     started = perf_counter()
 
-    schemas = [*tools.schemas_for(BUSINESS_TOOLS), submission_schema()]
+    schemas = tools.schemas_for(BUSINESS_TOOLS)
     for model_turn in range(1, MAX_MODEL_TURNS + 1):
         request_messages = canonical_messages if mode == "native" else compressed_messages
         result = client.generate(model=model, messages=request_messages, tools=schemas)
@@ -230,25 +223,6 @@ Do not skip, reorder, parallelize, or invent any step. After all three tools hav
                 total_tokens,
                 started,
                 final_text=result.parsed_content,
-            )
-
-        if any(call.name == SUBMISSION_TOOL for call in result.tool_calls):
-            if len(result.tool_calls) != 1:
-                return attempt_result("invalid_submission", tool_sequence, trace, input_tokens, output_tokens, total_tokens, started)
-            try:
-                output = ReleaseAssessment.model_validate(result.tool_calls[0].arguments)
-            except Exception as error:
-                return attempt_result("invalid_submission", tool_sequence, trace, input_tokens, output_tokens, total_tokens, started, error=str(error))
-            trace.append({"event_type": "submission", "tool": SUBMISSION_TOOL, "arguments": output.model_dump()})
-            return attempt_result(
-                "submitted",
-                tool_sequence,
-                trace,
-                input_tokens,
-                output_tokens,
-                total_tokens,
-                started,
-                submission=output.model_dump(),
             )
 
         expected = EXPECTED_SEQUENCE[len(tool_sequence)] if len(tool_sequence) < len(EXPECTED_SEQUENCE) else None
@@ -299,21 +273,12 @@ Do not skip, reorder, parallelize, or invent any step. After all three tools hav
     return attempt_result("max_turns", tool_sequence, trace, input_tokens, output_tokens, total_tokens, started)
 
 
-def submission_schema() -> dict[str, Any]:
-    return {
-        "name": SUBMISSION_TOOL,
-        "description": "Submit the final release assessment in the required structured format.",
-        "parameters": ReleaseAssessment.model_json_schema(),
-    }
-
-
 def compressed_tool_context(call: ToolCall, value: Any) -> str:
     """The proposed textual replacement for one native assistant/tool exchange."""
     return (
         f"我刚才调用了 {call.name} 工具。\n"
         f"输入参数为：{json.dumps(call.arguments, ensure_ascii=False)}\n"
-        f"工具结果为：{tool_result_text(value)}\n"
-        f"如果要结束任务，调用 {SUBMISSION_TOOL} 完成。"
+        f"工具结果为：{tool_result_text(value)}"
     )
 
 
@@ -341,7 +306,6 @@ def attempt_result(
         "outcome": outcome,
         "tool_sequence": tool_sequence,
         "completed_three_tool_rounds": tool_sequence == list(EXPECTED_SEQUENCE),
-        "submitted": outcome == "submitted",
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
         "total_tokens": total_tokens,
@@ -360,10 +324,7 @@ def build_summary(attempts: list[dict[str, Any]], model: str) -> dict[str, Any]:
         "model": model,
         "task": f"Release rollback assessment for {RELEASE_REF}",
         "expected_tool_sequence": list(EXPECTED_SEQUENCE),
-        "comparison_note": (
-            "This compares two complete strategies, not compression alone: compressed mode also appends "
-            "the proposed submit hint after each tool result."
-        ),
+        "comparison_note": "Compressed mode replaces completed native tool exchanges with textual summaries.",
         "modes": {},
     }
     for mode, rows in grouped.items():
@@ -371,7 +332,6 @@ def build_summary(attempts: list[dict[str, Any]], model: str) -> dict[str, Any]:
         summary["modes"][mode] = {
             "attempts": count,
             "three_tool_round_successes": sum(row["completed_three_tool_rounds"] for row in rows),
-            "submissions": sum(row["submitted"] for row in rows),
             "outcomes": {outcome: sum(row["outcome"] == outcome for row in rows) for outcome in sorted({row["outcome"] for row in rows})},
             "average_input_tokens": round(sum(row["input_tokens"] for row in rows) / count, 2),
             "average_output_tokens": round(sum(row["output_tokens"] for row in rows) / count, 2),

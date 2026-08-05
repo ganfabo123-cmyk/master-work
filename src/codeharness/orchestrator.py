@@ -3,8 +3,6 @@ from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
 
-from pydantic import BaseModel
-
 from .agents import Agent
 from .models import AgentResult, Message, Task
 from .room import AgentProfile, Room
@@ -73,6 +71,14 @@ class Orchestrator:
     def start_session(self, *, agent: Agent, task: Task) -> str:
         return self.trace.create_session(task.description, agent.name)
 
+    def session_agents(self, session_id: str) -> tuple[str, ...]:
+        """Return the Agent names recorded in an existing session."""
+        return tuple(self.trace.session_data(session_id).get("agents", []))
+
+    def resume_session(self, *, session_id: str, agent: Agent) -> tuple[Message, ...]:
+        """Restore an Agent's message history and reopen its Trace session."""
+        return self.trace.resume_session(session_id, agent.name)
+
     def run_turn(
         self,
         *,
@@ -81,7 +87,7 @@ class Orchestrator:
         session_id: str,
         messages: tuple[Message, ...] | list[Message] | None = None,
         record_initial_messages: bool = True,
-    ) -> BaseModel:
+    ) -> Message:
         return agent.run(
             task,
             messages=messages,

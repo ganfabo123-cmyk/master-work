@@ -9,8 +9,6 @@ from pathlib import Path
 from time import perf_counter
 from typing import Any
 
-from pydantic import BaseModel
-
 from ..llm import LLMClient, ModelResult
 from ..models import Message, Prompt, Task, ToolCall
 from ..tools import ToolRegistry, registry
@@ -18,10 +16,6 @@ from ..trace import TraceRecorder
 
 PromptBuilder = Callable[[Task], Prompt]
 ToolFunction = Callable[..., Any]
-
-
-class TextOutput(BaseModel):
-    content: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,7 +37,6 @@ class Agent:
     prompt_builder: PromptBuilder
     tools: tuple[ToolFunction, ...] = ()
     skills: tuple[SkillSpec, ...] = ()
-    output_format: type[BaseModel] = TextOutput
     tool_registry: ToolRegistry = registry
 
     def initial_messages(self, task: Task) -> tuple[Message, ...]:
@@ -60,14 +53,13 @@ class Agent:
         tools: tuple[ToolFunction, ...] | None = None,
         tool_schemas: list[dict[str, Any]] | None = None,
         model: str | None = None,
-        output_format: type[BaseModel] | None = None,
         max_turns: int = 8,
         trace: TraceRecorder | None = None,
         session_id: str | None = None,
         record_initial_messages: bool = True,
         **llm_kwargs: Any,
-    ) -> BaseModel:
-        """Run this Agent's complete LLM and tool loop, returning only its typed output."""
+    ) -> Message:
+        """Run this Agent's complete LLM and tool loop, returning its final assistant message."""
         if messages is None:
             if task is None:
                 raise ValueError("task is required when messages are not supplied")
@@ -75,9 +67,7 @@ class Agent:
         else:
             history = list(messages)
         selected_tools = self.tools if tools is None else tools
-        selected_format = self.output_format if output_format is None else output_format
-        submission_name, submission_schema = self._submission_tool(selected_format)
-        schemas = [*(self.tool_schemas(selected_tools) if tool_schemas is None else tool_schemas), submission_schema]
+        schemas = self.tool_schemas(selected_tools) if tool_schemas is None else tool_schemas
         if record_initial_messages and trace is not None and session_id is not None:
             self._record_initial_trace(trace, session_id, history)
 
@@ -96,7 +86,7 @@ class Agent:
                 assistant_message = Message("assistant", result.parsed_content)
                 history.append(assistant_message)
                 self._record_assistant_message(trace, session_id, assistant_message, result)
-                return self._wrap_direct_output(selected_format, result.parsed_content)
+                return assistant_message
 
             wire_tool_calls = tuple(
                 ToolCall(call.id, call.name, json.dumps(call.arguments, ensure_ascii=False))
@@ -105,16 +95,6 @@ class Agent:
             assistant_message = Message("assistant", result.parsed_content or "", tool_calls=wire_tool_calls)
             history.append(assistant_message)
             self._record_assistant_message(trace, session_id, assistant_message, result)
-            if any(call.name == submission_name for call in result.tool_calls):
-                if len(result.tool_calls) != 1:
-                    raise ValueError("a final submission cannot be combined with other tool calls")
-                call = result.tool_calls[0]
-                output = selected_format.model_validate(call.arguments)
-                tool_message = Message("tool", output.model_dump_json(), name=call.name, tool_call_id=call.id)
-                history.append(tool_message)
-                self._record_tool_message(trace, session_id, tool_message, duration_ms=0.0)
-                return output
-
             for call in result.tool_calls:
                 if call.name not in {tool.__name__ for tool in selected_tools}:
                     raise ValueError(f"tool is not allowed for agent '{self.name}': {call.name}")
@@ -128,32 +108,7 @@ class Agent:
                     tool_message = Message("tool", str(error), name=call.name, tool_call_id=call.id)
                     history.append(tool_message)
                     self._record_tool_message(trace, session_id, tool_message, duration_ms=round((perf_counter() - started) * 1000, 2), success=False)
-        raise RuntimeError(f"Agent '{self.name}' exceeded max_turns={max_turns} without producing output")
-
-    def _submission_tool(self, output_format: type[BaseModel]) -> tuple[str, dict[str, Any]]:
-        import re
-
-        format_name = re.sub(r"(?<!^)(?=[A-Z])", "_", output_format.__name__).lower()
-        name = f"submit_{format_name}"
-        if name in {tool.__name__ for tool in self.tools}:
-            raise ValueError(f"submission tool conflicts with agent tool: {name}")
-        return name, {
-            "name": name,
-            "description": "Submit the final result and finish this Agent task.",
-            "parameters": output_format.model_json_schema(),
-        }
-
-    @staticmethod
-    def _wrap_direct_output(output_format: type[BaseModel], content: Any) -> BaseModel:
-        """Validate a direct model answer without adding an output-format prompt."""
-        if isinstance(content, str):
-            try:
-                return output_format.model_validate_json(content)
-            except ValueError:
-                fields = tuple(output_format.model_fields)
-                if len(fields) == 1:
-                    return output_format.model_validate({fields[0]: content})
-        return output_format.model_validate(content)
+        raise RuntimeError(f"Agent '{self.name}' exceeded max_turns={max_turns} without a final assistant message")
 
     def _record_initial_trace(self, trace: TraceRecorder, session_id: str, messages: list[Message]) -> None:
         for message in messages:
