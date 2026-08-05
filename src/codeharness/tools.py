@@ -1,12 +1,28 @@
+"""Tool registry and tool design rules.
+
+## 工具设计规范
+
+1. 每个公开工具必须使用 ``@tool`` 注册，且函数名在整个 Harness 中唯一。
+2. 每个参数必须使用 ``Annotated[Type, Field(description=...)]``：description 说明
+   业务含义、格式、边界或单位，不能只写参数名。
+3. 函数 docstring 描述工具的动作、返回内容和必要的限制；它会成为模型可见的工具说明。
+4. 入参和返回值必须是可由 Pydantic 严格校验、可 JSON 序列化的明确类型；不要使用
+   无约束 ``dict``、隐式全局上下文或未说明的副作用。
+5. 工具只实现可观察的领域动作，不携带 Prompt、Agent 路由或最终回答逻辑；哪个 Agent
+   能使用工具由 Agent 的 ``tools`` 名单决定。
+6. 返回值应包含调用者继续决策所需的事实；找不到资料、权限不足或输入不合法时，应返回
+   清晰结果或抛出 ``ToolError``，不得编造成功结果。
+"""
+
 from __future__ import annotations
 
 import inspect
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, get_type_hints
+from typing import Annotated, Any, Callable, get_type_hints
 
-from pydantic import TypeAdapter, ValidationError
+from pydantic import Field, TypeAdapter, ValidationError
 
 
 class ToolError(Exception):
@@ -74,8 +90,10 @@ tool = registry.register
 
 
 @tool
-def inspect_task(task: str) -> str:
-    """Return a deterministic observation about the current task."""
+def inspect_task(
+    task: Annotated[str, Field(description="需要确认已接收的任务原文。")],
+) -> str:
+    """回显任务原文，用于演示确定性的只读工具调用。"""
     return f"Task received: {task}"
 
 
@@ -104,8 +122,10 @@ def _search_markdown(query: str, root: Path, *, no_match: str) -> str:
 
 
 @tool
-def search_customer_knowledge(query: str) -> str:
-    """Search the local customer-service knowledge base and return relevant Markdown excerpts."""
+def search_customer_knowledge(
+    query: Annotated[str, Field(description="用于检索客服知识库的关键词或完整问题。")],
+) -> str:
+    """检索本地客服知识库并返回最相关的 Markdown 原文；未命中时明确说明。"""
     return _search_markdown(
         query,
         _DATA_ROOT,
@@ -114,8 +134,10 @@ def search_customer_knowledge(query: str) -> str:
 
 
 @tool
-def search_release_runbooks(query: str) -> str:
-    """Search local production-release runbooks and return relevant Markdown excerpts."""
+def search_release_runbooks(
+    query: Annotated[str, Field(description="用于检索生产发布、回滚或事件升级 Runbook 的关键词或问题。")],
+) -> str:
+    """检索本地发布故障 Runbook 并返回相关 Markdown 原文；未命中时明确说明。"""
     return _search_markdown(
         query,
         _DATA_ROOT / "release_incident",
