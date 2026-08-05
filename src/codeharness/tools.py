@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import inspect
+import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Callable, get_type_hints
 
 from pydantic import TypeAdapter, ValidationError
@@ -53,6 +55,14 @@ class ToolRegistry:
     def schemas(self) -> list[dict[str, Any]]:
         return [tool.schema() for tool in self._tools.values()]
 
+    def schemas_for(self, functions: tuple[Callable[..., Any], ...]) -> list[dict[str, Any]]:
+        """Return schemas only for the tools declared by one Agent."""
+        names = [function.__name__ for function in functions]
+        missing = [name for name in names if name not in self._tools]
+        if missing:
+            raise ToolError(f"unregistered tools: {', '.join(missing)}")
+        return [self._tools[name].schema() for name in names]
+
     def invoke(self, name: str, arguments: dict[str, Any]) -> Any:
         if name not in self._tools:
             raise ToolError(f"unknown tool: {name}")
@@ -67,3 +77,29 @@ tool = registry.register
 def inspect_task(task: str) -> str:
     """Return a deterministic observation about the current task."""
     return f"Task received: {task}"
+
+
+_DATA_ROOT = Path(__file__).resolve().parents[2] / "data"
+
+
+def _knowledge_terms(text: str) -> set[str]:
+    words = {word.lower() for word in re.findall(r"[A-Za-z0-9_]{2,}", text)}
+    for phrase in re.findall(r"[\u4e00-\u9fff]{2,}", text):
+        words.add(phrase)
+        words.update(phrase[index:index + 2] for index in range(len(phrase) - 1))
+    return words
+
+
+@tool
+def search_customer_knowledge(query: str) -> str:
+    """Search the local customer-service knowledge base and return relevant Markdown excerpts."""
+    query_terms = _knowledge_terms(query)
+    scored: list[tuple[int, Path, str]] = []
+    for path in _DATA_ROOT.glob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        score = len(query_terms & _knowledge_terms(text))
+        if score:
+            scored.append((score, path, text))
+    if not scored:
+        return "No matching customer-service material was found. Do not invent policy details."
+    return "\n\n".join(f"# Source: {path.name}\n\n{text}" for _, path, text in sorted(scored, reverse=True)[:3])

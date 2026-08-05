@@ -5,15 +5,15 @@
 ## 已有闭环
 
 ```text
-Task → Prompt → Context → LLMClient → ToolRegistry → Runtime → Trace → AgentResult
+Task → Agent → Prompt / Tools / Output Format → LLMClient → Trace → Typed Output
 ```
 
-- `prompts/`：Prompt as Code；每个逻辑提示词是一个函数。
+- `agents/`：每个 Agent 声明自己的 Prompt Builder、工具、Skill 候选、模型与 Pydantic 输出格式。
+- `prompts/`：Prompt as Code；每个领域 Builder 自己构造系统提示词与用户提示词。
 - `tools.py`：每个工具只定义为一个 `@tool` 函数，注册、schema、校验从函数推导。
 - `skills/`：按需加载的工作流和验证说明；示例 Skill 不绑定任何业务领域。
 - `llm.py`：模型协议的统一边界；内置 `DemoLLMClient` 用于学习与测试。
-- `context.py`：决定每轮真正发送给模型的 messages。
-- `runtime.py`：唯一 Agent Loop，处理模型、工具、终止条件和验证证据。
+- `runtime.py`：只调度 `agent.run()`、创建 Trace Session 并返回类型化结果。
 - `trace.py`：JSONL 是事实源，同时生成便于查看的 Markdown。
 
 ## 快速开始
@@ -24,7 +24,7 @@ python -m codeharness
 pytest
 ```
 
-演示不会调用外网或真实模型：第一次返回 `inspect_task` 工具调用，第二次返回最终文本。运行后可在 `traces/` 查看完整事实记录。
+演示不会调用外网或真实模型：它调用 `inspect_task` 后，调用临时 `submit_text_output` 工具提交最终结果。运行后可在 `traces/` 查看完整事实记录。
 
 ## 用它创建新领域 Harness
 
@@ -34,3 +34,9 @@ pytest
 4. 为真实模型实现 `LLMClient.generate()`；Runtime、Trace、Context 与 ToolRegistry 保持复用。
 
 当确实出现跨任务记忆、远程环境或多 Agent 编排需求时，再在现有接口外添加；不要为未来假设预建平台。
+
+## 真实示例：客服 Harness
+
+客服示例的 Agent 声明位于 `src/codeharness/agents/customer_service.py`，虚构知识库放在 `data/*.md`。真实模型根据问题决定是否调用 `search_customer_knowledge`，通用 Runtime 负责执行调用并保留 Trace。
+
+客服 Agent 只维护自己的 Prompt Builder、工具名单和候选 Skill；对应 Prompt 与工具分别位于 `prompts/customer_service.py` 和 `tools.py`。新增领域 Agent 时，按同样方式新增一个 Agent 类即可。不存在客服专用运行入口或 CLI；所有 Agent 必须复用同一个通用 Runtime 入口。
