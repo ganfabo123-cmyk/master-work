@@ -11,7 +11,15 @@ from .orchestrator import Orchestrator
 def main() -> None:
     parser = argparse.ArgumentParser(prefix_chars="-/")
     parser.add_argument("/resume", "--resume", dest="resume", metavar="SESSION_ID", help="Resume an existing trace session.")
+    parser.add_argument("/web", "--web", action="store_true", help="Start the local scenario-neutral ROOM web console.")
     args = parser.parse_args()
+    if args.web:
+        if args.resume:
+            parser.error("/resume cannot be used with /web")
+        from .web import serve_web
+
+        serve_web()
+        return
     orchestrator = Orchestrator.from_environment(traces_root=Path("traces"))
     session_id = args.resume
 

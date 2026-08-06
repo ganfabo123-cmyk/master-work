@@ -1,26 +1,6 @@
-from pathlib import Path
+"""Run the standard interactive CodeHarness CLI with ``python -m codeharness``."""
 
-from .agents import Agent
-from .llm import DemoLLMClient
-from .models import Task
-from .prompts.learning import LearningPromptBuilder
-from .orchestrator import Orchestrator
-from .tools import inspect_task
-
-
-def main() -> None:
-    agent = Agent(
-        name="learning-agent",
-        model="demo-model",
-        llm=DemoLLMClient(),
-        prompt_builder=LearningPromptBuilder().build,
-        tools=(inspect_task,),
-    )
-    result = Orchestrator(traces_root=Path("traces")).run(
-        agent=agent,
-        task=Task("Explain the task after inspecting it."),
-    )
-    print(f"{result.status}: {result.content}\ntrace: traces/{result.session_id}")
+from .cli import main
 
 
 if __name__ == "__main__":

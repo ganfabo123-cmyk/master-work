@@ -70,9 +70,17 @@ class Orchestrator:
         orchestrator.register_agent_factory(_REVIEWER_NAME, lambda profile: RiskReviewerAgent(client, model))
         return orchestrator
 
-    def run(self, *, task: Task, session_id: str | None = None) -> AgentResult:
+    def run(
+        self,
+        *,
+        task: Task,
+        session_id: str | None = None,
+        on_session_opened: Callable[[str], None] | None = None,
+    ) -> AgentResult:
         """Create or restore one complete task session, then run Planner -> Reviewer -> Planner."""
         workflow = self._open_workflow_session(task=task, session_id=session_id)
+        if on_session_opened is not None:
+            on_session_opened(workflow.session_id)
         planner = workflow.agents[_PLANNER_NAME]
         reviewer = workflow.agents[_REVIEWER_NAME]
         try:
