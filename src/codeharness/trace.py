@@ -23,7 +23,15 @@ class TraceRecorder:
         self._elapsed_ms: dict[str, float] = {}
         self._token_totals: dict[str, dict[str, int]] = {}
 
-    def create_session(self, task: str, agent_name: str) -> str:
+    def create_session(
+        self,
+        task: str,
+        agent_name: str,
+        *,
+        mode: str = "agent",
+        room_id: str | None = None,
+        room_session_id: str | None = None,
+    ) -> str:
         session_id = f"session_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid4().hex[:6]}"
         directory = self.root / session_id
         directory.mkdir(parents=True, exist_ok=False)
@@ -36,8 +44,11 @@ class TraceRecorder:
                 "session_id": session_id,
                 "task": task,
                 "status": "running",
+                "mode": mode,
+                "entry_agent": agent_name,
                 "agents": [agent_name],
                 "tokens": self._token_totals[session_id],
+                **({"room": {"room_id": room_id, "session_id": room_session_id}} if room_id and room_session_id else {}),
             },
         )
         return session_id
@@ -54,6 +65,12 @@ class TraceRecorder:
         data = self.session_data(session_id)
         if agent_name not in data.get("agents", []):
             raise ValueError(f"Agent '{agent_name}' does not belong to trace session '{session_id}'")
+        self.resume_session_state(session_id)
+        return self.messages(session_id, agent_name)
+
+    def resume_session_state(self, session_id: str) -> dict:
+        """Reopen the task root without choosing one of its participating Agents."""
+        data = self.session_data(session_id)
         self._starts[session_id] = perf_counter()
         self._elapsed_ms[session_id] = float(data.get("duration_ms") or 0)
         stored_tokens = data.get("tokens") or {}
@@ -71,7 +88,22 @@ class TraceRecorder:
             }
         )
         self._write_json(self.root / session_id / "session.json", data)
-        return self.messages(session_id, agent_name)
+        return data
+
+    def register_agent(self, session_id: str, agent_name: str) -> None:
+        """Record one participating Agent under an existing task root session."""
+        data = self.session_data(session_id)
+        agents = data.setdefault("agents", [])
+        if agent_name not in agents:
+            agents.append(agent_name)
+            self._write_json(self.root / session_id / "session.json", data)
+
+    def attach_room(self, session_id: str, *, room_id: str, room_session_id: str) -> None:
+        """Mark a task root as multi-Agent and link its durable ROOM state."""
+        data = self.session_data(session_id)
+        data["mode"] = "room"
+        data["room"] = {"room_id": room_id, "session_id": room_session_id}
+        self._write_json(self.root / session_id / "session.json", data)
 
     def messages(self, session_id: str, agent_name: str) -> tuple[Message, ...]:
         """Restore the message stream recorded for one Agent, in append order."""
