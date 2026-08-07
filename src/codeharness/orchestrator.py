@@ -5,30 +5,33 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 
-from .agents import Agent, IncidentPlannerAgent, RiskReviewerAgent
+from .agents import Agent, WerewolfPlayerAgent
 from .llm import LLMClient, OpenAICompatibleClient
 from .models import AgentResult, Message, Task
 from .room import AgentProfile, Room, RoomMessage
+from .tools import ToolRegistry
 from .trace import TraceRecorder
+from .util.werewolf_actions import latest_valid_actions
+from .util.werewolf_rules import GameEvent, finish_as_draw, resolve_phase
+from .util.werewolf_state import Phase, Role, WerewolfGameState, actors_for_phase, load_state, phase_announcement, player_visible_state, save_state
+from .util.werewolf_tools import tools_for_player
 
 AgentFactory = Callable[[AgentProfile], Agent]
-_PLANNER_NAME = "incident-planner"
-_REVIEWER_NAME = "risk-reviewer"
+_PLAYER_FACTORY = "werewolf-player"
+_ENGINE_NAME = "game-engine"
 
 
 @dataclass(slots=True)
-class WorkflowSession:
-    """All state needed to run one Planner-Reviewer workflow session."""
-
+class WerewolfSession:
     session_id: str
     room: Room
     agents: dict[str, Agent]
     messages: dict[str, list[Message]]
-    is_new: bool
+    state: WerewolfGameState
 
 
 class Orchestrator:
-    """Owns the complete lifecycle and execution of one multi-Agent task session."""
+    """Owns session lifecycle and deterministic orchestration for one AI werewolf game."""
 
     def __init__(
         self,
@@ -36,12 +39,14 @@ class Orchestrator:
         traces_root: Path = Path("traces"),
         room_data_root: Path = Path("room/data"),
         max_turns: int = 8,
+        max_game_rounds: int = 12,
         llm: LLMClient | None = None,
         model: str | None = None,
     ) -> None:
         self.trace = TraceRecorder(traces_root)
         self.room_data_root = room_data_root
         self.max_turns = max_turns
+        self.max_game_rounds = max_game_rounds
         self.llm = llm
         self.model = model
         self._agents: dict[str, Agent] = {}
@@ -59,15 +64,11 @@ class Orchestrator:
     ) -> "Orchestrator":
         client = OpenAICompatibleClient.from_environment()
         model = os.getenv("CODEHARNESS_MODEL", "deepseek-v4-flash")
-        orchestrator = cls(
-            traces_root=traces_root,
-            room_data_root=room_data_root,
-            max_turns=max_turns,
-            llm=client,
-            model=model,
+        orchestrator = cls(traces_root=traces_root, room_data_root=room_data_root, max_turns=max_turns, llm=client, model=model)
+        orchestrator.register_agent_factory(
+            _PLAYER_FACTORY,
+            lambda profile: WerewolfPlayerAgent(client, model, name=profile.name, role=Role(str(profile.kwargs["identity"]))),
         )
-        orchestrator.register_agent_factory(_PLANNER_NAME, lambda profile: IncidentPlannerAgent(client, model))
-        orchestrator.register_agent_factory(_REVIEWER_NAME, lambda profile: RiskReviewerAgent(client, model))
         return orchestrator
 
     def run(
@@ -77,114 +78,124 @@ class Orchestrator:
         session_id: str | None = None,
         on_session_opened: Callable[[str], None] | None = None,
     ) -> AgentResult:
-        """Create or restore one complete task session, then run Planner -> Reviewer -> Planner."""
-        workflow = self._open_workflow_session(task=task, session_id=session_id)
+        """Open or restore one game, then directly drive its deterministic phase loop."""
+        game = self._open_or_restore_werewolf_session(task=task, session_id=session_id)
         if on_session_opened is not None:
-            on_session_opened(workflow.session_id)
-        planner = workflow.agents[_PLANNER_NAME]
-        reviewer = workflow.agents[_REVIEWER_NAME]
+            on_session_opened(game.session_id)
         try:
-            initial_plan = self.run_room_turn(
-                room=workflow.room,
-                agent_name=planner.name,
-                task=task,
-                session_id=workflow.session_id,
-                messages=workflow.messages[planner.name] or None,
-            )
-            plan_text = _result_text(initial_plan, "Planner initial plan")
-            workflow.messages[planner.name] = list(self.trace.messages(workflow.session_id, planner.name))
-            workflow.room.send(RoomMessage(name=planner.name, at=reviewer.name, txt=plan_text))
+            while game.state.phase is not Phase.FINISHED:
+                self._publish_game_events(game.room, (GameEvent(phase_announcement(game.state)),))
+                for player_name in actors_for_phase(game.state):
+                    agent = game.agents[player_name]
+                    registry, tools = tools_for_player(room=game.room, actor=player_name, state=game.state)
+                    self.run_room_turn(
+                        room=game.room,
+                        agent_name=player_name,
+                        task=task,
+                        session_id=game.session_id,
+                        messages=game.messages[player_name] or None,
+                        tools=tools,
+                        tool_registry=registry,
+                        extra_inputs={"werewolf": player_visible_state(game.state)},
+                    )
+                    game.messages[player_name] = self._messages_or_empty(game.session_id, agent.name)
 
-            review = self.run_room_turn(
-                room=workflow.room,
-                agent_name=reviewer.name,
-                task=task,
-                session_id=workflow.session_id,
-                messages=workflow.messages[reviewer.name] or None,
-            )
-            review_text = _result_text(review, "Reviewer result")
-            workflow.messages[reviewer.name] = list(self.trace.messages(workflow.session_id, reviewer.name))
-            workflow.room.send(RoomMessage(name=reviewer.name, at=planner.name, txt=review_text))
+                engine_inbox = game.room.receive(_ENGINE_NAME)
+                actions, rejected = latest_valid_actions(engine_inbox, game.state)
+                for action, reason in rejected:
+                    game.room.send(RoomMessage(name=_ENGINE_NAME, at=action.actor, txt=f"动作无效：{reason}"))
+                    game.state.consumed_action_ids.add(action.message_id)
+                game.state.consumed_action_ids.update(action.message_id for action in actions.values())
+                game.state, events = resolve_phase(game.state, actions)
+                if game.state.round_no > self.max_game_rounds and game.state.phase is not Phase.FINISHED:
+                    game.state, draw_events = finish_as_draw(game.state)
+                    events = (*events, *draw_events)
+                self._publish_game_events(game.room, events)
+                self._persist_game_state(game.session_id, game.state)
 
-            final = self.run_room_turn(
-                room=workflow.room,
-                agent_name=planner.name,
-                task=task,
-                session_id=workflow.session_id,
-                messages=workflow.messages[planner.name],
-            )
-            workflow.messages[planner.name] = list(self.trace.messages(workflow.session_id, planner.name))
-            message = _result_message(final, "Planner final recommendation")
-            self.trace.finish_session(workflow.session_id, "completed")
-            return AgentResult("completed", message, None, workflow.session_id)
+            self.trace.finish_session(game.session_id, "completed")
+            winner = game.state.winner.value if game.state.winner is not None else "unknown"
+            return AgentResult("completed", Message("assistant", f"狼人杀游戏结束，结果：{winner}。"), None, game.session_id)
         except Exception as error:
-            self.trace.finish_session(workflow.session_id, "failed", str(error))
-            return AgentResult("failed", None, str(error), workflow.session_id)
+            self._persist_game_state(game.session_id, game.state)
+            self.trace.finish_session(game.session_id, "failed", str(error))
+            return AgentResult("failed", None, str(error), game.session_id)
 
-    def _open_workflow_session(self, *, task: Task, session_id: str | None) -> WorkflowSession:
-        """Return every object needed by one workflow, either newly created or fully restored."""
+    def _open_or_restore_werewolf_session(self, *, task: Task, session_id: str | None) -> WerewolfSession:
         if session_id is None:
-            planner, reviewer = self._new_workflow_agents()
-            new_session_id = self.trace.create_session(task.description, planner.name, mode="room")
-            room = self.create_room(f"release-incident-review-{new_session_id}", session_id=new_session_id)
-            self.trace.attach_room(new_session_id, room_id=room.room_id, room_session_id=room.session_id)
-            self._register_workflow_agents(planner, reviewer)
-            self.invite_agents(room, (planner.name, reviewer.name), session_id=new_session_id)
-            return WorkflowSession(
-                session_id=new_session_id,
-                room=room,
-                agents={planner.name: planner, reviewer.name: reviewer},
-                messages={planner.name: [], reviewer.name: []},
-                is_new=True,
-            )
+            if self.llm is None or self.model is None:
+                raise RuntimeError("Orchestrator needs llm and model to create a werewolf game")
+            state = WerewolfGameState.random_eight_players()
+            root_session_id = self.trace.create_session(task.description, "player-1", mode="werewolf")
+            room = self.create_room(f"werewolf-{root_session_id}", session_id=root_session_id)
+            self.trace.attach_room(root_session_id, room_id=room.room_id, room_session_id=room.session_id)
+            self._register_engine(room)
+            agents: dict[str, Agent] = {}
+            for name, player in state.players.items():
+                agent = WerewolfPlayerAgent(self.llm, self.model, name=name, role=player.role)
+                profile = _player_profile(name, player.role)
+                self.register_agent(agent, profile)
+                agents[name] = agent
+            self.invite_agents(room, tuple(agents), session_id=root_session_id)
+            self._persist_game_state(root_session_id, state)
+            return WerewolfSession(root_session_id, room, agents, {name: [] for name in agents}, state)
 
         data = self.trace.session_data(session_id)
         room_data = data.get("room")
-        if data.get("mode") != "room" or not isinstance(room_data, dict):
-            raise ValueError(f"Session is not a resumable multi-Agent ROOM session: {session_id}")
-        room_id = room_data.get("room_id")
-        room_session_id = room_data.get("session_id")
+        if data.get("mode") != "werewolf" or not isinstance(room_data, dict):
+            raise ValueError(f"Session is not a resumable werewolf session: {session_id}")
+        room_id, room_session_id = room_data.get("room_id"), room_data.get("session_id")
         if not isinstance(room_id, str) or not isinstance(room_session_id, str):
             raise ValueError(f"Session has invalid ROOM metadata: {session_id}")
         self.trace.resume_session_state(session_id)
-        room = self._rooms.get(room_id)
-        if room is None:
-            room = self.resume_room(room_id, session_id=room_session_id)
-            restored = {agent.name: agent for agent in self.restore_room_agents(room)}
-        else:
-            restored = {name: self._agents[name] for name in room.participants() if name in self._agents}
-        required = {_PLANNER_NAME, _REVIEWER_NAME}
-        if not required.issubset(room.participants()) or not required.issubset(restored):
-            raise ValueError(f"Session is missing required ROOM participants: {session_id}")
-        messages = {name: list(self.trace.messages(session_id, name)) for name in required}
-        return WorkflowSession(session_id=session_id, room=room, agents=restored, messages=messages, is_new=False)
+        room = self.resume_room(room_id, session_id=room_session_id)
+        profiles = {profile.name: profile for profile in room.registered_agents()}
+        if _ENGINE_NAME not in room.participants():
+            raise ValueError(f"Werewolf session is missing game-engine: {session_id}")
+        agents: dict[str, Agent] = {}
+        for name in room.participants():
+            if name == _ENGINE_NAME:
+                continue
+            profile = profiles.get(name)
+            if profile is None:
+                raise ValueError(f"Werewolf session has no Profile for {name}")
+            factory_name = profile.kwargs.get("factory")
+            factory = self._agent_factories.get(factory_name) if isinstance(factory_name, str) else None
+            if factory is None:
+                raise ValueError(f"Werewolf session has no factory for {name}")
+            agent = factory(profile)
+            self.register_agent(agent, profile)
+            agents[name] = agent
+        state = load_state(self._game_state_path(session_id))
+        if set(agents) != set(state.players):
+            raise ValueError(f"Werewolf session players do not match persisted state: {session_id}")
+        return WerewolfSession(session_id, room, agents, {name: self._messages_or_empty(session_id, name) for name in agents}, state)
 
-    def _new_workflow_agents(self) -> tuple[IncidentPlannerAgent, RiskReviewerAgent]:
-        if self.llm is None or self.model is None:
-            raise RuntimeError("Orchestrator needs llm and model to create a new workflow session")
-        return IncidentPlannerAgent(self.llm, self.model), RiskReviewerAgent(self.llm, self.model)
+    def _register_engine(self, room: Room) -> None:
+        profile = AgentProfile(
+            name=_ENGINE_NAME,
+            introduction="Deterministic werewolf rules engine and public adjudicator.",
+            skill=("werewolf-rules",),
+            role="deterministic-rule-engine",
+        )
+        room.register(profile)
+        room.invite(profile.name)
 
-    def _register_workflow_agents(self, planner: Agent, reviewer: Agent) -> None:
-        self.register_agent(
-            planner,
-            AgentProfile(
-                name=planner.name,
-                introduction="Release incident planner.",
-                skill=("release-incident",),
-                role="planner",
-                kwargs={"factory": _PLANNER_NAME},
-            ),
-        )
-        self.register_agent(
-            reviewer,
-            AgentProfile(
-                name=reviewer.name,
-                introduction="Release incident risk reviewer.",
-                skill=("release-incident",),
-                role="reviewer",
-                kwargs={"factory": _REVIEWER_NAME},
-            ),
-        )
+    def _publish_game_events(self, room: Room, events: Sequence[GameEvent]) -> None:
+        for event in events:
+            room.send(RoomMessage(name=_ENGINE_NAME, at=event.recipient, txt=event.text))
+
+    def _game_state_path(self, session_id: str) -> Path:
+        return self.trace.root / session_id / "werewolf_state.json"
+
+    def _persist_game_state(self, session_id: str, state: WerewolfGameState) -> None:
+        save_state(self._game_state_path(session_id), state)
+
+    def _messages_or_empty(self, session_id: str, agent_name: str) -> list[Message]:
+        try:
+            return list(self.trace.messages(session_id, agent_name))
+        except KeyError:
+            return []
 
     def register_agent_factory(self, factory_name: str, factory: AgentFactory) -> None:
         if not factory_name.strip():
@@ -218,8 +229,7 @@ class Orchestrator:
     def invite_agents(self, room: Room, agent_names: Sequence[str], *, session_id: str | None = None) -> tuple[Agent, ...]:
         invited: list[Agent] = []
         for name in agent_names:
-            agent = self._agents.get(name)
-            profile = self._profiles.get(name)
+            agent, profile = self._agents.get(name), self._profiles.get(name)
             if agent is None or profile is None:
                 raise KeyError(f"Agent is not registered with Orchestrator: {name}")
             room.register(profile)
@@ -251,37 +261,36 @@ class Orchestrator:
         task: Task,
         session_id: str,
         messages: list[Message] | None = None,
+        tools: tuple[Callable[..., object], ...] | None = None,
+        tool_registry: ToolRegistry | None = None,
+        extra_inputs: dict[str, object] | None = None,
     ) -> AgentResult:
         agent = self._agents.get(agent_name)
         if agent is None:
             raise KeyError(f"Agent is not registered with Orchestrator: {agent_name}")
         inbox = room.receive(agent_name)
+        werewolf = (extra_inputs or {}).get("werewolf")
+        if isinstance(werewolf, dict):
+            werewolf = {**werewolf, "inbox": [message.model_dump(mode="json") for message in inbox]}
         room_task = Task(
             task.description,
             {
                 **task.inputs,
-                "room": {
-                    "room_id": room.room_id,
-                    "session_id": room.session_id,
-                    "inbox": [message.model_dump(mode="json") for message in inbox],
-                },
+                "room": {"room_id": room.room_id, "session_id": room.session_id, "inbox": [message.model_dump(mode="json") for message in inbox]},
+                **(extra_inputs or {}),
+                **({"werewolf": werewolf} if werewolf is not None else {}),
             },
         )
         history = list(messages) if messages else None
         if history is not None:
             history.append(_user_message_for_task(agent, room_task))
-        self.trace.record(
-            session_id,
-            agent.name,
-            "room_inbox",
-            room_id=room.room_id,
-            room_session_id=room.session_id,
-            message_ids=tuple(message.message_id for message in inbox),
-        )
+        self.trace.record(session_id, agent.name, "room_inbox", room_id=room.room_id, room_session_id=room.session_id, message_ids=tuple(message.message_id for message in inbox))
         try:
             output = agent.run(
                 room_task,
                 messages=history,
+                tools=tools,
+                tool_registry=tool_registry,
                 max_turns=self.max_turns,
                 trace=self.trace,
                 session_id=session_id,
@@ -292,21 +301,19 @@ class Orchestrator:
             return AgentResult("failed", None, str(error), session_id)
 
 
+def _player_profile(name: str, role: Role) -> AgentProfile:
+    return AgentProfile(
+        name=name,
+        introduction="AI participant in a classic eight-player werewolf game.",
+        skill=(f"werewolf-{role.value}",),
+        role="werewolf-player",
+        kwargs={"factory": _PLAYER_FACTORY, "identity": role.value},
+    )
+
+
 def _user_message_for_task(agent: Agent, task: Task) -> Message:
     messages = agent.initial_messages(task)
     user_messages = [message for message in messages if message.role == "user"]
     if len(user_messages) != 1:
         raise ValueError(f"Agent '{agent.name}' must build exactly one user message per request")
     return user_messages[0]
-
-
-def _result_message(result: AgentResult, label: str) -> Message:
-    if result.status != "completed" or not isinstance(result.content, Message):
-        raise RuntimeError(f"{label} failed: {result.error or 'no assistant message returned'}")
-    if not str(result.content.content).strip():
-        raise RuntimeError(f"{label} returned an empty assistant message")
-    return result.content
-
-
-def _result_text(result: AgentResult, label: str) -> str:
-    return str(_result_message(result, label).content)

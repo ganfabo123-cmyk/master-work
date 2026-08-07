@@ -43,6 +43,22 @@ def test_room_persists_and_restores_unread_inbox(tmp_path: Path) -> None:
     assert (tmp_path / "room_session-1.events.jsonl").exists()
 
 
+def test_room_routes_private_group_message_only_to_named_participants(tmp_path: Path) -> None:
+    room = Room("werewolf", session_id="session-wolves", data_root=tmp_path)
+    for name in ("player-1", "player-2", "player-3", "player-6"):
+        room.register(_profile(name))
+        room.invite(name)
+
+    room.send(RoomMessage(name="player-1", at=("player-1", "player-2", "player-6"), txt="今晚刀 player-3"))
+
+    assert [message.txt for message in room.receive("player-1")] == ["今晚刀 player-3"]
+    assert [message.txt for message in room.receive("player-2")] == ["今晚刀 player-3"]
+    assert room.receive("player-3") == ()
+    assert [message.txt for message in room.receive("player-6")] == ["今晚刀 player-3"]
+    restored = Room.resume("werewolf", session_id="session-wolves", data_root=tmp_path)
+    assert restored.history()[0].at == ("player-1", "player-2", "player-6")
+
+
 def test_orchestrator_recovers_agent_and_passes_room_inbox(tmp_path: Path) -> None:
     orchestrator = Orchestrator(traces_root=tmp_path / "traces", room_data_root=tmp_path / "room")
     planner = RecordingAgent("planner")

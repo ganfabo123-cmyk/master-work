@@ -35,9 +35,14 @@ class Agent:
     model: str
     llm: LLMClient
     prompt_builder: PromptBuilder
+    temperature: float | None = None
     tools: tuple[ToolFunction, ...] = ()
     skills: tuple[SkillSpec, ...] = ()
     tool_registry: ToolRegistry = registry
+
+    def __post_init__(self) -> None:
+        if self.temperature is not None and not 0 <= self.temperature <= 2:
+            raise ValueError("temperature must be between 0 and 2")
 
     def initial_messages(self, task: Task) -> tuple[Message, ...]:
         return self.prompt_builder(task).messages
@@ -52,6 +57,7 @@ class Agent:
         messages: tuple[Message, ...] | list[Message] | None = None,
         tools: tuple[ToolFunction, ...] | None = None,
         tool_schemas: list[dict[str, Any]] | None = None,
+        tool_registry: ToolRegistry | None = None,
         model: str | None = None,
         max_turns: int = 8,
         trace: TraceRecorder | None = None,
@@ -67,17 +73,19 @@ class Agent:
         else:
             history = list(messages)
         selected_tools = self.tools if tools is None else tools
-        schemas = self.tool_schemas(selected_tools) if tool_schemas is None else tool_schemas
+        active_registry = tool_registry or self.tool_registry
+        schemas = active_registry.schemas_for(selected_tools) if tool_schemas is None else tool_schemas
         if record_initial_messages and trace is not None and session_id is not None:
             self._record_initial_trace(trace, session_id, history)
 
         for _ in range(max_turns):
             sent_messages = tuple(history)
+            generation_options = {"temperature": self.temperature, **llm_kwargs} if self.temperature is not None else llm_kwargs
             result = self.llm.generate(
                 model=model or self.model,
                 messages=sent_messages,
                 tools=schemas,
-                **llm_kwargs,
+                **generation_options,
             )
             if result.parse_error:
                 self._append_feedback(history, trace, session_id, f"Model parse error: {result.parse_error}")
@@ -95,12 +103,23 @@ class Agent:
             assistant_message = Message("assistant", result.parsed_content or "", tool_calls=wire_tool_calls)
             history.append(assistant_message)
             self._record_assistant_message(trace, session_id, assistant_message, result)
+            defer_for_thought = any(call.name == "think" for call in result.tool_calls)
             for call in result.tool_calls:
                 if call.name not in {tool.__name__ for tool in selected_tools}:
                     raise ValueError(f"tool is not allowed for agent '{self.name}': {call.name}")
+                if defer_for_thought and call.name != "think":
+                    tool_message = Message(
+                        "tool",
+                        "请先仅调用 think 并根据其返回结果继续；本次消息或动作调用未执行。",
+                        name=call.name,
+                        tool_call_id=call.id,
+                    )
+                    history.append(tool_message)
+                    self._record_tool_message(trace, session_id, tool_message, duration_ms=0, success=False)
+                    continue
                 started = perf_counter()
                 try:
-                    value = self.tool_registry.invoke(call.name, call.arguments)
+                    value = active_registry.invoke(call.name, call.arguments)
                     tool_message = Message("tool", value, name=call.name, tool_call_id=call.id)
                     history.append(tool_message)
                     self._record_tool_message(trace, session_id, tool_message, duration_ms=round((perf_counter() - started) * 1000, 2))

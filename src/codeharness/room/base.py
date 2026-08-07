@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 from .models import AgentProfile, RoomMessage
 from .registry import RoomAgentRegistry
@@ -123,12 +124,14 @@ class Room:
         """Return immutable history in delivery order."""
         return tuple(self._messages)
 
-    def _recipients(self, at: str) -> tuple[str, ...]:
+    def _recipients(self, at: str | tuple[str, ...]) -> tuple[str, ...]:
         if at == "all":
             return self.participants()
-        if at not in self._participants:
-            raise ValueError(f"recipient is not in ROOM '{self.room_id}': {at}")
-        return (at,)
+        recipients = (at,) if isinstance(at, str) else at
+        missing = [recipient for recipient in recipients if recipient not in self._participants]
+        if missing:
+            raise ValueError(f"recipient is not in ROOM '{self.room_id}': {', '.join(missing)}")
+        return recipients
 
     @property
     def _state_path(self) -> Path:
@@ -151,7 +154,7 @@ class Room:
                 for name, messages in sorted(self._inboxes.items())
             },
         }
-        self._state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+        _atomic_write_json(self._state_path, state)
 
     def _record_event(self, event_type: str, **payload: Any) -> None:
         event = {
@@ -174,3 +177,14 @@ def _normalize_name(value: str, label: str) -> str:
     if not normalized:
         raise ValueError(f"{label} cannot be empty")
     return normalized
+
+
+def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
+    """Publish a complete JSON snapshot so polling readers never observe a partial file."""
+    temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
+    try:
+        temporary.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        temporary.replace(path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()

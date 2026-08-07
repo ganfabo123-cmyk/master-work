@@ -101,7 +101,7 @@ class TraceRecorder:
     def attach_room(self, session_id: str, *, room_id: str, room_session_id: str) -> None:
         """Mark a task root as multi-Agent and link its durable ROOM state."""
         data = self.session_data(session_id)
-        data["mode"] = "room"
+        data["mode"] = data.get("mode", "room")
         data["room"] = {"room_id": room_id, "session_id": room_session_id}
         self._write_json(self.root / session_id / "session.json", data)
 
@@ -147,7 +147,13 @@ class TraceRecorder:
 
     @staticmethod
     def _write_json(path: Path, data: dict) -> None:
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default), encoding="utf-8")
+        temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
+        try:
+            temporary.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default), encoding="utf-8")
+            temporary.replace(path)
+        finally:
+            if temporary.exists():
+                temporary.unlink()
 
 
 def _token_value(value: object) -> int:

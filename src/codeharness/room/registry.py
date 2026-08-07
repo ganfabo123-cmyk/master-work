@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import re
+from uuid import uuid4
 
 from .models import AgentProfile
 
@@ -17,7 +18,14 @@ class RoomAgentRegistry:
         self.data_root.mkdir(parents=True, exist_ok=True)
 
     def save(self, profile: AgentProfile) -> None:
-        self._profile_path(profile.name).write_text(profile.model_dump_json(indent=2), encoding="utf-8")
+        path = self._profile_path(profile.name)
+        temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
+        try:
+            temporary.write_text(profile.model_dump_json(indent=2), encoding="utf-8")
+            temporary.replace(path)
+        finally:
+            if temporary.exists():
+                temporary.unlink()
 
     def load(self, name: str) -> AgentProfile:
         path = self._profile_path(name)
