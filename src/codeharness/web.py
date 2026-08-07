@@ -166,9 +166,14 @@ def _session_snapshot(traces_root: Path, room_data_root: Path, session_id: str) 
                 for message in TraceRecorder(traces_root).room_messages(session_id, room_meta["room_id"])
             ]
             rooms.append(room)
-    room = next((candidate for candidate in rooms if "public" in str(candidate.get("room_id"))), rooms[0] if rooms else None)
+    declared_public_room_id = session.get("public_room_id")
+    room = next(
+        (candidate for candidate in rooms if candidate.get("room_id") == declared_public_room_id),
+        next((candidate for candidate in rooms if "public" in str(candidate.get("room_id"))), rooms[0] if rooms else None),
+    )
+    visible_rooms = [room] if room is not None else []
     profiles: dict[str, Any] = {}
-    for candidate in rooms:
+    for candidate in visible_rooms:
         room_session_id = candidate.get("session_id")
         if isinstance(room_session_id, str):
             for name in candidate.get("participants", []):
@@ -176,7 +181,7 @@ def _session_snapshot(traces_root: Path, room_data_root: Path, session_id: str) 
                     profile_path = room_data_root / room_session_id / "agents" / f"{name}.json"
                     if profile_path.exists():
                         profiles[name] = json.loads(profile_path.read_text(encoding="utf-8"))
-    return {"session": session, "room": room, "rooms": rooms, "profiles": profiles}
+    return {"session": session, "room": room, "rooms": visible_rooms, "profiles": profiles}
 
 
 _PAGE = """<!doctype html>

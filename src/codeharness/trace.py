@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from dataclasses import asdict, is_dataclass
 from datetime import datetime
 from pathlib import Path
@@ -155,6 +156,13 @@ class TraceRecorder:
             recipients=message.at,
             message=message.model_dump(mode="json"),
         )
+
+    def record_messages(self, session_id: str, agent_name: str, messages: Sequence[Message]) -> None:
+        """Append newly created model messages without re-recording prior history."""
+        for message in messages:
+            trace_message = message.as_dict()
+            event_type = "system" if message.role == "developer" else message.role
+            self.record(session_id, agent_name, event_type, message=trace_message)
 
     def room_message(self, session_id: str, message_id: str) -> RoomMessage:
         for message in self.room_messages(session_id):

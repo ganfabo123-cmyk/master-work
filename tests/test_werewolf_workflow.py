@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import Any
 
 from codeharness.llm import LLMClient, ModelResult
-from codeharness.agents import WerewolfPlayerAgent
 from codeharness.models import Message, Task, ToolCall
 from codeharness.orchestrator import Orchestrator
-from codeharness.util.werewolf_state import Role
+from codeharness.util.werewolf_workflow import WerewolfWorkflowConfig, open_or_restore_werewolf_session, run_werewolf_workflow
 
 
 class GameLLM(LLMClient):
@@ -54,9 +53,15 @@ class GameLLM(LLMClient):
 def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     traces = tmp_path / "traces"
     room = tmp_path / "room"
-    orchestrator = Orchestrator(traces_root=traces, room_data_root=room, llm=GameLLM(), model="game-test", max_game_rounds=4)
+    orchestrator = Orchestrator(traces_root=traces, room_data_root=room, llm=GameLLM(), model="game-test")
 
-    result = orchestrator.run(task=Task("开始一局经典狼人杀"))
+    result = run_werewolf_workflow(
+        orchestrator,
+        task=Task("开始一局经典狼人杀"),
+        session_id=None,
+        on_session_opened=None,
+        config=WerewolfWorkflowConfig(max_game_rounds=4),
+    )
 
     assert result.status == "completed"
     state_path = traces / result.session_id / "werewolf_state.json"
@@ -77,18 +82,15 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     assert any(message.txt == "agree on a target" for message in orchestrator.trace.room_messages(result.session_id, wolf_room_id))
     state_events = [
         json.loads(message.content)
-        for message in orchestrator.trace.messages(result.session_id, "player-1")
+        for player_name in state["players"]
+        for message in orchestrator.trace.messages(result.session_id, player_name)
         if message.role == "user" and isinstance(message.content, str) and '"type": "game_state"' in message.content
     ]
     assert state_events
     assert all(set(event) == {"type", "round_no", "phase", "alive_players", "available_actions"} for event in state_events)
-    resumed = Orchestrator(traces_root=traces, room_data_root=room, llm=GameLLM(), model="game-test", max_game_rounds=4)
-    resumed.register_agent_factory(
-        "werewolf-player",
-        lambda profile: WerewolfPlayerAgent(GameLLM(), "game-test", name=profile.name, role=Role(profile.kwargs["identity"])),
-    )
+    resumed = Orchestrator(traces_root=traces, room_data_root=room, llm=GameLLM(), model="game-test")
     # A finished session remains readable and can be reopened without rebuilding participants.
-    restored = resumed._open_or_restore_werewolf_session(task=Task("继续"), session_id=result.session_id)
+    restored = open_or_restore_werewolf_session(resumed, task=Task("继续"), session_id=result.session_id)
     assert len(restored.agents) == 8
     assert {name: profile.role.value for name, profile in restored.state.players.items()} == {
         name: profile["role"] for name, profile in state["players"].items()
