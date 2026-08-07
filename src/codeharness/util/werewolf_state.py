@@ -18,6 +18,7 @@ class Role(StrEnum):
 
 
 class Phase(StrEnum):
+    PREPARATION = "preparation"
     NIGHT_WOLF_DISCUSSION = "night_wolf_discussion"
     NIGHT_WOLF_KILL = "night_wolf_kill"
     NIGHT_SEER = "night_seer"
@@ -25,6 +26,7 @@ class Phase(StrEnum):
     HUNTER_SHOT = "hunter_shot"
     DAY_DISCUSSION = "day_discussion"
     DAY_VOTE = "day_vote"
+    REVIEW = "review"
     FINISHED = "finished"
 
 
@@ -50,7 +52,7 @@ class Death:
 @dataclass(slots=True)
 class WerewolfGameState:
     round_no: int = 1
-    phase: Phase = Phase.NIGHT_WOLF_DISCUSSION
+    phase: Phase = Phase.PREPARATION
     players: dict[str, PlayerState] = field(default_factory=dict)
     witch_has_antidote: bool = True
     witch_has_poison: bool = True
@@ -69,7 +71,7 @@ class WerewolfGameState:
             "player-3": Role.SEER,
             "player-4": Role.WITCH,
             "player-5": Role.HUNTER,
-            "player-6": Role.WOLF,
+            "player-6": Role.VILLAGER,
             "player-7": Role.VILLAGER,
             "player-8": Role.VILLAGER,
         }
@@ -79,7 +81,7 @@ class WerewolfGameState:
     def random_eight_players(cls, *, randomizer: Random | None = None) -> "WerewolfGameState":
         """Create one classic composition while assigning its roles independently per game."""
         names = [f"player-{number}" for number in range(1, 9)]
-        roles = [Role.WOLF, Role.WOLF, Role.WOLF, Role.SEER, Role.WITCH, Role.HUNTER, Role.VILLAGER, Role.VILLAGER]
+        roles = [Role.WOLF, Role.WOLF, Role.SEER, Role.WITCH, Role.HUNTER, Role.VILLAGER, Role.VILLAGER, Role.VILLAGER]
         (randomizer or SystemRandom()).shuffle(roles)
         return cls(players={name: PlayerState(name, role) for name, role in zip(names, roles, strict=True)})
 
@@ -114,7 +116,7 @@ class WerewolfGameState:
         deaths = [Death(player=str(item["player"]), cause=str(item["cause"])) for item in deaths_raw if isinstance(item, dict)]
         return cls(
             round_no=int(data.get("round_no", 1)),
-            phase=Phase(str(data.get("phase", Phase.NIGHT_WOLF_DISCUSSION))),
+            phase=Phase(str(data.get("phase", Phase.PREPARATION))),
             players=players,
             witch_has_antidote=bool(data.get("witch_has_antidote", True)),
             witch_has_poison=bool(data.get("witch_has_poison", True)),
@@ -137,6 +139,7 @@ def load_state(path: Path) -> WerewolfGameState:
 
 def phase_announcement(state: WerewolfGameState) -> str:
     return {
+        Phase.PREPARATION: "你已拿到身份。请认真准备并思考策略；如需参考过往复盘，可调用 list_experiences 查看自己的历史经验摘要，再用 get_experience 阅读详情。准备完成后直接结束本回合，等待游戏正式开始。",
         Phase.NIGHT_WOLF_DISCUSSION: f"第 {state.round_no} 夜：狼人请私下协商。",
         Phase.NIGHT_WOLF_KILL: "狼人协商结束，请提交击杀目标。",
         Phase.NIGHT_SEER: "预言家请查验。",
@@ -144,10 +147,13 @@ def phase_announcement(state: WerewolfGameState) -> str:
         Phase.HUNTER_SHOT: "猎人进入开枪阶段。",
         Phase.DAY_DISCUSSION: f"第 {state.round_no} 天：请公开讨论。",
         Phase.DAY_VOTE: "讨论结束，请投票放逐一名玩家。",
+        Phase.REVIEW: "游戏结算已发送，请完成复盘。",
     }[state.phase]
 
 
 def actors_for_phase(state: WerewolfGameState) -> tuple[str, ...]:
+    if state.phase is Phase.PREPARATION:
+        return tuple(state.players)
     if state.phase in {Phase.NIGHT_WOLF_DISCUSSION, Phase.NIGHT_WOLF_KILL}:
         return state.alive_wolves()
     if state.phase is Phase.NIGHT_SEER:
@@ -158,6 +164,8 @@ def actors_for_phase(state: WerewolfGameState) -> tuple[str, ...]:
         return state.alive_players()
     if state.phase is Phase.HUNTER_SHOT and state.hunter_name is not None:
         return (state.hunter_name,)
+    if state.phase is Phase.REVIEW:
+        return tuple(state.players)
     return ()
 
 

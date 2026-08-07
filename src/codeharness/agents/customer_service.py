@@ -5,7 +5,7 @@ from pathlib import Path
 from .base import Agent, SkillSpec
 from ..llm import LLMClient
 from ..prompts.customer_service import CustomerServicePromptBuilder
-from ..tools import search_customer_knowledge
+from ..tools import CustomerServiceTools
 
 _ROOT = Path(__file__).resolve().parents[3]
 
@@ -28,6 +28,6 @@ class CustomerServiceAgent(Agent):
                 brand_name="StarLink Home",
                 response_language="Chinese",
             ).build,
-            tools=(search_customer_knowledge,),
+            tools=(CustomerServiceTools("customer-service"),),
             skills=(CUSTOMER_SERVICE_SKILL,),
         )

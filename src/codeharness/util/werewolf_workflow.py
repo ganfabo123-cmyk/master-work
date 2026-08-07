@@ -12,16 +12,15 @@ from ..agents import Agent, WerewolfPlayerAgent
 from ..context import IncrementalContext
 from ..models import AgentResult, Message, Task
 from ..room import AgentProfile, Room, RoomMessage
+from ..tools.utils import available_werewolf_actions
 from .werewolf_actions import latest_valid_actions
 from .werewolf_rules import GameEvent, finish_as_draw, resolve_phase
 from .werewolf_state import Phase, Role, WerewolfGameState, actors_for_phase, load_state, phase_announcement, player_visible_state, save_state
-from .werewolf_tools import tools_for_player
 
 if TYPE_CHECKING:
     from ..orchestrator import Orchestrator
 
 
-_PLAYER_FACTORY = "werewolf-player"
 _ENGINE_NAME = "game-engine"
 
 
@@ -58,12 +57,7 @@ def run_werewolf_workflow(
             for player_name in actors_for_phase(game.state):
                 agent = game.agents[player_name]
                 is_wolf = game.state.role_of(player_name) is Role.WOLF
-                registry, tools = tools_for_player(
-                    room=game.public_room,
-                    wolf_room=game.wolf_room if is_wolf else None,
-                    actor=player_name,
-                    state=game.state,
-                )
+                available_tool_names = _available_tool_names(game.state, player_name)
                 turn = orchestrator.run_room_turn(
                     room=game.public_room,
                     additional_rooms=(game.wolf_room,) if is_wolf else (),
@@ -71,12 +65,21 @@ def run_werewolf_workflow(
                     task=task,
                     session_id=game.session_id,
                     incremental_context=game.contexts[player_name],
-                    events=(_game_state_event(game.state, tools),),
-                    tools=tools,
-                    tool_registry=registry,
+                    events=(_game_state_event(game.state, available_tool_names),),
+                    available_tool_names=available_tool_names,
                 )
                 if turn.status == "failed":
                     raise RuntimeError(f"Werewolf turn failed for {player_name}: {turn.error}")
+
+            if game.state.phase is Phase.REVIEW:
+                game.state.phase = Phase.FINISHED
+                _persist_game_state(orchestrator, game.session_id, game.state)
+                continue
+
+            if game.state.phase is Phase.PREPARATION:
+                game.state.phase = Phase.NIGHT_WOLF_DISCUSSION
+                _persist_game_state(orchestrator, game.session_id, game.state)
+                continue
 
             engine_inbox = game.public_room.receive(_ENGINE_NAME)
             actions, rejected = latest_valid_actions(engine_inbox, game.state)
@@ -85,7 +88,7 @@ def run_werewolf_workflow(
                 game.state.consumed_action_ids.add(action.message_id)
             game.state.consumed_action_ids.update(action.message_id for action in actions.values())
             game.state, events = resolve_phase(game.state, actions)
-            if game.state.round_no > config.max_game_rounds and game.state.phase is not Phase.FINISHED:
+            if game.state.round_no > config.max_game_rounds and game.state.phase not in {Phase.REVIEW, Phase.FINISHED}:
                 game.state, draw_events = finish_as_draw(game.state)
                 events = (*events, *draw_events)
             _publish_game_events(game.public_room, events)
@@ -101,7 +104,6 @@ def run_werewolf_workflow(
 
 
 def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, session_id: str | None) -> WerewolfSession:
-    _ensure_player_factory(orchestrator)
     if session_id is None:
         if orchestrator.llm is None or orchestrator.model is None:
             raise RuntimeError("Werewolf workflow needs an llm and model")
@@ -117,7 +119,15 @@ def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, 
         _register_engine(public_room, wolf_room)
         agents: dict[str, Agent] = {}
         for name, player in state.players.items():
-            agent = WerewolfPlayerAgent(orchestrator.llm, orchestrator.model, name=name, role=player.role)
+            agent = WerewolfPlayerAgent(
+                orchestrator.llm,
+                orchestrator.model,
+                name=name,
+                role=player.role,
+                public_room=public_room,
+                state=state,
+                wolf_room=wolf_room,
+            )
             profile = _player_profile(name, player.role)
             orchestrator.register_agent(agent, profile)
             agents[name] = agent
@@ -139,9 +149,26 @@ def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, 
     wolf_room = orchestrator.resume_room(wolf_room_id, session_id=session_id)
     if _ENGINE_NAME not in public_room.participants():
         raise ValueError(f"Werewolf session is missing game-engine: {session_id}")
-    agent_names = tuple(name for name in public_room.participants() if name != _ENGINE_NAME)
-    agents = {agent.name: agent for agent in orchestrator.restore_room_agents(public_room, agent_names=agent_names)}
     state = load_state(_game_state_path(orchestrator, session_id))
+    if orchestrator.llm is None or orchestrator.model is None:
+        raise RuntimeError("Werewolf workflow needs an llm and model")
+    agent_names = tuple(name for name in public_room.participants() if name != _ENGINE_NAME)
+    agents: dict[str, Agent] = {}
+    for name in agent_names:
+        player = state.players.get(name)
+        if player is None:
+            raise ValueError(f"Werewolf session is missing state for player: {name}")
+        agent = WerewolfPlayerAgent(
+            orchestrator.llm,
+            orchestrator.model,
+            name=name,
+            role=player.role,
+            public_room=public_room,
+            state=state,
+            wolf_room=wolf_room,
+        )
+        orchestrator.register_agent(agent, _player_profile(name, player.role))
+        agents[name] = agent
     if set(agents) != set(state.players):
         raise ValueError(f"Werewolf session players do not match persisted state: {session_id}")
     wolves = {name for name, player in state.players.items() if player.role is Role.WOLF}
@@ -149,19 +176,6 @@ def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, 
         raise ValueError(f"Werewolf private ROOM members do not match wolf identities: {session_id}")
     contexts = {name: orchestrator.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
     return WerewolfSession(session_id, public_room, wolf_room, agents, contexts, state)
-
-
-def _ensure_player_factory(orchestrator: Orchestrator) -> None:
-    if orchestrator.llm is None or orchestrator.model is None:
-        return
-    try:
-        orchestrator.register_agent_factory(
-            _PLAYER_FACTORY,
-            lambda profile: WerewolfPlayerAgent(orchestrator.llm, orchestrator.model, name=profile.name, role=Role(str(profile.kwargs["identity"]))),
-        )
-    except ValueError:
-        pass
-
 
 def _register_engine(*rooms: Room) -> None:
     profile = AgentProfile(
@@ -181,7 +195,7 @@ def _player_profile(name: str, role: Role) -> AgentProfile:
         introduction="AI participant in a classic eight-player werewolf game.",
         skill=(f"werewolf-{role.value}",),
         role="werewolf-player",
-        kwargs={"factory": _PLAYER_FACTORY, "identity": role.value},
+        kwargs={"identity": role.value},
     )
 
 
@@ -190,14 +204,27 @@ def _publish_game_events(room: Room, events: tuple[GameEvent, ...]) -> None:
         room.send(RoomMessage(name=_ENGINE_NAME, at=event.recipient, txt=event.text))
 
 
-def _game_state_event(state: WerewolfGameState, tools: tuple[Callable[..., object], ...]) -> Message:
+def _available_tool_names(state: WerewolfGameState, player_name: str) -> tuple[str, ...]:
+    names = ["think", "list_experiences", "get_experience"]
+    if state.phase is Phase.PREPARATION:
+        return tuple(names)
+    names.append("save_experience")
+    if state.phase is Phase.NIGHT_WOLF_DISCUSSION and state.role_of(player_name) is Role.WOLF:
+        names.append("wolf_message")
+    if state.phase is Phase.DAY_DISCUSSION:
+        names.append("speak")
+    names.extend(action.value for action in available_werewolf_actions(state, player_name))
+    return tuple(names)
+
+
+def _game_state_event(state: WerewolfGameState, available_tool_names: tuple[str, ...]) -> Message:
     return Message(
         "user",
         json.dumps(
             {
                 "type": "game_state",
                 **player_visible_state(state),
-                "available_actions": tuple(tool.__name__ for tool in tools if tool.__name__ != "think"),
+                "available_actions": available_tool_names,
             },
             ensure_ascii=False,
         ),

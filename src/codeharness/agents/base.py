@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Collection
 from dataclasses import dataclass
 import json
 from pathlib import Path
@@ -11,7 +11,8 @@ from typing import Any
 
 from ..llm import LLMClient, ModelResult
 from ..models import Message, Prompt, Task, ToolCall
-from ..tools import ToolRegistry, registry
+from ..tools import ToolRegistry
+from ..tools.base import BaseAgentTools
 from ..trace import TraceRecorder
 
 PromptBuilder = Callable[[Task], Prompt]
@@ -36,9 +37,8 @@ class Agent:
     llm: LLMClient
     prompt_builder: PromptBuilder
     temperature: float | None = None
-    tools: tuple[ToolFunction, ...] = ()
+    tools: tuple[BaseAgentTools, ...] = ()
     skills: tuple[SkillSpec, ...] = ()
-    tool_registry: ToolRegistry = registry
 
     def __post_init__(self) -> None:
         if self.temperature is not None and not 0 <= self.temperature <= 2:
@@ -47,8 +47,13 @@ class Agent:
     def initial_messages(self, task: Task) -> tuple[Message, ...]:
         return self.prompt_builder(task).messages
 
+    def tool_functions(self) -> tuple[ToolFunction, ...]:
+        """Return this Agent's model-callable functions from all owned tool instances."""
+        return tuple(function for tool_set in self.tools for function in tool_set.tool_functions())
+
     def tool_schemas(self, tools: tuple[ToolFunction, ...] | None = None) -> list[dict[str, Any]]:
-        return self.tool_registry.schemas_for(self.tools if tools is None else tools)
+        selected_tools = self.tool_functions() if tools is None else tools
+        return self._build_tool_registry(selected_tools).schemas_for(selected_tools)
 
     def run(
         self,
@@ -56,6 +61,7 @@ class Agent:
         *,
         messages: tuple[Message, ...] | list[Message] | None = None,
         tools: tuple[ToolFunction, ...] | None = None,
+        available_tool_names: Collection[str] | None = None,
         tool_schemas: list[dict[str, Any]] | None = None,
         tool_registry: ToolRegistry | None = None,
         model: str | None = None,
@@ -72,9 +78,12 @@ class Agent:
             history = list(self.initial_messages(task))
         else:
             history = list(messages)
-        selected_tools = self.tools if tools is None else tools
-        active_registry = tool_registry or self.tool_registry
+        selected_tools = self.tool_functions() if tools is None else tools
+        active_registry = self._build_tool_registry(selected_tools) if tool_registry is None else tool_registry
         schemas = active_registry.schemas_for(selected_tools) if tool_schemas is None else tool_schemas
+        selected_tool_names = tuple(tool.__name__ for tool in selected_tools)
+        allowed_tool_names = frozenset(selected_tool_names if available_tool_names is None else available_tool_names)
+        available_names = tuple(name for name in selected_tool_names if name in allowed_tool_names)
         if record_initial_messages and trace is not None and session_id is not None:
             self._record_initial_trace(trace, session_id, history)
 
@@ -105,11 +114,11 @@ class Agent:
             self._record_assistant_message(trace, session_id, assistant_message, result)
             defer_for_thought = any(call.name == "think" for call in result.tool_calls)
             for call in result.tool_calls:
-                if call.name not in {tool.__name__ for tool in selected_tools}:
-                    available = ", ".join(tool.__name__ for tool in selected_tools) or "无"
+                if call.name not in selected_tool_names or call.name not in allowed_tool_names:
+                    available = ", ".join(available_names) or "无"
                     tool_message = Message(
                         "tool",
-                        f"工具 '{call.name}' 当前不可用。可用工具：{available}。请根据当前状态重新选择；若无需行动，可直接结束本回合。",
+                        f"当前 {call.name} 工具不可用，只可用：{available}。",
                         name=call.name,
                         tool_call_id=call.id,
                     )
@@ -137,6 +146,14 @@ class Agent:
                     history.append(tool_message)
                     self._record_tool_message(trace, session_id, tool_message, duration_ms=round((perf_counter() - started) * 1000, 2), success=False)
         raise RuntimeError(f"Agent '{self.name}' exceeded max_turns={max_turns} without a final assistant message")
+
+    @staticmethod
+    def _build_tool_registry(tools: tuple[ToolFunction, ...]) -> ToolRegistry:
+        """Build one isolated registry for the functions available in this run."""
+        active_registry = ToolRegistry()
+        for tool_function in tools:
+            active_registry.register(tool_function)
+        return active_registry
 
     def _record_initial_trace(self, trace: TraceRecorder, session_id: str, messages: list[Message]) -> None:
         for message in messages:

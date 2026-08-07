@@ -3,7 +3,7 @@ from __future__ import annotations
 from .base import Agent
 from ..llm import LLMClient
 from ..prompts.release_incident import ReleaseIncidentPromptBuilder
-from ..tools import search_release_runbooks
+from ..tools import ReleaseIncidentTools
 
 
 class ReleaseIncidentAgent(Agent):
@@ -15,5 +15,5 @@ class ReleaseIncidentAgent(Agent):
             model=model,
             llm=llm,
             prompt_builder=ReleaseIncidentPromptBuilder().build,
-            tools=(search_release_runbooks,),
+            tools=(ReleaseIncidentTools("release-incident"),),
         )

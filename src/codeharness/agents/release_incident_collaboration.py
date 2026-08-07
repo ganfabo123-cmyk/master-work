@@ -5,7 +5,7 @@ from __future__ import annotations
 from .base import Agent
 from ..llm import LLMClient
 from ..prompts.release_incident_collaboration import IncidentPlannerPromptBuilder, RiskReviewerPromptBuilder
-from ..tools import search_release_runbooks
+from ..tools import IncidentPlannerTools, RiskReviewerTools
 
 
 class IncidentPlannerAgent(Agent):
@@ -17,7 +17,7 @@ class IncidentPlannerAgent(Agent):
             model=model,
             llm=llm,
             prompt_builder=IncidentPlannerPromptBuilder().build,
-            tools=(search_release_runbooks,),
+            tools=(IncidentPlannerTools("incident-planner"),),
         )
 
 
@@ -30,5 +30,5 @@ class RiskReviewerAgent(Agent):
             model=model,
             llm=llm,
             prompt_builder=RiskReviewerPromptBuilder().build,
-            tools=(search_release_runbooks,),
+            tools=(RiskReviewerTools("risk-reviewer"),),
         )

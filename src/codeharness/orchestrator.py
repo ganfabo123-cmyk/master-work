@@ -164,6 +164,7 @@ class Orchestrator:
         incremental_context: IncrementalContext | None = None,
         events: Sequence[Message] = (),
         tools: tuple[Callable[..., object], ...] | None = None,
+        available_tool_names: Sequence[str] | None = None,
         tool_registry: ToolRegistry | None = None,
         extra_inputs: dict[str, object] | None = None,
     ) -> AgentResult:
@@ -193,6 +194,7 @@ class Orchestrator:
                 room_task,
                 messages=history,
                 tools=tools,
+                available_tool_names=available_tool_names,
                 tool_registry=tool_registry,
                 max_turns=self.max_turns,
                 trace=self.trace,

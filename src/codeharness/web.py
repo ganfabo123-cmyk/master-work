@@ -171,7 +171,7 @@ def _session_snapshot(traces_root: Path, room_data_root: Path, session_id: str) 
         (candidate for candidate in rooms if candidate.get("room_id") == declared_public_room_id),
         next((candidate for candidate in rooms if "public" in str(candidate.get("room_id"))), rooms[0] if rooms else None),
     )
-    visible_rooms = [room] if room is not None else []
+    visible_rooms = rooms
     profiles: dict[str, Any] = {}
     for candidate in visible_rooms:
         room_session_id = candidate.get("session_id")

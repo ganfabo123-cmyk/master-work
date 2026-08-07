@@ -14,11 +14,11 @@ def test_random_game_preserves_classic_role_composition() -> None:
 
     assert tuple(state.players) == tuple(f"player-{number}" for number in range(1, 9))
     assert Counter(player.role.value for player in state.players.values()) == {
-        "wolf": 3,
+        "wolf": 2,
         "seer": 1,
         "witch": 1,
         "hunter": 1,
-        "villager": 2,
+        "villager": 3,
     }
 
 
@@ -36,7 +36,6 @@ def test_wolf_vote_is_resolved_deterministically() -> None:
     messages = (
         _action("player-1", ActionName.WOLF_KILL, "player-3", state),
         _action("player-2", ActionName.WOLF_KILL, "player-3", state),
-        _action("player-6", ActionName.WOLF_KILL, "player-4", state),
     )
     actions, rejected = latest_valid_actions(messages, state)
 

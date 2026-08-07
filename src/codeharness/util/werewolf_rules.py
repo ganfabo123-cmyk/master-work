@@ -66,8 +66,8 @@ def resolve_phase(state: WerewolfGameState, actions: dict[str, GameAction]) -> t
 
 def finish_as_draw(state: WerewolfGameState) -> tuple[WerewolfGameState, tuple[GameEvent, ...]]:
     state.winner = Winner.DRAW
-    state.phase = Phase.FINISHED
-    return state, (GameEvent("游戏因达到最大回合数而平局结束。"),)
+    state.phase = Phase.REVIEW
+    return state, (GameEvent("游戏因达到最大回合数而平局结束。"), *_review_events(state))
 
 
 def _resolve_witch_and_night(state: WerewolfGameState, actions: dict[str, GameAction]) -> tuple[WerewolfGameState, list[GameEvent]]:
@@ -124,9 +124,45 @@ def _check_winner(state: WerewolfGameState, events: list[GameEvent]) -> None:
     elif len(state.alive_wolves()) >= len(state.alive_players()) - len(state.alive_wolves()):
         state.winner = Winner.WOLVES
     if state.winner is not None:
-        state.phase = Phase.FINISHED
+        state.phase = Phase.REVIEW
         label = "好人阵营" if state.winner is Winner.VILLAGERS else "狼人阵营"
         events.append(GameEvent(f"游戏结束：{label} 获胜。"))
+        events.extend(_review_events(state))
+
+
+def _review_events(state: WerewolfGameState) -> tuple[GameEvent, ...]:
+    identities = "\n".join(f"- {name}：{_role_label(player.role)}" for name, player in state.players.items())
+    winner_label = {
+        Winner.WOLVES: "狼人阵营获胜",
+        Winner.VILLAGERS: "好人阵营获胜",
+        Winner.DRAW: "本局平局",
+    }[state.winner]
+    events: list[GameEvent] = []
+    for name, player in state.players.items():
+        if state.winner is Winner.DRAW:
+            outcome = "平局"
+        elif (state.winner is Winner.WOLVES) is (player.role is Role.WOLF):
+            outcome = "胜利"
+        else:
+            outcome = "失败"
+        events.append(
+            GameEvent(
+                f"本局结算：{winner_label}。\n\n全部玩家身份：\n{identities}\n\n你的本局结果：{outcome}。\n请调用 save_experience 完成本局复盘，然后直接结束本回合。",
+                name,
+                True,
+            )
+        )
+    return tuple(events)
+
+
+def _role_label(role: Role) -> str:
+    return {
+        Role.WOLF: "狼人",
+        Role.SEER: "预言家",
+        Role.WITCH: "女巫",
+        Role.HUNTER: "猎人",
+        Role.VILLAGER: "村民",
+    }[role]
 
 
 def _majority_target(actions: dict[str, GameAction], expected: ActionName) -> str | None:

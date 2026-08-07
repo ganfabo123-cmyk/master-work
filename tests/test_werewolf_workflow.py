@@ -14,9 +14,10 @@ class GameLLM(LLMClient):
     """Uses every current phase tool once, then ends its turn."""
 
     def generate(self, *, model: str, messages: tuple[Message, ...], tools: list[dict[str, Any]], **_: Any) -> ModelResult:
-        names = {tool["name"] for tool in tools}
+        assert {tool["name"] for tool in tools} >= {"think", "wolf_kill", "inspect", "vote", "shoot"}
+        latest_state = next((message for message in reversed(messages) if message.role == "user" and '"type": "game_state"' in str(message.content)), None)
+        names = set(json.loads(latest_state.content)["available_actions"]) if latest_state is not None else set()
         if "wolf_kill" in names:
-            latest_state = next(message for message in reversed(messages) if message.role == "user" and '"type": "game_state"' in str(message.content))
             assert "night_wolf_kill" in str(latest_state.content)
         if messages[-1].role == "tool":
             if messages[-1].name != "think":
@@ -77,9 +78,21 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     assert "game-engine" in public["participants"]
     assert len(public["participants"]) == 9
     assert "game-engine" in wolves["participants"]
-    assert len(wolves["participants"]) == 4
+    assert len(wolves["participants"]) == 3
     wolf_room_id = next(room_id for room_id in room_states if "wolves" in room_id)
     assert any(message.txt == "agree on a target" for message in orchestrator.trace.room_messages(result.session_id, wolf_room_id))
+    public_room_id = next(room_id for room_id in room_states if "public" in room_id)
+    public_messages = orchestrator.trace.room_messages(result.session_id, public_room_id)
+    assert any("你已拿到身份" in message.txt and "list_experiences" in message.txt for message in public_messages)
+    preparation_events = {
+        player_name: [
+            json.loads(message.content)
+            for message in orchestrator.trace.messages(result.session_id, player_name)
+            if message.role == "user" and isinstance(message.content, str) and '"phase": "preparation"' in message.content
+        ]
+        for player_name in state["players"]
+    }
+    assert all(events for events in preparation_events.values())
     state_events = [
         json.loads(message.content)
         for player_name in state["players"]
