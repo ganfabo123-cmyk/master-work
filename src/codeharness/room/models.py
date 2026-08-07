@@ -13,15 +13,18 @@ class AgentProfile(BaseModel):
     """Developer-declared metadata used to register and invite an Agent."""
 
     schema_version: int = Field(default=1, ge=1)
-    name: str = Field(min_length=1, description="Agent 的唯一名称。")
+    name: str = Field(min_length=1, description="Session 内唯一的 Agent ID。")
+    display_name: str | None = Field(default=None, description="可重复的展示名称；缺省时使用 name。")
     introduction: str = Field(description="Agent 能力与职责的简短介绍。")
     skill: tuple[str, ...] = Field(default=(), description="Agent 擅长处理的技能标签。")
     role: str = Field(description="Agent 在协作中的身份，例如 planner 或 reviewer。")
     kwargs: dict[str, Any] = Field(default_factory=dict, description="开发者定义的其他可扩展 Agent 属性。")
 
-    @field_validator("name", "introduction", "role")
+    @field_validator("name", "introduction", "role", "display_name")
     @classmethod
-    def require_nonempty_text(cls, value: str) -> str:
+    def require_nonempty_text(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         normalized = value.strip()
         if not normalized:
             raise ValueError("profile text fields cannot be empty")

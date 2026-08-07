@@ -17,6 +17,7 @@ def tools_for_player(
     room: Room,
     actor: str,
     state: WerewolfGameState,
+    wolf_room: Room | None = None,
 ) -> tuple[ToolRegistry, tuple[Callable[..., str], ...]]:
     """Build the exact tools one player may call in the current phase."""
     registry = ToolRegistry()
@@ -51,7 +52,7 @@ def tools_for_player(
         ) -> str:
             """向全部存活狼人发送私下协商消息。"""
             require_thought()
-            room.send(RoomMessage(name=actor, at=recipients, txt=content))
+            (wolf_room or room).send(RoomMessage(name=actor, at=recipients, txt=content))
             return "狼队私聊已发送。"
 
         register("wolf_message", wolf_message, "向全部存活狼人发送私下协商消息。")

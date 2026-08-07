@@ -106,7 +106,16 @@ class Agent:
             defer_for_thought = any(call.name == "think" for call in result.tool_calls)
             for call in result.tool_calls:
                 if call.name not in {tool.__name__ for tool in selected_tools}:
-                    raise ValueError(f"tool is not allowed for agent '{self.name}': {call.name}")
+                    available = ", ".join(tool.__name__ for tool in selected_tools) or "无"
+                    tool_message = Message(
+                        "tool",
+                        f"工具 '{call.name}' 当前不可用。可用工具：{available}。请根据当前状态重新选择；若无需行动，可直接结束本回合。",
+                        name=call.name,
+                        tool_call_id=call.id,
+                    )
+                    history.append(tool_message)
+                    self._record_tool_message(trace, session_id, tool_message, duration_ms=0, success=False)
+                    continue
                 if defer_for_thought and call.name != "think":
                     tool_message = Message(
                         "tool",

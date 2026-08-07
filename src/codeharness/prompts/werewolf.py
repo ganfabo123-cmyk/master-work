@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 from ..models import Message, Prompt, Task
@@ -19,9 +18,6 @@ class WerewolfPromptBuilder(BasePromptBuilder):
         self.role = role
 
     def build(self, task: Task) -> Prompt:
-        game = task.inputs.get("werewolf", {})
-        phase = Phase(game["phase"])
-        inbox = game.get("inbox", [])
         role_skill = (_SKILLS_ROOT / self.role.value / "SKILL.md").read_text(encoding="utf-8")
         system = f"""# 你的身份
 
@@ -31,10 +27,6 @@ class WerewolfPromptBuilder(BasePromptBuilder):
 
 {role_skill}
 
-# 当前阶段
-
-{phase.value}
-
 # 强制规则
 
 - 只能依据此 Prompt、自己的私有收件箱和所提供工具行动。
@@ -43,13 +35,9 @@ class WerewolfPromptBuilder(BasePromptBuilder):
 - `think` 的内容不会发到 ROOM，其他玩家不可见；不要把完整私密思考写进公开发言或狼队私聊。
 - 没有可用工具时，只能等待或做简短推理，不得伪造规则引擎结果。
 - 不得猜测、读取或声称知道其他玩家的 Profile 或身份。
+- 公共 ROOM 信息对所有玩家可见；仅当你是狼人且收到狼队私聊 ROOM 时，才可把其中内容用于协商。
+- 后续会以增量事件提供当前阶段、可用工具和新收到的 ROOM 消息；仅依据最新事件行动。
+- `save` 表示消耗解药救人，不表示跳过行动；若事件中没有 `save`，说明解药已不可用。
 """
-        user = f"""# 用户发起的请求
-
-{task.description}
-
-# 你当前可见的 ROOM 收件箱
-
-{json.dumps(inbox, ensure_ascii=False, indent=2)}
-"""
+        user = f"用户发起的请求：{task.description}"
         return Prompt((Message("developer", system), Message("user", user)))

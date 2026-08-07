@@ -58,11 +58,13 @@ def test_planner_reviewer_room_collaboration_is_traceable(tmp_path: Path) -> Non
     orchestrator.register_agent(reviewer, _profile("reviewer", "reviewer"))
     room = orchestrator.create_room("release-review", session_id="minimal-collaboration")
     orchestrator.invite_agents(room, ("planner", "reviewer"))
+    session_id = orchestrator.trace.create_session("release review", "planner", mode="room")
 
     planner_result = orchestrator.run_room_turn(
         room=room,
         agent_name="planner",
         task=Task("Prepare a rollback plan for elevated post-release errors."),
+        session_id=session_id,
     )
     assert planner_result.status == "completed"
     room.send(RoomMessage(name="planner", at="reviewer", txt=str(planner_result.content.content)))
@@ -71,11 +73,12 @@ def test_planner_reviewer_room_collaboration_is_traceable(tmp_path: Path) -> Non
         room=room,
         agent_name="reviewer",
         task=Task("Review the release plan."),
+        session_id=session_id,
     )
 
     assert reviewer_result.status == "completed"
     assert reviewer_result.content.content == "REVIEW: approved after confirming the rollback owner and error-rate threshold."
     assert room.receive("reviewer") == ()
     assert room.history()[0].txt == planner_result.content.content
-    assert (tmp_path / "traces" / planner_result.session_id / "planner.jsonl").exists()
-    assert (tmp_path / "traces" / reviewer_result.session_id / "reviewer.jsonl").exists()
+    assert (tmp_path / "traces" / planner_result.session_id / "agents" / "planner.jsonl").exists()
+    assert (tmp_path / "traces" / reviewer_result.session_id / "agents" / "reviewer.jsonl").exists()

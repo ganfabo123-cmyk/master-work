@@ -15,12 +15,14 @@ class GameLLM(LLMClient):
     """Uses every current phase tool once, then ends its turn."""
 
     def generate(self, *, model: str, messages: tuple[Message, ...], tools: list[dict[str, Any]], **_: Any) -> ModelResult:
+        names = {tool["name"] for tool in tools}
+        if "wolf_kill" in names:
+            latest_state = next(message for message in reversed(messages) if message.role == "user" and '"type": "game_state"' in str(message.content))
+            assert "night_wolf_kill" in str(latest_state.content)
         if messages[-1].role == "tool":
-            names = {tool["name"] for tool in tools}
             if messages[-1].name != "think":
                 return ModelResult(raw_content="action submitted", parsed_content="action submitted", model=model)
             return self._action_for(names)
-        names = {tool["name"] for tool in tools}
         return self._call("think", {"strategy": "Review the visible messages and select the safest legal move."})
 
     def _action_for(self, names: set[str]) -> ModelResult:
@@ -37,7 +39,7 @@ class GameLLM(LLMClient):
         for name, arguments in choices.items():
             if name in names:
                 return self._call(name, arguments)
-        return ModelResult(raw_content="abstain", parsed_content="abstain", model=model)
+        return ModelResult(raw_content="abstain", parsed_content="abstain", model="game-test")
 
     @staticmethod
     def _call(name: str, arguments: dict[str, str]) -> ModelResult:
@@ -60,10 +62,26 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     state_path = traces / result.session_id / "werewolf_state.json"
     assert state_path.exists()
     state = json.loads(state_path.read_text(encoding="utf-8"))
-    room_state = next(room.glob("room_*.json")).read_text(encoding="utf-8")
-    assert "game-engine" in room_state
-    assert "player-1" in room_state
-    assert "狼人请私下协商" in room_state
+    room_states = {
+        path.stem: json.loads(path.read_text(encoding="utf-8"))
+        for path in (room / result.session_id / "rooms").glob("*.json")
+    }
+    assert len(room_states) == 2
+    public = next(state for room_id, state in room_states.items() if "public" in room_id)
+    wolves = next(state for room_id, state in room_states.items() if "wolves" in room_id)
+    assert "game-engine" in public["participants"]
+    assert len(public["participants"]) == 9
+    assert "game-engine" in wolves["participants"]
+    assert len(wolves["participants"]) == 4
+    wolf_room_id = next(room_id for room_id in room_states if "wolves" in room_id)
+    assert any(message.txt == "agree on a target" for message in orchestrator.trace.room_messages(result.session_id, wolf_room_id))
+    state_events = [
+        json.loads(message.content)
+        for message in orchestrator.trace.messages(result.session_id, "player-1")
+        if message.role == "user" and isinstance(message.content, str) and '"type": "game_state"' in message.content
+    ]
+    assert state_events
+    assert all(set(event) == {"type", "round_no", "phase", "alive_players", "available_actions"} for event in state_events)
     resumed = Orchestrator(traces_root=traces, room_data_root=room, llm=GameLLM(), model="game-test", max_game_rounds=4)
     resumed.register_agent_factory(
         "werewolf-player",
