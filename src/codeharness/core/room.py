@@ -9,8 +9,8 @@ from time import sleep
 from typing import Any, Callable
 from uuid import uuid4
 
-from .models import AgentProfile, RoomMessage
-from .registry import RoomAgentRegistry
+from codeharness.room.models import AgentProfile, RoomMessage
+from codeharness.room.registry import RoomAgentRegistry
 
 
 MessageRecorder = Callable[[str, RoomMessage], None]
@@ -83,13 +83,11 @@ class Room:
         return room
 
     def register(self, profile: AgentProfile) -> None:
-        """Persist one Agent profile for this ROOM session without inviting it yet."""
         self._require_open()
         self.registry.save(profile)
         self._record_event("agent_registered", agent_name=profile.name)
 
     def invite(self, name: str) -> AgentProfile:
-        """Invite one registered Agent into this ROOM and create its inbox."""
         self._require_open()
         profile = self.registry.load(name)
         self._participants.add(profile.name)
@@ -99,7 +97,6 @@ class Room:
         return profile
 
     def leave(self, name: str) -> None:
-        """Remove a participant; previously sent messages remain in history."""
         self._require_open()
         participant = _normalize_name(name, "participant name")
         self._participants.discard(participant)
@@ -108,7 +105,6 @@ class Room:
         self._record_event("agent_left", agent_name=participant)
 
     def send(self, message: RoomMessage) -> None:
-        """Append one valid message and route it into every addressed inbox."""
         self._require_open()
         if message.name not in self._participants:
             raise ValueError(f"participant is not in ROOM '{self.room_id}': {message.name}")
@@ -127,7 +123,6 @@ class Room:
         )
 
     def receive(self, name: str) -> tuple[RoomMessage, ...]:
-        """Return and clear pending messages addressed to one ROOM participant."""
         participant = _normalize_name(name, "participant name")
         if participant not in self._participants:
             raise ValueError(f"participant is not in ROOM '{self.room_id}': {participant}")
@@ -139,7 +134,6 @@ class Room:
         return messages
 
     def close(self) -> None:
-        """Close this ROOM after its workflow has finished; persisted data remains readable."""
         self._status = "closed"
         self._persist_state()
         self._record_event("room_closed")
@@ -149,15 +143,12 @@ class Room:
         return self._status == "closed"
 
     def registered_agents(self) -> tuple[AgentProfile, ...]:
-        """Return persisted profiles registered for this ROOM session."""
         return self.registry.list()
 
     def participants(self) -> tuple[str, ...]:
-        """Return current participant names in a stable order."""
         return tuple(sorted(self._participants))
 
     def history(self) -> tuple[RoomMessage, ...]:
-        """Return immutable history in delivery order."""
         return tuple(self._load_message(message_id) for message_id in self._message_ids)
 
     def _recipients(self, at: str | tuple[str, ...]) -> tuple[str, ...]:
@@ -205,7 +196,6 @@ class Room:
             raise RuntimeError(f"ROOM is closed: {self.room_id}")
 
     def _persist_agent_message(self, message: RoomMessage) -> None:
-        """Durably write the source event before changing the derived ROOM view."""
         if self._message_recorder is not None:
             self._message_recorder(self.room_id, message)
             return
@@ -261,7 +251,6 @@ def _normalize_name(value: str, label: str) -> str:
 
 
 def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
-    """Publish a complete JSON snapshot so polling readers never observe a partial file."""
     temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
     try:
         temporary.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -272,7 +261,6 @@ def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
 
 
 def _replace_with_retry(temporary: Path, destination: Path, *, attempts: int = 8) -> None:
-    """Windows may briefly lock a file while the Web polling thread reads it."""
     for attempt in range(attempts):
         try:
             temporary.replace(destination)

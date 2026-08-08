@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..models import Message, Prompt
+from codeharness.models import Message, Prompt
 
 
 class BasePromptBuilder:

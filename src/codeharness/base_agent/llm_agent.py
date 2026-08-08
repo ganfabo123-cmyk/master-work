@@ -11,9 +11,10 @@ from typing import Any
 
 from ..llm import LLMClient, ModelResult
 from ..models import Message, Prompt, Task, ToolCall
-from ..tools import ToolRegistry
+from ..core.tool_registry import ToolRegistry
 from ..tools.base import BaseAgentTools
 from ..trace import TraceRecorder
+from ..core.base_agent import BaseAgent
 
 PromptBuilder = Callable[[Task], Prompt]
 ToolFunction = Callable[..., Any]
@@ -29,13 +30,15 @@ class SkillSpec:
 
 
 @dataclass(frozen=True, slots=True)
-class Agent:
-    """All domain-specific Agent choices belong in this class declaration."""
+class LLMAgent(BaseAgent):
+    """Generic LLM-backed Agent implementation for concrete domain Agents."""
 
     name: str
     model: str
     llm: LLMClient
     prompt_builder: PromptBuilder
+    policy: Any = None
+    action: Any = None
     temperature: float | None = None
     tools: tuple[BaseAgentTools, ...] = ()
     skills: tuple[SkillSpec, ...] = ()

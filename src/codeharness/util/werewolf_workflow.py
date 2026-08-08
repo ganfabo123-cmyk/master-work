@@ -5,17 +5,18 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 import json
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ..agents import Agent, WerewolfPlayerAgent
+from ..base_agent import LLMAgent as Agent
+from ..agents import WerewolfPlayerAgent
 from ..context import IncrementalContext
 from ..models import AgentResult, Message, Task
 from ..room import AgentProfile, Room, RoomMessage
+from ..state import StateStore
 from ..tools.utils import available_werewolf_actions
 from .werewolf_actions import latest_valid_actions
 from .werewolf_rules import GameEvent, finish_as_draw, resolve_phase
-from .werewolf_state import Phase, Role, WerewolfGameState, actors_for_phase, load_state, phase_announcement, player_visible_state, save_state
+from .werewolf_state import Phase, Role, WerewolfGameState, actors_for_phase, phase_announcement, player_visible_state
 
 if TYPE_CHECKING:
     from ..orchestrator import Orchestrator
@@ -37,6 +38,7 @@ class WerewolfSession:
     agents: dict[str, Agent]
     contexts: dict[str, IncrementalContext]
     state: WerewolfGameState
+    state_store: StateStore
 
 
 def run_werewolf_workflow(
@@ -73,12 +75,12 @@ def run_werewolf_workflow(
 
             if game.state.phase is Phase.REVIEW:
                 game.state.phase = Phase.FINISHED
-                _persist_game_state(orchestrator, game.session_id, game.state)
+                _persist_game_state(game.state_store, game.session_id, game.state)
                 continue
 
             if game.state.phase is Phase.PREPARATION:
                 game.state.phase = Phase.NIGHT_WOLF_DISCUSSION
-                _persist_game_state(orchestrator, game.session_id, game.state)
+                _persist_game_state(game.state_store, game.session_id, game.state)
                 continue
 
             engine_inbox = game.public_room.receive(_ENGINE_NAME)
@@ -92,18 +94,19 @@ def run_werewolf_workflow(
                 game.state, draw_events = finish_as_draw(game.state)
                 events = (*events, *draw_events)
             _publish_game_events(game.public_room, events)
-            _persist_game_state(orchestrator, game.session_id, game.state)
+            _persist_game_state(game.state_store, game.session_id, game.state)
 
         orchestrator.trace.finish_session(game.session_id, "completed")
         winner = game.state.winner.value if game.state.winner is not None else "unknown"
         return AgentResult("completed", Message("assistant", f"狼人杀游戏结束，结果：{winner}。"), None, game.session_id)
     except Exception as error:
-        _persist_game_state(orchestrator, game.session_id, game.state)
+        _persist_game_state(game.state_store, game.session_id, game.state)
         orchestrator.trace.finish_session(game.session_id, "failed", str(error))
         return AgentResult("failed", None, str(error), game.session_id)
 
 
 def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, session_id: str | None) -> WerewolfSession:
+    state_store = StateStore(orchestrator.trace.root.parent / "state" / "data")
     if session_id is None:
         if orchestrator.llm is None or orchestrator.model is None:
             raise RuntimeError("Werewolf workflow needs an llm and model")
@@ -133,9 +136,9 @@ def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, 
             agents[name] = agent
         orchestrator.invite_agents(public_room, tuple(agents), session_id=root_session_id)
         orchestrator.invite_agents(wolf_room, tuple(name for name, player in state.players.items() if player.role is Role.WOLF), session_id=root_session_id)
-        _persist_game_state(orchestrator, root_session_id, state)
+        _persist_game_state(state_store, root_session_id, state)
         contexts = {name: orchestrator.open_incremental_context(agent_name=name, task=task, session_id=root_session_id) for name in agents}
-        return WerewolfSession(root_session_id, public_room, wolf_room, agents, contexts, state)
+        return WerewolfSession(root_session_id, public_room, wolf_room, agents, contexts, state, state_store)
 
     data = orchestrator.trace.session_data(session_id)
     room_metadata = data.get("werewolf_rooms")
@@ -149,7 +152,7 @@ def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, 
     wolf_room = orchestrator.resume_room(wolf_room_id, session_id=session_id)
     if _ENGINE_NAME not in public_room.participants():
         raise ValueError(f"Werewolf session is missing game-engine: {session_id}")
-    state = load_state(_game_state_path(orchestrator, session_id))
+    state = state_store.restore(session_id, "werewolf", WerewolfGameState)
     if orchestrator.llm is None or orchestrator.model is None:
         raise RuntimeError("Werewolf workflow needs an llm and model")
     agent_names = tuple(name for name in public_room.participants() if name != _ENGINE_NAME)
@@ -175,7 +178,7 @@ def open_or_restore_werewolf_session(orchestrator: Orchestrator, *, task: Task, 
     if set(wolf_room.participants()) != {_ENGINE_NAME, *wolves}:
         raise ValueError(f"Werewolf private ROOM members do not match wolf identities: {session_id}")
     contexts = {name: orchestrator.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
-    return WerewolfSession(session_id, public_room, wolf_room, agents, contexts, state)
+    return WerewolfSession(session_id, public_room, wolf_room, agents, contexts, state, state_store)
 
 def _register_engine(*rooms: Room) -> None:
     profile = AgentProfile(
@@ -231,9 +234,5 @@ def _game_state_event(state: WerewolfGameState, available_tool_names: tuple[str,
     )
 
 
-def _game_state_path(orchestrator: Orchestrator, session_id: str) -> Path:
-    return orchestrator.trace.root / session_id / "werewolf_state.json"
-
-
-def _persist_game_state(orchestrator: Orchestrator, session_id: str, state: WerewolfGameState) -> None:
-    save_state(_game_state_path(orchestrator, session_id), state)
+def _persist_game_state(state_store: StateStore, session_id: str, state: WerewolfGameState) -> None:
+    state_store.update(session_id, "werewolf", state)

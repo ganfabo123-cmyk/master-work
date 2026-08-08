@@ -9,10 +9,10 @@ from pydantic import Field
 
 from ..memory import LongTermMemoryEntry, LongTermMemoryManager
 from ..room import Room
-from ..util.werewolf_actions import ActionName
+from ...action.werewolf import WerewolfActionTools
 from ..util.werewolf_state import Phase, Role, WerewolfGameState
 from .base import BaseAgentTools
-from .utils import build_werewolf_action_tool, send_public_werewolf_message, send_wolf_message
+from .utils import send_public_werewolf_message, send_wolf_message
 
 
 class WerewolfPlayerTools(BaseAgentTools):
@@ -22,6 +22,7 @@ class WerewolfPlayerTools(BaseAgentTools):
         self.state = state
         self.wolf_room = wolf_room
         self._has_thought = False
+        self.action_tools = WerewolfActionTools(agent_name, room, state, lambda: self._has_thought)
 
     def tool_functions(self) -> tuple[Callable[..., Any], ...]:
         """Return this player's complete, phase-invariant tool contract."""
@@ -33,7 +34,7 @@ class WerewolfPlayerTools(BaseAgentTools):
             self.get_experience,
             self.wolf_message,
             self.speak,
-            *(build_werewolf_action_tool(self.room, self.agent_name, self.state, action, lambda: self._has_thought) for action in ActionName),
+            *self.action_tools.tool_functions(),
         )
 
     def think(

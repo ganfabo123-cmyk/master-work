@@ -9,12 +9,10 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Annotated, Callable
-
-from pydantic import Field
+ 
 
 from ..room import Room, RoomMessage
-from ..util.werewolf_actions import ActionName, encode_action
+from ..util.werewolf_actions import ActionName
 from ..util.werewolf_state import Phase, Role, WerewolfGameState
 
 
@@ -80,28 +78,3 @@ def send_public_werewolf_message(room: Room, agent_name: str, content: str, has_
     room.send(RoomMessage(name=agent_name, at="all", txt=content))
     return "公开发言已发送。"
 
-
-def build_werewolf_action_tool(
-    room: Room,
-    agent_name: str,
-    state: WerewolfGameState,
-    action: ActionName,
-    has_thought: Callable[[], bool],
-) -> Callable[..., str]:
-    """Build one phase-specific, model-callable action function for a player."""
-    if action in {ActionName.SAVE, ActionName.SKIP_SHOT}:
-        def submit() -> str:
-            """提交无需目标的游戏动作。"""
-            require_werewolf_thought(has_thought())
-            room.send(RoomMessage(name=agent_name, at="game-engine", txt=encode_action(action=action, target=None, round_no=state.round_no, phase=state.phase)))
-            return "动作已提交给规则引擎。"
-    else:
-        def submit(
-            target: Annotated[str, Field(description="目标玩家名称，例如 player-3；必须是存活且合法的玩家。")],
-        ) -> str:
-            """提交一个有目标的游戏动作。"""
-            require_werewolf_thought(has_thought())
-            room.send(RoomMessage(name=agent_name, at="game-engine", txt=encode_action(action=action, target=target, round_no=state.round_no, phase=state.phase)))
-            return "动作已提交给规则引擎。"
-    submit.__name__ = action.value
-    return submit

@@ -1,12 +1,12 @@
-"""Durable, model-independent state for one classic eight-player werewolf game."""
+"""Durable state for one classic eight-player werewolf game."""
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import StrEnum
-import json
-from pathlib import Path
 from random import Random, SystemRandom
+
+from ..core import BaseState
 
 
 class Role(StrEnum):
@@ -50,7 +50,7 @@ class Death:
 
 
 @dataclass(slots=True)
-class WerewolfGameState:
+class WerewolfGameState(BaseState):
     round_no: int = 1
     phase: Phase = Phase.PREPARATION
     players: dict[str, PlayerState] = field(default_factory=dict)
@@ -64,7 +64,31 @@ class WerewolfGameState:
     consumed_action_ids: set[str] = field(default_factory=set)
 
     @classmethod
-    def classic_eight_players(cls) -> "WerewolfGameState":
+    def initial(cls, task_id: str, session_id: str) -> "WerewolfGameState":
+        return cls.classic_eight_players(task_id=task_id, session_id=session_id)
+
+    @property
+    def is_terminal(self) -> bool:
+        return self.phase is Phase.FINISHED or self.winner is not None
+
+    def process(self, action: object) -> "WerewolfGameState":
+        from ..util.werewolf_rules import resolve_phase
+
+        if isinstance(action, dict):
+            actions = action
+        else:
+            try:
+                from ..util.werewolf_actions import GameAction
+            except ImportError as error:
+                raise TypeError("action must be a GameAction or action mapping") from error
+            if not isinstance(action, GameAction):
+                raise TypeError("action must be a GameAction or action mapping")
+            actions = {action.actor: action}
+        next_state, _ = resolve_phase(self, actions)
+        return next_state
+
+    @classmethod
+    def classic_eight_players(cls, *, task_id: str, session_id: str) -> "WerewolfGameState":
         roles = {
             "player-1": Role.WOLF,
             "player-2": Role.WOLF,
@@ -75,15 +99,25 @@ class WerewolfGameState:
             "player-7": Role.VILLAGER,
             "player-8": Role.VILLAGER,
         }
-        return cls(players={name: PlayerState(name, role) for name, role in roles.items()})
+        return cls(task_id=task_id, session_id=session_id, players={name: PlayerState(name, role) for name, role in roles.items()})
 
     @classmethod
-    def random_eight_players(cls, *, randomizer: Random | None = None) -> "WerewolfGameState":
-        """Create one classic composition while assigning its roles independently per game."""
+    def random_eight_players(
+        cls,
+        *,
+        task_id: str,
+        session_id: str,
+        randomizer: Random | None = None,
+    ) -> "WerewolfGameState":
+        """Create a classic composition while assigning roles independently per game."""
         names = [f"player-{number}" for number in range(1, 9)]
         roles = [Role.WOLF, Role.WOLF, Role.SEER, Role.WITCH, Role.HUNTER, Role.VILLAGER, Role.VILLAGER, Role.VILLAGER]
         (randomizer or SystemRandom()).shuffle(roles)
-        return cls(players={name: PlayerState(name, role) for name, role in zip(names, roles, strict=True)})
+        return cls(
+            task_id=task_id,
+            session_id=session_id,
+            players={name: PlayerState(name, role) for name, role in zip(names, roles, strict=True)},
+        )
 
     def alive_players(self) -> tuple[str, ...]:
         return tuple(name for name, player in self.players.items() if player.alive)
@@ -115,6 +149,8 @@ class WerewolfGameState:
         deaths_raw = data.get("pending_deaths", [])
         deaths = [Death(player=str(item["player"]), cause=str(item["cause"])) for item in deaths_raw if isinstance(item, dict)]
         return cls(
+            task_id=str(data.get("task_id", "")),
+            session_id=str(data.get("session_id", "")),
             round_no=int(data.get("round_no", 1)),
             phase=Phase(str(data.get("phase", Phase.PREPARATION))),
             players=players,
@@ -127,14 +163,6 @@ class WerewolfGameState:
             winner=Winner(str(data["winner"])) if data.get("winner") else None,
             consumed_action_ids=set(str(value) for value in data.get("consumed_action_ids", []) if isinstance(value, str)),
         )
-
-
-def save_state(path: Path, state: WerewolfGameState) -> None:
-    path.write_text(json.dumps(state.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
-
-
-def load_state(path: Path) -> WerewolfGameState:
-    return WerewolfGameState.from_dict(json.loads(path.read_text(encoding="utf-8")))
 
 
 def phase_announcement(state: WerewolfGameState) -> str:

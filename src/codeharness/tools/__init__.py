@@ -4,7 +4,7 @@ from .customer_service import CustomerServiceTools
 from .demo import DemoTools
 from .release_incident import ReleaseIncidentTools
 from .release_incident_collaboration import IncidentPlannerTools, RiskReviewerTools
-from .registry import CompiledTool, ToolError, ToolRegistry, registry, tool
+from ..core.tool_registry import CompiledTool, ToolError, ToolRegistry, registry, tool
 
 __all__ = [
     "CompiledTool",

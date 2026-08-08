@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .base import Agent, SkillSpec
+from ..base_agent import LLMAgent, SkillSpec
 from ..llm import LLMClient
 from ..prompts.customer_service import CustomerServicePromptBuilder
 from ..tools import CustomerServiceTools
@@ -16,7 +16,7 @@ CUSTOMER_SERVICE_SKILL = SkillSpec(
 )
 
 
-class CustomerServiceAgent(Agent):
+class CustomerServiceAgent(LLMAgent):
     """The complete declaration required to add the customer-service Agent."""
 
     def __init__(self, llm: LLMClient, model: str) -> None:

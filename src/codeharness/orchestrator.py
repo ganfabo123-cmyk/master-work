@@ -4,12 +4,12 @@ from collections.abc import Callable, Sequence
 import os
 from pathlib import Path
 
-from .agents import Agent
+from .base_agent import LLMAgent as Agent
 from .context import IncrementalContext
 from .llm import LLMClient, OpenAICompatibleClient
 from .models import AgentResult, Message, Task
 from .room import AgentProfile, Room, RoomTurnContext
-from .tools import ToolRegistry
+from .core.tool_registry import ToolRegistry
 from .trace import TraceRecorder
 
 

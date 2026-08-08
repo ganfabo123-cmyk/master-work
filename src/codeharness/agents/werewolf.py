@@ -4,18 +4,18 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .base import Agent, SkillSpec
+from ..base_agent import LLMAgent, SkillSpec
 from ..llm import LLMClient
-from ..prompts.werewolf import WerewolfPromptBuilder
-from ..room import Room
-from ..tools.werewolf_player import WerewolfPlayerTools
-from ..util.werewolf_state import Role, WerewolfGameState
+from ..core.room import Room
+from ..policy.werewolf.prompt import WerewolfPromptBuilder
+from ..policy.werewolf.tool import WerewolfPlayerTools
+from ..state.werewolf import Role, WerewolfGameState
 
 
 _SKILLS_ROOT = Path(__file__).resolve().parents[1] / "skills" / "werewolf"
 
 
-class WerewolfPlayerAgent(Agent):
+class WerewolfPlayerAgent(LLMAgent):
     def __init__(
         self,
         llm: LLMClient,
