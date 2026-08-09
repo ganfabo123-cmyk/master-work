@@ -48,7 +48,7 @@ def test_agent_aggregates_bound_functions_from_multiple_tool_instances() -> None
         model="test",
         llm=DemoLLMClient(),
         prompt_builder=lambda task: Prompt((Message("developer", "test"), Message("user", task.description))),
-        tools=(FirstTools("player-1"), SecondTools("player-1")),
+        policy_tools=(FirstTools("player-1"), SecondTools("player-1")),
     )
 
     assert [function.__name__ for function in agent.tool_functions()] == ["first", "second"]
@@ -83,7 +83,7 @@ def test_agent_run_invokes_function_bound_to_its_tool_instance() -> None:
         model="test",
         llm=CallingFirstLLM(),
         prompt_builder=lambda task: Prompt((Message("developer", "test"), Message("user", task.description))),
-        tools=(FirstTools("player-1"), SecondTools("player-1")),
+        policy_tools=(FirstTools("player-1"), SecondTools("player-1")),
     )
 
     result = agent.run(Task("test"))
@@ -97,7 +97,7 @@ def test_agent_run_rejects_a_tool_outside_the_available_names_without_changing_s
         model="test",
         llm=CallingSecondLLM(),
         prompt_builder=lambda task: Prompt((Message("developer", "test"), Message("user", task.description))),
-        tools=(FirstTools("player-1"), SecondTools("player-1")),
+        policy_tools=(FirstTools("player-1"), SecondTools("player-1")),
     )
 
     result = agent.run(Task("test"), available_tool_names=("first",))

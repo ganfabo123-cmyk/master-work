@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..base_agent import LLMAgent, SkillSpec
-from ..llm import LLMClient
-from ..core.room import Room
+from ..action.werewolf import WerewolfActionTools
+from ..base_class.base_agent import LLMAgent, SkillSpec
+from ..client import LLMClient
+from ..room import Room
 from ..policy.werewolf.prompt import WerewolfPromptBuilder
 from ..policy.werewolf.tool import WerewolfPlayerTools
 from ..state.werewolf import Role, WerewolfGameState
@@ -27,13 +28,16 @@ class WerewolfPlayerAgent(LLMAgent):
         state: WerewolfGameState,
         wolf_room: Room | None = None,
     ) -> None:
+        policy_tools = WerewolfPlayerTools(name, public_room, state, wolf_room)
+        action_tools = WerewolfActionTools(name, public_room, state, policy_tools.has_thought)
         super().__init__(
             name=name,
             model=model,
             llm=llm,
-            prompt_builder=WerewolfPromptBuilder(player_name=name, role=role).build,
+            policy=WerewolfPromptBuilder(player_name=name, role=role),
             temperature=0.9,
-            tools=(WerewolfPlayerTools(name, public_room, state, wolf_room),),
+            policy_tools=(policy_tools,),
+            action_tools=(action_tools,),
             skills=(
                 SkillSpec(
                     name=f"werewolf-{role.value}",

@@ -6,11 +6,11 @@ from typing import Annotated, Callable
 
 from pydantic import Field
 
-from ...core.base_tool import BaseAgentTools
-from ...core.room import Room
+from ...protocol.base_tool import BaseAgentTools
+from ...room import Room
 from ...room.models import RoomMessage
-from ...util.werewolf_actions import ActionName, encode_action
-from ...util.werewolf_state import WerewolfGameState
+from ...state.werewolf import WerewolfGameState
+from .actions import ActionName, encode_action
 
 
 class WerewolfActionTools(BaseAgentTools):

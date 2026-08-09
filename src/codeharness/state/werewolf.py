@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass, field
 from enum import StrEnum
 from random import Random, SystemRandom
 
-from ..core import BaseState
+from ..protocol.base_state import BaseState
 
 
 class Role(StrEnum):
@@ -72,13 +72,13 @@ class WerewolfGameState(BaseState):
         return self.phase is Phase.FINISHED or self.winner is not None
 
     def process(self, action: object) -> "WerewolfGameState":
-        from ..util.werewolf_rules import resolve_phase
+        from ..environment.werewolf import resolve_phase
 
         if isinstance(action, dict):
             actions = action
         else:
             try:
-                from ..util.werewolf_actions import GameAction
+                from ..action.werewolf.actions import GameAction
             except ImportError as error:
                 raise TypeError("action must be a GameAction or action mapping") from error
             if not isinstance(action, GameAction):
@@ -88,7 +88,7 @@ class WerewolfGameState(BaseState):
         return next_state
 
     @classmethod
-    def classic_eight_players(cls, *, task_id: str, session_id: str) -> "WerewolfGameState":
+    def classic_eight_players(cls, *, task_id: str = "", session_id: str = "") -> "WerewolfGameState":
         roles = {
             "player-1": Role.WOLF,
             "player-2": Role.WOLF,
@@ -105,8 +105,8 @@ class WerewolfGameState(BaseState):
     def random_eight_players(
         cls,
         *,
-        task_id: str,
-        session_id: str,
+        task_id: str = "",
+        session_id: str = "",
         randomizer: Random | None = None,
     ) -> "WerewolfGameState":
         """Create a classic composition while assigning roles independently per game."""

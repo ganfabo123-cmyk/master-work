@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CodeHarness ROOM</title>
+  <style>
+    body { margin: 0; font: 14px system-ui, sans-serif; background: #f1f3f5; color: #18202a; }
+    main { width: min(860px, 100vw); min-height: 100vh; margin: auto; background: #fff; display: flex; flex-direction: column; }
+    header { padding: 16px 20px; border-bottom: 1px solid #ddd; }
+    #messages { flex: 1; padding: 20px; overflow: auto; }
+    .message { margin: 12px 0; padding: 10px 12px; background: #f5f7fa; border-radius: 8px; white-space: pre-wrap; }
+    .meta { color: #687384; font-size: 12px; margin-bottom: 4px; }
+    footer { padding: 14px 20px; border-top: 1px solid #ddd; }
+    textarea { width: 100%; height: 70px; box-sizing: border-box; padding: 8px; }
+    button { margin-top: 8px; padding: 8px 14px; cursor: pointer; }
+    input { padding: 7px; width: 100%; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+<main>
+  <header><h2>CodeHarness ROOM</h2><div id="status">等待任务</div></header>
+  <section id="messages">暂无 ROOM 消息</section>
+  <footer>
+    <textarea id="content" placeholder="输入任务或问题"></textarea>
+    <button id="run">发送</button>
+    <label>Session ID（可选，用于恢复）</label>
+    <input id="session" placeholder="session_...">
+  </footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+function render(data) {
+  const room = data.room;
+  $('status').textContent = room ? `${room.room_id} · ${(room.participants || []).length} 位 Agent` : '暂无 ROOM';
+  $('messages').innerHTML = room && room.messages?.length
+    ? room.messages.map(m => `<article class="message"><div class="meta">${m.name || ''} → ${Array.isArray(m.at) ? m.at.join('、') : m.at}</div>${escapeHtml(m.txt || '')}</article>`).join('')
+    : '暂无 ROOM 消息';
+}
+function escapeHtml(value) { const node = document.createElement('div'); node.textContent = value; return node.innerHTML; }
+async function refresh(sessionId) {
+  const response = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}`);
+  const data = await response.json();
+  if (!response.ok) throw Error(data.error || '加载 Session 失败');
+  render(data);
+}
+$('run').onclick = async () => {
+  const button = $('run'); button.disabled = true; $('status').textContent = '运行中…';
+  try {
+    const response = await fetch('/api/run', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content: $('content').value, session_id: $('session').value || null}) });
+    const job = await response.json(); if (!response.ok) throw Error(job.error);
+    const timer = setInterval(async () => {
+      const result = await (await fetch(`/api/jobs/${job.job_id}`)).json();
+      if (result.session_id) { $('session').value = result.session_id; await refresh(result.session_id); }
+      if (result.status !== 'running') { clearInterval(timer); button.disabled = false; $('status').textContent = result.error || result.content || result.status; }
+    }, 700);
+  } catch (error) { button.disabled = false; $('status').textContent = error.message; }
+};
+</script>
+</body>
+</html>

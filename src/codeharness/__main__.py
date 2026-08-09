@@ -1,6 +1,6 @@
 """Run the standard interactive CodeHarness CLI with ``python -m codeharness``."""
 
-from .cli import main
+from .main import main
 
 
 if __name__ == "__main__":

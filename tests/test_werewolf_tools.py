@@ -5,10 +5,11 @@ from tempfile import TemporaryDirectory
 from typing import Any
 
 from codeharness.agents import Agent, WerewolfPlayerAgent
-from codeharness.llm import LLMClient, ModelResult
+from codeharness.client import LLMClient
+from codeharness.models import ModelResult
 from codeharness.models import Message, Prompt, Task, ToolCall
 from codeharness.room import AgentProfile, Room
-from codeharness.util.werewolf_state import Phase, Role, WerewolfGameState
+from codeharness.state.werewolf import Phase, Role, WerewolfGameState
 
 
 class TemperatureRecordingLLM(LLMClient):

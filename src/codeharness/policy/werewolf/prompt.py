@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..models import Message, Prompt, Task
-from ..util.werewolf_state import Phase, Role
-from .base import BasePromptBuilder
+from ...models import Message, Prompt, Task
+from ...state.werewolf import Role
+from ...protocol.base_prompt import BasePromptBuilder
 
 
-_SKILLS_ROOT = Path(__file__).resolve().parents[1] / "skills" / "werewolf"
+_SKILLS_ROOT = Path(__file__).resolve().parents[2] / "skills" / "werewolf"
 
 
 class WerewolfPromptBuilder(BasePromptBuilder):

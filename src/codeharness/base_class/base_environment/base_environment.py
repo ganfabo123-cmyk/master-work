@@ -1,4 +1,4 @@
-"""Base environment contract for State-Observation-Agent workflows."""
+"""Generic environment contract for State-Observation-Agent workflows."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from typing import Any
 
-from ..observation import BaseObservation
-from ..state import BaseState
+from ...protocol.base_observation import BaseObservation
+from ...protocol.base_state import BaseState
 
 
 class BaseEnvironment(ABC):

@@ -4,9 +4,9 @@ from collections import Counter
 from random import Random
 
 from codeharness.room import RoomMessage
-from codeharness.util.werewolf_actions import ActionName, encode_action, latest_valid_actions
-from codeharness.util.werewolf_rules import resolve_phase
-from codeharness.util.werewolf_state import Phase, WerewolfGameState, Winner
+from codeharness.action.werewolf.actions import ActionName, encode_action, latest_valid_actions
+from codeharness.environment.werewolf import resolve_phase
+from codeharness.state.werewolf import Phase, WerewolfGameState, Winner
 
 
 def test_random_game_preserves_classic_role_composition() -> None:

@@ -7,10 +7,10 @@ name = "codeharness"
 version = "0.1.0"
 description = "A small, domain-neutral learning template for agent harnesses."
 requires-python = ">=3.11"
-dependencies = ["pydantic>=2.11,<3"]
+dependencies = ["pydantic>=2.11,<3", "flask>=3.1,<4"]
 
 [project.scripts]
-CodeHarness = "codeharness.cli:main"
+CodeHarness = "codeharness.main:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]

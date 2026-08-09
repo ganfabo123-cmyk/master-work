@@ -7,12 +7,10 @@ from typing import Annotated, Any, Callable, Literal
 
 from pydantic import Field
 
-from ..memory import LongTermMemoryEntry, LongTermMemoryManager
-from ..room import Room
-from ...action.werewolf import WerewolfActionTools
-from ..util.werewolf_state import Phase, Role, WerewolfGameState
-from .base import BaseAgentTools
-from .utils import send_public_werewolf_message, send_wolf_message
+from ...memory import LongTermMemoryEntry, LongTermMemoryManager
+from ...room import Room, RoomMessage
+from ...state.werewolf import WerewolfGameState
+from ...protocol.base_tool import BaseAgentTools
 
 
 class WerewolfPlayerTools(BaseAgentTools):
@@ -22,10 +20,13 @@ class WerewolfPlayerTools(BaseAgentTools):
         self.state = state
         self.wolf_room = wolf_room
         self._has_thought = False
-        self.action_tools = WerewolfActionTools(agent_name, room, state, lambda: self._has_thought)
+
+    def has_thought(self) -> bool:
+        """Return whether this Agent completed the required private thinking step."""
+        return self._has_thought
 
     def tool_functions(self) -> tuple[Callable[..., Any], ...]:
-        """Return this player's complete, phase-invariant tool contract."""
+        """Return this player's Policy-owned, phase-invariant tool contract."""
         self._has_thought = False
         return (
             self.think,
@@ -34,7 +35,6 @@ class WerewolfPlayerTools(BaseAgentTools):
             self.get_experience,
             self.wolf_message,
             self.speak,
-            *self.action_tools.tool_functions(),
         )
 
     def think(
@@ -97,11 +97,19 @@ class WerewolfPlayerTools(BaseAgentTools):
         content: Annotated[str, Field(description="发给全部存活狼队友的私下协商内容。")],
     ) -> str:
         """向全部存活狼人发送私下协商消息。"""
-        return send_wolf_message(self.room, self.wolf_room, self.state, self.agent_name, content, self._has_thought)
+        self._require_thought()
+        (self.wolf_room or self.room).send(RoomMessage(name=self.agent_name, at=self.state.alive_wolves(), txt=content))
+        return "狼队私聊已发送。"
 
     def speak(
         self,
         content: Annotated[str, Field(description="公开发言内容，应基于当前可见线索进行推理。")],
     ) -> str:
         """向全体玩家公开发言。"""
-        return send_public_werewolf_message(self.room, self.agent_name, content, self._has_thought)
+        self._require_thought()
+        self.room.send(RoomMessage(name=self.agent_name, at="all", txt=content))
+        return "公开发言已发送。"
+
+    def _require_thought(self) -> None:
+        if not self._has_thought:
+            raise ValueError("请先调用 think(strategy) 完成私密思考，再发送 ROOM 消息或提交游戏动作。")

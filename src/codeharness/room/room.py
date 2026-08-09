@@ -9,8 +9,8 @@ from time import sleep
 from typing import Any, Callable
 from uuid import uuid4
 
-from codeharness.room.models import AgentProfile, RoomMessage
-from codeharness.room.registry import RoomAgentRegistry
+from .models import AgentProfile, RoomMessage
+from .registry import RoomAgentRegistry
 
 
 MessageRecorder = Callable[[str, RoomMessage], None]

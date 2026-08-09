@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from ..models import Message
-from .base import Room
 from .models import RoomMessage
+
+if TYPE_CHECKING:
+    from .room import Room
 
 
 @dataclass(frozen=True, slots=True)

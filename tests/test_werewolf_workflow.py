@@ -4,10 +4,11 @@ import json
 from pathlib import Path
 from typing import Any
 
-from codeharness.llm import LLMClient, ModelResult
+from codeharness.client import LLMClient
+from codeharness.models import ModelResult
 from codeharness.models import Message, Task, ToolCall
-from codeharness.orchestrator import Orchestrator
-from codeharness.util.werewolf_workflow import WerewolfWorkflowConfig, open_or_restore_werewolf_session, run_werewolf_workflow
+from codeharness.environment.werewolf import WerewolfEnvironment, WerewolfWorkflowConfig, open_or_restore_session
+from codeharness.session import SessionManager
 
 
 class GameLLM(LLMClient):
@@ -54,10 +55,9 @@ class GameLLM(LLMClient):
 def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     traces = tmp_path / "traces"
     room = tmp_path / "room"
-    orchestrator = Orchestrator(traces_root=traces, room_data_root=room, llm=GameLLM(), model="game-test")
+    environment = WerewolfEnvironment(SessionManager(traces_root=traces, room_data_root=room), llm=GameLLM(), model="game-test")
 
-    result = run_werewolf_workflow(
-        orchestrator,
+    result = environment.run(
         task=Task("开始一局经典狼人杀"),
         session_id=None,
         on_session_opened=None,
@@ -65,7 +65,7 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     )
 
     assert result.status == "completed"
-    state_path = traces / result.session_id / "werewolf_state.json"
+    state_path = tmp_path / "state" / "data" / result.session_id / "werewolf.json"
     assert state_path.exists()
     state = json.loads(state_path.read_text(encoding="utf-8"))
     room_states = {
@@ -80,14 +80,14 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     assert "game-engine" in wolves["participants"]
     assert len(wolves["participants"]) == 3
     wolf_room_id = next(room_id for room_id in room_states if "wolves" in room_id)
-    assert any(message.txt == "agree on a target" for message in orchestrator.trace.room_messages(result.session_id, wolf_room_id))
+    assert any(message.txt == "agree on a target" for message in environment.trace.room_messages(result.session_id, wolf_room_id))
     public_room_id = next(room_id for room_id in room_states if "public" in room_id)
-    public_messages = orchestrator.trace.room_messages(result.session_id, public_room_id)
+    public_messages = environment.trace.room_messages(result.session_id, public_room_id)
     assert any("你已拿到身份" in message.txt and "list_experiences" in message.txt for message in public_messages)
     preparation_events = {
         player_name: [
             json.loads(message.content)
-            for message in orchestrator.trace.messages(result.session_id, player_name)
+            for message in environment.trace.messages(result.session_id, player_name)
             if message.role == "user" and isinstance(message.content, str) and '"phase": "preparation"' in message.content
         ]
         for player_name in state["players"]
@@ -96,14 +96,14 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     state_events = [
         json.loads(message.content)
         for player_name in state["players"]
-        for message in orchestrator.trace.messages(result.session_id, player_name)
+        for message in environment.trace.messages(result.session_id, player_name)
         if message.role == "user" and isinstance(message.content, str) and '"type": "game_state"' in message.content
     ]
     assert state_events
     assert all(set(event) == {"type", "round_no", "phase", "alive_players", "available_actions"} for event in state_events)
-    resumed = Orchestrator(traces_root=traces, room_data_root=room, llm=GameLLM(), model="game-test")
+    resumed = WerewolfEnvironment(SessionManager(traces_root=traces, room_data_root=room), llm=GameLLM(), model="game-test")
     # A finished session remains readable and can be reopened without rebuilding participants.
-    restored = open_or_restore_werewolf_session(resumed, task=Task("继续"), session_id=result.session_id)
+    restored = open_or_restore_session(resumed, task=Task("继续"), session_id=result.session_id)
     assert len(restored.agents) == 8
     assert {name: profile.role.value for name, profile in restored.state.players.items()} == {
         name: profile["role"] for name, profile in state["players"].items()

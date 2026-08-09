@@ -8,7 +8,7 @@ from typing import Any, Protocol
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from .models import Message, ModelResult, ToolCall
+from ..models import Message, ModelResult, ToolCall
 
 
 class LLMClient(Protocol):

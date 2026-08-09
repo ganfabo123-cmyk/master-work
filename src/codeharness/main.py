@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
+
+from .environment.werewolf import WerewolfEnvironment
 from .models import Task
-from .orchestrator import Orchestrator
 
 
 def main() -> None:
@@ -16,13 +16,13 @@ def main() -> None:
     if args.web:
         if args.resume:
             parser.error("/resume cannot be used with /web")
-        from .web import serve_web
+        from .app import serve_web
 
         serve_web()
         return
-    orchestrator = Orchestrator.from_environment(traces_root=Path("traces"))
-    session_id = args.resume
 
+    environment = WerewolfEnvironment.from_environment()
+    session_id = args.resume
     print("CodeHarness")
     print("输入问题开始对话；输入 exit 或 quit 退出。")
     try:
@@ -35,13 +35,11 @@ def main() -> None:
                 continue
             if content.lower() in {"exit", "quit"}:
                 break
-
             try:
-                result = orchestrator.run(task=Task(content), session_id=session_id)
+                result = environment.run(task=Task(content), session_id=session_id)
             except Exception as error:
                 print(f"\nError: {error}")
                 continue
-
             session_id = result.session_id
             if result.status == "failed":
                 print(f"\nError: {result.error}")
