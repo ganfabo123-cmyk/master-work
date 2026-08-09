@@ -11,8 +11,8 @@ import json
 from flask import Flask, jsonify, request, send_from_directory
 
 from .environment.werewolf import WerewolfEnvironment
-from .models import Task
-from .trace import TraceRecorder
+from .core.models import Task
+from .infra.trace import TraceRecorder
 
 
 class JobStore:

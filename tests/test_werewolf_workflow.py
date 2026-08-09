@@ -4,11 +4,10 @@ import json
 from pathlib import Path
 from typing import Any
 
-from codeharness.client import LLMClient
-from codeharness.models import ModelResult
-from codeharness.models import Message, Task, ToolCall
+from codeharness.core.models import Message, ModelResult, Task, ToolCall
+from codeharness.infra.client import LLMClient
 from codeharness.environment.werewolf import WerewolfEnvironment, WerewolfWorkflowConfig, open_or_restore_session
-from codeharness.session import SessionManager
+from codeharness.infra.session import SessionManager
 
 
 class GameLLM(LLMClient):

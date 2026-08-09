@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 
-from codeharness.memory import LongTermMemoryEntry, LongTermMemoryManager
+from codeharness.infra.memory import LongTermMemoryEntry, LongTermMemoryManager
 
 
 def _entry(name: str = "首日发言不足以定罪") -> LongTermMemoryEntry:

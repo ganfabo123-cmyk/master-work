@@ -1,1 +1,0 @@
-"""Werewolf policy components."""

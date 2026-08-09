@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 
 from .environment.werewolf import WerewolfEnvironment
-from .models import Task
+from .core.models import Task
 
 
 def main() -> None:

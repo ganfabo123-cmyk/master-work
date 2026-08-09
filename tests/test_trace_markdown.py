@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from codeharness.models import Message, ToolCall
-from codeharness.trace import TraceRecorder
+from codeharness.core.models import Message, ToolCall
+from codeharness.infra.trace import TraceRecorder
 
 
 def test_markdown_expands_native_tool_arguments_without_changing_jsonl(tmp_path: Path) -> None:

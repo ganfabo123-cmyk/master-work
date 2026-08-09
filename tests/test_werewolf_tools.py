@@ -5,10 +5,9 @@ from tempfile import TemporaryDirectory
 from typing import Any
 
 from codeharness.agents import Agent, WerewolfPlayerAgent
-from codeharness.client import LLMClient
-from codeharness.models import ModelResult
-from codeharness.models import Message, Prompt, Task, ToolCall
-from codeharness.room import AgentProfile, Room
+from codeharness.core.models import Message, ModelResult, Prompt, Task, ToolCall
+from codeharness.infra.client import LLMClient
+from codeharness.infra.room import AgentProfile, Room
 from codeharness.state.werewolf import Phase, Role, WerewolfGameState
 
 
