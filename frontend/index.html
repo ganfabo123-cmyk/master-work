@@ -5,57 +5,397 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CodeHarness ROOM</title>
   <style>
-    body { margin: 0; font: 14px system-ui, sans-serif; background: #f1f3f5; color: #18202a; }
-    main { width: min(860px, 100vw); min-height: 100vh; margin: auto; background: #fff; display: flex; flex-direction: column; }
-    header { padding: 16px 20px; border-bottom: 1px solid #ddd; }
-    #messages { flex: 1; padding: 20px; overflow: auto; }
-    .message { margin: 12px 0; padding: 10px 12px; background: #f5f7fa; border-radius: 8px; white-space: pre-wrap; }
-    .meta { color: #687384; font-size: 12px; margin-bottom: 4px; }
-    footer { padding: 14px 20px; border-top: 1px solid #ddd; }
-    textarea { width: 100%; height: 70px; box-sizing: border-box; padding: 8px; }
-    button { margin-top: 8px; padding: 8px 14px; cursor: pointer; }
-    input { padding: 7px; width: 100%; box-sizing: border-box; }
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #6d778b;
+      --line: #e2e6ed;
+      --panel: rgba(255, 255, 255, .94);
+      --canvas: #f3f5f9;
+      --accent: #4c5fd5;
+      --accent-soft: #eef0ff;
+      --private: #8f5a28;
+      --private-soft: #fff2e4;
+      --shadow: 0 18px 50px rgba(36, 45, 72, .1);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font: 14px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, #e8ecff 0, transparent 30rem),
+        var(--canvas);
+    }
+    button, textarea, input { font: inherit; }
+    button { border: 0; }
+
+    .shell {
+      width: min(1180px, calc(100vw - 32px));
+      height: calc(100vh - 32px);
+      min-height: 650px;
+      margin: 16px auto;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, .8);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+    header {
+      min-height: 78px;
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: white;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      background: linear-gradient(145deg, #5569df, #3547b8);
+      box-shadow: 0 8px 18px rgba(76, 95, 213, .28);
+    }
+    h1 { margin: 0; font-size: 19px; line-height: 1.2; letter-spacing: -.02em; }
+    .eyebrow { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    #run-state {
+      max-width: 48%;
+      padding: 8px 12px;
+      overflow: hidden;
+      color: var(--muted);
+      background: #f6f7fa;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #run-state.busy { color: var(--accent); background: var(--accent-soft); border-color: #d9ddff; }
+    #run-state.error { color: #a33a3a; background: #fff0f0; border-color: #f1cccc; }
+
+    .app-market { min-width: 0; padding: 14px 22px 16px; overflow: hidden; border-bottom: 1px solid var(--line); background: #fbfcff; }
+    .market-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+    .market-heading h2 { margin: 0; font-size: 14px; }
+    .market-heading span { color: var(--muted); font-size: 11px; }
+    #app-list { width: 100%; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 9px; }
+    .app-card { width: 100%; max-width: 100%; min-width: 0; padding: 11px 12px; overflow: hidden; text-align: left; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 11px; cursor: pointer; }
+    .app-card:hover { border-color: #bec7ef; transform: translateY(-1px); }
+    .app-card.active { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 2px rgba(76, 95, 213, .08); }
+    .app-card-name { display: block; margin-bottom: 3px; font-weight: 750; }
+    .app-card-id { color: var(--accent); font-size: 10px; font-weight: 700; }
+    .app-card-description { display: block; margin-top: 5px; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+
+    .workspace { min-height: 0; display: grid; grid-template-columns: 260px 1fr; }
+    aside {
+      min-width: 0;
+      padding: 20px 14px;
+      overflow: auto;
+      background: #fafbfc;
+      border-right: 1px solid var(--line);
+    }
+    .side-title {
+      margin: 0 8px 10px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    #room-list { display: grid; gap: 7px; }
+    .room-button {
+      width: 100%;
+      padding: 11px 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 10px;
+      text-align: left;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      cursor: pointer;
+    }
+    .room-button:hover { background: white; border-color: var(--line); }
+    .room-button.active { background: var(--accent-soft); border-color: #d8ddff; }
+    .room-name { overflow: hidden; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+    .room-count { color: var(--muted); font-size: 12px; }
+    .room-kind { color: var(--muted); font-size: 11px; }
+    .room-kind.private { color: var(--private); }
+    .participants { margin-top: 24px; }
+    #participant-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 8px; }
+    .participant { padding: 4px 8px; color: #566076; background: white; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; }
+
+    .room-panel { min-width: 0; min-height: 0; display: grid; grid-template-rows: auto 1fr auto; }
+    .room-header { padding: 16px 22px; border-bottom: 1px solid var(--line); }
+    .room-title-row { display: flex; align-items: center; gap: 9px; }
+    #room-title { margin: 0; overflow: hidden; font-size: 16px; text-overflow: ellipsis; white-space: nowrap; }
+    .badge { padding: 2px 7px; color: var(--accent); background: var(--accent-soft); border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .badge.private { color: var(--private); background: var(--private-soft); }
+    #room-summary { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    #messages { padding: 18px 22px 28px; overflow: auto; scroll-behavior: smooth; }
+    .empty { height: 100%; min-height: 180px; display: grid; place-items: center; color: #9098a8; text-align: center; }
+    .message { max-width: 88%; margin: 0 0 12px; padding: 11px 13px; background: #f6f7fa; border: 1px solid #eceef3; border-radius: 4px 13px 13px 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .message.engine { background: #f3f4ff; border-color: #e2e5ff; }
+    .meta { margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 650; }
+
+    footer { padding: 14px 22px 18px; background: rgba(250, 251, 252, .94); border-top: 1px solid var(--line); }
+    textarea, input {
+      width: 100%;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #cfd5df;
+      border-radius: 10px;
+      outline: none;
+    }
+    textarea { min-height: 76px; padding: 11px 13px; resize: vertical; }
+    textarea:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(76, 95, 213, .12); }
+    .controls { margin-top: 9px; display: grid; grid-template-columns: auto minmax(180px, 1fr); gap: 10px; align-items: end; }
+    #run { height: 38px; padding: 0 18px; color: white; background: var(--accent); border-radius: 9px; font-weight: 700; cursor: pointer; }
+    #run:hover { background: #3f51c3; }
+    #run:disabled { opacity: .5; cursor: wait; }
+    label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 11px; }
+    input { height: 38px; padding: 0 10px; }
+
+    @media (max-width: 760px) {
+      .shell { width: 100%; height: 100vh; min-height: 600px; margin: 0; border: 0; border-radius: 0; }
+      header { padding: 12px 14px; }
+      .app-market { padding: 10px 14px; }
+      #app-list { display: flex; overflow-x: auto; }
+      .app-card { min-width: 210px; }
+      #run-state { max-width: 42%; }
+      .workspace { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      aside { padding: 10px 12px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      #room-list { display: flex; }
+      .room-button { min-width: 180px; }
+      .participants, aside .side-title { display: none; }
+      .room-header, #messages, footer { padding-left: 14px; padding-right: 14px; }
+      .controls { grid-template-columns: 1fr; }
+      #run { width: 100%; }
+      .message { max-width: 96%; }
+    }
   </style>
 </head>
 <body>
-<main>
-  <header><h2>CodeHarness ROOM</h2><div id="status">等待任务</div></header>
-  <section id="messages">暂无 ROOM 消息</section>
-  <footer>
-    <textarea id="content" placeholder="输入任务或问题"></textarea>
-    <button id="run">发送</button>
-    <label>Session ID（可选，用于恢复）</label>
-    <input id="session" placeholder="session_...">
-  </footer>
+<main class="shell">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">CH</div>
+      <div><h1>CodeHarness</h1><div class="eyebrow">ROOM Console</div></div>
+    </div>
+    <div id="run-state">等待任务</div>
+  </header>
+
+  <section class="app-market">
+    <div class="market-heading"><h2>应用市场</h2><span>选择本次要运行的工作流</span></div>
+    <div id="app-list"><div class="room-count">正在加载 App…</div></div>
+  </section>
+
+  <div class="workspace">
+    <aside>
+      <div class="side-title">Rooms</div>
+      <nav id="room-list"><div class="room-count">暂无 ROOM</div></nav>
+      <section class="participants">
+        <div class="side-title">Participants</div>
+        <div id="participant-list"><span class="room-count">暂无参与者</span></div>
+      </section>
+    </aside>
+
+    <section class="room-panel">
+      <div class="room-header">
+        <div class="room-title-row"><h2 id="room-title">尚未连接 Session</h2><span id="room-badge" class="badge" hidden></span></div>
+        <div id="room-summary">提交任务后将在这里显示 ROOM 消息</div>
+      </div>
+      <section id="messages"><div class="empty">暂无 ROOM 消息</div></section>
+      <footer>
+        <textarea id="content" placeholder="输入任务，例如：开始一局狼人杀"></textarea>
+        <div class="controls">
+          <button id="run">运行任务</button>
+          <div><label for="session">Session ID（留空创建新会话，填写后恢复）</label><input id="session" placeholder="session_..."></div>
+        </div>
+      </footer>
+    </section>
+  </div>
 </main>
+
 <script>
 const $ = id => document.getElementById(id);
-function render(data) {
-  const room = data.room;
-  $('status').textContent = room ? `${room.room_id} · ${(room.participants || []).length} 位 Agent` : '暂无 ROOM';
-  $('messages').innerHTML = room && room.messages?.length
-    ? room.messages.map(m => `<article class="message"><div class="meta">${m.name || ''} → ${Array.isArray(m.at) ? m.at.join('、') : m.at}</div>${escapeHtml(m.txt || '')}</article>`).join('')
-    : '暂无 ROOM 消息';
+let snapshot = null;
+let selectedRoomId = null;
+let selectedAppName = null;
+
+function selectApp(appName) {
+  if (selectedAppName !== appName) {
+    selectedAppName = appName;
+    $('session').value = '';
+    snapshot = null;
+    selectedRoomId = null;
+  }
+  document.querySelectorAll('.app-card').forEach(card => card.classList.toggle('active', card.dataset.appName === selectedAppName));
 }
-function escapeHtml(value) { const node = document.createElement('div'); node.textContent = value; return node.innerHTML; }
+
+async function loadApps() {
+  const response = await fetch('/api/apps', {cache: 'no-store'});
+  const data = await response.json();
+  if (!response.ok) throw Error(data.error || '加载 App 失败');
+  const apps = Array.isArray(data.apps) ? data.apps : [];
+  selectedAppName = apps.some(app => app.name === data.default_app) ? data.default_app : apps[0]?.name || null;
+  $('app-list').replaceChildren(...(apps.length ? apps.map(app => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = `app-card${app.name === selectedAppName ? ' active' : ''}`;
+    card.dataset.appName = app.name;
+    const name = document.createElement('span');
+    name.className = 'app-card-name';
+    name.textContent = app.display_name;
+    const id = document.createElement('span');
+    id.className = 'app-card-id';
+    id.textContent = app.name;
+    const description = document.createElement('span');
+    description.className = 'app-card-description';
+    description.textContent = app.description;
+    card.append(name, id, description);
+    card.onclick = () => selectApp(app.name);
+    return card;
+  }) : [Object.assign(document.createElement('div'), {className: 'room-count', textContent: '没有发现可运行的 App'})]));
+}
+
+function isPublicRoom(room, data) {
+  return room.room_id === data.session?.public_room_id;
+}
+
+function roomLabel(room, data) {
+  if (isPublicRoom(room, data)) return '公共 ROOM';
+  const raw = room.room_id || '未命名 ROOM';
+  const marker = raw.includes('-wolves-') ? '狼人 ROOM' : raw;
+  return marker;
+}
+
+function render(data) {
+  snapshot = data;
+  const rooms = Array.isArray(data.rooms) ? data.rooms : [];
+  if (!rooms.some(room => room.room_id === selectedRoomId)) {
+    selectedRoomId = data.room?.room_id || rooms[0]?.room_id || null;
+  }
+  const selected = rooms.find(room => room.room_id === selectedRoomId) || null;
+
+  $('room-list').replaceChildren(...(rooms.length ? rooms.map(room => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `room-button${room.room_id === selectedRoomId ? ' active' : ''}`;
+    const name = document.createElement('span');
+    name.className = 'room-name';
+    name.textContent = roomLabel(room, data);
+    const count = document.createElement('span');
+    count.className = 'room-count';
+    count.textContent = `${room.messages?.length || 0}`;
+    const kind = document.createElement('span');
+    kind.className = `room-kind${isPublicRoom(room, data) ? '' : ' private'}`;
+    kind.textContent = isPublicRoom(room, data) ? '所有参与者可见' : '限定参与者可见';
+    button.append(name, count, kind);
+    button.onclick = () => { selectedRoomId = room.room_id; render(snapshot); };
+    return button;
+  }) : [Object.assign(document.createElement('div'), {className: 'room-count', textContent: '暂无 ROOM'})]));
+
+  if (!selected) {
+    $('room-title').textContent = '尚未连接 Session';
+    $('room-summary').textContent = '提交任务后将在这里显示 ROOM 消息';
+    $('room-badge').hidden = true;
+    $('messages').innerHTML = '<div class="empty">暂无 ROOM 消息</div>';
+    $('participant-list').innerHTML = '<span class="room-count">暂无参与者</span>';
+    return;
+  }
+
+  const publicRoom = isPublicRoom(selected, data);
+  $('room-title').textContent = roomLabel(selected, data);
+  $('room-title').title = selected.room_id;
+  const badge = $('room-badge');
+  badge.hidden = false;
+  badge.className = `badge${publicRoom ? '' : ' private'}`;
+  badge.textContent = publicRoom ? 'PUBLIC' : 'PRIVATE';
+  const participants = Array.isArray(selected.participants) ? selected.participants : [];
+  const messages = Array.isArray(selected.messages) ? selected.messages : [];
+  $('room-summary').textContent = `${selected.room_id} · ${participants.length} 位参与者 · ${messages.length} 条消息`;
+  $('participant-list').replaceChildren(...(participants.length ? participants.map(name => {
+    const chip = document.createElement('span');
+    chip.className = 'participant';
+    chip.textContent = name;
+    return chip;
+  }) : [Object.assign(document.createElement('span'), {className: 'room-count', textContent: '暂无参与者'})]));
+  $('messages').replaceChildren(...(messages.length ? messages.map(message => {
+    const article = document.createElement('article');
+    article.className = `message${message.name === 'game-engine' ? ' engine' : ''}`;
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const recipient = Array.isArray(message.at) ? message.at.join('、') : message.at;
+    meta.textContent = `${message.name || 'unknown'} → ${recipient || 'unknown'}`;
+    article.append(meta, document.createTextNode(message.txt || ''));
+    return article;
+  }) : [Object.assign(document.createElement('div'), {className: 'empty', textContent: '这个 ROOM 暂无消息'})]));
+}
+
+function setRunState(text, kind = '') {
+  const state = $('run-state');
+  state.textContent = text;
+  state.className = kind;
+  state.title = text;
+}
+
 async function refresh(sessionId) {
-  const response = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}`);
+  const response = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}`, {cache: 'no-store'});
   const data = await response.json();
   if (!response.ok) throw Error(data.error || '加载 Session 失败');
   render(data);
 }
+
 $('run').onclick = async () => {
-  const button = $('run'); button.disabled = true; $('status').textContent = '运行中…';
+  const button = $('run');
+  button.disabled = true;
+  setRunState('运行中…', 'busy');
   try {
-    const response = await fetch('/api/run', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content: $('content').value, session_id: $('session').value || null}) });
-    const job = await response.json(); if (!response.ok) throw Error(job.error);
+    if (!selectedAppName) throw Error('请先选择一个 App');
+    const response = await fetch('/api/run', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({app_name: selectedAppName, content: $('content').value, session_id: $('session').value || null})
+    });
+    const job = await response.json();
+    if (!response.ok) throw Error(job.error);
     const timer = setInterval(async () => {
-      const result = await (await fetch(`/api/jobs/${job.job_id}`)).json();
-      if (result.session_id) { $('session').value = result.session_id; await refresh(result.session_id); }
-      if (result.status !== 'running') { clearInterval(timer); button.disabled = false; $('status').textContent = result.error || result.content || result.status; }
+      try {
+        const jobResponse = await fetch(`/api/jobs/${job.job_id}`, {cache: 'no-store'});
+        const result = await jobResponse.json();
+        if (result.session_id) {
+          $('session').value = result.session_id;
+          await refresh(result.session_id);
+        }
+        if (result.status !== 'running') {
+          clearInterval(timer);
+          button.disabled = false;
+          setRunState(result.error || result.content || result.status, result.error ? 'error' : '');
+        }
+      } catch (error) {
+        clearInterval(timer);
+        button.disabled = false;
+        setRunState(error.message, 'error');
+      }
     }, 700);
-  } catch (error) { button.disabled = false; $('status').textContent = error.message; }
+  } catch (error) {
+    button.disabled = false;
+    setRunState(error.message, 'error');
+  }
 };
+
+loadApps().catch(error => setRunState(error.message, 'error'));
 </script>
 </body>
 </html>

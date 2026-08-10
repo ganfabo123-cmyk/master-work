@@ -113,6 +113,7 @@ class RoomRuntime:
                 trace=self.trace,
                 session_id=session_id,
                 record_initial_messages=history is None,
+                message_sink=None if incremental_context is None else incremental_context.append_turn_messages,
             )
             return AgentResult("completed", output, None, session_id)
         except Exception as error:

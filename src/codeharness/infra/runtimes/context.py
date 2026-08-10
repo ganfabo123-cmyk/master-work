@@ -46,6 +46,10 @@ class IncrementalContext:
         self.messages.extend(appended)
         return appended
 
+    def append_turn_messages(self, messages: Iterable[Message]) -> tuple[Message, ...]:
+        """Append assistant/tool messages generated during one Agent turn."""
+        return self.append(messages)
+
     def history(self) -> tuple[Message, ...]:
         return tuple(self.messages)
 

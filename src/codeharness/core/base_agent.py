@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Collection
+from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -93,6 +93,14 @@ class Agent:
         """Return model-callable functions from Policy and Action tool sets."""
         return tuple(function for tool_set in self.get_tools() for function in tool_set.tool_functions())
 
+    def action_tool_names(self) -> frozenset[str]:
+        """Return the Tool names whose calls represent Environment Actions."""
+        return frozenset(
+            function.__name__
+            for tool_set in self.action_tools
+            for function in tool_set.tool_functions()
+        )
+
     def tool_schemas(self, tools: tuple[ToolFunction, ...] | None = None) -> list[dict[str, Any]]:
         selected_tools = self.tool_functions() if tools is None else tools
         return self.runtime.build_tool_registry(selected_tools).schemas_for(selected_tools)
@@ -112,6 +120,7 @@ class Agent:
         trace: TraceRecorder | None = None,
         session_id: str | None = None,
         record_initial_messages: bool = True,
+        message_sink: Callable[[Iterable[Message]], object] | None = None,
         **llm_kwargs: Any,
     ) -> Message:
         """Delegate one complete LLM run to the configured runtime."""
@@ -123,6 +132,7 @@ class Agent:
             messages=messages,
             initial_messages=self.initial_messages,
             tool_functions=self.tool_functions,
+            action_tool_names=self.action_tool_names(),
             tools=tools,
             available_tool_names=available_tool_names,
             tool_schemas=tool_schemas,
@@ -133,6 +143,7 @@ class Agent:
             trace=trace,
             session_id=session_id,
             record_initial_messages=record_initial_messages,
+            message_sink=message_sink,
             llm_kwargs=llm_kwargs,
         )
 

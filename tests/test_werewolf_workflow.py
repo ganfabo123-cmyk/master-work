@@ -6,14 +6,17 @@ from typing import Any
 
 from codeharness.core.models import Message, ModelResult, Task, ToolCall
 from codeharness.infra.client import LLMClient
-from codeharness.environment.werewolf import WerewolfEnvironment, WerewolfWorkflowConfig, open_or_restore_session
+from codeharness.apps.werewolf.environment import WerewolfEnvironment, WerewolfWorkflowConfig
 from codeharness.infra.session import SessionManager
+from codeharness.infra.runtimes import SessionRuntime
+from tool_message_assertions import assert_tool_calls_are_paired
 
 
 class GameLLM(LLMClient):
     """Uses every current phase tool once, then ends its turn."""
 
     def generate(self, *, model: str, messages: tuple[Message, ...], tools: list[dict[str, Any]], **_: Any) -> ModelResult:
+        assert_tool_calls_are_paired(messages)
         assert {tool["name"] for tool in tools} >= {"think", "wolf_kill", "inspect", "vote", "shoot"}
         latest_state = next((message for message in reversed(messages) if message.role == "user" and '"type": "game_state"' in str(message.content)), None)
         names = set(json.loads(latest_state.content)["available_actions"]) if latest_state is not None else set()
@@ -56,10 +59,9 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     room = tmp_path / "room"
     environment = WerewolfEnvironment(SessionManager(traces_root=traces, room_data_root=room), llm=GameLLM(), model="game-test")
 
-    result = environment.run(
+    result = SessionRuntime(trace=environment.trace).run(
+        environment,
         task=Task("开始一局经典狼人杀"),
-        session_id=None,
-        on_session_opened=None,
         config=WerewolfWorkflowConfig(max_game_rounds=4),
     )
 
@@ -100,10 +102,21 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     ]
     assert state_events
     assert all(set(event) == {"type", "round_no", "phase", "alive_players", "available_actions"} for event in state_events)
+    assert environment._rl_game is not None
+    for context in environment._rl_game.contexts.values():
+        assert_tool_calls_are_paired(context.history())
     resumed = WerewolfEnvironment(SessionManager(traces_root=traces, room_data_root=room), llm=GameLLM(), model="game-test")
-    # A finished session remains readable and can be reopened without rebuilding participants.
-    restored = open_or_restore_session(resumed, task=Task("继续"), session_id=result.session_id)
-    assert len(restored.agents) == 8
-    assert {name: profile.role.value for name, profile in restored.state.players.items()} == {
+    # A finished session remains readable and can be reopened through the same Runtime.
+    resumed_result = SessionRuntime(trace=resumed.trace).run(
+        resumed,
+        task=Task("继续"),
+        session_id=result.session_id,
+    )
+    assert resumed_result.status == "completed"
+    assert len(resumed.agents) == 8
+    assert {name: profile.role.value for name, profile in resumed.state.players.items()} == {
         name: profile["role"] for name, profile in state["players"].items()
     }
+    assert resumed._rl_game is not None
+    for context in resumed._rl_game.contexts.values():
+        assert_tool_calls_are_paired(context.history())

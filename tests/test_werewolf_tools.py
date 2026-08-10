@@ -4,11 +4,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
-from codeharness.agents import Agent, WerewolfPlayerAgent
+from codeharness.apps.werewolf.agent import WerewolfPlayerAgent
+from codeharness.apps.werewolf.state import Phase, Role, WerewolfGameState
+from codeharness.core import Agent
 from codeharness.core.models import Message, ModelResult, Prompt, Task, ToolCall
 from codeharness.infra.client import LLMClient
 from codeharness.infra.room import AgentProfile, Room
-from codeharness.state.werewolf import Phase, Role, WerewolfGameState
+from codeharness.infra.runtimes import LLMRuntime
 
 
 class TemperatureRecordingLLM(LLMClient):
@@ -35,10 +37,7 @@ class ThoughtThenActionLLM(LLMClient):
                 ),
                 model=model,
             )
-        if self.calls == 2:
-            assert any(message.name == "wolf_message" and "未执行" in str(message.content) for message in messages)
-            return ModelResult(raw_content="", tool_calls=(ToolCall("message-retry", "wolf_message", {"content": "今晚处理 player-3"}),), model=model)
-        return ModelResult(raw_content="done", parsed_content="done", model=model)
+        raise AssertionError("An Action Tool Call must terminate the Agent turn")
 
 
 class InvalidSaveThenStopLLM(LLMClient):
@@ -83,7 +82,7 @@ def _player_agent(
 
 def _registry_for(agent: WerewolfPlayerAgent):
     functions = agent.tool_functions()
-    return agent._build_tool_registry(functions), functions
+    return LLMRuntime.build_tool_registry(functions), functions
 
 
 def test_temperature_is_forwarded_to_model() -> None:
@@ -127,29 +126,19 @@ def test_preparation_keeps_the_full_phase_invariant_tool_contract() -> None:
         ]
 
 
-def test_think_is_private_and_required_before_room_message() -> None:
+def test_action_tool_schema_has_no_room_side_effect_when_invoked_directly() -> None:
     with TemporaryDirectory() as directory:
         room = Room("werewolf", session_id="thinking-test", data_root=Path(directory))
         state = WerewolfGameState.classic_eight_players()
         _register_players(room, state)
         registry, _ = _registry_for(_player_agent(TemperatureRecordingLLM(), room=room, state=state, name="player-1"))
 
-        try:
-            registry.invoke("wolf_message", {"content": "今晚处理 player-3"})
-        except Exception as error:
-            assert "先调用 think" in str(error)
-        else:
-            raise AssertionError("ROOM message should require think first")
-        registry.invoke("think", {"strategy": "player-3 的发言最像预言家"})
         registry.invoke("wolf_message", {"content": "今晚处理 player-3"})
 
-        message = room.history()[0]
-        assert message.txt == "今晚处理 player-3"
-        assert "预言家" not in message.txt
-        assert message.at == ("player-1", "player-2")
+        assert room.history() == ()
 
 
-def test_think_must_finish_in_a_separate_model_turn_before_message() -> None:
+def test_policy_tool_executes_before_action_tool_terminates_turn() -> None:
     with TemporaryDirectory() as directory:
         room = Room("werewolf", session_id="separate-think-test", data_root=Path(directory))
         state = WerewolfGameState.classic_eight_players()
@@ -157,13 +146,14 @@ def test_think_must_finish_in_a_separate_model_turn_before_message() -> None:
         llm = ThoughtThenActionLLM()
         agent = _player_agent(llm, room=room, state=state, name="player-1")
 
-        agent.run(Task("test"))
+        result = agent.run(Task("test"))
 
-        assert llm.calls == 3
-        assert [message.txt for message in room.history()] == ["今晚处理 player-3"]
+        assert llm.calls == 1
+        assert [call.name for call in result.tool_calls] == ["think", "wolf_message"]
+        assert room.history() == ()
 
 
-def test_wolf_message_is_written_only_to_the_private_wolf_room() -> None:
+def test_wolf_message_action_does_not_write_either_room_before_environment_consumes_it() -> None:
     with TemporaryDirectory() as directory:
         root = Path(directory)
         public_room = Room("public", session_id="private-room-test", data_root=root)
@@ -177,7 +167,7 @@ def test_wolf_message_is_written_only_to_the_private_wolf_room() -> None:
         registry.invoke("wolf_message", {"content": "今晚处理 player-3"})
 
         assert public_room.history() == ()
-        assert [message.txt for message in wolf_room.history()] == ["今晚处理 player-3"]
+        assert wolf_room.history() == ()
         assert wolf_room.participants() == ("game-engine", "player-1", "player-2")
 
 

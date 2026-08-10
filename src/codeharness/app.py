@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from importlib import import_module
+from inspect import isclass
 from pathlib import Path
 from threading import Lock, Thread
 from typing import Any
@@ -10,9 +12,54 @@ import json
 
 from flask import Flask, jsonify, request, send_from_directory
 
-from .environment.werewolf import WerewolfEnvironment
+from .core.base_environment import Environment
 from .core.models import Task
+from .infra.runtimes import SessionRuntime
 from .infra.trace import TraceRecorder
+
+
+def environment_type(app_name: str) -> type[Environment]:
+    """Resolve the unique Environment implementation exported by one App."""
+    if not app_name.isidentifier():
+        raise ValueError(f"App 未找到：{app_name}")
+    module_name = f"{__package__}.apps.{app_name}.environment"
+    try:
+        module = import_module(module_name)
+    except ModuleNotFoundError as error:
+        if error.name == module_name or error.name == f"{__package__}.apps.{app_name}":
+            raise ValueError(f"App 未找到：{app_name}") from None
+        raise
+    candidates = [
+        value
+        for value in vars(module).values()
+        if isclass(value)
+        and value is not Environment
+        and issubclass(value, Environment)
+        and value.__module__ == module.__name__
+    ]
+    if len(candidates) != 1 or not callable(getattr(candidates[0], "from_environment", None)):
+        raise ValueError(f"App 未找到：{app_name}")
+    return candidates[0]
+
+
+def discover_apps() -> list[dict[str, str]]:
+    """Discover valid apps/<app_name>/environment.py modules for the Web market."""
+    apps_root = Path(__file__).resolve().parent / "apps"
+    discovered: list[dict[str, str]] = []
+    for environment_path in sorted(apps_root.glob("*/environment.py")):
+        app_name = environment_path.parent.name
+        try:
+            resolved_type = environment_type(app_name)
+        except (ImportError, ValueError):
+            continue
+        description = " ".join((resolved_type.__doc__ or "CodeHarness application workflow.").split())
+        discovered.append({"name": app_name, "display_name": app_name.replace("_", " ").title(), "description": description})
+    return discovered
+
+
+def create_environment(app_name: str, *, traces_root: Path = Path("traces"), room_data_root: Path = Path("room/data")) -> Any:
+    """Construct one configured application Environment by its CLI name."""
+    return environment_type(app_name).from_environment(traces_root=traces_root, room_data_root=room_data_root)
 
 
 class JobStore:
@@ -20,10 +67,10 @@ class JobStore:
         self._lock = Lock()
         self._jobs: dict[str, dict[str, Any]] = {}
 
-    def create(self) -> str:
+    def create(self, app_name: str) -> str:
         job_id = uuid4().hex
         with self._lock:
-            self._jobs[job_id] = {"job_id": job_id, "status": "running", "session_id": None, "content": None, "error": None}
+            self._jobs[job_id] = {"job_id": job_id, "app_name": app_name, "status": "running", "session_id": None, "content": None, "error": None}
         return job_id
 
     def update(self, job_id: str, **values: Any) -> None:
@@ -40,6 +87,7 @@ class JobStore:
 
 def create_app(
     *,
+    app_name: str = "incident_consultation",
     traces_root: Path = Path("traces"),
     room_data_root: Path = Path("room/data"),
     frontend_root: Path | None = None,
@@ -51,6 +99,10 @@ def create_app(
     @app.get("/")
     def index() -> Any:
         return send_from_directory(frontend, "index.html")
+
+    @app.get("/api/apps")
+    def get_apps() -> Any:
+        return jsonify({"apps": discover_apps(), "default_app": app_name})
 
     @app.get("/api/jobs/<job_id>")
     def get_job(job_id: str) -> Any:
@@ -73,14 +125,21 @@ def create_app(
         payload = request.get_json(silent=True) or {}
         content = payload.get("content")
         session_id = payload.get("session_id")
+        selected_app = payload.get("app_name", app_name)
         if not isinstance(content, str) or not content.strip():
             return jsonify({"error": "content is required"}), 400
         if session_id is not None and not isinstance(session_id, str):
             return jsonify({"error": "session_id must be a string"}), 400
-        job_id = jobs.create()
+        if not isinstance(selected_app, str):
+            return jsonify({"error": "app_name must be a string"}), 400
+        try:
+            environment_type(selected_app)
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 404
+        job_id = jobs.create(selected_app)
         Thread(
             target=_run_job,
-            args=(jobs, job_id, traces_root, room_data_root, content.strip(), session_id or None),
+            args=(jobs, job_id, selected_app, traces_root, room_data_root, content.strip(), session_id or None),
             daemon=True,
         ).start()
         return jsonify({"job_id": job_id, "status": "running"}), 202
@@ -91,14 +150,16 @@ def create_app(
 def _run_job(
     jobs: JobStore,
     job_id: str,
+    app_name: str,
     traces_root: Path,
     room_data_root: Path,
     content: str,
     session_id: str | None,
 ) -> None:
     try:
-        environment = WerewolfEnvironment.from_environment(traces_root=traces_root, room_data_root=room_data_root)
-        result = environment.run(
+        environment = create_environment(app_name, traces_root=traces_root, room_data_root=room_data_root)
+        result = SessionRuntime(trace=environment.session.trace).run(
+            environment,
             task=Task(content),
             session_id=session_id,
             on_session_opened=lambda opened_session_id: jobs.update(job_id, session_id=opened_session_id),
@@ -153,7 +214,7 @@ def session_snapshot(traces_root: Path, room_data_root: Path, session_id: str) -
     return {"session": session, "room": selected, "rooms": rooms, "profiles": profiles}
 
 
-def serve_web(*, host: str = "127.0.0.1", port: int = 8765) -> None:
+def serve_web(*, app_name: str = "incident_consultation", host: str = "127.0.0.1", port: int = 8765) -> None:
     """Start the Flask development server for the local console."""
-    print(f"CodeHarness Web: http://{host}:{port}")
-    create_app().run(host=host, port=port, threaded=True)
+    print(f"CodeHarness Web ({app_name}): http://{host}:{port}")
+    create_app(app_name=app_name).run(host=host, port=port, threaded=True)

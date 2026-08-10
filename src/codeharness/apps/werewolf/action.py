@@ -4,18 +4,19 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from enum import StrEnum
-import json
 from typing import Annotated
 
 from pydantic import Field
 
 from ...core.base_action import Action, BaseAction, RawContentAction, ToolAction
 from ...infra.tools import BaseAgentTools
-from ...infra.room import Room, RoomMessage
+from ...infra.room import Room
 from .state import Phase, WerewolfGameState
 
 
 class ActionName(StrEnum):
+    WOLF_MESSAGE = "wolf_message"
+    SPEAK = "speak"
     WOLF_KILL = "wolf_kill"
     INSPECT = "inspect"
     SAVE = "save"
@@ -23,25 +24,6 @@ class ActionName(StrEnum):
     VOTE = "vote"
     SHOOT = "shoot"
     SKIP_SHOT = "skip_shot"
-
-
-def encode_action(
-    *,
-    action: ActionName,
-    target: str | None,
-    round_no: int,
-    phase: Phase,
-) -> str:
-    return json.dumps(
-        {
-            "type": "werewolf.action",
-            "action": action,
-            "target": target,
-            "round": round_no,
-            "phase": phase,
-        },
-        ensure_ascii=False,
-    )
 
 
 class WerewolfActionTools(BaseAgentTools):
@@ -52,54 +34,36 @@ class WerewolfActionTools(BaseAgentTools):
         agent_name: str,
         room: Room,
         state: WerewolfGameState,
-        has_thought: Callable[[], bool],
     ) -> None:
         super().__init__(agent_name)
-        self.room = room
-        self.state = state
-        self._has_thought = has_thought
 
     def tool_functions(self) -> tuple[Callable[..., str], ...]:
-        return tuple(self._build_action_tool(action) for action in ActionName)
+        game_actions = tuple(action for action in ActionName if action not in {ActionName.WOLF_MESSAGE, ActionName.SPEAK})
+        return (self.wolf_message, self.speak, *(self._build_action_tool(action) for action in game_actions))
+
+    def wolf_message(self, content: Annotated[str, Field(description="发给全部存活狼队友的私下协商内容。")]) -> str:
+        """生成狼队私下协商 Action。"""
+        return "Wolf Message Action 已生成，等待 Environment 执行。"
+
+    def speak(self, content: Annotated[str, Field(description="公开发言内容，应基于当前可见线索进行推理。")]) -> str:
+        """生成面向全体玩家的公开发言 Action。"""
+        return "Speak Action 已生成，等待 Environment 执行。"
 
     def _build_action_tool(self, action: ActionName) -> Callable[..., str]:
         if action in {ActionName.SAVE, ActionName.SKIP_SHOT}:
 
             def submit() -> str:
-                """提交无需目标的游戏动作。"""
-                self._require_thought()
-                self._submit(action, None)
-                return "动作已提交给规则引擎。"
+                """生成一个无需目标的游戏 Action。"""
+                return "游戏 Action 已生成，等待 Environment 执行。"
         else:
 
             def submit(
                 target: Annotated[str, Field(description="目标玩家名称，例如 player-3；必须是存活且合法的玩家。")],
             ) -> str:
-                """提交一个有目标的游戏动作。"""
-                self._require_thought()
-                self._submit(action, target)
-                return "动作已提交给规则引擎。"
+                """生成一个有目标的游戏 Action。"""
+                return "游戏 Action 已生成，等待 Environment 执行。"
         submit.__name__ = action.value
         return submit
-
-    def _require_thought(self) -> None:
-        if not self._has_thought():
-            raise ValueError("请先调用 think(strategy) 完成私密思考，再发送 ROOM 消息或提交游戏动作。")
-
-    def _submit(self, action: ActionName, target: str | None) -> None:
-        self.room.send(
-            RoomMessage(
-                name=self.agent_name,
-                at="game-engine",
-                txt=encode_action(
-                    action=action,
-                    target=target,
-                    round_no=self.state.round_no,
-                    phase=self.state.phase,
-                ),
-            )
-        )
-
 
 class WerewolfAction(BaseAction):
     """Combine the Werewolf action tools with the Action base class."""
@@ -110,16 +74,17 @@ class WerewolfAction(BaseAction):
         agent_name: str,
         room: Room,
         state: WerewolfGameState,
-        has_thought: Callable[[], bool],
     ) -> None:
         super().__init__(
-            tools=WerewolfActionTools(agent_name, room, state, has_thought),
+            tools=WerewolfActionTools(agent_name, room, state),
         )
         self.tool_action_map = {
             "raw content": Action(
                 name="raw content",
                 type=RawContentAction,
             ),
+            "wolf_message": Action(name=ActionName.WOLF_MESSAGE.value, type=ToolAction),
+            "speak": Action(name=ActionName.SPEAK.value, type=ToolAction),
             "wolf_kill": Action(
                 name=ActionName.WOLF_KILL.value,
                 type=ToolAction,

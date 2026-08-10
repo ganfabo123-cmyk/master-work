@@ -28,6 +28,7 @@
 from __future__ import annotations
 
 from ...core.models import AgentResult, Task
+from ...infra.runtimes import SessionRuntime
 from .environment import WerewolfEnvironment, WerewolfWorkflowConfig
 
 
@@ -39,7 +40,12 @@ def run_werewolf_rl(
     config: WerewolfWorkflowConfig | None = None,
 ) -> AgentResult:
     """Run the formal Werewolf Environment through its standard RL loop."""
-    return environment.run(task=task, session_id=session_id, config=config)
+    return SessionRuntime(trace=environment.trace).run(
+        environment,
+        task=task,
+        session_id=session_id,
+        config=config,
+    )
 
 
 __all__ = ["run_werewolf_rl"]

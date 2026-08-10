@@ -13,7 +13,7 @@ from ...infra.prompt import BasePromptBuilder
 from ...infra.tools import BaseAgentTools
 from ...infra.memory import LongTermMemoryEntry, LongTermMemoryManager
 from ...core.models import Message, Prompt, Task
-from ...infra.room import Room, RoomMessage
+from ...infra.room import Room
 from .state import Role, WerewolfGameState
 
 
@@ -61,32 +61,21 @@ class WerewolfPlayerTools(BaseAgentTools):
         wolf_room: Room | None = None,
     ) -> None:
         super().__init__(agent_name)
-        self.room = room
-        self.state = state
-        self.wolf_room = wolf_room
-        self._has_thought = False
-
-    def has_thought(self) -> bool:
-        return self._has_thought
 
     def tool_functions(self) -> tuple[Callable[..., Any], ...]:
-        self._has_thought = False
         return (
             self.think,
             self.save_experience,
             self.list_experiences,
             self.get_experience,
-            self.wolf_message,
-            self.speak,
         )
 
     def think(
         self,
         strategy: Annotated[str, Field(description="本回合的私密策略推理，包括线索、风险和下一步行动依据；不会发送到 ROOM。")],
     ) -> str:
-        """记录本回合私密思考；必须先调用，之后才能发送 ROOM 消息或提交游戏动作。"""
-        self._has_thought = True
-        return "思考已记录。现在可以调用公开发言、私聊或游戏动作工具。"
+        """记录本回合的私密策略推理。"""
+        return "思考已记录。"
 
     def save_experience(
         self,
@@ -134,31 +123,6 @@ class WerewolfPlayerTools(BaseAgentTools):
         if entry is None:
             return f"没有找到名称为“{experience_name}”的长期经验。"
         return entry.render()
-
-    def wolf_message(
-        self,
-        content: Annotated[str, Field(description="发给全部存活狼队友的私下协商内容。")],
-    ) -> str:
-        """向全部存活狼人发送私下协商消息。"""
-        self._require_thought()
-        (self.wolf_room or self.room).send(
-            RoomMessage(name=self.agent_name, at=self.state.alive_wolves(), txt=content)
-        )
-        return "狼队私聊已发送。"
-
-    def speak(
-        self,
-        content: Annotated[str, Field(description="公开发言内容，应基于当前可见线索进行推理。")],
-    ) -> str:
-        """向全体玩家公开发言。"""
-        self._require_thought()
-        self.room.send(RoomMessage(name=self.agent_name, at="all", txt=content))
-        return "公开发言已发送。"
-
-    def _require_thought(self) -> None:
-        if not self._has_thought:
-            raise ValueError("请先调用 think(strategy) 完成私密思考，再发送 ROOM 消息或提交游戏动作。")
-
 
 class WerewolfPolicy(BasePolicy):
     """Combine the Werewolf Prompt Builder and Policy tools."""

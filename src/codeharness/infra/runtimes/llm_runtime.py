@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Collection
+from collections.abc import Callable, Collection, Iterable
 import json
 from time import perf_counter
 from typing import Any
@@ -29,6 +29,7 @@ class LLMRuntime:
         messages: tuple[Message, ...] | list[Message] | None,
         initial_messages: Callable[[Task], tuple[Message, ...]],
         tool_functions: Callable[[], tuple[ToolFunction, ...]],
+        action_tool_names: Collection[str],
         tools: tuple[ToolFunction, ...] | None,
         available_tool_names: Collection[str] | None,
         tool_schemas: list[dict[str, Any]] | None,
@@ -39,6 +40,7 @@ class LLMRuntime:
         trace: TraceRecorder | None,
         session_id: str | None,
         record_initial_messages: bool,
+        message_sink: Callable[[Iterable[Message]], object] | None,
         llm_kwargs: dict[str, Any],
     ) -> Message:
         if messages is None:
@@ -72,11 +74,11 @@ class LLMRuntime:
                 **generation_options,
             )
             if result.parse_error:
-                self._append_feedback(history, trace, session_id, agent_name, f"Model parse error: {result.parse_error}")
+                self._append_feedback(history, trace, session_id, agent_name, f"Model parse error: {result.parse_error}", message_sink)
                 continue
             if not result.tool_calls:
                 assistant_message = Message("assistant", result.parsed_content)
-                history.append(assistant_message)
+                self._append_generated(history, assistant_message, message_sink)
                 self._record_assistant_message(trace, session_id, agent_name, assistant_message, result)
                 return assistant_message
 
@@ -85,25 +87,40 @@ class LLMRuntime:
                 result.parsed_content or "",
                 tool_calls=self._wire_tool_calls(result.tool_calls),
             )
-            history.append(assistant_message)
+            self._append_generated(history, assistant_message, message_sink)
             self._record_assistant_message(trace, session_id, agent_name, assistant_message, result)
-            defer_for_thought = any(call.name == "think" for call in result.tool_calls)
+            terminal_action_seen = False
             for call in result.tool_calls:
-                history.append(
+                if terminal_action_seen:
+                    skipped = Message("tool", "本轮已经产生 Action，后续工具调用未执行。", name=call.name, tool_call_id=call.id)
+                    self._record_tool_message(trace, session_id, agent_name, skipped, duration_ms=0, success=False)
+                    self._append_generated(history, skipped, message_sink)
+                    continue
+                if (
+                    call.name in action_tool_names
+                    and call.name in selected_tool_names
+                    and call.name in allowed_tool_names
+                ):
+                    terminal_action_seen = True
+                    continue
+                self._append_generated(
+                    history,
                     self._handle_tool_call(
                         agent_name=agent_name,
                         call=call,
                         selected_tool_names=selected_tool_names,
                         allowed_tool_names=allowed_tool_names,
                         available_names=available_names,
-                        defer_for_thought=defer_for_thought,
                         tool_registry=active_registry,
                         observation=active_observation,
                         trace=trace,
                         session_id=session_id,
-                    )
+                    ),
+                    message_sink,
                 )
-        raise RuntimeError(f"Agent '{agent_name}' exceeded max_turns={max_turns} without a final assistant message")
+            if terminal_action_seen:
+                return assistant_message
+        raise RuntimeError(f"Agent '{agent_name}' exceeded max_turns={max_turns} without producing an Action or raw content")
 
     @staticmethod
     def build_tool_registry(tools: tuple[ToolFunction, ...]) -> ToolRegistry:
@@ -128,7 +145,6 @@ class LLMRuntime:
         selected_tool_names: tuple[str, ...],
         allowed_tool_names: frozenset[str],
         available_names: tuple[str, ...],
-        defer_for_thought: bool,
         tool_registry: ToolRegistry,
         observation: Observation,
         trace: TraceRecorder | None,
@@ -140,18 +156,13 @@ class LLMRuntime:
             self._record_tool_message(trace, session_id, agent_name, tool_message, duration_ms=0, success=False)
             return tool_message
 
-        if defer_for_thought and call.name != "think":
-            tool_message = Message("tool", "请先仅调用 think 并根据其返回结果继续；本次消息或动作调用未执行。", name=call.name, tool_call_id=call.id)
-            self._record_tool_message(trace, session_id, agent_name, tool_message, duration_ms=0, success=False)
-            return tool_message
-
         started = perf_counter()
         execution_error: Exception | None = None
 
         def execute_tool(name: str, arguments: dict[str, Any]) -> Any:
             nonlocal execution_error
             try:
-                return tool_registry.invoke(name, arguments)
+                return self.execute_tool(tool_registry, name, arguments)
             except Exception as error:
                 execution_error = error
                 raise
@@ -173,6 +184,11 @@ class LLMRuntime:
             return tool_message
 
     @staticmethod
+    def execute_tool(tool_registry: ToolRegistry, name: str, arguments: dict[str, Any]) -> Any:
+        """Execute one registered Tool without applying domain semantics."""
+        return tool_registry.invoke(name, arguments)
+
+    @staticmethod
     def _record_initial_trace(trace: TraceRecorder, session_id: str, agent_name: str, messages: list[Message]) -> None:
         trace.record_initial_messages(session_id, agent_name, messages)
 
@@ -187,8 +203,14 @@ class LLMRuntime:
             trace.record_tool_message(session_id, agent_name, message, success=success, duration_ms=duration_ms)
 
     @staticmethod
-    def _append_feedback(history: list[Message], trace: TraceRecorder | None, session_id: str | None, agent_name: str, content: str) -> None:
+    def _append_feedback(history: list[Message], trace: TraceRecorder | None, session_id: str | None, agent_name: str, content: str, message_sink: Callable[[Iterable[Message]], object] | None) -> None:
         message = Message("user", content)
-        history.append(message)
+        LLMRuntime._append_generated(history, message, message_sink)
         if trace is not None and session_id is not None:
             trace.record_feedback(session_id, agent_name, message)
+
+    @staticmethod
+    def _append_generated(history: list[Message], message: Message, message_sink: Callable[[Iterable[Message]], object] | None) -> None:
+        history.append(message)
+        if message_sink is not None:
+            message_sink((message,))

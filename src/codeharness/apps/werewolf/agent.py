@@ -38,7 +38,6 @@ class WerewolfPlayerAgent(Agent):
             agent_name=name,
             room=public_room,
             state=state,
-            has_thought=policy.tools.has_thought,
         )
         super().__init__(
             name=name,
