@@ -29,6 +29,11 @@ class ActionManager(ABC):
         """Return the actions available to one Agent for the current State."""
         raise NotImplementedError
 
+    @abstractmethod
+    def resolve_actions(self, state: State, actions: object) -> Any:
+        """Resolve collected Actions into the input consumed by Environment.step()."""
+        raise NotImplementedError
+
 
 class Environment(BaseRL, ABC):
     """Own the LLM Agents, State, and Observation of one environment."""
@@ -62,6 +67,21 @@ class Environment(BaseRL, ABC):
     def finish_trace(self, session_id: str, status: str, error: str | None = None) -> None:
         if self.trace is not None:
             self.trace.finish_session(session_id, status, error)
+
+    @abstractmethod
+    def select_agents(self, state: State) -> Sequence[Agent]:
+        """Return the Agents that act for the current State."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def ready_to_step(self, state: State, actions: object) -> bool:
+        """Return whether the collected Actions are ready for one State transition."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def build_events(self, old_state: State, actions: object, new_state: State) -> Sequence[Any]:
+        """Build feedback events from one completed State transition."""
+        raise NotImplementedError
 
     @abstractmethod
     def orchestrate_agents(self) -> Any:

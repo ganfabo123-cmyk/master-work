@@ -2,8 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from ...core.models import AgentState, Message, Prompt
+from ...core.models import Task
+from ..trace import TraceRecorder
+
+if TYPE_CHECKING:
+    from ...core.base_agent import Agent
 
 
 class ContextBuilder:
@@ -42,3 +48,23 @@ class IncrementalContext:
 
     def history(self) -> tuple[Message, ...]:
         return tuple(self.messages)
+
+
+def open_incremental_context(
+    *,
+    agent: Agent,
+    task: Task,
+    session_id: str,
+    trace: TraceRecorder,
+) -> IncrementalContext:
+    """Restore one Agent's message stream or initialize it from its Policy."""
+    try:
+        restored = trace.messages(session_id, agent.name)
+    except KeyError:
+        restored = ()
+    context, initial = IncrementalContext.restore_or_initialize(
+        restored_messages=restored,
+        initial_messages=agent.initial_messages(Task(task.description)),
+    )
+    trace.record_initial_messages(session_id, agent.name, initial)
+    return context

@@ -135,3 +135,7 @@ class Agent:
             record_initial_messages=record_initial_messages,
             llm_kwargs=llm_kwargs,
         )
+
+    def act(self, observation: Observation) -> Message:
+        """Apply this Agent's Policy to one Observation and return its response."""
+        return self.run(observation=observation)
