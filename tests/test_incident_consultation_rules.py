@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from coworker.apps.incident_consultation.action import IncidentAction
 from coworker.apps.incident_consultation.case_loader import Evidence, IncidentCase
-from coworker.apps.incident_consultation.environment import IncidentActionManager, IncidentActionValue
+from coworker.apps.incident_consultation.environment import IncidentActionManager, IncidentActionPayload, IncidentActionValue
 from coworker.apps.incident_consultation.observation import build_state_message
 from coworker.apps.incident_consultation.state import ExpertRole, IncidentState
 from coworker.core.base_action import BaseAction
@@ -11,6 +11,7 @@ from coworker.core.base_environment import ActionManager, Environment
 from coworker.core.base_observation import Observation
 from coworker.core.base_policy import BasePolicy
 from coworker.core.base_state import State
+from coworker.core.models import ToolCall
 from coworker.infra.room import AgentProfile, Room
 
 
@@ -55,8 +56,17 @@ def test_expert_observation_and_action_are_limited_to_owned_evidence(tmp_path) -
     room.invite("metrics-expert")
     action = IncidentAction(agent_name="metrics-expert", room=room)
     manager = IncidentActionManager({"metrics-expert": action})
-    valid = IncidentActionValue("a1", "metrics-expert", "submit_finding", "checkoutservice", "CPU changed", ("metrics-1",), 80)
-    invalid = IncidentActionValue("a2", "metrics-expert", "submit_finding", "checkoutservice", "log error", ("logs-1",), 80)
+    observation = Observation("obs", "task", "session")
+    valid = IncidentActionValue(
+        "a1", "metrics-expert", "submit_finding",
+        IncidentActionPayload("checkoutservice", "CPU changed", ("metrics-1",), 80),
+        ToolCall("call-1", "submit_finding", {}), observation,
+    )
+    invalid = IncidentActionValue(
+        "a2", "metrics-expert", "submit_finding",
+        IncidentActionPayload("checkoutservice", "log error", ("logs-1",), 80),
+        ToolCall("call-2", "submit_finding", {}), observation,
+    )
 
     assert manager.validate_action(valid, state)
     assert not manager.validate_action(invalid, state)

@@ -10,17 +10,20 @@ import os
 from pathlib import Path
 from typing import Any
 
+from ...core.action_envelope import ActionEnvelope
 from ...core.base_agent import Agent
 from ...core.base_environment import ActionManager, Environment
 from ...core.base_observation import Observation
 from ...core.base_state import State
-from ...core.models import AgentResult, Message, Task, ToolCall
+from ...core.events import AppEvent, EventDelivery
+from ...core.models import AgentResult, Message, Task
 from ...core.session import SessionContext
 from ...infra import StateStore
 from ...infra.client import LLMClient, OpenAICompatibleClient
-from ...infra.room import AgentProfile, Room, RoomMessage
-from ...infra.runtimes import IncrementalContext, RoomRuntime, SessionRuntime
-from ...infra.session import SessionManager
+from ...infra.events import RoomEventDispatcher
+from ...infra.room import AgentProfile, RoomMessage
+from ...infra.runtimes import RoomRuntime, SessionRuntime, SynchronousAppRuntime
+from ...infra.session import AppSession, SessionManager
 from .action import ENGINE_NAME
 from .agent import ScriptMurderAgent
 from .case_loader import ScriptMurderCase, load_case
@@ -32,14 +35,19 @@ DISCUSSION_PHASES = {ScriptMurderPhase.ROUND_1_DISCUSSION, ScriptMurderPhase.ROU
 
 
 @dataclass(frozen=True, slots=True)
-class ScriptMurderActionValue:
-    message_id: str
-    actor: str
-    name: str
-    tool_call: ToolCall
-    observation: ScriptMurderObservation
+class ScriptMurderActionPayload:
     content: str = ""
     submission: FinalSubmission | None = None
+
+
+class ScriptMurderActionValue(ActionEnvelope[ScriptMurderActionPayload]):
+    @property
+    def content(self) -> str:
+        return self.payload.content
+
+    @property
+    def submission(self) -> FinalSubmission | None:
+        return self.payload.submission
 
 
 class ScriptMurderActionManager(ActionManager):
@@ -58,9 +66,9 @@ class ScriptMurderActionManager(ActionManager):
             return None
         name = call.name
         if name == "speak":
-            return ScriptMurderActionValue(f"{actor}:{call.id}", actor, name, call, observation, content=str(payload.get("message", "")).strip())
+            return ScriptMurderActionValue(f"{actor}:{call.id}", actor, name, ScriptMurderActionPayload(content=str(payload.get("message", "")).strip()), call, observation)
         if name == "pass_turn":
-            return ScriptMurderActionValue(f"{actor}:{call.id}", actor, name, call, observation)
+            return ScriptMurderActionValue(f"{actor}:{call.id}", actor, name, ScriptMurderActionPayload(), call, observation)
         if name != "submit_resolution":
             return None
         submission = FinalSubmission(
@@ -69,7 +77,7 @@ class ScriptMurderActionManager(ActionManager):
             target=None if payload.get("target") is None else str(payload["target"]),
             leader_vote=str(payload.get("leader_vote", "")),
         )
-        return ScriptMurderActionValue(f"{actor}:{call.id}", actor, name, call, observation, submission=submission)
+        return ScriptMurderActionValue(f"{actor}:{call.id}", actor, name, ScriptMurderActionPayload(submission=submission), call, observation)
 
     def validate_action(self, action: Any, state: State) -> bool:
         if not isinstance(action, ScriptMurderActionValue) or not isinstance(state, ScriptMurderState):
@@ -121,17 +129,6 @@ class ScriptMurderWorkflowConfig:
     case_root: Path | None = None
 
 
-@dataclass(slots=True)
-class ScriptMurderSession:
-    session_id: str
-    public_room: Room
-    private_rooms: dict[str, Room]
-    agents: dict[str, ScriptMurderAgent]
-    contexts: dict[str, IncrementalContext]
-    state: ScriptMurderState
-    state_store: StateStore
-
-
 class ScriptMurderEnvironment(Environment):
     """Run one deterministic two-round murder-mystery session."""
 
@@ -143,9 +140,11 @@ class ScriptMurderEnvironment(Environment):
         self.llm = llm
         self.model = model
         self.room_runtime = RoomRuntime(trace=session.trace, max_turns=max_turns)
+        self.sync_runtime = SynchronousAppRuntime()
+        self.event_dispatcher = RoomEventDispatcher()
         self.action_manager = ScriptMurderActionManager()
         self.case = load_case()
-        self._active: ScriptMurderSession | None = None
+        self._active: AppSession[ScriptMurderState] | None = None
         self._task: Task | None = None
         placeholder = ScriptMurderState.initial("", "")
         super().__init__((), placeholder, Observation("script-murder-placeholder", "", ""), trace=session.trace)
@@ -163,25 +162,8 @@ class ScriptMurderEnvironment(Environment):
         self._task = task
         self.agents = tuple(self._active.agents.values())
         self.state = self._active.state
-        while not self._active.state.is_terminal:
-            current = self._active.state
-            if current.phase is ScriptMurderPhase.RESOLUTION:
-                old_state = ScriptMurderState.from_dict(current.to_dict())
-                self._active.state = self.step(current, None)
-                self._publish_events(old_state, None, self._active.state)
-                continue
-            agents = self.select_agents(current)
-            if len(agents) != 1:
-                raise RuntimeError(f"Expected one script murder actor in phase {current.phase.value}")
-            action = self.act(agents[0], self.observe(current, agents[0]))
-            if action is None:
-                raise RuntimeError(f"No legal action produced by {agents[0].name}")
-            old_state = ScriptMurderState.from_dict(current.to_dict())
-            self._active.state = self.step(current, action)
-            if old_state.phase is ScriptMurderPhase.ROUND_1_DISCUSSION and self._active.state.phase is ScriptMurderPhase.ROUND_2_DISCUSSION:
-                self._deliver_round(2)
-            self._publish_events(old_state, action, self._active.state)
-        return AgentResult("completed", Message("assistant", self._active.state.ending_report), None, self._active.session_id)
+        state = self.sync_runtime.run(self, self._active)
+        return AgentResult("completed", Message("assistant", state.ending_report), None, self._active.session_id)
 
     def select_agents(self, state: State) -> tuple[Agent, ...]:
         current, active = self._state(state), self._require_active()
@@ -193,7 +175,7 @@ class ScriptMurderEnvironment(Environment):
         available = self.action_manager.available_actions(current, agent)
         return ScriptMurderObservation(
             state_message=build_state_message(current, agent.name, available), available_tool_names=available,
-            public_room=active.public_room, private_room=active.private_rooms[agent.name],
+            public_room=active.room("public"), private_room=active.room(f"private:{agent.name}"),
             task_id=current.task_id, session_id=current.session_id,
         )
 
@@ -202,7 +184,7 @@ class ScriptMurderEnvironment(Environment):
             raise TypeError("observation must be ScriptMurderObservation")
         active = self._require_active()
         turn = self.room_runtime.run_turn(
-            room=active.public_room, additional_rooms=(observation.private_room,), agent_name=agent.name,
+            room=active.room("public"), additional_rooms=(observation.private_room,), agent_name=agent.name,
             task=self._require_task(), session_id=active.session_id, incremental_context=active.contexts[agent.name],
             events=(observation.state_message,), available_tool_names=observation.available_tool_names,
         )
@@ -212,7 +194,23 @@ class ScriptMurderEnvironment(Environment):
 
     def ready_to_step(self, state: State, actions: object) -> bool:
         current = self._state(state)
-        return current.phase is ScriptMurderPhase.RESOLUTION or self.action_manager.validate_action(actions, current)
+        if current.phase is ScriptMurderPhase.RESOLUTION:
+            return isinstance(actions, dict) and not actions
+        return isinstance(actions, dict) and len(actions) == 1 and self.action_manager.validate_action(next(iter(actions.values())), current)
+
+    def resolve_collected_actions(self, state: State, actions: dict[str, ActionEnvelope[Any]]) -> ScriptMurderActionValue | None:
+        current = self._state(state)
+        if current.phase is ScriptMurderPhase.RESOLUTION:
+            return None
+        if len(actions) != 1:
+            raise RuntimeError(f"Expected one script murder actor in phase {current.phase.value}")
+        return self.action_manager.resolve_actions(current, next(iter(actions.values())))
+
+    def after_transition(self, old_state: State, actions: object, new_state: State) -> State:
+        before, after = self._state(old_state), self._state(new_state)
+        if before.phase is ScriptMurderPhase.ROUND_1_DISCUSSION and after.phase is ScriptMurderPhase.ROUND_2_DISCUSSION:
+            self._deliver_round(2)
+        return after
 
     def step(self, state: State, action: Any) -> State:
         current, active = self._state(state), self._require_active()
@@ -238,7 +236,7 @@ class ScriptMurderEnvironment(Environment):
             next_state.consumed_action_ids.add(resolved.message_id)
             if next_state.phase in DISCUSSION_PHASES:
                 if resolved.name == "speak":
-                    active.public_room.send(RoomMessage(name=resolved.actor, at="all", txt=resolved.content))
+                    active.room("public").send(RoomMessage(name=resolved.actor, at="all", txt=resolved.content))
                 next_state.speaker_index += 1
                 if next_state.speaker_index == len(PLAYERS):
                     next_state.speaker_index = 0
@@ -251,10 +249,9 @@ class ScriptMurderEnvironment(Environment):
                     next_state.phase = ScriptMurderPhase.RESOLUTION
         active.state = next_state
         self.state = next_state
-        active.state_store.update(active.session_id, "script_murder", next_state)
         return next_state
 
-    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[Message, ...]:
+    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[AppEvent, ...]:
         before, after = self._state(old_state), self._state(new_state)
         if before.phase is not after.phase:
             labels = {
@@ -264,13 +261,17 @@ class ScriptMurderEnvironment(Environment):
                 ScriptMurderPhase.FINISHED: after.ending_report,
             }
             content = labels.get(after.phase)
-            return () if content is None else (Message("user", content),)
+            return () if content is None else (AppEvent(f"{after.session_id}:script-murder:{after.phase.value}", "phase_changed", ENGINE_NAME, content),)
         return ()
+
+    def dispatch_events(self, events: tuple[AppEvent, ...]) -> None:
+        deliveries = tuple(EventDelivery(event.event_id, "public") for event in events)
+        self.event_dispatcher.dispatch(events, deliveries, rooms=self._require_active().rooms)
 
     def orchestrate_agents(self) -> Any:
         return self.run
 
-    def _open(self, task: Task, context: SessionContext) -> ScriptMurderSession:
+    def _open(self, task: Task, context: SessionContext) -> AppSession[ScriptMurderState]:
         session_id = context.session_id
         store = StateStore(self.session.trace.root.parent / "state" / "data")
         if context.resumed:
@@ -309,24 +310,26 @@ class ScriptMurderEnvironment(Environment):
         for player, room in private_rooms.items():
             if player not in room.participants():
                 self.room_runtime.invite_agents(room, (player,), session_id=session_id)
-        active = ScriptMurderSession(
-            session_id, public_room, private_rooms, agents,
+        active = AppSession(
+            session_id, state, agents,
             {player: self.room_runtime.open_incremental_context(agent_name=player, task=task, session_id=session_id) for player in PLAYERS},
-            state, store,
+            {"public": public_room, **{f"private:{player}": room for player, room in private_rooms.items()}},
+            store, "script_murder",
         )
         self._active = active
         if not context.resumed:
             self._publish_opening()
             self._deliver_round(1)
-        store.update(session_id, "script_murder", state)
+        active.persist()
         return active
 
     def _publish_opening(self) -> None:
         active = self._require_active()
         cast = "\n".join(f"- {self.case.characters[key].name}：{value}" for key, value in self.case.public_cast.items())
         situation = "\n".join(f"- {item}" for item in self.case.public_situation)
-        active.public_room.send(RoomMessage(name=ENGINE_NAME, at="all", txt=f"# {self.case.title}\n\n{self.case.public_briefing}\n\n{situation}\n\n公开角色：\n{cast}"))
-        for player, room in active.private_rooms.items():
+        active.room("public").send(RoomMessage(name=ENGINE_NAME, at="all", txt=f"# {self.case.title}\n\n{self.case.public_briefing}\n\n{situation}\n\n公开角色：\n{cast}"))
+        for player in PLAYERS:
+            room = active.room(f"private:{player}")
             character = self.case.characters[active.state.character_for(player)]
             goals = "\n".join(f"- {item}" for item in character.goals)
             room.send(RoomMessage(name=ENGINE_NAME, at=player, txt=f"你的角色是 {character.name}。\n\n{character.private_briefing}\n\n你的目标：\n{goals}"))
@@ -338,13 +341,13 @@ class ScriptMurderEnvironment(Environment):
                 continue
             document = self.case.documents[document_id]
             if document.recipients == "all":
-                active.public_room.send(RoomMessage(name=ENGINE_NAME, at="all", txt=f"【第 {round_no} 轮材料】{document.title}\n{document.content}"))
+                active.room("public").send(RoomMessage(name=ENGINE_NAME, at="all", txt=f"【第 {round_no} 轮材料】{document.title}\n{document.content}"))
             else:
                 for character_id in document.recipients:
                     player = active.state.player_for(character_id)
-                    active.private_rooms[player].send(RoomMessage(name=ENGINE_NAME, at=player, txt=f"【第 {round_no} 轮私密材料】{document.title}\n{document.content}"))
+                    active.room(f"private:{player}").send(RoomMessage(name=ENGINE_NAME, at=player, txt=f"【第 {round_no} 轮私密材料】{document.title}\n{document.content}"))
             active.state.delivered_document_ids.add(document_id)
-        active.state_store.update(active.session_id, "script_murder", active.state)
+        active.persist()
 
     def _resolve_case(self, state: ScriptMurderState) -> None:
         by_character = {state.character_for(player): submission for player, submission in state.final_submissions.items()}
@@ -403,12 +406,7 @@ class ScriptMurderEnvironment(Environment):
         lines.append("\n最终声明、行动及投票的完整结构化结果已保存在 Session State 和 Trace 中。")
         return "\n".join(lines)
 
-    def _publish_events(self, old_state: ScriptMurderState, action: object, new_state: ScriptMurderState) -> None:
-        active = self._require_active()
-        for event in self.build_events(old_state, action, new_state):
-            active.public_room.send(RoomMessage(name=ENGINE_NAME, at="all", txt=event.content))
-
-    def _require_active(self) -> ScriptMurderSession:
+    def _require_active(self) -> AppSession[ScriptMurderState]:
         if self._active is None:
             raise RuntimeError("Script murder session has not started")
         return self._active

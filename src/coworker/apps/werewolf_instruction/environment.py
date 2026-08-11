@@ -9,17 +9,20 @@ import os
 from pathlib import Path
 from typing import Any
 
+from ...core.action_envelope import ActionEnvelope
 from ...core.base_agent import Agent
 from ...core.base_environment import ActionManager, Environment
 from ...core.base_observation import Observation
 from ...core.base_state import State
-from ...core.models import AgentResult, Message, Task, ToolCall
+from ...core.events import AppEvent, EventDelivery
+from ...core.models import AgentResult, Message, Task
 from ...core.session import SessionContext
 from ...infra import StateStore
 from ...infra.client import LLMClient, OpenAICompatibleClient
-from ...infra.room import AgentProfile, Room, RoomMessage
-from ...infra.runtimes import IncrementalContext, RoomRuntime, SessionRuntime
-from ...infra.session import SessionManager
+from ...infra.events import RoomEventDispatcher
+from ...infra.room import AgentProfile, RoomMessage
+from ...infra.runtimes import RoomRuntime, SessionRuntime, SynchronousAppRuntime
+from ...infra.session import AppSession, SessionManager
 from .action import ENGINE_NAME, WerewolfInstructionAction
 from .agent import WerewolfInstructionAgent
 from .observation import WerewolfInstructionObservation, build_state_message
@@ -27,13 +30,14 @@ from .state import InstructionPhase, PARTICIPANTS, WerewolfInstructionState
 
 
 @dataclass(frozen=True, slots=True)
-class InstructionActionValue:
-    message_id: str
-    actor: str
-    name: str
+class InstructionActionPayload:
     content: str
-    tool_call: ToolCall
-    observation: WerewolfInstructionObservation
+
+
+class InstructionActionValue(ActionEnvelope[InstructionActionPayload]):
+    @property
+    def content(self) -> str:
+        return self.payload.content
 
 
 class WerewolfInstructionActionManager(ActionManager):
@@ -50,7 +54,7 @@ class WerewolfInstructionActionManager(ActionManager):
         except (StopIteration, TypeError, ValueError, json.JSONDecodeError):
             return None
         key = "content" if call.name == "speak" else "instruction"
-        return InstructionActionValue(f"{actor}:{call.id}", actor, call.name, str(payload.get(key, "")).strip(), call, observation)
+        return InstructionActionValue(f"{actor}:{call.id}", actor, call.name, InstructionActionPayload(str(payload.get(key, "")).strip()), call, observation)
 
     def validate_action(self, action: Any, state: State) -> bool:
         return (
@@ -83,16 +87,6 @@ class WerewolfInstructionWorkflowConfig:
     max_discussion_rounds: int = 8
 
 
-@dataclass(slots=True)
-class WerewolfInstructionSession:
-    session_id: str
-    room: Room
-    agents: dict[str, WerewolfInstructionAgent]
-    contexts: dict[str, IncrementalContext]
-    state: WerewolfInstructionState
-    state_store: StateStore
-
-
 class WerewolfInstructionEnvironment(Environment):
     session_mode = "werewolf-instruction"
     entry_agent = "player-1"
@@ -102,9 +96,12 @@ class WerewolfInstructionEnvironment(Environment):
         self.llm = llm
         self.model = model
         self.room_runtime = RoomRuntime(trace=session.trace, max_turns=max_turns)
+        self.sync_runtime = SynchronousAppRuntime()
+        self.event_dispatcher = RoomEventDispatcher()
         self.action_manager = WerewolfInstructionActionManager()
-        self._active: WerewolfInstructionSession | None = None
+        self._active: AppSession[WerewolfInstructionState] | None = None
         self._task: Task | None = None
+        self._max_discussion_rounds = WerewolfInstructionWorkflowConfig().max_discussion_rounds
         placeholder = WerewolfInstructionState.initial("", "")
         super().__init__((), placeholder, Observation("werewolf-instruction-placeholder", "", ""), trace=session.trace)
 
@@ -121,20 +118,15 @@ class WerewolfInstructionEnvironment(Environment):
         self.agents = tuple(self._active.agents.values())
         self.state = self._active.state
         active = self._active
-        limit = (config or WerewolfInstructionWorkflowConfig()).max_discussion_rounds
-        while not active.state.is_terminal:
-            if active.state.discussion_round > limit:
-                raise RuntimeError(f"Not all participants submitted instructions within {limit} discussion rounds")
-            actions: dict[str, InstructionActionValue] = {}
-            for agent in self.select_agents(active.state):
-                action = self.act(agent, self.observe(active.state, agent))
-                if action is not None:
-                    actions[action.actor] = action
-            old_state = WerewolfInstructionState.from_dict(active.state.to_dict())
-            active.state = self.step(active.state, self.action_manager.resolve_actions(active.state, actions))
-            for event in self.build_events(old_state, actions, active.state):
-                active.room.send(RoomMessage(name=ENGINE_NAME, at="all", txt=event.content))
-        return AgentResult("completed", Message("assistant", active.state.tutorial), None, active.session_id)
+        self._max_discussion_rounds = (config or WerewolfInstructionWorkflowConfig()).max_discussion_rounds
+        state = self.sync_runtime.run(self, active)
+        return AgentResult("completed", Message("assistant", state.tutorial), None, active.session_id)
+
+    def before_cycle(self, state: State) -> tuple[AppEvent, ...]:
+        current = self._state(state)
+        if current.discussion_round > self._max_discussion_rounds:
+            raise RuntimeError(f"Not all participants submitted instructions within {self._max_discussion_rounds} discussion rounds")
+        return ()
 
     def select_agents(self, state: State) -> tuple[Agent, ...]:
         current, active = self._state(state), self._require_active()
@@ -142,13 +134,13 @@ class WerewolfInstructionEnvironment(Environment):
 
     def observe(self, state: State, agent: Agent) -> Observation:
         current, active = self._state(state), self._require_active()
-        return WerewolfInstructionObservation(state_message=build_state_message(current, agent.name), available_tool_names=self.action_manager.available_actions(current, agent), room=active.room, task_id=current.task_id, session_id=current.session_id)
+        return WerewolfInstructionObservation(state_message=build_state_message(current, agent.name), available_tool_names=self.action_manager.available_actions(current, agent), room=active.room("public"), task_id=current.task_id, session_id=current.session_id)
 
     def act(self, agent: Agent, observation: Observation) -> InstructionActionValue | None:
         if not isinstance(observation, WerewolfInstructionObservation):
             raise TypeError("observation must be WerewolfInstructionObservation")
         active = self._require_active()
-        turn = self.room_runtime.run_turn(room=active.room, agent_name=agent.name, task=self._require_task(), session_id=active.session_id, incremental_context=active.contexts[agent.name], events=(observation.state_message,), available_tool_names=observation.available_tool_names)
+        turn = self.room_runtime.run_turn(room=active.room("public"), agent_name=agent.name, task=self._require_task(), session_id=active.session_id, incremental_context=active.contexts[agent.name], events=(observation.state_message,), available_tool_names=observation.available_tool_names)
         if turn.status == "failed":
             raise RuntimeError(f"Instruction discussion turn failed for {agent.name}: {turn.error}")
         return self.action_manager.resolve_action((agent.name, turn.content, observation, active.state))
@@ -170,7 +162,7 @@ class WerewolfInstructionEnvironment(Environment):
                     message_sink=active.contexts[item.actor].append_turn_messages,
                 )
                 if item.name == "speak":
-                    active.room.send(RoomMessage(name=item.actor, at="all", txt=item.content))
+                    active.room("public").send(RoomMessage(name=item.actor, at="all", txt=item.content))
                     next_state.spoken.add(item.actor)
                 else:
                     next_state.instructions[item.actor] = item.content
@@ -188,19 +180,22 @@ class WerewolfInstructionEnvironment(Environment):
             next_state.discussion_round += 1
         active.state = next_state
         self.state = next_state
-        active.state_store.update(active.session_id, "werewolf_instruction", next_state)
         return next_state
 
-    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[Message, ...]:
+    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[AppEvent, ...]:
         before, after = self._state(old_state), self._state(new_state)
         if not before.is_terminal and after.is_terminal:
-            return (Message("user", "八名参与者均已提交教程内容，讨论结束。"),)
+            return (AppEvent(f"{after.session_id}:instruction:finished", "workflow_finished", ENGINE_NAME, "八名参与者均已提交教程内容，讨论结束。"),)
         return ()
+
+    def dispatch_events(self, events: tuple[AppEvent, ...]) -> None:
+        deliveries = tuple(EventDelivery(event.event_id, "public") for event in events)
+        self.event_dispatcher.dispatch(events, deliveries, rooms=self._require_active().rooms)
 
     def orchestrate_agents(self) -> Any:
         return self.run
 
-    def _open(self, task: Task, context: SessionContext) -> WerewolfInstructionSession:
+    def _open(self, task: Task, context: SessionContext) -> AppSession[WerewolfInstructionState]:
         session_id = context.session_id
         store = StateStore(self.session.trace.root.parent / "state" / "data")
         if context.resumed:
@@ -222,11 +217,12 @@ class WerewolfInstructionEnvironment(Environment):
         missing = tuple(name for name in PARTICIPANTS if name not in room.participants())
         if missing:
             self.room_runtime.invite_agents(room, missing, session_id=session_id)
-        store.update(session_id, "werewolf_instruction", state)
         contexts = {name: self.room_runtime.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
-        return WerewolfInstructionSession(session_id, room, agents, contexts, state, store)
+        active = AppSession(session_id, state, agents, contexts, {"public": room}, store, "werewolf_instruction")
+        active.persist()
+        return active
 
-    def _require_active(self) -> WerewolfInstructionSession:
+    def _require_active(self) -> AppSession[WerewolfInstructionState]:
         if self._active is None:
             raise RuntimeError("Werewolf instruction discussion has not started")
         return self._active

@@ -12,20 +12,23 @@ from typing import Any
 
 from .agent import WerewolfPlayerAgent
 from .action import ActionName, WerewolfAction
-from ...infra.runtimes import IncrementalContext
+from ...core.action_envelope import ActionEnvelope
+from ...core.events import AppEvent, EventDelivery
+from ...infra.events import RoomEventDispatcher
 from ...infra.runtimes.room_runtime import RoomRuntime
 from ...infra.runtimes.session_runtime import SessionRuntime
+from ...infra.runtimes.synchronous_app_runtime import SynchronousAppRuntime
 from ...core.base_agent import Agent
 from ...core.base_environment import ActionManager, Environment
 from ...core.base_observation import Observation
 from ...core.base_state import State
 from ...infra import StateStore
-from ...core.models import AgentResult, Message, Task, ToolCall
+from ...core.models import AgentResult, Message, Task
 from ...core.session import SessionContext
 from ...infra.client import LLMClient, OpenAICompatibleClient
 from .observation import WerewolfObservation, WerewolfTurnObservation
 from ...infra.room import AgentProfile, Room, RoomMessage
-from ...infra.session import SessionManager
+from ...infra.session import AppSession, SessionManager
 from .state import Death, Phase, Role, WerewolfGameState, Winner
 
 ENGINE_NAME = "game-engine"
@@ -39,16 +42,34 @@ class GameEvent:
 
 
 @dataclass(frozen=True, slots=True)
-class GameAction:
-    message_id: str
-    actor: str
+class GameActionPayload:
     action: ActionName
     target: str | None
     round_no: int
     phase: Phase
-    tool_call: ToolCall
-    observation: WerewolfTurnObservation
     content: str = ""
+
+
+class GameAction(ActionEnvelope[GameActionPayload]):
+    @property
+    def action(self) -> ActionName:
+        return self.payload.action
+
+    @property
+    def target(self) -> str | None:
+        return self.payload.target
+
+    @property
+    def round_no(self) -> int:
+        return self.payload.round_no
+
+    @property
+    def phase(self) -> Phase:
+        return self.payload.phase
+
+    @property
+    def content(self) -> str:
+        return self.payload.content
 
 
 class WerewolfActionManager(ActionManager):
@@ -69,15 +90,9 @@ class WerewolfActionManager(ActionManager):
             mapped_action = self.action.get_action(call.name)
             target = payload.get("target")
             return GameAction(
-                message_id=f"{actor}:{call.id}",
-                actor=actor,
-                action=ActionName(mapped_action.name),
-                target=target if isinstance(target, str) else None,
-                round_no=state.round_no,
-                phase=state.phase,
-                tool_call=call,
-                observation=observation,
-                content=str(payload.get("content", "")).strip(),
+                f"{actor}:{call.id}", actor, mapped_action.name,
+                GameActionPayload(ActionName(mapped_action.name), target if isinstance(target, str) else None, state.round_no, state.phase, str(payload.get("content", "")).strip()),
+                call, observation,
             )
         except (KeyError, StopIteration, TypeError, ValueError, json.JSONDecodeError):
             return None
@@ -188,15 +203,7 @@ class WerewolfWorkflowConfig:
     max_game_rounds: int = 12
 
 
-@dataclass(slots=True)
-class WerewolfSession:
-    session_id: str
-    public_room: Room
-    wolf_room: Room
-    agents: dict[str, WerewolfPlayerAgent]
-    contexts: dict[str, IncrementalContext]
-    state: WerewolfGameState
-    state_store: StateStore
+WerewolfSession = AppSession
 
 
 class WerewolfEnvironment(Environment):
@@ -212,10 +219,13 @@ class WerewolfEnvironment(Environment):
         self.model = model
         self.max_turns = max_turns
         self.room_runtime = RoomRuntime(trace=session.trace, max_turns=max_turns)
+        self.sync_runtime = SynchronousAppRuntime()
+        self.event_dispatcher = RoomEventDispatcher()
         self.action_manager: WerewolfActionManager | None = None
         self._step_events: tuple[GameEvent, ...] = ()
         self._rl_game: WerewolfSession | None = None
         self._rl_task: Task | None = None
+        self._max_game_rounds = WerewolfWorkflowConfig().max_game_rounds
         placeholder = WerewolfGameState.initial("", "")
         super().__init__(agents=(), state=placeholder, observation=WerewolfObservation(), trace=session.trace)
 
@@ -267,43 +277,25 @@ class WerewolfEnvironment(Environment):
         self.state = game.state
         self.observation = WerewolfObservation()
         self.action_manager = WerewolfActionManager(next(iter(game.agents.values())).action)
-        config = config or WerewolfWorkflowConfig()
+        self._max_game_rounds = (config or WerewolfWorkflowConfig()).max_game_rounds
         try:
-            state = game.state
-            while state.phase is not Phase.FINISHED:
-                publish_events(game.public_room, (GameEvent(phase_announcement(state)),))
-
-                actions: dict[str, GameAction] = {}
-                for agent in self.select_agents(state):
-
-                    # State → Observation
-                    observation = self.observe(state, agent)
-
-                    # Observation → Policy → Action
-                    action = self.act(agent, observation)
-                    if action is not None:
-                        actions[action.actor] = action
-
-                if self.ready_to_step(state, actions):
-                    resolved_actions = self._require_action_manager().resolve_actions(state, actions)
-                    old_state = state
-
-                    # Action → Environment → New State
-                    state = self.step(state, resolved_actions)
-                    events = self.build_events(old_state, resolved_actions, state)
-                    publish_events(game.public_room, tuple(events))
-
-                if state.round_no > config.max_game_rounds and state.phase not in {Phase.REVIEW, Phase.FINISHED}:
-                    state, events = finish_as_draw(state)
-                    publish_events(game.public_room, events)
-                    persist(game.state_store, game.session_id, state)
-                    game.state = state
-                    self.state = state
+            state = self.sync_runtime.run(self, game)
             winner = state.winner.value if state.winner else "unknown"
             return AgentResult("completed", Message("assistant", f"狼人杀游戏结束，结果：{winner}。"), None, game.session_id)
         except Exception:
-            persist(game.state_store, game.session_id, game.state)
+            game.persist()
             raise
+
+    def before_cycle(self, state: State) -> tuple[AppEvent, ...]:
+        current = self._require_werewolf_state(state)
+        return (AppEvent(f"{current.session_id}:werewolf:{current.round_no}:{current.phase.value}:start", "phase_started", ENGINE_NAME, phase_announcement(current)),)
+
+    def after_transition(self, old_state: State, actions: object, new_state: State) -> State:
+        current = self._require_werewolf_state(new_state)
+        if current.round_no > self._max_game_rounds and current.phase not in {Phase.REVIEW, Phase.FINISHED}:
+            current, events = finish_as_draw(current)
+            self._step_events = (*self._step_events, *events)
+        return current
 
     def observe(self, state: State, agent: Agent) -> Observation:
         """Create one Agent-visible Observation from the current State."""
@@ -314,8 +306,8 @@ class WerewolfEnvironment(Environment):
         return WerewolfTurnObservation(
             state_message=WerewolfObservation().game_state_message(current, names),
             available_tool_names=names,
-            public_room=game.public_room,
-            additional_rooms=(game.wolf_room,) if current.role_of(agent.name) is Role.WOLF else (),
+            public_room=game.room("public"),
+            additional_rooms=(game.room("wolves"),) if current.role_of(agent.name) is Role.WOLF else (),
             task_id=current.task_id,
             session_id=current.session_id,
         )
@@ -356,7 +348,7 @@ class WerewolfEnvironment(Environment):
                 agent=agent, observation=observation, tool_call=action.tool_call, reason=reason,
                 message_sink=game.contexts[agent.name].append_turn_messages,
             )
-            game.public_room.send(RoomMessage(name=ENGINE_NAME, at=agent.name, txt=f"动作无效：{reason}"))
+            game.room("public").send(RoomMessage(name=ENGINE_NAME, at=agent.name, txt=f"动作无效：{reason}"))
             return None
         return action
 
@@ -387,9 +379,9 @@ class WerewolfEnvironment(Environment):
                 message_sink=game.contexts[item.actor].append_turn_messages,
             )
             if item.action is ActionName.WOLF_MESSAGE:
-                game.wolf_room.send(RoomMessage(name=item.actor, at=current.alive_wolves(), txt=item.content))
+                game.room("wolves").send(RoomMessage(name=item.actor, at=current.alive_wolves(), txt=item.content))
             elif item.action is ActionName.SPEAK:
-                game.public_room.send(RoomMessage(name=item.actor, at="all", txt=item.content))
+                game.room("public").send(RoomMessage(name=item.actor, at="all", txt=item.content))
 
         current.consumed_action_ids.update(item.message_id for item in actions.values())
         if current.phase is Phase.PREPARATION:
@@ -402,7 +394,6 @@ class WerewolfEnvironment(Environment):
             current, events = resolve_phase(current, actions, manager)
 
         self._step_events = events
-        persist(game.state_store, game.session_id, current)
         game.state = current
         self.state = current
         return current
@@ -412,11 +403,29 @@ class WerewolfEnvironment(Environment):
         self._require_werewolf_state(state)
         return isinstance(actions, dict)
 
-    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[GameEvent, ...]:
+    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[AppEvent, ...]:
         """Return the feedback events produced by the latest Werewolf transition."""
         self._require_werewolf_state(old_state)
         self._require_werewolf_state(new_state)
-        return self._step_events
+        current = self._require_werewolf_state(new_state)
+        return tuple(
+            AppEvent(
+                f"{current.session_id}:werewolf:{current.round_no}:{current.phase.value}:{index}",
+                "domain_feedback", ENGINE_NAME, event.text,
+                {"recipient": event.recipient, "private": event.private},
+            )
+            for index, event in enumerate(self._step_events)
+        )
+
+    def dispatch_events(self, events: tuple[AppEvent, ...]) -> None:
+        deliveries = tuple(
+            EventDelivery(
+                event.event_id, "public", str(event.metadata.get("recipient", "all")),
+                bool(event.metadata.get("private", False)),
+            )
+            for event in events
+        )
+        self.event_dispatcher.dispatch(events, deliveries, rooms=self._require_rl_game().rooms)
 
     def _require_rl_game(self) -> WerewolfSession:
         if self._rl_game is None:
@@ -443,7 +452,7 @@ class WerewolfEnvironment(Environment):
         return self.run
 
 
-def open_or_restore_session(environment: WerewolfEnvironment, *, task: Task, context: SessionContext) -> WerewolfSession:
+def open_or_restore_session(environment: WerewolfEnvironment, *, task: Task, context: SessionContext) -> AppSession[WerewolfGameState]:
     store = StateStore(environment.trace.root.parent / "state" / "data")
     session_id = context.session_id
     if not context.resumed:
@@ -459,9 +468,10 @@ def open_or_restore_session(environment: WerewolfEnvironment, *, task: Task, con
             agents[name] = agent
         environment.room_runtime.invite_agents(public, tuple(agents), session_id=session_id)
         environment.room_runtime.invite_agents(wolves, tuple(name for name, player in state.players.items() if player.role is Role.WOLF), session_id=session_id)
-        persist(store, session_id, state)
         contexts = {name: environment.room_runtime.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
-        return WerewolfSession(session_id, public, wolves, agents, contexts, state, store)
+        active = AppSession(session_id, state, agents, contexts, {"public": public, "wolves": wolves}, store, "werewolf")
+        active.persist()
+        return active
     data = environment.trace.session_data(session_id)
     rooms = data.get("werewolf_rooms")
     if data.get("mode") != "werewolf" or not isinstance(rooms, dict):
@@ -478,7 +488,7 @@ def open_or_restore_session(environment: WerewolfEnvironment, *, task: Task, con
         environment.room_runtime.register_agent(agent, player_profile(name, player.role))
         agents[name] = agent
     contexts = {name: environment.room_runtime.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
-    return WerewolfSession(session_id, public, wolves, agents, contexts, state, store)
+    return AppSession(session_id, state, agents, contexts, {"public": public, "wolves": wolves}, store, "werewolf")
 
 
 def register_engine(*rooms: Room) -> None:
@@ -490,11 +500,6 @@ def register_engine(*rooms: Room) -> None:
 
 def player_profile(name: str, role: Role) -> AgentProfile:
     return AgentProfile(name=name, introduction="AI participant in a classic eight-player werewolf game.", skill=(f"werewolf-{role.value}",), role="werewolf-player", kwargs={"identity": role.value})
-
-
-def publish_events(room: Room, events: tuple[GameEvent, ...]) -> None:
-    for event in events:
-        room.send(RoomMessage(name=ENGINE_NAME, at=event.recipient, txt=event.text))
 
 
 def available_tool_names(
@@ -530,10 +535,6 @@ def actors_for_phase(state: WerewolfGameState) -> tuple[str, ...]:
     if state.phase in {Phase.DAY_DISCUSSION, Phase.DAY_VOTE}: return state.alive_players()
     if state.phase is Phase.HUNTER_SHOT and state.hunter_name: return (state.hunter_name,)
     return ()
-
-
-def persist(store: StateStore, session_id: str, state: WerewolfGameState) -> None:
-    store.update(session_id, "werewolf", state)
 
 
 def resolve_phase(

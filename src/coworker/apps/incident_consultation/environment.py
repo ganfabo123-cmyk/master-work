@@ -9,19 +9,22 @@ import os
 from pathlib import Path
 from typing import Any
 
+from ...core.action_envelope import ActionEnvelope
 from ...core.base_agent import Agent
 from ...core.base_environment import ActionManager, Environment
 from ...core.base_observation import Observation
 from ...core.base_state import State
-from ...core.models import AgentResult, Message, Task, ToolCall
+from ...core.events import AppEvent, EventDelivery
+from ...core.models import AgentResult, Message, Task
 from ...core.session import SessionContext
 from ...infra import StateStore
 from ...infra.client import LLMClient, OpenAICompatibleClient
-from ...infra.room import AgentProfile, Room, RoomMessage
-from ...infra.runtimes import IncrementalContext
+from ...infra.events import RoomEventDispatcher
+from ...infra.room import AgentProfile
+from ...infra.runtimes import SynchronousAppRuntime
 from ...infra.runtimes.room_runtime import RoomRuntime
 from ...infra.runtimes.session_runtime import SessionRuntime
-from ...infra.session import SessionManager
+from ...infra.session import AppSession, SessionManager
 from .action import IncidentAction
 from .agent import IncidentExpertAgent
 from .case_loader import load_rcaeval_case
@@ -38,21 +41,29 @@ EXPERTS = {
 
 
 @dataclass(frozen=True, slots=True)
-class IncidentActionValue:
-    message_id: str
-    actor: str
-    name: str
+class IncidentActionPayload:
     component: str
     narrative: str
     evidence_ids: tuple[str, ...]
     confidence: int
-    tool_call: ToolCall
-    observation: IncidentObservation
 
 
-@dataclass(frozen=True, slots=True)
-class ConsultationEvent:
-    text: str
+class IncidentActionValue(ActionEnvelope[IncidentActionPayload]):
+    @property
+    def component(self) -> str:
+        return self.payload.component
+
+    @property
+    def narrative(self) -> str:
+        return self.payload.narrative
+
+    @property
+    def evidence_ids(self) -> tuple[str, ...]:
+        return self.payload.evidence_ids
+
+    @property
+    def confidence(self) -> int:
+        return self.payload.confidence
 
 
 class IncidentActionManager(ActionManager):
@@ -73,15 +84,12 @@ class IncidentActionManager(ActionManager):
             if not isinstance(payload, dict):
                 return None
             return IncidentActionValue(
-                message_id=f"{actor}:{call.id}",
-                actor=actor,
-                name=mapped.name,
-                component=str(payload["component"]).strip(),
-                narrative=str(payload[narrative_key]).strip(),
-                evidence_ids=tuple(str(item) for item in payload["evidence_ids"]),
-                confidence=int(payload["confidence"]),
-                tool_call=call,
-                observation=observation,
+                f"{actor}:{call.id}", actor, mapped.name,
+                IncidentActionPayload(
+                    str(payload["component"]).strip(), str(payload[narrative_key]).strip(),
+                    tuple(str(item) for item in payload["evidence_ids"]), int(payload["confidence"]),
+                ),
+                call, observation,
             )
         except (KeyError, StopIteration, TypeError, ValueError, json.JSONDecodeError):
             return None
@@ -121,16 +129,6 @@ class IncidentWorkflowConfig:
     case_root: Path = Path("data/software_incident/rcaeval_multi_source_sample/multi-source-data")
 
 
-@dataclass(slots=True)
-class IncidentSession:
-    session_id: str
-    room: Room
-    agents: dict[str, IncidentExpertAgent]
-    contexts: dict[str, IncrementalContext]
-    state: IncidentState
-    state_store: StateStore
-
-
 class IncidentConsultationEnvironment(Environment):
     session_mode = "incident-consultation"
     entry_agent = "lead-expert"
@@ -141,8 +139,10 @@ class IncidentConsultationEnvironment(Environment):
         self.model = model
         self.max_turns = max_turns
         self.room_runtime = RoomRuntime(trace=session.trace, max_turns=max_turns)
+        self.sync_runtime = SynchronousAppRuntime()
+        self.event_dispatcher = RoomEventDispatcher()
         self.action_manager: IncidentActionManager | None = None
-        self._active: IncidentSession | None = None
+        self._active: AppSession[IncidentState] | None = None
         self._task: Task | None = None
         super().__init__((), IncidentState.initial("", ""), Observation("incident-placeholder", "", ""), trace=session.trace)
 
@@ -182,24 +182,13 @@ class IncidentConsultationEnvironment(Environment):
             self._active, self._task = active, task
             self.agents, self.state = tuple(active.agents.values()), active.state
             self.action_manager = IncidentActionManager({name: agent.action for name, agent in active.agents.items()})
-            while not active.state.is_terminal:
-                actions: dict[str, IncidentActionValue] = {}
-                for agent in self.select_agents(active.state):
-                    action = self.act(agent, self.observe(active.state, agent))
-                    if action is not None:
-                        actions[action.actor] = action
-                if not self.ready_to_step(active.state, actions):
-                    raise RuntimeError(f"Missing required actions for phase {active.state.phase.value}")
-                old_state = active.state
-                new_state = self.step(old_state, self.action_manager.resolve_actions(old_state, actions))
-                for event in self.build_events(old_state, actions, new_state):
-                    active.room.send(RoomMessage(name=ENGINE_NAME, at="all", txt=event.text))
-            diagnosis = active.state.final_diagnosis
+            state = self.sync_runtime.run(self, active)
+            diagnosis = state.final_diagnosis
             text = "会诊完成。" if diagnosis is None else f"会诊完成：疑似根因组件 {diagnosis.component}；{diagnosis.root_cause}"
             return AgentResult("completed", Message("assistant", text), None, active.session_id)
         except Exception:
             if self._active is not None:
-                self._active.state_store.update(self._active.session_id, "incident_consultation", self._active.state)
+                self._active.persist()
             raise
 
     def select_agents(self, state: State) -> tuple[Agent, ...]:
@@ -210,13 +199,13 @@ class IncidentConsultationEnvironment(Environment):
     def observe(self, state: State, agent: Agent) -> Observation:
         current, active, manager = self._state(state), self._require_active(), self._manager()
         role = EXPERTS[agent.name]
-        return IncidentObservation(state_message=build_state_message(current, role), available_tool_names=manager.available_actions(current, agent), room=active.room, task_id=current.task_id, session_id=current.session_id)
+        return IncidentObservation(state_message=build_state_message(current, role), available_tool_names=manager.available_actions(current, agent), room=active.room("public"), task_id=current.task_id, session_id=current.session_id)
 
     def act(self, agent: Agent, observation: Observation) -> IncidentActionValue | None:
         if not isinstance(observation, IncidentObservation):
             raise TypeError("observation must be IncidentObservation")
         active = self._require_active()
-        turn = self.room_runtime.run_turn(room=active.room, agent_name=agent.name, task=self._require_task(), session_id=active.session_id, incremental_context=active.contexts[agent.name], events=(observation.state_message,), available_tool_names=observation.available_tool_names)
+        turn = self.room_runtime.run_turn(room=active.room("public"), agent_name=agent.name, task=self._require_task(), session_id=active.session_id, incremental_context=active.contexts[agent.name], events=(observation.state_message,), available_tool_names=observation.available_tool_names)
         if turn.status == "failed":
             raise RuntimeError(f"Incident expert turn failed for {agent.name}: {turn.error}")
         return self._manager().resolve_action((agent.name, turn.content, observation))
@@ -255,21 +244,24 @@ class IncidentConsultationEnvironment(Environment):
             next_state.phase = ConsultationPhase.FINISHED
         active.state = next_state
         self.state = next_state
-        active.state_store.update(active.session_id, "incident_consultation", next_state)
         return next_state
 
-    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[ConsultationEvent, ...]:
+    def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[AppEvent, ...]:
         before, after = self._state(old_state), self._state(new_state)
         if before.phase is ConsultationPhase.INDEPENDENT_ANALYSIS and after.phase is ConsultationPhase.FINAL_DIAGNOSIS:
-            return (ConsultationEvent("三位证据专家已提交 Finding，进入最终诊断阶段。"),)
+            return (AppEvent(f"{after.session_id}:consultation:diagnosis", "phase_changed", ENGINE_NAME, "三位证据专家已提交 Finding，进入最终诊断阶段。"),)
         if after.phase is ConsultationPhase.FINISHED:
-            return (ConsultationEvent("主诊断专家已提交最终诊断，会诊结束。"),)
+            return (AppEvent(f"{after.session_id}:consultation:finished", "workflow_finished", ENGINE_NAME, "主诊断专家已提交最终诊断，会诊结束。"),)
         return ()
+
+    def dispatch_events(self, events: tuple[AppEvent, ...]) -> None:
+        deliveries = tuple(EventDelivery(event.event_id, "public") for event in events)
+        self.event_dispatcher.dispatch(events, deliveries, rooms=self._require_active().rooms)
 
     def orchestrate_agents(self) -> Any:
         return self.run
 
-    def _open(self, task: Task, context: SessionContext, config: IncidentWorkflowConfig) -> IncidentSession:
+    def _open(self, task: Task, context: SessionContext, config: IncidentWorkflowConfig) -> AppSession[IncidentState]:
         store = StateStore(self.session.trace.root.parent / "state" / "data")
         session_id = context.session_id
         if not context.resumed:
@@ -291,11 +283,12 @@ class IncidentConsultationEnvironment(Environment):
             self.room_runtime.register_agent(agent, AgentProfile(name=name, introduction=f"Incident consultation expert for {role.value}.", role=role.value))
         if session_id is not None and not all(name in room.participants() for name in agents):
             self.room_runtime.invite_agents(room, tuple(agents), session_id=session_id)
-        store.update(session_id, "incident_consultation", state)
         contexts = {name: self.room_runtime.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
-        return IncidentSession(session_id, room, agents, contexts, state, store)
+        active = AppSession(session_id, state, agents, contexts, {"public": room}, store, "incident_consultation")
+        active.persist()
+        return active
 
-    def _require_active(self) -> IncidentSession:
+    def _require_active(self) -> AppSession[IncidentState]:
         if self._active is None:
             raise RuntimeError("Incident consultation has not started")
         return self._active

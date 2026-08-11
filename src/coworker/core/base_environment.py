@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Sequence
-from functools import partial
 from typing import Any
 
 from .base_agent import Agent
@@ -13,6 +12,7 @@ from .base_rl import BaseRL
 from .base_state import State
 from .models import Message, ToolCall
 from ..infra.trace import TraceRecorder
+from ..infra.runtimes.action_consumer import ActionConsumer
 
 
 class ActionManager(ABC):
@@ -45,6 +45,7 @@ class Environment(BaseRL, ABC):
         self.state = state
         self.observation = observation
         self.trace = trace
+        self.action_consumer = ActionConsumer(trace=trace)
 
     def record_trace(self, session_id: str, agent_name: str, event_type: str, **payload: object) -> None:
         if self.trace is not None:
@@ -79,12 +80,12 @@ class Environment(BaseRL, ABC):
         message_sink: Callable[[Iterable[Message]], object],
     ) -> tuple[Message, ...]:
         """Execute one validated ToolAction and return its pure Observation feedback."""
-        registry = agent.runtime.build_tool_registry(agent.tool_functions())
-        executor = partial(agent.runtime.execute_tool, registry)
-        feedback = tuple(observation.feedback("tool_result", (tool_call,), executor))
-        message_sink(feedback)
-        self.record_trace_messages(observation.session_id, agent.name, feedback)
-        return feedback
+        return self.action_consumer.execute(
+            agent=agent,
+            observation=observation,
+            tool_call=tool_call,
+            message_sink=message_sink,
+        )
 
     def reject_tool_action(
         self,
@@ -96,10 +97,33 @@ class Environment(BaseRL, ABC):
         message_sink: Callable[[Iterable[Message]], object],
     ) -> tuple[Message, ...]:
         """Pair one rejected ToolAction without executing its Tool function."""
-        feedback = tuple(observation.feedback("tool_result", (tool_call,), lambda _name, _arguments: reason))
-        message_sink(feedback)
-        self.record_trace_messages(observation.session_id, agent.name, feedback)
-        return feedback
+        return self.action_consumer.reject(
+            agent=agent,
+            observation=observation,
+            tool_call=tool_call,
+            reason=reason,
+            message_sink=message_sink,
+        )
+
+    def before_cycle(self, state: State) -> Sequence[Any]:
+        """Return events emitted before participants act in one cycle."""
+        return ()
+
+    def resolve_collected_actions(self, state: State, actions: dict[str, Any]) -> Any:
+        """Resolve a domain-neutral actor-to-Action collection for step()."""
+        manager = getattr(self, "action_manager", None)
+        if manager is None:
+            raise RuntimeError("Environment has no ActionManager")
+        return manager.resolve_actions(state, actions)
+
+    def after_transition(self, old_state: State, actions: Any, new_state: State) -> State:
+        """Run optional App bookkeeping after step() and before persistence."""
+        return new_state
+
+    def dispatch_events(self, events: Sequence[Any]) -> None:
+        """Deliver App-built events through its configured infrastructure."""
+        if events:
+            raise NotImplementedError("Environment must dispatch non-empty events")
 
     @abstractmethod
     def select_agents(self, state: State) -> Sequence[Agent]:
