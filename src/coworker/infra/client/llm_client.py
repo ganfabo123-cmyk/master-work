@@ -113,7 +113,7 @@ class OpenAICompatibleClient:
 
 def _load_dotenv_if_present() -> None:
     """Tiny local .env reader; existing environment values always win."""
-    path = os.getenv("CODEHARNESS_ENV_FILE", ".env")
+    path = os.getenv("COWORKER_ENV_FILE", ".env")
     if not os.path.exists(path):
         return
     for line in open(path, encoding="utf-8"):

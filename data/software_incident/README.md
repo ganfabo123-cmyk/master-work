@@ -25,6 +25,6 @@ contents are under `rcaeval_multi_source_sample/multi-source-data/`.
 - `inject_time.txt`: fault injection timestamp (`1705354566`).
 
 This directory contains source data only. It has not yet been converted into a
-CodeHarness State or split into per-expert Observations. The accompanying RCAEval
+CoWorker State or split into per-expert Observations. The accompanying RCAEval
 tutorial reports algorithm rankings for the sample, not an explicit authoritative
 ground-truth label; do not silently treat the first ranked metric as ground truth.

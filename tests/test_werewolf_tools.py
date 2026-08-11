@@ -4,13 +4,13 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
-from codeharness.apps.werewolf.agent import WerewolfPlayerAgent
-from codeharness.apps.werewolf.state import Phase, Role, WerewolfGameState
-from codeharness.core import Agent
-from codeharness.core.models import Message, ModelResult, Prompt, Task, ToolCall
-from codeharness.infra.client import LLMClient
-from codeharness.infra.room import AgentProfile, Room
-from codeharness.infra.runtimes import LLMRuntime
+from coworker.apps.werewolf.agent import WerewolfPlayerAgent
+from coworker.apps.werewolf.state import Phase, Role, WerewolfGameState
+from coworker.core import Agent
+from coworker.core.models import Message, ModelResult, Prompt, Task, ToolCall
+from coworker.infra.client import LLMClient
+from coworker.infra.room import AgentProfile, Room
+from coworker.infra.runtimes import LLMRuntime
 
 
 class TemperatureRecordingLLM(LLMClient):

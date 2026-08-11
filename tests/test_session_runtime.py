@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from codeharness.core import SessionContext
-from codeharness.core.models import AgentResult, Message, Task
-from codeharness.infra.runtimes import SessionRuntime
-from codeharness.infra.trace import TraceRecorder
+from coworker.core import SessionContext
+from coworker.core.models import AgentResult, Message, Task
+from coworker.infra.runtimes import SessionRuntime
+from coworker.infra.trace import TraceRecorder
 
 
 class StubEnvironment:

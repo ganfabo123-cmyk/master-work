@@ -1,4 +1,4 @@
-"""Interactive terminal entry point for CodeHarness."""
+"""Interactive terminal entry point for CoWorker."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def main() -> None:
     environment = create_environment(args.app)
     runtime = SessionRuntime(trace=environment.session.trace)
     session_id = args.resume
-    print("CodeHarness")
+    print("CoWorker")
     print("输入问题开始对话；输入 exit 或 quit 退出。")
     try:
         while True:
@@ -49,7 +49,7 @@ def main() -> None:
                 print(f"\nError: {result.error}")
                 continue
             answer = str(result.content.content if result.content is not None else "")
-            print(f"\nCodeHarness › {answer}")
+            print(f"\nCoWorker › {answer}")
     except KeyboardInterrupt:
         print()
     finally:

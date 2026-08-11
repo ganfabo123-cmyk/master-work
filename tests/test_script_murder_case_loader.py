@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from codeharness.apps.script_murder.case_loader import load_case
+from coworker.apps.script_murder.case_loader import load_case
 
 
 def test_case_package_has_complete_authorized_references() -> None:

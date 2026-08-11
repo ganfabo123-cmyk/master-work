@@ -4,11 +4,11 @@ import json
 from pathlib import Path
 from typing import Any
 
-from codeharness.core.models import Message, ModelResult, Task, ToolCall
-from codeharness.infra.client import LLMClient
-from codeharness.apps.werewolf.environment import WerewolfEnvironment, WerewolfWorkflowConfig
-from codeharness.infra.session import SessionManager
-from codeharness.infra.runtimes import SessionRuntime
+from coworker.core.models import Message, ModelResult, Task, ToolCall
+from coworker.infra.client import LLMClient
+from coworker.apps.werewolf.environment import WerewolfEnvironment, WerewolfWorkflowConfig
+from coworker.infra.session import SessionManager
+from coworker.infra.runtimes import SessionRuntime
 from tool_message_assertions import assert_tool_calls_are_paired
 
 

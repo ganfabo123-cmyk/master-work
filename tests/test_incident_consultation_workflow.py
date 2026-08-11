@@ -4,12 +4,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from codeharness.apps.incident_consultation.environment import IncidentConsultationEnvironment, IncidentWorkflowConfig
-from codeharness.apps.incident_consultation.state import IncidentState
-from codeharness.core.models import Message, ModelResult, Task, ToolCall
-from codeharness.infra.client import LLMClient
-from codeharness.infra.runtimes import SessionRuntime
-from codeharness.infra.session import SessionManager
+from coworker.apps.incident_consultation.environment import IncidentConsultationEnvironment, IncidentWorkflowConfig
+from coworker.apps.incident_consultation.state import IncidentState
+from coworker.core.models import Message, ModelResult, Task, ToolCall
+from coworker.infra.client import LLMClient
+from coworker.infra.runtimes import SessionRuntime
+from coworker.infra.session import SessionManager
 
 from test_incident_case_loader import write_case
 from tool_message_assertions import assert_tool_calls_are_paired

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from codeharness.apps.incident_consultation.case_loader import load_rcaeval_case
+from coworker.apps.incident_consultation.case_loader import load_rcaeval_case
 
 
 def write_case(root: Path) -> Path:

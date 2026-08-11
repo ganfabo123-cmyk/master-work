@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from codeharness.apps.incident_consultation.action import IncidentAction
-from codeharness.apps.incident_consultation.case_loader import Evidence, IncidentCase
-from codeharness.apps.incident_consultation.environment import IncidentActionManager, IncidentActionValue
-from codeharness.apps.incident_consultation.observation import build_state_message
-from codeharness.apps.incident_consultation.state import ExpertRole, IncidentState
-from codeharness.core.base_action import BaseAction
-from codeharness.core.base_agent import Agent
-from codeharness.core.base_environment import ActionManager, Environment
-from codeharness.core.base_observation import Observation
-from codeharness.core.base_policy import BasePolicy
-from codeharness.core.base_state import State
-from codeharness.infra.room import AgentProfile, Room
+from coworker.apps.incident_consultation.action import IncidentAction
+from coworker.apps.incident_consultation.case_loader import Evidence, IncidentCase
+from coworker.apps.incident_consultation.environment import IncidentActionManager, IncidentActionValue
+from coworker.apps.incident_consultation.observation import build_state_message
+from coworker.apps.incident_consultation.state import ExpertRole, IncidentState
+from coworker.core.base_action import BaseAction
+from coworker.core.base_agent import Agent
+from coworker.core.base_environment import ActionManager, Environment
+from coworker.core.base_observation import Observation
+from coworker.core.base_policy import BasePolicy
+from coworker.core.base_state import State
+from coworker.infra.room import AgentProfile, Room
 
 
 def _state() -> IncidentState:
@@ -26,11 +26,11 @@ def _state() -> IncidentState:
     return IncidentState.from_case(case, task_id="task", session_id="session")
 
 
-def test_app_types_inherit_existing_codeharness_bases() -> None:
-    from codeharness.apps.incident_consultation.agent import IncidentExpertAgent
-    from codeharness.apps.incident_consultation.environment import IncidentConsultationEnvironment
-    from codeharness.apps.incident_consultation.observation import IncidentObservation
-    from codeharness.apps.incident_consultation.policy import IncidentPolicy
+def test_app_types_inherit_existing_coworker_bases() -> None:
+    from coworker.apps.incident_consultation.agent import IncidentExpertAgent
+    from coworker.apps.incident_consultation.environment import IncidentConsultationEnvironment
+    from coworker.apps.incident_consultation.observation import IncidentObservation
+    from coworker.apps.incident_consultation.policy import IncidentPolicy
 
     assert issubclass(IncidentState, State)
     assert issubclass(IncidentObservation, Observation)

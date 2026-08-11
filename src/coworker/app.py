@@ -1,4 +1,4 @@
-"""Flask application and HTTP routes for the CodeHarness web console."""
+"""Flask application and HTTP routes for the CoWorker web console."""
 
 from __future__ import annotations
 
@@ -52,7 +52,7 @@ def discover_apps() -> list[dict[str, str]]:
             resolved_type = environment_type(app_name)
         except (ImportError, ValueError):
             continue
-        description = " ".join((resolved_type.__doc__ or "CodeHarness application workflow.").split())
+        description = " ".join((resolved_type.__doc__ or "CoWorker application workflow.").split())
         discovered.append({"name": app_name, "display_name": app_name.replace("_", " ").title(), "description": description})
     return discovered
 
@@ -216,5 +216,5 @@ def session_snapshot(traces_root: Path, room_data_root: Path, session_id: str) -
 
 def serve_web(*, app_name: str = "incident_consultation", host: str = "127.0.0.1", port: int = 8765) -> None:
     """Start the Flask development server for the local console."""
-    print(f"CodeHarness Web ({app_name}): http://{host}:{port}")
+    print(f"CoWorker Web ({app_name}): http://{host}:{port}")
     create_app(app_name=app_name).run(host=host, port=port, threaded=True)

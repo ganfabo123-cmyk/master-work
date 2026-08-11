@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from codeharness.infra.runtimes import IncrementalContext
-from codeharness.core.models import Message
-from codeharness.infra.room import AgentProfile, Room, RoomMessage, RoomTurnContext
-from codeharness.infra.trace import TraceRecorder
+from coworker.infra.runtimes import IncrementalContext
+from coworker.core.models import Message
+from coworker.infra.room import AgentProfile, Room, RoomMessage, RoomTurnContext
+from coworker.infra.trace import TraceRecorder
 
 
 def test_incremental_context_records_initial_prefix_once_and_restores_in_order(tmp_path: Path) -> None:

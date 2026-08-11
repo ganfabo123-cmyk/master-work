@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from codeharness.core.models import Message
+from coworker.core.models import Message
 
 
 def assert_tool_calls_are_paired(messages: Iterable[Message]) -> None:

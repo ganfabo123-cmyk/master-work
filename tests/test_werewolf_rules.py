@@ -3,10 +3,10 @@ from __future__ import annotations
 from collections import Counter
 from random import Random
 
-from codeharness.infra.room import RoomMessage
-from codeharness.core.action.werewolf.actions import ActionName, encode_action, latest_valid_actions
-from codeharness.environment.werewolf import resolve_phase
-from codeharness.state.werewolf import Phase, WerewolfGameState, Winner
+from coworker.infra.room import RoomMessage
+from coworker.core.action.werewolf.actions import ActionName, encode_action, latest_valid_actions
+from coworker.environment.werewolf import resolve_phase
+from coworker.state.werewolf import Phase, WerewolfGameState, Winner
 
 
 def test_random_game_preserves_classic_role_composition() -> None:

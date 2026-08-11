@@ -230,7 +230,7 @@ class WerewolfEnvironment(Environment):
         return cls(
             SessionManager(traces_root=traces_root, room_data_root=room_data_root),
             llm=OpenAICompatibleClient.from_environment(),
-            model=os.getenv("CODEHARNESS_MODEL", "deepseek-v4-flash"),
+            model=os.getenv("COWORKER_MODEL", "deepseek-v4-flash"),
             max_turns=max_turns,
         )
 

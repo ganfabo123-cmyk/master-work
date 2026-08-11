@@ -1,6 +1,6 @@
 # 爱丽舍宫阴影（结构化中文改编数据）
 
-本目录由 Matt Clifford 于 2020 年创作的 *Intrigue in the Shadow of the Élysée* PDF 解析而来，供 CodeHarness 后续剧本杀 App 使用。
+本目录由 Matt Clifford 于 2020 年创作的 *Intrigue in the Shadow of the Élysée* PDF 解析而来，供 CoWorker 后续剧本杀 App 使用。
 
 - 原作作者：Matt Clifford
 - 原作许可：Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
@@ -21,4 +21,3 @@
 - `characters/*.json`：分别投递给对应角色的私密简报。
 - `documents/documents.json`：两轮中投递的信件及党章摘录。
 - `reveals/*.json`：每轮文档的收件人索引。
-

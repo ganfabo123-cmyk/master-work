@@ -3,20 +3,20 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "codeharness"
+name = "coworker"
 version = "0.1.0"
 description = "A small, domain-neutral learning template for agent harnesses."
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2.11,<3", "flask>=3.1,<4"]
 
 [project.scripts]
-CodeHarness = "codeharness.main:main"
+CoWorker = "coworker.main:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/codeharness"]
+packages = ["src/coworker"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

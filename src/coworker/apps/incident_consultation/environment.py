@@ -148,7 +148,7 @@ class IncidentConsultationEnvironment(Environment):
 
     @classmethod
     def from_environment(cls, *, traces_root: Path = Path("traces"), room_data_root: Path = Path("room/data"), max_turns: int = 5) -> "IncidentConsultationEnvironment":
-        return cls(SessionManager(traces_root=traces_root, room_data_root=room_data_root), llm=OpenAICompatibleClient.from_environment(), model=os.getenv("CODEHARNESS_MODEL", "deepseek-v4-flash"), max_turns=max_turns)
+        return cls(SessionManager(traces_root=traces_root, room_data_root=room_data_root), llm=OpenAICompatibleClient.from_environment(), model=os.getenv("COWORKER_MODEL", "deepseek-v4-flash"), max_turns=max_turns)
 
     def run(
         self,

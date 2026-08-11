@@ -3,11 +3,11 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from codeharness.core import Agent
-from codeharness.core.models import Message, ModelResult, Prompt, Task, ToolCall
-from codeharness.infra.client import LLMClient
-from codeharness.infra.runtimes import IncrementalContext
-from codeharness.infra.tools import BaseAgentTools
+from coworker.core import Agent
+from coworker.core.models import Message, ModelResult, Prompt, Task, ToolCall
+from coworker.infra.client import LLMClient
+from coworker.infra.runtimes import IncrementalContext
+from coworker.infra.tools import BaseAgentTools
 
 
 class PolicyThenActionLLM(LLMClient):
