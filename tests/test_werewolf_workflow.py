@@ -54,6 +54,21 @@ class GameLLM(LLMClient):
         )
 
 
+class InterruptBeforeReviewLLM(GameLLM):
+    def generate(self, *, model: str, messages: tuple[Message, ...], tools: list[dict[str, Any]], **kwargs: Any) -> ModelResult:
+        latest_state = next(
+            (
+                message
+                for message in reversed(messages)
+                if message.role == "user" and '"type": "game_state"' in str(message.content)
+            ),
+            None,
+        )
+        if latest_state is not None and json.loads(latest_state.content)["phase"] == "review":
+            raise RuntimeError("intentional interruption before player review")
+        return super().generate(model=model, messages=messages, tools=tools, **kwargs)
+
+
 def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     traces = tmp_path / "traces"
     room = tmp_path / "room"
@@ -69,6 +84,8 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     state_path = tmp_path / "state" / "data" / result.session_id / "werewolf.json"
     assert state_path.exists()
     state = json.loads(state_path.read_text(encoding="utf-8"))
+    assert state["phase"] == "finished"
+    assert state["winner"] is not None
     room_states = {
         path.stem: json.loads(path.read_text(encoding="utf-8"))
         for path in (room / result.session_id / "rooms").glob("*.json")
@@ -100,6 +117,15 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
         for player_name in state["players"]
     }
     assert all(events for events in preparation_events.values())
+    review_events = {
+        player_name: [
+            json.loads(message.content)
+            for message in environment.trace.messages(result.session_id, player_name)
+            if message.role == "user" and isinstance(message.content, str) and '"phase": "review"' in message.content
+        ]
+        for player_name in state["players"]
+    }
+    assert all(events for events in review_events.values())
     state_events = [
         json.loads(message.content)
         for player_name in state["players"]
@@ -123,6 +149,57 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
     assert {name: profile.role.value for name, profile in resumed.state.players.items()} == {
         name: profile["role"] for name, profile in state["players"].items()
     }
+    assert resumed._rl_game is not None
+    for context in resumed._rl_game.contexts.values():
+        assert_tool_calls_are_paired(context.history())
+
+
+def test_game_resumes_from_review_boundary(tmp_path: Path) -> None:
+    traces = tmp_path / "traces"
+    room = tmp_path / "room"
+    interrupted = WerewolfEnvironment(
+        SessionManager(traces_root=traces, room_data_root=room),
+        llm=InterruptBeforeReviewLLM(),
+        model="game-test",
+    )
+
+    failed = SessionRuntime(trace=interrupted.trace).run(
+        interrupted,
+        task=Task("开始一局经典狼人杀"),
+        config=WerewolfWorkflowConfig(max_game_rounds=4),
+    )
+
+    assert failed.status == "failed"
+    assert "intentional interruption" in str(failed.error)
+    state_path = tmp_path / "state" / "data" / failed.session_id / "werewolf.json"
+    interrupted_state = json.loads(state_path.read_text(encoding="utf-8"))
+    assert interrupted_state["phase"] == "review"
+    assert interrupted_state["winner"] is not None
+    public_room_id = interrupted.trace.session_data(failed.session_id)["public_room_id"]
+    public_before_resume = interrupted.trace.room_messages(failed.session_id, public_room_id)
+    settlement_ids = [message.message_id for message in public_before_resume if "本局完整结算" in message.txt]
+    assert len(settlement_ids) == 1
+
+    resumed = WerewolfEnvironment(
+        SessionManager(traces_root=traces, room_data_root=room),
+        llm=GameLLM(),
+        model="game-test",
+    )
+    completed = SessionRuntime(trace=resumed.trace).run(
+        resumed,
+        task=Task("继续复盘"),
+        session_id=failed.session_id,
+    )
+
+    assert completed.status == "completed", completed.error
+    assert resumed.state.phase.value == "finished"
+    settlement_ids_after_resume = [
+        message.message_id
+        for message in resumed.trace.room_messages(failed.session_id, public_room_id)
+        if "本局完整结算" in message.txt
+    ]
+    assert settlement_ids_after_resume == settlement_ids
+    assert resumed.trace.session_data(failed.session_id)["resume_count"] == 1
     assert resumed._rl_game is not None
     for context in resumed._rl_game.contexts.values():
         assert_tool_calls_are_paired(context.history())

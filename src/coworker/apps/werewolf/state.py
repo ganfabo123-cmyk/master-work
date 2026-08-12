@@ -69,7 +69,7 @@ class WerewolfGameState(State):
 
     @property
     def is_terminal(self) -> bool:
-        return self.phase is Phase.FINISHED or self.winner is not None
+        return self.phase is Phase.FINISHED
 
     def process(self, action: object) -> "WerewolfGameState":
         raise NotImplementedError("Werewolf State transitions are owned by WerewolfEnvironment.step()")

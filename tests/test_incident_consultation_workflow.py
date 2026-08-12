@@ -33,6 +33,18 @@ class ConsultationLLM(LLMClient):
         return ModelResult(raw_content="", tool_calls=(ToolCall(f"{name}-call", name, arguments),), model=model)
 
 
+class InterruptBeforeLeadLLM(ConsultationLLM):
+    def generate(self, *, model: str, messages: tuple[Message, ...], tools: list[dict[str, Any]], **kwargs: Any) -> ModelResult:
+        state_message = next(
+            message
+            for message in reversed(messages)
+            if message.role == "user" and '"type": "incident_consultation_state"' in str(message.content)
+        )
+        if json.loads(state_message.content)["role"] == "lead":
+            raise RuntimeError("intentional interruption before final diagnosis")
+        return super().generate(model=model, messages=messages, tools=tools, **kwargs)
+
+
 def test_complete_incident_consultation_uses_room_state_store_and_trace(tmp_path: Path) -> None:
     case_root = write_case(tmp_path / "case")
     environment = IncidentConsultationEnvironment(
@@ -78,6 +90,55 @@ def test_complete_incident_consultation_uses_room_state_store_and_trace(tmp_path
     assert resumed_result.status == "completed"
     assert resumed.state.is_terminal
     assert resumed.trace.session_data(result.session_id)["resume_count"] == 1
+    assert resumed._active is not None
+    for context in resumed._active.contexts.values():
+        assert_tool_calls_are_paired(context.history())
+
+
+def test_incident_consultation_resumes_from_final_diagnosis_boundary(tmp_path: Path) -> None:
+    case_root = write_case(tmp_path / "case")
+    session = SessionManager(traces_root=tmp_path / "traces", room_data_root=tmp_path / "room")
+    interrupted = IncidentConsultationEnvironment(session, llm=InterruptBeforeLeadLLM(), model="test")
+
+    failed = SessionRuntime(trace=session.trace).run(
+        interrupted,
+        task=Task("分析这个软件故障案例"),
+        config=IncidentWorkflowConfig(case_root=case_root),
+    )
+
+    assert failed.status == "failed"
+    assert "intentional interruption" in str(failed.error)
+    state_path = tmp_path / "state" / "data" / failed.session_id / "incident_consultation.json"
+    interrupted_state = IncidentState.from_dict(json.loads(state_path.read_text(encoding="utf-8")))
+    assert interrupted_state.phase.value == "final_diagnosis"
+    assert set(interrupted_state.findings) == {"metrics-expert", "logs-expert", "traces-expert"}
+    assert interrupted_state.final_diagnosis is None
+    room_id = session.trace.session_data(failed.session_id)["incident_room_id"]
+    findings_before_resume = [
+        message.message_id
+        for message in session.trace.room_messages(failed.session_id, room_id)
+        if message.name in interrupted_state.findings
+    ]
+    assert len(findings_before_resume) == 3
+
+    resumed_session = SessionManager(traces_root=tmp_path / "traces", room_data_root=tmp_path / "room")
+    resumed = IncidentConsultationEnvironment(resumed_session, llm=ConsultationLLM(), model="test")
+    completed = SessionRuntime(trace=resumed_session.trace).run(
+        resumed,
+        task=Task("继续分析"),
+        session_id=failed.session_id,
+    )
+
+    assert completed.status == "completed", completed.error
+    assert resumed.state.is_terminal
+    assert resumed.state.final_diagnosis is not None
+    findings_after_resume = [
+        message.message_id
+        for message in resumed_session.trace.room_messages(failed.session_id, room_id)
+        if message.name in interrupted_state.findings
+    ]
+    assert findings_after_resume == findings_before_resume
+    assert resumed_session.trace.session_data(failed.session_id)["resume_count"] == 1
     assert resumed._active is not None
     for context in resumed._active.contexts.values():
         assert_tool_calls_are_paired(context.history())
