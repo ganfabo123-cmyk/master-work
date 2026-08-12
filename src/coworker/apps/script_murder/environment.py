@@ -79,27 +79,35 @@ class ScriptMurderActionManager(ActionManager):
         )
         return ScriptMurderActionValue(f"{actor}:{call.id}", actor, name, ScriptMurderActionPayload(submission=submission), call, observation)
 
-    def validate_action(self, action: Any, state: State) -> bool:
+    def validate_action(self, action: Any, state: State) -> tuple[bool, str]:
         if not isinstance(action, ScriptMurderActionValue) or not isinstance(state, ScriptMurderState):
-            return False
+            return False, "提交参数无法解析，或当前 State 类型不正确。"
         if action.message_id in state.consumed_action_ids or action.actor not in state.character_assignments:
-            return False
+            return False, "Action 已消费，或提交者不属于当前剧本。"
         expected = self.expected_player(state)
         if action.actor != expected:
-            return False
+            return False, f"当前应由 {expected or '无人'} 行动。"
         if state.phase in DISCUSSION_PHASES:
-            return action.name in {"speak", "pass_turn"} and (action.name != "speak" or bool(action.content))
+            if action.name not in {"speak", "pass_turn"}:
+                return False, "讨论阶段只接受 speak 或 pass_turn。"
+            if action.name == "speak" and not action.content:
+                return False, "公开发言内容不能为空。"
+            return True, ""
         if state.phase is not ScriptMurderPhase.FINAL_SUBMISSION or action.name != "submit_resolution" or action.submission is None:
-            return False
+            return False, "最终提交阶段必须调用 submit_resolution 并填写完整提交内容。"
         submission = action.submission
         character_ids = set(state.character_assignments.values())
         if submission.decisive_action not in {"murder", "guard", "investigate", "pass"}:
-            return False
+            return False, "decisive_action 必须为 murder、guard、investigate 或 pass。"
         if submission.decisive_action == "pass" and submission.target is not None:
-            return False
+            return False, "decisive_action 为 pass 时 target 必须为空。"
         if submission.decisive_action != "pass" and submission.target not in character_ids:
-            return False
-        return submission.leader_vote in character_ids and action.actor not in state.final_submissions
+            return False, "非 pass 行动必须指定合法角色 target。"
+        if submission.leader_vote not in character_ids:
+            return False, "leader_vote 必须是合法角色 ID。"
+        if action.actor in state.final_submissions:
+            return False, "该玩家已经完成最终提交。"
+        return True, ""
 
     def available_actions(self, state: State, agent: Agent) -> tuple[str, ...]:
         if not isinstance(state, ScriptMurderState) or agent.name != self.expected_player(state):
@@ -196,7 +204,7 @@ class ScriptMurderEnvironment(Environment):
         current = self._state(state)
         if current.phase is ScriptMurderPhase.RESOLUTION:
             return isinstance(actions, dict) and not actions
-        return isinstance(actions, dict) and len(actions) == 1 and self.action_manager.validate_action(next(iter(actions.values())), current)
+        return isinstance(actions, dict) and len(actions) == 1 and self.action_manager.validate_action(next(iter(actions.values())), current)[0]
 
     def resolve_collected_actions(self, state: State, actions: dict[str, ActionEnvelope[Any]]) -> ScriptMurderActionValue | None:
         current = self._state(state)
@@ -219,10 +227,11 @@ class ScriptMurderEnvironment(Environment):
             self._resolve_case(next_state)
         else:
             resolved = self.action_manager.resolve_actions(next_state, action)
-            if not self.action_manager.validate_action(resolved, next_state):
+            valid, reason = self.action_manager.validate_action(resolved, next_state)
+            if not valid:
                 self.reject_tool_action(
                     agent=active.agents[resolved.actor], observation=resolved.observation, tool_call=resolved.tool_call,
-                    reason="Action 未通过当前剧本杀状态验证。",
+                    reason=reason,
                     message_sink=active.contexts[resolved.actor].append_turn_messages,
                 )
                 raise ValueError(f"Illegal action {resolved.name!r} from {resolved.actor!r}")
@@ -245,6 +254,17 @@ class ScriptMurderEnvironment(Environment):
                 if resolved.submission is None:
                     raise ValueError("Final submission payload is missing")
                 next_state.final_submissions[resolved.actor] = resolved.submission
+                submission = resolved.submission
+                declarations = "\n".join(f"- {item}" for item in submission.declarations) or "- 无"
+                active.room(f"private:{resolved.actor}").send(RoomMessage(
+                    name=resolved.actor,
+                    at=resolved.actor,
+                    txt=(
+                        f"# 最终提交\n\n声明：\n{declarations}\n\n"
+                        f"决定性行动：{submission.decisive_action}\n目标：{submission.target or '无'}\n"
+                        f"党魁投票：{submission.leader_vote}"
+                    ),
+                ))
                 if len(next_state.final_submissions) == len(PLAYERS):
                     next_state.phase = ScriptMurderPhase.RESOLUTION
         active.state = next_state
@@ -261,6 +281,17 @@ class ScriptMurderEnvironment(Environment):
                 ScriptMurderPhase.FINISHED: after.ending_report,
             }
             content = labels.get(after.phase)
+            if after.phase is ScriptMurderPhase.FINISHED:
+                submissions = "\n\n".join(
+                    self._public_submission(player, submission)
+                    for player, submission in after.final_submissions.items()
+                )
+                resolution = json.dumps(after.resolution, ensure_ascii=False, indent=2)
+                return (
+                    AppEvent(f"{after.session_id}:script-murder:submissions", "final_submissions_revealed", ENGINE_NAME, f"# 全部最终提交\n\n{submissions}"),
+                    AppEvent(f"{after.session_id}:script-murder:resolution", "case_resolved", ENGINE_NAME, f"# 结构化结算\n\n```json\n{resolution}\n```"),
+                    AppEvent(f"{after.session_id}:script-murder:finished", "workflow_finished", ENGINE_NAME, after.ending_report),
+                )
             return () if content is None else (AppEvent(f"{after.session_id}:script-murder:{after.phase.value}", "phase_changed", ENGINE_NAME, content),)
         return ()
 
@@ -403,8 +434,17 @@ class ScriptMurderEnvironment(Environment):
         for character_id in self.case.character_order:
             character = self.case.characters[character_id]
             lines.append(f"- {character.name}：" + "；".join(character.goals))
-        lines.append("\n最终声明、行动及投票的完整结构化结果已保存在 Session State 和 Trace 中。")
+        lines.append("\n最终声明、行动及投票的完整记录已发布到公共 ROOM，并保存在 Session State 和 Trace 中。")
         return "\n".join(lines)
+
+    def _public_submission(self, player: str, submission: FinalSubmission) -> str:
+        character = self.case.characters[self._require_active().state.character_for(player)]
+        declarations = "\n".join(f"- {item}" for item in submission.declarations) or "- 无"
+        return (
+            f"## {player}（{character.name}）\n\n声明：\n{declarations}\n\n"
+            f"决定性行动：{submission.decisive_action}\n目标：{submission.target or '无'}\n"
+            f"党魁投票：{submission.leader_vote}"
+        )
 
     def _require_active(self) -> AppSession[ScriptMurderState]:
         if self._active is None:

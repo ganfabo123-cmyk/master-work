@@ -56,18 +56,20 @@ class WerewolfInstructionActionManager(ActionManager):
         key = "content" if call.name == "speak" else "instruction"
         return InstructionActionValue(f"{actor}:{call.id}", actor, call.name, InstructionActionPayload(str(payload.get(key, "")).strip()), call, observation)
 
-    def validate_action(self, action: Any, state: State) -> bool:
-        return (
-            isinstance(action, InstructionActionValue)
-            and isinstance(state, WerewolfInstructionState)
-            and action.actor in PARTICIPANTS
-            and action.message_id not in state.consumed_action_ids
-            and bool(action.content)
-            and (
-                (action.name == "speak" and action.actor not in state.spoken)
-                or (action.name == "submit_my_instruction" and action.actor in state.spoken and action.actor not in state.instructions)
-            )
-        )
+    def validate_action(self, action: Any, state: State) -> tuple[bool, str]:
+        if not isinstance(action, InstructionActionValue) or not isinstance(state, WerewolfInstructionState):
+            return False, "提交参数无法解析，或当前 State 类型不正确。"
+        if action.actor not in PARTICIPANTS or action.message_id in state.consumed_action_ids:
+            return False, "提交者不是参与者，或该 Action 已消费。"
+        if not action.content:
+            return False, "提交内容不能为空。"
+        if action.name == "speak":
+            return (False, "该参与者已经完成公开发言。") if action.actor in state.spoken else (True, "")
+        if action.name == "submit_my_instruction":
+            if action.actor not in state.spoken:
+                return False, "必须先完成公开发言，再提交教程正文。"
+            return (False, "该参与者已经提交教程正文。") if action.actor in state.instructions else (True, "")
+        return False, "当前只接受 speak 或 submit_my_instruction。"
 
     def available_actions(self, state: State, agent: Agent) -> tuple[str, ...]:
         if isinstance(state, WerewolfInstructionState) and agent.name not in state.spoken:
@@ -154,7 +156,8 @@ class WerewolfInstructionEnvironment(Environment):
         next_state = WerewolfInstructionState.from_dict(current.to_dict())
         actions = self.action_manager.resolve_actions(next_state, action)
         for item in actions.values():
-            if self.action_manager.validate_action(item, next_state):
+            valid, reason = self.action_manager.validate_action(item, next_state)
+            if valid:
                 self.execute_tool_action(
                     agent=active.agents[item.actor],
                     observation=item.observation,
@@ -166,11 +169,12 @@ class WerewolfInstructionEnvironment(Environment):
                     next_state.spoken.add(item.actor)
                 else:
                     next_state.instructions[item.actor] = item.content
+                    active.room("public").send(RoomMessage(name=item.actor, at="all", txt=f"# 教程提交\n\n{item.content}"))
                 next_state.consumed_action_ids.add(item.message_id)
             else:
                 self.reject_tool_action(
                     agent=active.agents[item.actor], observation=item.observation, tool_call=item.tool_call,
-                    reason="Action 未通过当前教程讨论状态验证。",
+                    reason=reason,
                     message_sink=active.contexts[item.actor].append_turn_messages,
                 )
         if all(name in next_state.instructions for name in PARTICIPANTS):
@@ -185,7 +189,10 @@ class WerewolfInstructionEnvironment(Environment):
     def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[AppEvent, ...]:
         before, after = self._state(old_state), self._state(new_state)
         if not before.is_terminal and after.is_terminal:
-            return (AppEvent(f"{after.session_id}:instruction:finished", "workflow_finished", ENGINE_NAME, "八名参与者均已提交教程内容，讨论结束。"),)
+            return (
+                AppEvent(f"{after.session_id}:instruction:tutorial", "tutorial_completed", ENGINE_NAME, f"# 完整狼人杀教程\n\n{after.tutorial}"),
+                AppEvent(f"{after.session_id}:instruction:finished", "workflow_finished", ENGINE_NAME, "八名参与者均已提交教程内容，讨论结束。"),
+            )
         return ()
 
     def dispatch_events(self, events: tuple[AppEvent, ...]) -> None:

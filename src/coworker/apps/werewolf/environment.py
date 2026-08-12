@@ -97,8 +97,55 @@ class WerewolfActionManager(ActionManager):
         except (KeyError, StopIteration, TypeError, ValueError, json.JSONDecodeError):
             return None
 
-    def validate_action(self, action: GameAction, state: WerewolfGameState) -> bool:
-        return self._validation_error(action, state) is None
+    def validate_action(self, action: Any, state: State) -> tuple[bool, str]:
+        if not isinstance(action, GameAction) or not isinstance(state, WerewolfGameState):
+            return False, "提交参数无法解析，或当前 State 类型不正确。"
+        if action.message_id in state.consumed_action_ids:
+            return False, "该动作已经结算。"
+        hunter_final_action = action.action in {ActionName.SHOOT, ActionName.SKIP_SHOT} and state.hunter_name == action.actor
+        if not state.is_alive(action.actor) and not hunter_final_action:
+            return False, "死亡玩家不能行动。"
+        if action.round_no != state.round_no or action.phase is not state.phase:
+            return False, "动作不属于当前回合或阶段。"
+        role = state.role_of(action.actor)
+        if action.action in {ActionName.WOLF_MESSAGE, ActionName.SPEAK} and not action.content:
+            return False, "发言内容不能为空。"
+        target_actions = {ActionName.WOLF_KILL, ActionName.INSPECT, ActionName.POISON, ActionName.VOTE, ActionName.SHOOT}
+        if action.action in target_actions and (action.target is None or not state.is_alive(action.target)):
+            return False, "目标必须是存活玩家。"
+        if action.action is ActionName.WOLF_MESSAGE:
+            if state.phase is not Phase.NIGHT_WOLF_DISCUSSION or role is not Role.WOLF:
+                return False, "当前无权进行狼队协商。"
+        elif action.action is ActionName.SPEAK:
+            if state.phase is not Phase.DAY_DISCUSSION:
+                return False, "当前不是公开讨论阶段。"
+        elif action.action is ActionName.WOLF_KILL:
+            if state.phase is not Phase.NIGHT_WOLF_KILL or role is not Role.WOLF:
+                return False, "当前无权发动狼人击杀。"
+            if action.target is not None and state.role_of(action.target) is Role.WOLF:
+                return False, "狼人不能击杀狼人。"
+        elif action.action is ActionName.INSPECT:
+            if state.phase is not Phase.NIGHT_SEER or role is not Role.SEER:
+                return False, "当前无权查验。"
+            if action.target == action.actor:
+                return False, "不能查验自己。"
+        elif action.action is ActionName.SAVE:
+            if state.phase is not Phase.NIGHT_WITCH or role is not Role.WITCH or not state.witch_has_antidote:
+                return False, "当前无权使用解药。"
+            if state.wolf_target is None:
+                return False, "今晚无人被狼刀，不能使用解药。"
+        elif action.action is ActionName.POISON:
+            if state.phase is not Phase.NIGHT_WITCH or role is not Role.WITCH or not state.witch_has_poison:
+                return False, "当前无权使用毒药。"
+        elif action.action is ActionName.VOTE:
+            if state.phase is not Phase.DAY_VOTE:
+                return False, "当前不是投票阶段。"
+            if action.target == action.actor:
+                return False, "不能投票给自己。"
+        elif action.action in {ActionName.SHOOT, ActionName.SKIP_SHOT}:
+            if state.phase is not Phase.HUNTER_SHOT or role is not Role.HUNTER or state.hunter_name != action.actor:
+                return False, "当前无权发动猎人技能。"
+        return True, ""
 
     def available_actions(self, state: WerewolfGameState, agent: Agent) -> tuple[ActionName, ...]:
         agent_name = agent.name
@@ -147,56 +194,6 @@ class WerewolfActionManager(ActionManager):
         ):
             raise TypeError("actions must be dict[str, GameAction]")
         return actions
-
-    @staticmethod
-    def _validation_error(action: GameAction, state: WerewolfGameState) -> str | None:
-        if action.message_id in state.consumed_action_ids:
-            return "该动作已经结算。"
-        hunter_final_action = action.action in {ActionName.SHOOT, ActionName.SKIP_SHOT} and state.hunter_name == action.actor
-        if not state.is_alive(action.actor) and not hunter_final_action:
-            return "死亡玩家不能行动。"
-        if action.round_no != state.round_no or action.phase is not state.phase:
-            return "动作不属于当前回合或阶段。"
-        role = state.role_of(action.actor)
-        if action.action in {ActionName.WOLF_MESSAGE, ActionName.SPEAK} and not action.content:
-            return "发言内容不能为空。"
-        target_actions = {ActionName.WOLF_KILL, ActionName.INSPECT, ActionName.POISON, ActionName.VOTE, ActionName.SHOOT}
-        if action.action in target_actions and (action.target is None or not state.is_alive(action.target)):
-            return "目标必须是存活玩家。"
-        if action.action is ActionName.WOLF_MESSAGE:
-            if state.phase is not Phase.NIGHT_WOLF_DISCUSSION or role is not Role.WOLF:
-                return "当前无权进行狼队协商。"
-        elif action.action is ActionName.SPEAK:
-            if state.phase is not Phase.DAY_DISCUSSION:
-                return "当前不是公开讨论阶段。"
-        elif action.action is ActionName.WOLF_KILL:
-            if state.phase is not Phase.NIGHT_WOLF_KILL or role is not Role.WOLF:
-                return "当前无权发动狼人击杀。"
-            if action.target is not None and state.role_of(action.target) is Role.WOLF:
-                return "狼人不能击杀狼人。"
-        elif action.action is ActionName.INSPECT:
-            if state.phase is not Phase.NIGHT_SEER or role is not Role.SEER:
-                return "当前无权查验。"
-            if action.target == action.actor:
-                return "不能查验自己。"
-        elif action.action is ActionName.SAVE:
-            if state.phase is not Phase.NIGHT_WITCH or role is not Role.WITCH or not state.witch_has_antidote:
-                return "当前无权使用解药。"
-            if state.wolf_target is None:
-                return "今晚无人被狼刀，不能使用解药。"
-        elif action.action is ActionName.POISON:
-            if state.phase is not Phase.NIGHT_WITCH or role is not Role.WITCH or not state.witch_has_poison:
-                return "当前无权使用毒药。"
-        elif action.action is ActionName.VOTE:
-            if state.phase is not Phase.DAY_VOTE:
-                return "当前不是投票阶段。"
-            if action.target == action.actor:
-                return "不能投票给自己。"
-        elif action.action in {ActionName.SHOOT, ActionName.SKIP_SHOT}:
-            if state.phase is not Phase.HUNTER_SHOT or role is not Role.HUNTER or state.hunter_name != action.actor:
-                return "当前无权发动猎人技能。"
-        return None
-
 
 @dataclass(slots=True)
 class WerewolfWorkflowConfig:
@@ -307,7 +304,7 @@ class WerewolfEnvironment(Environment):
             state_message=WerewolfObservation().game_state_message(current, names),
             available_tool_names=names,
             public_room=game.room("public"),
-            additional_rooms=(game.room("wolves"),) if current.role_of(agent.name) is Role.WOLF else (),
+            additional_rooms=(game.room(f"private:{agent.name}"),) + ((game.room("wolves"),) if current.role_of(agent.name) is Role.WOLF else ()),
             task_id=current.task_id,
             session_id=current.session_id,
         )
@@ -342,8 +339,8 @@ class WerewolfEnvironment(Environment):
         action = manager.resolve_action((agent.name, turn.content, observation, game.state))
         if action is None:
             return None
-        reason = manager._validation_error(action, game.state)
-        if reason is not None:
+        valid, reason = manager.validate_action(action, game.state)
+        if not valid:
             self.reject_tool_action(
                 agent=agent, observation=observation, tool_call=action.tool_call, reason=reason,
                 message_sink=game.contexts[agent.name].append_turn_messages,
@@ -365,8 +362,8 @@ class WerewolfEnvironment(Environment):
         actions: dict[str, GameAction] = action
 
         for item in actions.values():
-            reason = manager._validation_error(item, current)
-            if reason is not None:
+            valid, reason = manager.validate_action(item, current)
+            if not valid:
                 self.reject_tool_action(
                     agent=game.agents[item.actor], observation=item.observation, tool_call=item.tool_call, reason=reason,
                     message_sink=game.contexts[item.actor].append_turn_messages,
@@ -382,6 +379,16 @@ class WerewolfEnvironment(Environment):
                 game.room("wolves").send(RoomMessage(name=item.actor, at=current.alive_wolves(), txt=item.content))
             elif item.action is ActionName.SPEAK:
                 game.room("public").send(RoomMessage(name=item.actor, at="all", txt=item.content))
+            elif item.action is ActionName.WOLF_KILL:
+                game.room("wolves").send(RoomMessage(name=item.actor, at=current.alive_wolves(), txt=f"提交击杀目标：{item.target}"))
+            elif item.action in {ActionName.INSPECT, ActionName.SAVE, ActionName.POISON}:
+                target = f"；目标：{item.target}" if item.target is not None else ""
+                game.room(f"private:{item.actor}").send(RoomMessage(name=item.actor, at=item.actor, txt=f"提交 {item.action.value}{target}"))
+            elif item.action is ActionName.VOTE:
+                game.room("public").send(RoomMessage(name=item.actor, at="all", txt=f"投票给 {item.target}"))
+            elif item.action in {ActionName.SHOOT, ActionName.SKIP_SHOT}:
+                target = f"；目标：{item.target}" if item.target is not None else ""
+                game.room("public").send(RoomMessage(name=item.actor, at="all", txt=f"提交 {item.action.value}{target}"))
 
         current.consumed_action_ids.update(item.message_id for item in actions.values())
         if current.phase is Phase.PREPARATION:
@@ -460,7 +467,9 @@ def open_or_restore_session(environment: WerewolfEnvironment, *, task: Task, con
         public = environment.session.create_room(f"werewolf-public-{session_id}", session_id=session_id)
         wolves = environment.session.create_room(f"werewolf-wolves-{session_id}", session_id=session_id)
         environment.trace.update_session_metadata(session_id, public_room_id=public.room_id, werewolf_rooms={"public_room_id": public.room_id, "wolf_room_id": wolves.room_id})
-        register_engine(public, wolves)
+        private_rooms = {name: environment.session.create_room(f"werewolf-{name}-{session_id}", session_id=session_id) for name in state.players}
+        environment.trace.update_session_metadata(session_id, werewolf_private_room_ids={name: room.room_id for name, room in private_rooms.items()})
+        register_engine(public, wolves, *private_rooms.values())
         agents: dict[str, WerewolfPlayerAgent] = {}
         for name, player in state.players.items():
             agent = WerewolfPlayerAgent(environment.llm, environment.model, name=name, role=player.role, public_room=public, state=state, wolf_room=wolves)
@@ -468,8 +477,11 @@ def open_or_restore_session(environment: WerewolfEnvironment, *, task: Task, con
             agents[name] = agent
         environment.room_runtime.invite_agents(public, tuple(agents), session_id=session_id)
         environment.room_runtime.invite_agents(wolves, tuple(name for name, player in state.players.items() if player.role is Role.WOLF), session_id=session_id)
+        for name, room in private_rooms.items():
+            environment.room_runtime.invite_agents(room, (name,), session_id=session_id)
+            room.send(RoomMessage(name=ENGINE_NAME, at=name, txt=f"你的身份：{state.role_of(name).value}"))
         contexts = {name: environment.room_runtime.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
-        active = AppSession(session_id, state, agents, contexts, {"public": public, "wolves": wolves}, store, "werewolf")
+        active = AppSession(session_id, state, agents, contexts, {"public": public, "wolves": wolves, **{f"private:{name}": room for name, room in private_rooms.items()}}, store, "werewolf")
         active.persist()
         return active
     data = environment.trace.session_data(session_id)
@@ -481,14 +493,25 @@ def open_or_restore_session(environment: WerewolfEnvironment, *, task: Task, con
         raise ValueError(f"Session has invalid werewolf ROOM metadata: {session_id}")
     public, wolves = environment.session.resume_room(public_id, session_id=session_id), environment.session.resume_room(wolf_id, session_id=session_id)
     state = store.restore(session_id, "werewolf", WerewolfGameState)
+    private_ids = data.get("werewolf_private_room_ids")
+    if isinstance(private_ids, dict) and all(isinstance(private_ids.get(name), str) for name in state.players):
+        private_rooms = {name: environment.session.resume_room(str(private_ids[name]), session_id=session_id) for name in state.players}
+    else:
+        private_rooms = {name: environment.session.create_room(f"werewolf-{name}-{session_id}", session_id=session_id) for name in state.players}
+        environment.trace.update_session_metadata(session_id, werewolf_private_room_ids={name: room.room_id for name, room in private_rooms.items()})
+        register_engine(*private_rooms.values())
     agents = {}
     for name in state.players:
         player = state.players[name]
         agent = WerewolfPlayerAgent(environment.llm, environment.model, name=name, role=player.role, public_room=public, state=state, wolf_room=wolves)
         environment.room_runtime.register_agent(agent, player_profile(name, player.role))
         agents[name] = agent
+    for name, room in private_rooms.items():
+        if name not in room.participants():
+            environment.room_runtime.invite_agents(room, (name,), session_id=session_id)
+            room.send(RoomMessage(name=ENGINE_NAME, at=name, txt=f"你的身份：{state.role_of(name).value}"))
     contexts = {name: environment.room_runtime.open_incremental_context(agent_name=name, task=task, session_id=session_id) for name in agents}
-    return AppSession(session_id, state, agents, contexts, {"public": public, "wolves": wolves}, store, "werewolf")
+    return AppSession(session_id, state, agents, contexts, {"public": public, "wolves": wolves, **{f"private:{name}": room for name, room in private_rooms.items()}}, store, "werewolf")
 
 
 def register_engine(*rooms: Room) -> None:
@@ -571,7 +594,7 @@ def resolve_phase(
 
 def finish_as_draw(state: WerewolfGameState) -> tuple[WerewolfGameState, tuple[GameEvent, ...]]:
     state.winner = Winner.DRAW; state.phase = Phase.REVIEW
-    return state, (GameEvent("游戏因达到最大回合数而平局结束。"), *review_events(state))
+    return state, (GameEvent("游戏因达到最大回合数而平局结束。"), public_review_event(state), *review_events(state))
 
 
 def resolve_witch_and_night(state: WerewolfGameState, actions: dict[str, GameAction]) -> tuple[WerewolfGameState, list[GameEvent]]:
@@ -599,14 +622,25 @@ def begin_next_night(state: WerewolfGameState) -> None:
 
 
 def kill(state: WerewolfGameState, death: Death) -> None:
-    if death.player in state.players: state.players[death.player].alive = False
+    if death.player in state.players:
+        state.players[death.player].alive = False
+        state.pending_deaths.append(death)
 
 
 def check_winner(state: WerewolfGameState, events: list[GameEvent]) -> None:
     if not state.alive_wolves(): state.winner = Winner.VILLAGERS
     elif len(state.alive_wolves()) >= len(state.alive_players()) - len(state.alive_wolves()): state.winner = Winner.WOLVES
     if state.winner:
-        state.phase = Phase.REVIEW; label = "好人阵营" if state.winner is Winner.VILLAGERS else "狼人阵营"; events.append(GameEvent(f"游戏结束：{label}获胜。")); events.extend(review_events(state))
+        state.phase = Phase.REVIEW; label = "好人阵营" if state.winner is Winner.VILLAGERS else "狼人阵营"; events.append(GameEvent(f"游戏结束：{label}获胜。")); events.append(public_review_event(state)); events.extend(review_events(state))
+
+
+def public_review_event(state: WerewolfGameState) -> GameEvent:
+    identities = "\n".join(f"- {name}：{player.role.value}" for name, player in state.players.items())
+    deaths = "\n".join(f"- {death.player}：{death.cause}" for death in state.pending_deaths) or "- 无"
+    return GameEvent(
+        f"# 本局完整结算\n\n胜负：{state.winner.value if state.winner else 'draw'}\n\n"
+        f"全部玩家身份：\n{identities}\n\n死亡记录：\n{deaths}"
+    )
 
 
 def review_events(state: WerewolfGameState) -> tuple[GameEvent, ...]:

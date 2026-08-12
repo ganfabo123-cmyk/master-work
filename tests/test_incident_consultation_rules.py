@@ -68,5 +68,5 @@ def test_expert_observation_and_action_are_limited_to_owned_evidence(tmp_path) -
         ToolCall("call-2", "submit_finding", {}), observation,
     )
 
-    assert manager.validate_action(valid, state)
-    assert not manager.validate_action(invalid, state)
+    assert manager.validate_action(valid, state)[0]
+    assert not manager.validate_action(invalid, state)[0]

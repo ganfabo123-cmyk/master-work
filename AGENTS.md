@@ -328,6 +328,16 @@
 为什么我能成功，我认为原因是：
 多 Agent 协作无论表现为 ROOM、队列、任务看板、共享事件流还是 Agent 间 RPC，本质都包含三层。事件是不可变协作事实，必须有稳定 `event_id`、会话 ID、发送者、内容、创建时间和可见范围，正文只保存一份；投递记录事件应交给哪些消费者，只保存 `event_id`、目标和投递状态，广播是多条投递而不是多份消息；消费记录某个 Agent 是否已读取或处理该投递，必须按 `event_id` 幂等，重试、恢复或快照滞后时不得重复产生业务副作用。模型上下文只是某个 Agent 对有权看到且尚需处理事件的增量投影，前端只是授权事件的展示投影，业务状态机只消费合法事件并产生新事件。访问控制必须在事件查询和投递边界执行，不能只靠前端隐藏。以后实现协作能力时必须先明确这三层，即使替换 ROOM、队列或其他通信实现，协作语义也应保持一致。
 
+### 设计原则：ROOM 是正式交互平台与人工审查窗口
+
+在 CodeHarness 中，ROOM 不只是阶段通知或运行状态的展示板。它同时是 Agent 之间的正式交互平台，以及供人查看、理解和审查完整协作过程的可视化窗口。
+
+- 所有具有业务意义的 Agent 输出、Action 内容、研究产物、最终提交和 Environment 结算结果，都必须按可见性规则完整投递到对应 ROOM；Trace 或 State 中已有数据不能替代 ROOM 投影。
+- 阶段摘要可以作为辅助消息保留，但绝对不能用“已提交”“已完成”等摘要替代完整正文或完整可审计字段。
+- 公开内容进入公共 ROOM；私密身份、线索、手牌或协作内容进入相应私密 ROOM；需要暂时保密的提交先进入授权范围，业务规则允许公开后再完整投影到公共 ROOM。
+- ROOM 展示的是业务可审计内容，不要求暴露模型隐藏推理；但模型最终选择的 Action、工具提交参数、对外发言、领域产物及其造成的状态变化必须可见。
+- 新增或修改 App 时，必须明确建立 `Action / Artifact → 可见性规则 → ROOM 投影` 映射，并用测试验证完整内容确实进入正确 ROOM。只验证阶段通知存在，不算完成。
+
 ### 经验：必须无条件遵守开发者指令
 
 > 这是「1. 用推测替代明确边界」的一则具体案例记录，规则本身以该节为准。
@@ -353,6 +363,18 @@
 我需要深刻思考一下这次成功/失败的背后原因：
 为什么我失败，我认为原因是：
 我没有坚持系统已经确定的 `State → Observation → Policy → Action → Environment → New State` 主线，把“模型选择了什么动作”和“动作已经造成什么效果”混在工具函数中，又把传统问答式 Tool Loop 的完成条件错误地套在状态型 Agent 回合上。以后必须明确区分三类职责：Runtime 只提供无领域语义的工具注册、调用、异常和 Trace 能力；Observation 的 `feedback` 只通过 Runtime 执行工具并把结果转换成协议反馈，不改变领域状态；Agent 的 Policy 只生成 RawContentAction 或 ToolAction，Action Tool Call 本身就是动作描述，不得直接写 ROOM 或修改 State；Environment 必须先验证 Action，再通过 Observation feedback 执行 ToolAction，并在自己的消费方法中统一完成 ROOM 投递、领域状态改变和 New State 生成。LLMRuntime 只执行 Policy Tool；一旦发现合法 Action Tool Call，应立即返回该 Action，不执行它，也不要求额外的 raw assistant 收尾。任何需要从日志、ROOM 或外部副作用反向恢复 Action 的实现，都是绕过正式 Action 通道的危险信号；它会破坏原子性、恢复一致性和职责可审计性，应在设计阶段直接拒绝。
+
+### 经验：动作校验结果必须携带可反馈原因
+
+在 2026-08-12，我在 CodeHarness 的 Action 校验与纠正反馈链路中，试图通过独立的 `validation_error` 方法补充 `validate_action` 只能返回布尔值的不足。
+反馈为失败（根据用户指出最终校验仍调用只返回 `bool` 的 `validate_action`，独立错误函数没有建立统一有效的反馈契约，并要求修改基类及所有 App）。
+
+当时我的做法是：
+保留 `validate_action(action, state) -> bool` 作为正式校验入口，同时在个别 App 中增加 `validation_error` 或 `_validation_error` 来生成具体原因。调用方需要先判断布尔结果，再调用旁路方法获取反馈；不同 App 因而采用了不同校验路径，部分 App 只能向 Agent 返回笼统的 `validation error`。这种设计还会让两个方法分别维护同一套规则，产生结果与原因不一致的风险。
+
+我需要深刻思考一下这次成功/失败的背后原因：
+为什么我失败，我认为原因是：
+校验是否通过与拒绝原因是同一次领域判断不可分割的两个结果，不能拆成正式布尔接口和可选错误旁路。以后 `ActionManager.validate_action` 必须统一返回 `(valid, reason)`：通过时返回 `True` 和空原因，失败时返回 `False` 和能够指导 Agent 修正动作的明确原因。所有 App、`act()`、`step()` 和预检查入口都必须消费这一统一契约；失败原因应直接进入 `reject_tool_action`，形成 `Action → validate_action → reason → Agent correction` 的可审计反馈闭环。不得再增加 `validation_error`、`_validation_error` 或固定通用错误文本来绕开正式接口，也不得让不同 App 自行选择另一套校验协议。
 
 ## 完成标准
 

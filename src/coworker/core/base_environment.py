@@ -22,8 +22,8 @@ class ActionManager(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def validate_action(self, action: Any, state: State) -> bool:
-        """Return whether an action is valid for the current State."""
+    def validate_action(self, action: Any, state: State) -> tuple[bool, str]:
+        """Return validity and a user-facing rejection reason for the current State."""
         raise NotImplementedError
 
     @abstractmethod

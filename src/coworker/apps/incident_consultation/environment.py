@@ -94,19 +94,27 @@ class IncidentActionManager(ActionManager):
         except (KeyError, StopIteration, TypeError, ValueError, json.JSONDecodeError):
             return None
 
-    def validate_action(self, action: Any, state: State) -> bool:
+    def validate_action(self, action: Any, state: State) -> tuple[bool, str]:
         if not isinstance(action, IncidentActionValue) or not isinstance(state, IncidentState):
-            return False
+            return False, "提交参数无法解析，或当前 State 类型不正确。"
         if action.message_id in state.consumed_action_ids or action.actor not in EXPERTS or not action.component or not action.narrative:
-            return False
+            return False, "Action 已消费、提交者无效，或 component / narrative 为空。"
         if not 0 <= action.confidence <= 100 or not action.evidence_ids:
-            return False
+            return False, "confidence 必须为 0 到 100，且 evidence_ids 不能为空。"
         role = EXPERTS[action.actor]
         if state.phase is ConsultationPhase.INDEPENDENT_ANALYSIS:
             allowed = {item.evidence_id for item in state.evidence_for(role)}
-            return role is not ExpertRole.LEAD and action.name == "submit_finding" and set(action.evidence_ids) <= allowed
+            if role is ExpertRole.LEAD or action.name != "submit_finding":
+                return False, "独立分析阶段只有证据专家可以调用 submit_finding。"
+            if not set(action.evidence_ids) <= allowed:
+                return False, "evidence_ids 包含当前专家不可见或不存在的证据。"
+            return True, ""
         cited = {evidence_id for finding in state.findings.values() for evidence_id in finding.evidence_ids}
-        return state.phase is ConsultationPhase.FINAL_DIAGNOSIS and role is ExpertRole.LEAD and action.name == "submit_final_diagnosis" and set(action.evidence_ids) <= cited
+        if state.phase is not ConsultationPhase.FINAL_DIAGNOSIS or role is not ExpertRole.LEAD or action.name != "submit_final_diagnosis":
+            return False, "最终诊断阶段只有 lead-expert 可以调用 submit_final_diagnosis。"
+        if not set(action.evidence_ids) <= cited:
+            return False, "最终诊断只能引用三份 Finding 已引用的 evidence_ids。"
+        return True, ""
 
     def available_actions(self, state: State, agent: Agent) -> tuple[str, ...]:
         if not isinstance(state, IncidentState):
@@ -220,10 +228,11 @@ class IncidentConsultationEnvironment(Environment):
         next_state = IncidentState.from_dict(current.to_dict())
         actions = self._manager().resolve_actions(next_state, action)
         for item in actions.values():
-            if not self._manager().validate_action(item, next_state):
+            valid, reason = self._manager().validate_action(item, next_state)
+            if not valid:
                 self.reject_tool_action(
                     agent=active.agents[item.actor], observation=item.observation, tool_call=item.tool_call,
-                    reason="Action 未通过当前会诊状态验证。",
+                    reason=reason,
                     message_sink=active.contexts[item.actor].append_turn_messages,
                 )
                 raise ValueError(f"Illegal incident action {item.name!r} from {item.actor!r}")
@@ -249,9 +258,25 @@ class IncidentConsultationEnvironment(Environment):
     def build_events(self, old_state: State, actions: object, new_state: State) -> tuple[AppEvent, ...]:
         before, after = self._state(old_state), self._state(new_state)
         if before.phase is ConsultationPhase.INDEPENDENT_ANALYSIS and after.phase is ConsultationPhase.FINAL_DIAGNOSIS:
-            return (AppEvent(f"{after.session_id}:consultation:diagnosis", "phase_changed", ENGINE_NAME, "三位证据专家已提交 Finding，进入最终诊断阶段。"),)
+            findings = tuple(
+                AppEvent(
+                    f"{after.session_id}:consultation:finding:{finding.finding_id}", "finding_submitted", finding.expert,
+                    f"# Finding：{finding.component}\n\n{finding.summary}\n\n证据 ID：{', '.join(finding.evidence_ids) or '无'}\n置信度：{finding.confidence}%",
+                )
+                for finding in after.findings.values()
+            )
+            return (*findings, AppEvent(f"{after.session_id}:consultation:diagnosis", "phase_changed", ENGINE_NAME, "三位证据专家已提交 Finding，进入最终诊断阶段。"))
         if after.phase is ConsultationPhase.FINISHED:
-            return (AppEvent(f"{after.session_id}:consultation:finished", "workflow_finished", ENGINE_NAME, "主诊断专家已提交最终诊断，会诊结束。"),)
+            diagnosis = after.final_diagnosis
+            if diagnosis is None:
+                return ()
+            return (
+                AppEvent(
+                    f"{after.session_id}:consultation:final-diagnosis", "final_diagnosis_submitted", "lead-expert",
+                    f"# 最终诊断：{diagnosis.component}\n\n{diagnosis.root_cause}\n\n证据 ID：{', '.join(diagnosis.evidence_ids) or '无'}\n置信度：{diagnosis.confidence}%",
+                ),
+                AppEvent(f"{after.session_id}:consultation:finished", "workflow_finished", ENGINE_NAME, "主诊断专家已提交最终诊断，会诊结束。"),
+            )
         return ()
 
     def dispatch_events(self, events: tuple[AppEvent, ...]) -> None:

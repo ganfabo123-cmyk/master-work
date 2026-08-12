@@ -47,6 +47,8 @@ def test_discussion_builds_plain_tutorial_and_resumes(tmp_path: Path) -> None:
     room_id = environment.trace.session_data(result.session_id)["werewolf_instruction_room_id"]
     discussion = environment.trace.room_messages(result.session_id, room_id)
     assert all(any(message.name == name and "分享一条" in str(message.txt) for message in discussion) for name in PARTICIPANTS)
+    assert all(any(message.name == name and environment.state.instructions[name] in str(message.txt) for message in discussion) for name in PARTICIPANTS)
+    assert any(message.name == "instruction-engine" and expected in str(message.txt) for message in discussion)
     assert environment._active is not None
     for context in environment._active.contexts.values():
         assert_tool_calls_are_paired(context.history())

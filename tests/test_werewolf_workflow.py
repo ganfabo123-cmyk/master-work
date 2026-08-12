@@ -73,18 +73,24 @@ def test_game_is_room_traceable_and_resumable(tmp_path: Path) -> None:
         path.stem: json.loads(path.read_text(encoding="utf-8"))
         for path in (room / result.session_id / "rooms").glob("*.json")
     }
-    assert len(room_states) == 2
+    assert len(room_states) == 10
     public = next(state for room_id, state in room_states.items() if "public" in room_id)
     wolves = next(state for room_id, state in room_states.items() if "wolves" in room_id)
     assert "game-engine" in public["participants"]
     assert len(public["participants"]) == 9
     assert "game-engine" in wolves["participants"]
     assert len(wolves["participants"]) == 3
+    private_room_ids = environment.trace.session_data(result.session_id)["werewolf_private_room_ids"]
+    for player_name, private_room_id in private_room_ids.items():
+        private_messages = environment.trace.room_messages(result.session_id, private_room_id)
+        assert any(state["players"][player_name]["role"] in message.txt for message in private_messages)
     wolf_room_id = next(room_id for room_id in room_states if "wolves" in room_id)
-    assert any(message.txt == "agree on a target" for message in environment.trace.room_messages(result.session_id, wolf_room_id))
+    wolf_messages = environment.trace.room_messages(result.session_id, wolf_room_id)
+    assert any(message.txt == "agree on a target" for message in wolf_messages)
     public_room_id = next(room_id for room_id in room_states if "public" in room_id)
     public_messages = environment.trace.room_messages(result.session_id, public_room_id)
     assert any("你已拿到身份" in message.txt and "list_experiences" in message.txt for message in public_messages)
+    assert any("本局完整结算" in message.txt and "全部玩家身份" in message.txt and "死亡记录" in message.txt for message in public_messages)
     preparation_events = {
         player_name: [
             json.loads(message.content)

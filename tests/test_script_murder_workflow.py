@@ -58,10 +58,16 @@ def test_complete_workflow_is_private_deterministic_and_resumable(tmp_path: Path
     assert any("目击证词" in str(message.txt) for message in player_one_private)
     assert not any("目击证词" in str(message.txt) for message in player_two_private)
     assert any("卧底家庭线索" in str(message.txt) for message in player_two_private)
+    for player, room_id in private_ids.items():
+        private_messages = environment.trace.room_messages(result.session_id, room_id)
+        submission = state.final_submissions[player]
+        assert any(submission.declarations[0] in str(message.txt) and submission.leader_vote in str(message.txt) for message in private_messages)
 
     public_messages = environment.trace.room_messages(result.session_id, session["script_murder_public_room_id"])
     assert sum(message.name in PLAYERS and "依据自己掌握的信息发言" in str(message.txt) for message in public_messages) == 10
     assert not any('"action": "submit_resolution"' in str(message.txt) for message in public_messages)
+    assert all(any(submission.declarations[0] in str(message.txt) for message in public_messages) for submission in state.final_submissions.values())
+    assert any("结构化结算" in str(message.txt) and "leader_votes" in str(message.txt) for message in public_messages)
     assert environment._active is not None
     for context in environment._active.contexts.values():
         assert_tool_calls_are_paired(context.history())

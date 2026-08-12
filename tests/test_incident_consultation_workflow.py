@@ -57,7 +57,10 @@ def test_complete_incident_consultation_uses_room_state_store_and_trace(tmp_path
     session = environment.trace.session_data(result.session_id)
     assert session["mode"] == "incident-consultation"
     room_id = session["incident_room_id"]
-    assert any("最终诊断" in str(message.txt) for message in environment.trace.room_messages(result.session_id, room_id))
+    room_messages = environment.trace.room_messages(result.session_id, room_id)
+    for finding in state.findings.values():
+        assert any(message.name == finding.expert and finding.summary in str(message.txt) and finding.component in str(message.txt) for message in room_messages)
+    assert any(message.name == "lead-expert" and state.final_diagnosis.root_cause in str(message.txt) for message in room_messages)
     assert environment._active is not None
     for context in environment._active.contexts.values():
         assert_tool_calls_are_paired(context.history())
