@@ -242,6 +242,17 @@
   config:
     allowParallelInProgress: true
 
+# Chinese-thinking guidance: one non-complete section, keeps all other sections.
+- id: think-zh
+  name: '@deepseek-ai/dsh-think-zh'
+
+# Long-term experience memory: human-confirmed records append to the global
+# $DSH_HOME/memory.md; keyword search returns candidates for selective loading.
+- id: memory
+  name: '@deepseek-ai/dsh-memory'
+  isolate:
+    memory: true
+
 # The `web` service and its search provider stay in the host composition; only
 # the model-facing tool is per-session.
 - id: tool-web

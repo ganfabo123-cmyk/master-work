@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="520" viewBox="0 0 1120 520" role="img" aria-labelledby="title desc">
+  <title id="title">Real Loader demo transcript</title>
+  <desc id="desc">Terminal output shows keyword search returning metadata and an explicit get loading the complete UTF-8 experience.</desc>
+  <rect width="1120" height="520" rx="20" fill="#0b1220"/>
+  <circle cx="30" cy="28" r="7" fill="#fb7185"/><circle cx="53" cy="28" r="7" fill="#fbbf24"/><circle cx="76" cy="28" r="7" fill="#4ade80"/>
+  <text x="104" y="34" font-family="Inter,Segoe UI,sans-serif" font-size="14" fill="#94a3b8">real Cordis Loader · encoding-experience demo</text>
+  <g font-family="Consolas,Cascadia Mono,monospace" font-size="16" fill="#e2e8f0">
+    <text x="28" y="78" fill="#86efac">$ memory_search(deepseek-harness, encoding, typescript)</text>
+    <text x="28" y="112">[memory-17]</text><text x="28" y="140">title: Windows 中文源码写入必须显式使用 UTF-8</text>
+    <text x="28" y="168">keywords: deepseek-harness, windows, encoding, filesystem, typescript</text>
+    <text x="28" y="196">matched keywords: deepseek-harness, encoding, typescript</text>
+    <text x="28" y="224">outcome: success</text>
+    <text x="28" y="274" fill="#86efac">$ memory_get(memory-17)</text>
+    <text x="28" y="308"># Windows 中文源码写入必须显式使用 UTF-8 {memory-17}</text>
+    <text x="28" y="342" fill="#fbbf24">## Problem</text>
+    <text x="28" y="370">依赖 PowerShell 默认编码写回文件后，中文内容发生乱码。</text>
+    <text x="28" y="410" fill="#fbbf24">## Resolution</text>
+    <text x="28" y="438">明确指定 UTF-8，并通过磁盘重新加载验证多语言内容。</text>
+    <text x="28" y="478" fill="#60a5fa">✓ candidate metadata first · complete body only after memory_get</text>
+  </g>
+</svg>
+

@@ -1277,6 +1277,22 @@ export interface ReconnectConfig {
 
 Source: [`packages/mcp/mcp-client/src/index.ts:98`](../packages/mcp/mcp-client/src/index.ts)
 
+<a id="deepseek-aidsh-memory"></a>
+
+## `@deepseek-ai/dsh-memory`
+
+Requires: `tools` · `systemPrompt`
+
+```ts config-catalog
+/** Plugin config for `@deepseek-ai/dsh-memory`. */
+export interface Config {
+  /** Absolute host path to the process-shared experience store. */
+  memoryFile?: string
+}
+```
+
+Source: [`packages/memory/memory/src/config.ts:14`](../packages/memory/memory/src/config.ts)
+
 <a id="deepseek-aidsh-message-feedback"></a>
 
 ## `@deepseek-ai/dsh-message-feedback`
@@ -3084,6 +3100,7 @@ These load from a `cordis.yml` entry with no `config:` block; they declare no co
 - `@deepseek-ai/dsh-subagent` ([`packages/subagent/subagent/src/index.ts`](../packages/subagent/subagent/src/index.ts))
 - `@deepseek-ai/dsh-subprocess-local` ([`packages/subprocess/subprocess-local/src/index.ts`](../packages/subprocess/subprocess-local/src/index.ts))
 - `@deepseek-ai/dsh-terminal` ([`packages/terminal/terminal/src/index.ts`](../packages/terminal/terminal/src/index.ts))
+- `@deepseek-ai/dsh-think-zh` — requires `systemPrompt` ([`packages/preset/think-zh/src/index.ts`](../packages/preset/think-zh/src/index.ts))
 - `@deepseek-ai/dsh-tool-ask-user` — requires `tools` · `userQuestions` ([`packages/interaction/tool-ask-user/src/index.ts`](../packages/interaction/tool-ask-user/src/index.ts))
 - `@deepseek-ai/dsh-tool-call-timeout-policy` — requires `tools` ([`packages/guard/timeout-policy/src/index.ts`](../packages/guard/timeout-policy/src/index.ts))
 - `@deepseek-ai/dsh-tool-cordis` — requires `tools` · `systemPrompt` · `dynamicCordisRunner` · `cordisInspect` ([`packages/extensions/tool-cordis/src/index.ts`](../packages/extensions/tool-cordis/src/index.ts))

@@ -222,6 +222,13 @@ const SERVICE_ROLES: ServiceRole[] = [
     note: 'Owns local per-assistant-message feedback, lifecycle and target validation, per-item compare-and-set, and the Host unary Remote contract without entering Session history or telemetry.',
   },
   {
+    key: 'memory',
+    pkg: 'memory',
+    title: 'Keyword experience memory',
+    mode: 'core',
+    note: 'Owns the append-only Markdown experience store, process-local write serialization, candidate selection, and progressive model-facing retrieval.',
+  },
+  {
     key: 'workspaceRegistry',
     pkg: 'workspace',
     title: 'Workspace entity registry',

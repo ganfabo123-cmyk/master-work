@@ -882,6 +882,31 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
     ],
   },
   {
+    key: 'memory',
+    summary: 'Process-global experience memory backed by the configured Markdown file.',
+    description: 'Process-global experience memory backed by the configured Markdown file.',
+    methods: [
+      {
+        signature: 'async record(entries: readonly NewExperienceMemory[], signal?: AbortSignal): Promise<ExperienceMemory[]>',
+        description: 'Validate and append one or more experiences to the formal memory store. Keywords are persisted in canonical form, omitted outcomes become `unknown`, and one Harness-generated ISO timestamp applies to the batch.',
+        parameters: [{ name: 'entries', description: 'model-authored experience fields supplied for persistence.' }, { name: 'signal', description: 'operation cancellation.' }],
+        returns: 'durable experiences with assigned ids and timestamps.',
+      },
+      {
+        signature: 'async search(request: MemorySearchRequest, signal?: AbortSignal): Promise<MemorySearchCandidate[]>',
+        description: 'Select lightweight candidates. Internal ranking chooses Top-K only; the returned order is stable id order and does not express relevance.',
+        parameters: [{ name: 'request', description: 'query keywords and optional candidate limit.' }, { name: 'signal', description: 'operation cancellation.' }],
+        returns: 'candidate metadata without bodies or ranking scores.',
+      },
+      {
+        signature: 'get(id: string, signal?: AbortSignal): Promise<ExperienceMemory | undefined>',
+        description: 'Read one complete experience by stable id.',
+        parameters: [{ name: 'id', description: 'stable `memory-N` identity.' }, { name: 'signal', description: 'operation cancellation.' }],
+        returns: 'the complete experience, or `undefined` when absent.',
+      },
+    ],
+  },
+  {
     key: 'messageFeedback',
     summary: 'Storage-domain sidecar service.',
     description: 'Storage-domain sidecar service. It inspects persisted Session history and never creates or resumes an Agent or Session.',
@@ -3030,6 +3055,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface EpochHeader {\n    config: LlmCallConfig;\n    adapterDefaults?: LlmCallConfigAdapterDefaults;\n    system?: string;\n    tools?: ToolSchema[];\n}',
   },
   {
+    name: 'ExperienceMemory',
+    declaration: 'export interface ExperienceMemory {\n    readonly id: string;\n    readonly title: string;\n    readonly keywords: readonly string[];\n    readonly recordedAt: string;\n    readonly outcome: MemoryOutcome;\n    readonly body: string;\n}',
+  },
+  {
     name: 'FileDiff',
     declaration: 'export interface FileDiff {\n    path: string;\n    oldText: string | null;\n    newText: string;\n}',
   },
@@ -3362,6 +3391,18 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface ManualCompactAgentContext extends CompactionAgentContext {\n    runMaintenance<T>(task: (signal: AbortSignal) => Promise<T>): Promise<T>;\n}',
   },
   {
+    name: 'MemoryOutcome',
+    declaration: 'export type MemoryOutcome = \'success\' | \'failure\' | \'mixed\' | \'unknown\';',
+  },
+  {
+    name: 'MemorySearchCandidate',
+    declaration: 'export interface MemorySearchCandidate {\n    readonly id: string;\n    readonly title: string;\n    readonly keywords: readonly string[];\n    readonly matchedKeywords: readonly string[];\n    readonly outcome: MemoryOutcome;\n}',
+  },
+  {
+    name: 'MemorySearchRequest',
+    declaration: 'export interface MemorySearchRequest {\n    readonly keywords: readonly string[];\n    readonly limit?: number;\n}',
+  },
+  {
     name: 'Message',
     declaration: 'export interface Message {\n    readonly id: MessageId;\n    readonly role: \'system\' | \'user\' | \'assistant\';\n    readonly content: ContentBlock[];\n    readonly source: MessageSource;\n}',
   },
@@ -3464,6 +3505,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'ModelModalityMap',
     declaration: 'export interface ModelModalityMap {\n    text: \'text\';\n    image: \'image\';\n}',
+  },
+  {
+    name: 'NewExperienceMemory',
+    declaration: 'export interface NewExperienceMemory {\n    readonly title: string;\n    readonly keywords: readonly string[];\n    readonly outcome?: MemoryOutcome;\n    readonly body: string;\n}',
   },
   {
     name: 'ObjectJsonSchema',

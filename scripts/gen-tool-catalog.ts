@@ -56,6 +56,7 @@ import Lsp from '@deepseek-ai/dsh-lsp'
 import * as ToolLsp from '@deepseek-ai/dsh-tool-lsp'
 import * as ToolSkill from '@deepseek-ai/dsh-tool-skill'
 import * as ToolSessionQuery from '@deepseek-ai/dsh-tool-session-query'
+import * as Memory from '@deepseek-ai/dsh-memory'
 import * as ToolTasks from '@deepseek-ai/dsh-tool-jobs'
 import * as ToolTodo from '@deepseek-ai/dsh-tool-todo'
 import * as ToolSubagent from '@deepseek-ai/dsh-tool-subagent'
@@ -208,6 +209,18 @@ const TOOL_PACKAGES: ToolPackage[] = [
     async mount() {},
     note:
       'Owned by the tool registry as a reserved transport outside filterable capability layers under `mode: code` / `mode: both` (see the Code Mode Agent Note). Under `code` it is the registry\'s only wire contribution; the other visible capabilities are declared in a generated SDK section in the loaded runtime\'s language, and a program calls them through bindings scheduled under the native concurrency contract (submission-ordered starts and policy; concurrency-safe bodies overlap up to `maxParallelSubCalls`) that re-enter the complete guarded tool pipeline and link each nested execution to this outer result.',
+  },
+  {
+    pkg: '@deepseek-ai/dsh-memory',
+    dir: 'memory',
+    source: 'packages/memory/memory/src/index.ts',
+    requires: ['ctx.tools', 'ctx.systemPrompt', 'ctx.userQuestions (record approval, optional)'],
+    writes: ['tool/call', 'memory.md after approval', 'tool/result'],
+    async mount(ctx) {
+      await ctx.plugin(Memory)
+    },
+    note:
+      'memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append.',
   },
   {
     pkg: '@deepseek-ai/dsh-plan-mode',

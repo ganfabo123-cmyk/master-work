@@ -17,6 +17,7 @@ This table connects model-visible tool names to the plugin package and service s
 | --- | --- | --- | --- | --- | --- |
 | `@deepseek-ai/dsh-tool-ask-user` | `ask_user_question` | `ctx.tools`, `ctx.userQuestions` | `tool/call`, `tool/result after a UI/provider answers the question` | - | ask_user_question pauses the tool call until the active UI provider returns a human answer. |
 | `@deepseek-ai/dsh-tools` | `run_code` | `ctx.tools`, `ctx.codeRuntime (execution time)`, `ctx.systemPrompt` | `tool/call`, `one tool/code-dispatch-start + tool/code-dispatch pair per bridged sub-call`, `tool/result` | - | Owned by the tool registry as a reserved transport outside filterable capability layers under `mode: code` / `mode: both` (see the Code Mode Agent Note). Under `code` it is the registry's only wire contribution; the other visible capabilities are declared in a generated SDK section in the loaded runtime's language, and a program calls them through bindings scheduled under the native concurrency contract (submission-ordered starts and policy; concurrency-safe bodies overlap up to `maxParallelSubCalls`) that re-enter the complete guarded tool pipeline and link each nested execution to this outer result. |
+| `@deepseek-ai/dsh-memory` | `memory_get`, `memory_record`, `memory_search` | `ctx.tools`, `ctx.systemPrompt`, `ctx.userQuestions (record approval, optional)` | `tool/call`, `memory.md after approval`, `tool/result` | - | memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append. |
 | `@deepseek-ai/dsh-plan-mode` | `exit_plan_mode` | `ctx.tools`, `ctx.systemPrompt`, `ctx.userQuestions (execution time, opportunistic)` | `tool/call`, `plan/mode inactive on an approved review`, `tool/result` | - | exit_plan_mode stays in the model-facing schema while planning is inactive so transitions add no tool-catalog churn on top of the plan-policy change. Its execute path rejects calls outside plan mode; in plan mode it presents the plan over the user-questions seam (approve / keep planning with feedback), and approval logs plan mode inactive at the step boundary. |
 | `@deepseek-ai/dsh-tool-bash` | `bash` | `ctx.tools`, `ctx.shell`, `ctx.systemPrompt`, `ctx.shellEnv`, `ctx.jobs at call time for run_in_background` | `tool/call`, `tool/result` | - | The bash tool is the model-facing consumer of the bash executor seam. A `run_in_background` run registers with the generic `ctx.jobs` runtime and is collected/stopped through the `job_*` tools from `@deepseek-ai/dsh-tool-jobs`; the `enableRunInBackground` config (default true) removes the parameter entirely when disabled. |
 | `@deepseek-ai/dsh-tool-pwsh` | `pwsh` | `ctx.tools`, `ctx.shell`, `ctx.systemPrompt`, `ctx.shellEnv`, `ctx.jobs at call time for run_in_background` | `tool/call`, `tool/result` | - | The pwsh tool is the PowerShell-dialect consumer of the bash executor seam for Windows compositions (a PowerShell executor such as `@deepseek-ai/dsh-pwsh-local` backs `ctx.shell`); it mirrors the bash tool call-for-call minus sandbox controls — `run_in_background` runs register with the generic `ctx.jobs` runtime and are collected/stopped through the `job_*` tools, and the managed `DSH_*` environment comes from `@deepseek-ai/dsh-shell-env`. Each call runs in a fresh process (no persistent PTY session), with native `C:\...` paths and `$env:NAME` variables. |
@@ -145,6 +146,118 @@ Execute a TypeScript program against the available tools. Takes two required arg
 Source: [`packages/core/tools/src/code-mode.ts`](../packages/core/tools/src/code-mode.ts)
 
 Owned by the tool registry as a reserved transport outside filterable capability layers under `mode: code` / `mode: both` (see the Code Mode Agent Note). Under `code` it is the registry's only wire contribution; the other visible capabilities are declared in a generated SDK section in the loaded runtime's language, and a program calls them through bindings scheduled under the native concurrency contract (submission-ordered starts and policy; concurrency-safe bodies overlap up to `maxParallelSubCalls`) that re-enter the complete guarded tool pipeline and link each nested execution to this outer result.
+
+<a id="deepseek-aidsh-memory"></a>
+
+## `@deepseek-ai/dsh-memory`
+
+### `memory_get`
+
+Read one complete past experience by its stable memory-N id.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The candidate experience id."
+    }
+  },
+  "required": [
+    "id"
+  ]
+}
+```
+
+Source: [`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `memory_record`
+
+Append one or more reusable experiences directly to memory.md using the supplied tool-call fields.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "entries": {
+      "type": "array",
+      "description": "Reusable experiences from the current task.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short, specific experience title."
+          },
+          "keywords": {
+            "type": "array",
+            "description": "Stable recall terms covering relevant semantic dimensions.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Observed result; omitted becomes unknown.",
+            "enum": [
+              "success",
+              "failure",
+              "mixed",
+              "unknown"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "description": "Markdown experience body. Level-one headings are forbidden. Recommended template:\n## Context\n\nDescribe the task and relevant environment.\n\n## Problem\n\nDescribe the problem or unexpected behavior.\n\n## Attempts\n\nDescribe attempted approaches and their outcomes.\n\n## Resolution\n\nDescribe the adopted resolution when one exists.\n\n## Lesson\n\nState the transferable lesson for future tasks."
+          }
+        },
+        "required": [
+          "title",
+          "keywords",
+          "body"
+        ]
+      }
+    }
+  },
+  "required": [
+    "entries"
+  ]
+}
+```
+
+Source: [`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `memory_search`
+
+Find lightweight candidate experiences by several exact keywords. Result order is stable and does not express relevance.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "keywords": {
+      "type": "array",
+      "description": "Specific technology, system, problem, environment, and component terms.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limit": {
+      "type": "number",
+      "description": "Maximum candidate count. Defaults to 10."
+    }
+  },
+  "required": [
+    "keywords"
+  ]
+}
+```
+
+Source: [`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append.
 
 <a id="deepseek-aidsh-plan-mode"></a>
 
