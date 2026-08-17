@@ -4,6 +4,7 @@
  * @module @deepseek-ai/dsh-memory/model
  */
 
+import type { FactMemory } from './fact.ts'
 import type { ExperienceMemory } from './memory.ts'
 import type { MemorySearchCandidate } from './service.ts'
 
@@ -59,4 +60,18 @@ export function formatExperience(memory: ExperienceMemory): string {
     '',
     memory.body,
   ].join('\n')
+}
+
+/**
+ * Render the injected per-cwd facts the model should treat as known context.
+ * Facts are stable key/value pairs the user or the model deliberately saved for
+ * this working directory; they are not retrieval candidates and are not stale
+ * few-shot — each is asserted as a current fact for this cwd.
+ * @param facts - durable cwd-scoped facts in file order.
+ * @returns the injected system-prompt fact block, or `''` when there are none.
+ */
+export function formatFactSection(facts: readonly FactMemory[]): string {
+  if (facts.length === 0) return ''
+  const lines = facts.map(fact => `${fact.key}: ${fact.value}`)
+  return 'Remembered facts for this working directory (saved by the user or the model; treat them as known, current facts unless contradicted by the user):\n' + lines.join('\n')
 }

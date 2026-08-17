@@ -5,6 +5,8 @@
  */
 
 import { Service, type Context } from '@deepseek-ai/cordis'
+import type { FactMemory } from './fact.ts'
+import { normalizeFactKey } from './fact.ts'
 import {
   normalizeKeywords,
   type ExperienceMemory,
@@ -13,6 +15,7 @@ import {
 } from './memory.ts'
 import { KeywordRetriever } from './retrieval/keyword_retriever.ts'
 import type { MemoryRetriever } from './retrieval/retriever.ts'
+import { FactStore } from './store/fact_store.ts'
 import { MemoryStore } from './store/memory_store.ts'
 
 /** Stable error taxonomy for memory failures. */
@@ -26,6 +29,8 @@ export class MemoryError extends Error {
 /** Runtime-owned dependencies for the memory service. */
 export interface MemoryRuntime {
   readonly memoryFile: string
+  readonly factsDir: string
+  readonly maxFacts: number
   readonly now?: () => Date
   readonly retriever?: MemoryRetriever
 }
@@ -45,17 +50,21 @@ export interface MemorySearchRequest {
   readonly limit?: number
 }
 
-/** Process-global experience memory backed by the configured Markdown file. */
+/** Process-global memory service backed by the configured experience file and per-cwd fact files. */
 export class MemoryService extends Service {
   private readonly store: MemoryStore
+  private readonly factStore: FactStore
   private readonly retriever: MemoryRetriever
   private readonly now: () => Date
+  private readonly maxFacts: number
 
   constructor(ctx: Context, runtime: MemoryRuntime) {
     super(ctx, 'memory')
     this.store = new MemoryStore(runtime.memoryFile)
+    this.factStore = new FactStore(runtime.factsDir)
     this.retriever = runtime.retriever ?? new KeywordRetriever()
     this.now = runtime.now ?? (() => new Date())
+    this.maxFacts = runtime.maxFacts
   }
 
   /**
@@ -115,5 +124,51 @@ export class MemoryService extends Service {
    */
   get(id: string, signal?: AbortSignal): Promise<ExperienceMemory | undefined> {
     return this.store.get(id, signal)
+  }
+
+  /**
+   * Read every fact for one cwd in file order.
+   * @param cwd - absolute session working directory.
+   * @param signal - operation cancellation.
+   * @returns durable cwd-scoped facts.
+   */
+  facts(cwd: string, signal?: AbortSignal): Promise<FactMemory[]> {
+    return this.factStore.list(cwd, signal)
+  }
+
+  /**
+   * Upsert one fact for a cwd, normalizing the key and assigning a timestamp.
+   * @param cwd - absolute session working directory.
+   * @param input - the key/value to persist; the key is trimmed and lowercased.
+   * @param signal - operation cancellation.
+   * @returns the durable fact assigned a Harness-generated ISO timestamp.
+   */
+  async rememberFact(cwd: string, input: { key: string; value: string }, signal?: AbortSignal): Promise<FactMemory> {
+    const key = normalizeFactKey(input.key)
+    const value = input.value.trim()
+    if (key.length === 0) throw new MemoryError('fact key must not be blank', 'FACT_EMPTY_KEY')
+    if (value.length === 0) throw new MemoryError('fact value must not be blank', 'FACT_EMPTY_VALUE')
+    const fact: FactMemory = { key, value, recordedAt: this.now().toISOString() }
+    await this.factStore.set(cwd, fact, signal)
+    return fact
+  }
+
+  /**
+   * Remove one fact by normalized key for a cwd.
+   * @param cwd - absolute session working directory.
+   * @param key - the fact key to remove; trimmed and lowercased before lookup.
+   * @param signal - operation cancellation.
+   * @returns whether a fact with that key was removed.
+   */
+  forgetFact(cwd: string, key: string, signal?: AbortSignal): Promise<boolean> {
+    return this.factStore.remove(cwd, normalizeFactKey(key), signal)
+  }
+
+  /**
+   * The configured cap on facts injected per cwd.
+   * @returns the effective fact count budget for the injected section.
+   */
+  factBudget(): number {
+    return this.maxFacts
   }
 }

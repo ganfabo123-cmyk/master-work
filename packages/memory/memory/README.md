@@ -4,7 +4,7 @@ English | [中文](README.zh.md)
 
 **Session stores what happened. Experience Memory stores what is worth reusing.**
 
-`@deepseek-ai/dsh-memory` is an append-only experience-memory plugin for DeepSeek Harness. It distils reusable successes and failures into independent Markdown records instead of storing conversations or reconstructing complete sessions.
+`@deepseek-ai/dsh-memory` is an append-only experience-memory plugin for DeepSeek Harness. It distils reusable successes and failures into independent Markdown records instead of storing conversations or reconstructing complete sessions. It also provides cwd-scoped fact memory: stable facts about the user or workspace that are injected automatically into the model context on every turn.
 
 ![Experience Memory core flow](assets/memory-flow.svg)
 
@@ -94,7 +94,25 @@ Load the plugin after the system-prompt and tool services:
 
 `memoryFile` defaults to `$DSH_HOME/memory.md`. The host owns this path; the model cannot choose a workspace file. The parent directory and file are created on the first successful `memory_record` call.
 
-## Three model-facing tools
+Fact memory is stored per absolute cwd under `factsDir` (defaults to `$DSH_HOME/memory-facts`), one Markdown file per cwd whose name is a short SHA-256 digest of the absolute path. `maxFacts` caps how many facts are injected into the system prompt per cwd (default `100`).
+
+## Fact memory (per-cwd long-term memory)
+
+Unlike experience memory, facts are never searched: `fact_remember` and `fact_forget` manage a key/value store scoped to the absolute session working directory, and every fact for the current cwd is injected into the system prompt on each assembly.
+
+```text
+user says "我叫 gan" or asks to remember the name
+  → fact_remember({ key: 'user name', value: 'gan' })
+  → persisted to <factsDir>/<sha256(cwd)>.md
+  → injected every turn as "user name: gan" for this cwd only
+```
+
+- Isolation is by absolute cwd: a fact saved in `D:/project-a` is never visible in `D:/project-b`, or in the same path spelled with a different casing or separator.
+- Keys are trimmed and lowercased; `fact_remember` upserts, so a later value for the same key replaces the earlier one.
+- The injected block tells the model to treat the facts as known, current facts unless the user contradicts them, and to remember stable personal or project facts proactively and forget corrected or revoked ones on request.
+- Injection is a dynamic `system-prompt/assemble` contribution, so facts appear on every turn and update immediately after a `fact_remember` or `fact_forget` call without a restart.
+
+## Model-facing tools
 
 ### `memory_search`
 
@@ -119,6 +137,14 @@ model Tool Call
 
 Blank titles, bodies, or keyword lists are rejected. Bodies may contain `##` through `######` headings, but a level-one heading is forbidden because only `# <title> {memory-N}` defines a record boundary.
 
+### `fact_remember`
+
+Saves one key/value fact for the current session cwd. A blank key or value is rejected; the key is trimmed and lowercased before persistence.
+
+### `fact_forget`
+
+Removes one saved fact by key for the current session cwd. A missing key returns an explicit model-readable message instead of failing.
+
 ## Architecture
 
 ![Experience Memory architecture](assets/architecture.svg)
@@ -127,7 +153,9 @@ Blank titles, bodies, or keyword lists are rejected. Bodies may contain `##` thr
 
 Its internal matched-keyword count selects Top-K only. Selected candidates are then presented in ascending `memory-N` order, so presentation order is not a relevance claim. Model-facing output never exposes `score`, `rankingScore`, or `similarity`.
 
-`MemoryRetriever` receives a `MemorySearchSource`. Future BM25, vector, or hybrid providers may maintain derived indexes without changing the Store, Service, or three model tools. Those providers are extension points, not V1 features.
+`MemoryRetriever` receives a `MemorySearchSource`. Future BM25, vector, or hybrid providers may maintain derived indexes without changing the Store, Service, or model tools. Those providers are extension points, not V1 features.
+
+`FactStore` owns the per-cwd fact files; `FactSource` is its read-only projection used by the system-prompt injection. `MemoryService` exposes both stores and is the sole entry point for the tools.
 
 ## Durability and concurrency
 
@@ -135,6 +163,7 @@ Its internal matched-keyword count selects Top-K only. Selected candidates are t
 - Writes use atomic replacement with owner-only file and directory permissions.
 - A process-local serialized queue covers reload, id allocation, and write. Concurrent sessions in one process cannot duplicate ids or lose an append.
 - Multiple processes writing the same file concurrently are not supported.
+- Each cwd's fact file has its own serialized write queue, so concurrent `fact_remember` calls on one cwd cannot lose a fact, and a `fact_forget` that empties the store removes the file.
 
 ## Verification
 
@@ -145,6 +174,7 @@ The release-focused suite covers:
 - three concurrent appends without duplicate ids or lost content;
 - exact keyword matching, canonical normalization, zero-match behavior, limit, and Top-K/presentation separation;
 - tool output contracts, including no body or score leakage from search;
+- fact round-trip, concurrent remember, per-cwd isolation, and injected-section rendering;
 - real Cordis Loader assembly and complete `record → search → get` tool execution;
 - plugin unload cleanup for tools, service, and system-prompt section;
 - multilingual UTF-8 round-trip with 中文, English, 日本語, emoji, Markdown, code spans, and a Chinese Windows path.
@@ -160,14 +190,15 @@ Coverage percentage is diagnostic rather than the release definition; product co
 
 ## Model guidance and token behavior
 
-The plugin tells the model to generate several specific search keywords, treat results as candidates rather than truth, explicitly load only worthwhile records, and record reusable lessons rather than routine errors or complete session history.
+The plugin tells the model to generate several specific search keywords, treat results as candidates rather than truth, explicitly load only worthwhile records, and record reusable lessons rather than routine errors or complete session history. It also instructs the model to keep the injected per-cwd facts as known context, to save stable personal or project facts with `fact_remember`, and to drop corrected or revoked facts with `fact_forget`.
 
-Tool schemas and fixed guidance remain prefix-stable while plugin visibility is unchanged. Search cost grows with lightweight selected metadata; complete body tokens enter context only through explicit `memory_get` calls.
+Tool schemas and fixed guidance remain prefix-stable while plugin visibility is unchanged. Search cost grows with lightweight selected metadata; complete body tokens enter context only through explicit `memory_get` calls. Injected facts add at most `maxFacts` short `key: value` lines per cwd per turn.
 
 ## Known limitations and roadmap
 
-- V1 is process-global and exact-keyword only; there is no workspace scope, BM25, embedding, vector, reranking, or hybrid retrieval.
+- Experience memory is process-global and exact-keyword only; there is no project-root scope, BM25, embedding, vector, reranking, or hybrid retrieval. Fact memory is cwd-scoped only — it does not follow a project to its subdirectories.
 - There is no automatic session mining, migration, deletion, merge, semantic deduplication, contradiction handling, or decay.
 - The write queue protects one process only.
+- Fact keys are case-insensitive by design (trimmed and lowercased), so `User Name` and `user name` are the same fact.
 - Performance benchmarking and large-corpus retrieval evaluation are deferred until real usage invalidates the current linear-scan assumption.
 

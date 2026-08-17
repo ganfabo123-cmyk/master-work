@@ -17,7 +17,7 @@ This table connects model-visible tool names to the plugin package and service s
 | --- | --- | --- | --- | --- | --- |
 | `@deepseek-ai/dsh-tool-ask-user` | `ask_user_question` | `ctx.tools`, `ctx.userQuestions` | `tool/call`, `tool/result after a UI/provider answers the question` | - | ask_user_question pauses the tool call until the active UI provider returns a human answer. |
 | `@deepseek-ai/dsh-tools` | `run_code` | `ctx.tools`, `ctx.codeRuntime (execution time)`, `ctx.systemPrompt` | `tool/call`, `one tool/code-dispatch-start + tool/code-dispatch pair per bridged sub-call`, `tool/result` | - | Owned by the tool registry as a reserved transport outside filterable capability layers under `mode: code` / `mode: both` (see the Code Mode Agent Note). Under `code` it is the registry's only wire contribution; the other visible capabilities are declared in a generated SDK section in the loaded runtime's language, and a program calls them through bindings scheduled under the native concurrency contract (submission-ordered starts and policy; concurrency-safe bodies overlap up to `maxParallelSubCalls`) that re-enter the complete guarded tool pipeline and link each nested execution to this outer result. |
-| `@deepseek-ai/dsh-memory` | `memory_get`, `memory_record`, `memory_search` | `ctx.tools`, `ctx.systemPrompt`, `ctx.userQuestions (record approval, optional)` | `tool/call`, `memory.md after approval`, `tool/result` | - | memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append. |
+| `@deepseek-ai/dsh-memory` | `fact_forget`, `fact_remember`, `memory_get`, `memory_record`, `memory_search` | `ctx.tools`, `ctx.systemPrompt`, `ctx.userQuestions (record approval, optional)` | `tool/call`, `memory.md after approval`, `per-cwd fact file after remember/forget`, `tool/result` | - | memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append; fact_remember/fact_forget manage per-cwd facts injected into the system prompt on every assembly. |
 | `@deepseek-ai/dsh-plan-mode` | `exit_plan_mode` | `ctx.tools`, `ctx.systemPrompt`, `ctx.userQuestions (execution time, opportunistic)` | `tool/call`, `plan/mode inactive on an approved review`, `tool/result` | - | exit_plan_mode stays in the model-facing schema while planning is inactive so transitions add no tool-catalog churn on top of the plan-policy change. Its execute path rejects calls outside plan mode; in plan mode it presents the plan over the user-questions seam (approve / keep planning with feedback), and approval logs plan mode inactive at the step boundary. |
 | `@deepseek-ai/dsh-tool-bash` | `bash` | `ctx.tools`, `ctx.shell`, `ctx.systemPrompt`, `ctx.shellEnv`, `ctx.jobs at call time for run_in_background` | `tool/call`, `tool/result` | - | The bash tool is the model-facing consumer of the bash executor seam. A `run_in_background` run registers with the generic `ctx.jobs` runtime and is collected/stopped through the `job_*` tools from `@deepseek-ai/dsh-tool-jobs`; the `enableRunInBackground` config (default true) removes the parameter entirely when disabled. |
 | `@deepseek-ai/dsh-tool-pwsh` | `pwsh` | `ctx.tools`, `ctx.shell`, `ctx.systemPrompt`, `ctx.shellEnv`, `ctx.jobs at call time for run_in_background` | `tool/call`, `tool/result` | - | The pwsh tool is the PowerShell-dialect consumer of the bash executor seam for Windows compositions (a PowerShell executor such as `@deepseek-ai/dsh-pwsh-local` backs `ctx.shell`); it mirrors the bash tool call-for-call minus sandbox controls — `run_in_background` runs register with the generic `ctx.jobs` runtime and are collected/stopped through the `job_*` tools, and the managed `DSH_*` environment comes from `@deepseek-ai/dsh-shell-env`. Each call runs in a fresh process (no persistent PTY session), with native `C:\...` paths and `$env:NAME` variables. |
@@ -33,6 +33,7 @@ This table connects model-visible tool names to the plugin package and service s
 | `@deepseek-ai/dsh-tool-ralph` | `ralph` | `ctx.tools`, `ctx.workflowEngine`, `ctx.subagents`, `ctx.systemPrompt`, `a calling Agent (exec.agent parents every fresh round)` | `tool/call`, `tool/result`, `workflow and child session events during execution` | - | A fixed foreground workflow starts one fresh structured child per round; the model selects only the immutable objective and an optional round cap. |
 | `@deepseek-ai/dsh-tool-skill` | `skill` | `ctx.tools`, `ctx.agents`, `ctx.skills` | `tool/call`, `tool/result`, `user/message replacement catalogs via agent.inject()` | - | - |
 | `@deepseek-ai/dsh-tool-session-query` | `session_event_read`, `session_event_search`, `session_event_trace`, `session_search`, `session_trace` | `ctx.tools`, `ctx.systemPrompt`, `ctx.sessionQuery`, `a calling Agent for workspace authority` | `tool/call`, `tool/result` | - | The five read-only tools hide provider cursors and authorize every result from the immutable calling agent session. The package is opt-in; compositions that need enforced deadlines or bounded inline output also mount the generic timeout or spill policies. |
+| `@deepseek-ai/dsh-tool-cross-session-search` | `cross_session_search` | `ctx.tools`, `ctx.systemPrompt`, `ctx.sessionQuery`, `ctx.approval`, `a calling Agent for the per-call approval gate` | `tool/call`, `tool/result`, `approval/asked + approval/decided audit pair on the caller session` | - | The single read-only search tool reaches sessions in every workspace, so each call passes a per-call user-approval gate through ctx.approval; only an allowed-once answer authorizes the search, and the audit pair lands on the caller session. The package is opt-in. |
 | `@deepseek-ai/dsh-tool-subagent` | `subagent` | `ctx.tools`, `ctx.subagents`, `ctx.systemPrompt` | `tool/call`, `tool/result`, `child session events through the chosen provider` | `subagent`, `subagent_fork` | The registered tool name is the load-time `toolName` config (default `subagent`); the schema above is that default. The shipped compositions load this package once per subagent backend, so the model additionally sees `subagent_fork` bound to the fork backend. Each instance's description, `run_in_background` parameter, and system-prompt policy follow its own `backgroundMode` and `enableRunInBackground`, so the two shipped schemas are not identical: `subagent` is `continuable` and defaults omitted calls to background with automatic settlement delivery, while `subagent_fork` stays `one-shot` and defaults them to foreground — see `packages/bundle/base/cordis.patch.yml` and `examples/acp-agent/cordis.yml`. |
 | `@deepseek-ai/dsh-tool-subagent-control` | `interrupt_agent`, `list_agents`, `send_message` | `ctx.tools`, `ctx.subagents`, `ctx.agents and ctx.sessionProjections (list_agents only)` | `tool/call`, `tool/result`, `child session events through ctx.subagents` | - | The globally named control tools over continuable background subagents: provider-bound `tool-subagent` instances register distinct delegation tools, while this package registers `send_message` and `interrupt_agent` once, plus `list_agents` from its separately loaded `/list-agents` plugin (whose catalog rows use the sessionProjections and live Agent registries). |
 | `@deepseek-ai/dsh-tool-subagent-report` | `report` | `ctx.subagents`, `ctx.systemPrompt`, `a live continuable in-process child Agent` | `tool/call`, `tool/result`, `a user-role message in the direct parent session` | - | Registered per continuable in-process child rather than globally, so this schema is visible only inside such a child and survives its global `toolFilter`. The same contribution installs the child-scoped `tool:report` prompt section, which this catalog does not render. The parent-facing `send_message` tool is installed independently. |
@@ -151,6 +152,53 @@ Owned by the tool registry as a reserved transport outside filterable capability
 
 ## `@deepseek-ai/dsh-memory`
 
+### `fact_forget`
+
+Remove one saved fact for the current working directory by its key. Use it when the user says a remembered fact is wrong or asks you to forget it.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "The fact key to forget, e.g. \"user name\"; trimmed and lowercased."
+    }
+  },
+  "required": [
+    "key"
+  ]
+}
+```
+
+Source: [`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `fact_remember`
+
+Save one stable fact for the current working directory. The fact is injected into your context on every future turn in this cwd until forgotten. Use it when the user asks you to remember something or states a stable personal or project fact.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Short fact key, e.g. \"user name\"; trimmed and lowercased."
+    },
+    "value": {
+      "type": "string",
+      "description": "The fact value, e.g. \"gan\"."
+    }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
+}
+```
+
+Source: [`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
 ### `memory_get`
 
 Read one complete past experience by its stable memory-N id.
@@ -257,7 +305,7 @@ Find lightweight candidate experiences by several exact keywords. Result order i
 
 Source: [`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
 
-memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append.
+memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append; fact_remember/fact_forget manage per-cwd facts injected into the system prompt on every assembly.
 
 <a id="deepseek-aidsh-plan-mode"></a>
 
@@ -1580,6 +1628,59 @@ Read the authorized session lineage around one session, including complete visib
 Source: [`packages/session-query/tool-session-query/src/index.ts`](../packages/session-query/tool-session-query/src/index.ts)
 
 The five read-only tools hide provider cursors and authorize every result from the immutable calling agent session. The package is opt-in; compositions that need enforced deadlines or bounded inline output also mount the generic timeout or spill policies.
+
+<a id="deepseek-aidsh-tool-cross-session-search"></a>
+
+## `@deepseek-ai/dsh-tool-cross-session-search`
+
+### `cross_session_search`
+
+Search prior sessions across every workspace and return the strongest matching event from each session. Requires per-call user approval.
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Literal full-text query over prior session history in every workspace."
+    },
+    "session_ids": {
+      "type": "array",
+      "description": "Optional session ids to include.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_at_from": {
+      "type": "string",
+      "description": "Inclusive timezone-qualified ISO 8601 creation-time lower bound."
+    },
+    "created_at_to": {
+      "type": "string",
+      "description": "Inclusive timezone-qualified ISO 8601 creation-time upper bound."
+    },
+    "parent_session_ids": {
+      "type": "array",
+      "description": "Optional direct parent session ids.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "include_root_sessions": {
+      "type": "boolean",
+      "description": "Include sessions with no parent in the parent filter."
+    }
+  },
+  "required": [
+    "query"
+  ]
+}
+```
+
+Source: [`packages/session-query/tool-cross-session-search/src/index.ts`](../packages/session-query/tool-cross-session-search/src/index.ts)
+
+The single read-only search tool reaches sessions in every workspace, so each call passes a per-call user-approval gate through ctx.approval; only an allowed-once answer authorizes the search, and the audit pair lands on the caller session. The package is opt-in.
 
 <a id="deepseek-aidsh-tool-subagent"></a>
 

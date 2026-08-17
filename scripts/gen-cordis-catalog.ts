@@ -264,6 +264,7 @@ export const LINK_MAP: Readonly<Record<string, string>> = {
   MessageFeedbackVersion: 'feedback.md',
   MessageFeedbackVersionConflict: 'feedback.md',
   ExperienceMemory: 'memory.md',
+  FactMemory: 'memory.md',
   MemorySearchCandidate: 'memory.md',
   MemorySearchRequest: 'memory.md',
   NewExperienceMemory: 'memory.md',

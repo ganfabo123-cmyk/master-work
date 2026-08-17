@@ -1288,10 +1288,14 @@ Requires: `tools` · `systemPrompt`
 export interface Config {
   /** Absolute host path to the process-shared experience store. */
   memoryFile?: string
+  /** Absolute directory owning per-cwd fact files (auto-injected long-term memory). */
+  factsDir?: string
+  /** Maximum facts injected into the system prompt per cwd. */
+  maxFacts?: number
 }
 ```
 
-Source: [`packages/memory/memory/src/config.ts:14`](../packages/memory/memory/src/config.ts)
+Source: [`packages/memory/memory/src/config.ts:22`](../packages/memory/memory/src/config.ts)
 
 <a id="deepseek-aidsh-message-feedback"></a>
 
@@ -2387,6 +2391,22 @@ export interface Config {
 ```
 
 Source: [`packages/shell/tool-bash-persistent/src/index.ts:405`](../packages/shell/tool-bash-persistent/src/index.ts)
+
+<a id="deepseek-aidsh-tool-cross-session-search"></a>
+
+## `@deepseek-ai/dsh-tool-cross-session-search`
+
+Requires: `tools` · `systemPrompt` · `sessionQuery` · `approval`
+
+```ts config-catalog
+/** Deployment-owned search count bound. */
+export interface Config {
+  /** Maximum approved cross-workspace hits returned by one search call. Defaults to 20. */
+  maxSearchResults?: number
+}
+```
+
+Source: [`packages/session-query/tool-cross-session-search/src/index.ts:34`](../packages/session-query/tool-cross-session-search/src/index.ts)
 
 <a id="deepseek-aidsh-tool-fs"></a>
 

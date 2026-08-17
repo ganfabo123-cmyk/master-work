@@ -19,6 +19,7 @@
 | --- | --- | --- | --- | --- | --- |
 | `@deepseek-ai/dsh-tool-ask-user` | `ask_user_question` | `ctx.tools`、`ctx.userQuestions` | `tool/call`、`tool/result after a UI/provider answers the question` | - | ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类答案。 |
 | `@deepseek-ai/dsh-tools` | `run_code` | `ctx.tools`、`ctx.codeRuntime (execution time)`、`ctx.systemPrompt` | `tool/call`、`one tool/code-dispatch-start + tool/code-dispatch pair per bridged sub-call`、`tool/result` | - | 在 `mode: code`／`mode: both` 下，它由工具注册表所有，作为可过滤能力层之外的保留传输机制（参见 Code Mode Agent Note）。在 `code` 下，它是注册表对协议格式（wire format）的唯一贡献；其他可见能力在使用已加载运行时语言生成的 SDK 章节中声明。程序通过 binding 调用这些能力，调用按照原生并发约定调度：启动顺序和策略遵循提交顺序，并发安全的函数体最多重叠执行 `maxParallelSubCalls` 个。调用会重新进入完整且受守卫保护的工具流水线，并将每个嵌套执行关联到此外层结果。 |
+| `@deepseek-ai/dsh-memory` | `fact_forget`、`fact_remember`、`memory_get`、`memory_record`、`memory_search` | `ctx.tools`、`ctx.systemPrompt`、`ctx.userQuestions (record approval, optional)` | `tool/call`、`memory.md after approval`、`per-cwd fact file after remember/forget`、`tool/result` | - | memory_search 返回稳定、非排名顺序的轻量候选；memory_get 加载一条完整经验；memory_record 在追加前确认可复用经验正文；fact_remember/fact_forget 管理每次系统提示装配都会注入的按 cwd 事实。 |
 | `@deepseek-ai/dsh-plan-mode` | `exit_plan_mode` | `ctx.tools`、`ctx.systemPrompt`、`ctx.userQuestions (execution time, opportunistic)` | `tool/call`、`plan/mode inactive on an approved review`、`tool/result` | - | 规划未激活时，exit_plan_mode 仍保留在面向模型的 schema 中，这样状态转换不会在规划策略变更之外额外造成工具目录变动。其执行路径会拒绝规划模式之外的调用；在规划模式下，它通过用户交互 seam 提交计划（批准／根据反馈继续规划），批准后会在步骤边界记录规划模式已停用。 |
 | `@deepseek-ai/dsh-tool-bash` | `bash` | `ctx.tools`、`ctx.shell`、`ctx.systemPrompt`、`ctx.shellEnv`、`ctx.jobs at call time for run_in_background` | `tool/call`、`tool/result` | - | bash 工具是 bash 执行器 seam 面向模型的消费方。使用 `run_in_background` 的运行会注册到通用 `ctx.jobs` 运行时，并通过 `job_*` 工具（来自 `@deepseek-ai/dsh-tool-jobs`）收集／停止；禁用 `enableRunInBackground` 配置（默认为 true）后，该参数会被完全移除。 |
 | `@deepseek-ai/dsh-tool-pwsh` | `pwsh` | `ctx.tools`、`ctx.shell`、`ctx.systemPrompt`、`ctx.shellEnv`、`ctx.jobs at call time for run_in_background` | `tool/call`、`tool/result` | - | pwsh 工具是 Windows 组合中 bash 执行器 seam 的 PowerShell 方言消费方（由 `@deepseek-ai/dsh-pwsh-local` 等 PowerShell 执行器为 `ctx.shell` 提供后端）；除沙箱接口外，它逐项对应 bash 工具调用。使用 `run_in_background` 的运行会注册到通用 `ctx.jobs` 运行时，并通过 `job_*` 工具收集／停止；托管的 `DSH_*` 环境来自 `@deepseek-ai/dsh-shell-env`。每次调用都在新进程中运行，不使用持久 PTY 会话。路径采用原生 `C:\...` 形式，变量采用 `$env:NAME`。 |
@@ -34,6 +35,7 @@
 | `@deepseek-ai/dsh-tool-ralph` | `ralph` | `ctx.tools`、`ctx.workflowEngine`、`ctx.subagents`、`ctx.systemPrompt`、`a calling Agent (exec.agent parents every fresh round)` | `tool/call`、`tool/result`、`workflow and child session events during execution` | - | 固定的前台工作流会在每个 Round 启动一个全新的结构化子级；模型只能选择不可变目标和可选的 Round 上限。 |
 | `@deepseek-ai/dsh-tool-skill` | `skill` | `ctx.tools`、`ctx.agents`、`ctx.skills` | `tool/call`、`tool/result`、`user/message replacement catalogs via agent.inject()` | - | - |
 | `@deepseek-ai/dsh-tool-session-query` | `session_event_read`、`session_event_search`、`session_event_trace`、`session_search`、`session_trace` | `ctx.tools`、`ctx.systemPrompt`、`ctx.sessionQuery`、`a calling Agent for workspace authority` | `tool/call`、`tool/result` | - | 这 5 个只读工具会隐藏提供方游标，并根据不可变的调用 agent 会话为每个结果授权。该包需要选择启用；需要强制截止时间或限制行内输出的组合还会挂载通用超时或 spill 策略。 |
+| `@deepseek-ai/dsh-tool-cross-session-search` | `cross_session_search` | `ctx.tools`、`ctx.systemPrompt`、`ctx.sessionQuery`、`ctx.approval`、`a calling Agent for the per-call approval gate` | `tool/call`、`tool/result`、`approval/asked + approval/decided audit pair on the caller session` | - | 唯一的只读搜索工具可触及所有工作目录中的会话，因此每次调用都会经 `ctx.approval` 穿过逐次用户授权 gate；只有 `allowed-once` 答复才授权搜索，审计对会落到调用者会话上。该包需显式启用。 |
 | `@deepseek-ai/dsh-tool-subagent` | `subagent` | `ctx.tools`、`ctx.subagents`、`ctx.systemPrompt` | `tool/call`、`tool/result`、`child session events through the chosen provider` | `subagent`、`subagent_fork` | 注册的工具名称取决于加载时 `toolName` 配置（默认为 `subagent`）；上述 schema 对应默认值。随产品发布的组合会为每个 subagent 后端加载一次该包，因此模型还会看到绑定到 fork 后端的 `subagent_fork`。每个实例的描述、`run_in_background` 参数与 system prompt 策略取决于它自己的 `backgroundMode` 和 `enableRunInBackground`，因此两个随附 schema 并不相同：`subagent` 为 `continuable`，省略参数时默认后台运行，并由 runtime 自动投递结束结果；`subagent_fork` 保持 `one-shot`，省略参数时默认前台运行。详见 `packages/bundle/base/cordis.patch.yml` 和 `examples/acp-agent/cordis.yml`。 |
 | `@deepseek-ai/dsh-tool-subagent-control` | `interrupt_agent`、`list_agents`、`send_message` | `ctx.tools`、`ctx.subagents`、`ctx.agents and ctx.sessionProjections (list_agents only)` | `tool/call`、`tool/result`、`child session events through ctx.subagents` | - | 这些是控制可继续后台 subagent 的全局命名工具：绑定提供方的 `tool-subagent` 实例注册不同的委派工具；本包注册一次 `send_message` 和 `interrupt_agent`，另由 `list_agents` 通过单独加载的 `/list-agents` 插件提供，其目录行使用 sessionProjections 和实时 Agent 注册表。 |
 | `@deepseek-ai/dsh-tool-subagent-report` | `report` | `ctx.subagents`、`ctx.systemPrompt`、`a live continuable in-process child Agent` | `tool/call`、`tool/result`、`a user-role message in the direct parent session` | - | 按可继续的进程内子级注册，而非全局注册，因此该 schema 仅在这种子级内部可见，并且不受其全局 `toolFilter` 影响。同一份贡献还会安装子级作用域的 `tool:report` 系统提示词 section，本目录不渲染该 section。面向父级的 `send_message` 工具单独安装。 |
@@ -147,6 +149,165 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
 来源：[`packages/core/tools/src/code-mode.ts`](../packages/core/tools/src/code-mode.ts)
 
 在 `mode: code`／`mode: both` 下，它由工具注册表所有，作为可过滤能力层之外的保留传输机制（参见 Code Mode Agent Note）。在 `code` 下，它是注册表对协议格式的唯一贡献；其他可见能力在使用已加载运行时语言生成的 SDK 章节中声明。程序通过 binding 调用这些能力，调用按照原生并发约定调度：启动顺序和策略遵循提交顺序，并发安全的函数体最多重叠执行 `maxParallelSubCalls` 个。调用会重新进入完整且受守卫保护的工具流水线，并将每个嵌套执行关联到此外层结果。
+
+<a id="deepseek-aidsh-memory"></a>
+
+## `@deepseek-ai/dsh-memory`
+
+### `fact_forget`
+
+按键删除当前工作目录的一条已保存事实。用户说某条记忆事实错误或要求忘记时使用。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "The fact key to forget, e.g. \"user name\"; trimmed and lowercased."
+    }
+  },
+  "required": [
+    "key"
+  ]
+}
+```
+
+来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `fact_remember`
+
+为当前工作目录保存一条稳定事实。该事实会在此 cwd 的每个后续回合注入上下文，直到被忘记。用户要求记住内容，或陈述稳定的个人/项目事实时使用。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Short fact key, e.g. \"user name\"; trimmed and lowercased."
+    },
+    "value": {
+      "type": "string",
+      "description": "The fact value, e.g. \"gan\"."
+    }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
+}
+```
+
+来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `memory_get`
+
+通过稳定的 memory-N id 读取一条完整过往经验。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The candidate experience id."
+    }
+  },
+  "required": [
+    "id"
+  ]
+}
+```
+
+来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `memory_record`
+
+使用提供的工具调用字段，将一条或多条可复用经验直接追加到 memory.md。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "entries": {
+      "type": "array",
+      "description": "Reusable experiences from the current task.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short, specific experience title."
+          },
+          "keywords": {
+            "type": "array",
+            "description": "Stable recall terms covering relevant semantic dimensions.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Observed result; omitted becomes unknown.",
+            "enum": [
+              "success",
+              "failure",
+              "mixed",
+              "unknown"
+            ]
+          },
+          "body": {
+            "type": "string",
+            "description": "Markdown experience body. Level-one headings are forbidden. Recommended template:\n## Context\n\nDescribe the task and relevant environment.\n\n## Problem\n\nDescribe the problem or unexpected behavior.\n\n## Attempts\n\nDescribe attempted approaches and their outcomes.\n\n## Resolution\n\nDescribe the adopted resolution when one exists.\n\n## Lesson\n\nState the transferable lesson for future tasks."
+          }
+        },
+        "required": [
+          "title",
+          "keywords",
+          "body"
+        ]
+      }
+    }
+  },
+  "required": [
+    "entries"
+  ]
+}
+```
+
+来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `memory_search`
+
+用多个精确关键词查找轻量候选经验。结果顺序稳定，不表示相关性。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "keywords": {
+      "type": "array",
+      "description": "Specific technology, system, problem, environment, and component terms.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limit": {
+      "type": "number",
+      "description": "Maximum candidate count. Defaults to 10."
+    }
+  },
+  "required": [
+    "keywords"
+  ]
+}
+```
+
+来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+memory_search 返回稳定、非排名顺序的轻量候选；memory_get 加载一条完整经验；memory_record 在追加前确认可复用经验正文；fact_remember/fact_forget 管理每次系统提示装配都会注入的按 cwd 事实。
 
 <a id="deepseek-aidsh-plan-mode"></a>
 
@@ -1471,6 +1632,59 @@ lsp 工具将提供方选择和语言服务器子进程置于 ctx.lsp 之后，�
 来源：[`packages/session-query/tool-session-query/src/index.ts`](../packages/session-query/tool-session-query/src/index.ts)
 
 这 5 个只读工具会隐藏提供方游标，并根据不可变的调用 agent 会话为每个结果授权。该包需要选择启用；需要强制截止时间或限制行内输出的组合还会挂载通用超时或 spill 策略。
+
+<a id="deepseek-aidsh-tool-cross-session-search"></a>
+
+## `@deepseek-ai/dsh-tool-cross-session-search`
+
+### `cross_session_search`
+
+搜索所有工作目录中的先前会话，并从每个会话返回匹配度最高的事件。需要逐次用户授权。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Literal full-text query over prior session history in every workspace."
+    },
+    "session_ids": {
+      "type": "array",
+      "description": "Optional session ids to include.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_at_from": {
+      "type": "string",
+      "description": "Inclusive timezone-qualified ISO 8601 creation-time lower bound."
+    },
+    "created_at_to": {
+      "type": "string",
+      "description": "Inclusive timezone-qualified ISO 8601 creation-time upper bound."
+    },
+    "parent_session_ids": {
+      "type": "array",
+      "description": "Optional direct parent session ids.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "include_root_sessions": {
+      "type": "boolean",
+      "description": "Include sessions with no parent in the parent filter."
+    }
+  },
+  "required": [
+    "query"
+  ]
+}
+```
+
+来源：[`packages/session-query/tool-cross-session-search/src/index.ts`](../packages/session-query/tool-cross-session-search/src/index.ts)
+
+唯一的只读搜索工具可触及所有工作目录中的会话，因此每次调用都会经 `ctx.approval` 穿过逐次用户授权 gate；只有 `allowed-once` 答复才授权搜索，审计对会落到调用者会话上。该包需显式启用。
 
 <a id="deepseek-aidsh-tool-subagent"></a>
 

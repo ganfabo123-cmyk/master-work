@@ -883,8 +883,8 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
   },
   {
     key: 'memory',
-    summary: 'Process-global experience memory backed by the configured Markdown file.',
-    description: 'Process-global experience memory backed by the configured Markdown file.',
+    summary: 'Process-global memory service backed by the configured experience file and per-cwd fact files.',
+    description: 'Process-global memory service backed by the configured experience file and per-cwd fact files.',
     methods: [
       {
         signature: 'async record(entries: readonly NewExperienceMemory[], signal?: AbortSignal): Promise<ExperienceMemory[]>',
@@ -903,6 +903,30 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         description: 'Read one complete experience by stable id.',
         parameters: [{ name: 'id', description: 'stable `memory-N` identity.' }, { name: 'signal', description: 'operation cancellation.' }],
         returns: 'the complete experience, or `undefined` when absent.',
+      },
+      {
+        signature: 'facts(cwd: string, signal?: AbortSignal): Promise<FactMemory[]>',
+        description: 'Read every fact for one cwd in file order.',
+        parameters: [{ name: 'cwd', description: 'absolute session working directory.' }, { name: 'signal', description: 'operation cancellation.' }],
+        returns: 'durable cwd-scoped facts.',
+      },
+      {
+        signature: 'async rememberFact(cwd: string, input: { key: string; value: string }, signal?: AbortSignal): Promise<FactMemory>',
+        description: 'Upsert one fact for a cwd, normalizing the key and assigning a timestamp.',
+        parameters: [{ name: 'cwd', description: 'absolute session working directory.' }, { name: 'input', description: 'the key/value to persist; the key is trimmed and lowercased.' }, { name: 'signal', description: 'operation cancellation.' }],
+        returns: 'the durable fact assigned a Harness-generated ISO timestamp.',
+      },
+      {
+        signature: 'forgetFact(cwd: string, key: string, signal?: AbortSignal): Promise<boolean>',
+        description: 'Remove one fact by normalized key for a cwd.',
+        parameters: [{ name: 'cwd', description: 'absolute session working directory.' }, { name: 'key', description: 'the fact key to remove; trimmed and lowercased before lookup.' }, { name: 'signal', description: 'operation cancellation.' }],
+        returns: 'whether a fact with that key was removed.',
+      },
+      {
+        signature: 'factBudget(): number',
+        description: 'The configured cap on facts injected per cwd.',
+        parameters: [],
+        returns: 'the effective fact count budget for the injected section.',
       },
     ],
   },
@@ -3057,6 +3081,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'ExperienceMemory',
     declaration: 'export interface ExperienceMemory {\n    readonly id: string;\n    readonly title: string;\n    readonly keywords: readonly string[];\n    readonly recordedAt: string;\n    readonly outcome: MemoryOutcome;\n    readonly body: string;\n}',
+  },
+  {
+    name: 'FactMemory',
+    declaration: 'export interface FactMemory {\n    readonly key: string;\n    readonly value: string;\n    readonly recordedAt: string;\n}',
   },
   {
     name: 'FileDiff',

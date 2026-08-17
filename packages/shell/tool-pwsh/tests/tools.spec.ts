@@ -164,6 +164,15 @@ async function setupWithTasks(toolConfig: Partial<ToolPwsh.Config> = {}, dshHome
 class ConfiningFakeBash extends ShellExecutor {
   requests: ShellExecRequest[] = []
   modes: Array<string | undefined> = []
+  handler: (spec: ShellExecSpec) => ShellRunResult = spec => runResult('ok\n', {
+    sandbox: {
+      mode: spec.sandboxPolicy?.mode ?? 'read-only',
+      denied: false,
+      ...spec.command === 'without optional sandbox facts'
+        ? {}
+        : { enforcement: 'full' as const, runnerFailed: false },
+    },
+  })
 
   override get sandboxMode() {
     return 'read-only' as const
@@ -184,15 +193,7 @@ class ConfiningFakeBash extends ShellExecutor {
 
   override async run(spec: ShellExecSpec): Promise<ShellRunResult> {
     this.modes.push(spec.sandboxPolicy?.mode)
-    return runResult('ok\n', {
-      sandbox: {
-        mode: spec.sandboxPolicy?.mode ?? 'read-only',
-        denied: false,
-        ...spec.command === 'without optional sandbox facts'
-          ? {}
-          : { enforcement: 'full' as const, runnerFailed: false },
-      },
-    })
+    return this.handler(spec)
   }
 
   override start(spec: ShellExecSpec): ShellProcess {
@@ -636,6 +637,62 @@ describe('sandbox escalation through ctx.approval', () => {
     const background = await call(ctx, 'pwsh', { ...escalate, run_in_background: true }, agent)
     expect(text(background)).toBe('started background job pwsh-1')
     expect(bash.modes).toEqual(['workspace-write', 'workspace-write'])
+  })
+
+  it('asks inline after a foreground sandbox denial and reruns the same command once when allowed', async () => {
+    const { ctx, bash } = await setupSandboxed(true)
+    const prompted = vi.fn(() => Promise.resolve<ApprovalOutcome>('allowed-once'))
+    ctx.on('approval/request', prompted)
+    bash.handler = spec => spec.sandboxPolicy?.mode === 'read-only'
+      ? runResult('', {
+        exitCode: 1,
+        stderr: { text: 'Access to the path is denied.\n', truncated: false },
+        sandbox: { mode: 'read-only', denied: true, enforcement: 'full' },
+      })
+      : runResult('ok after approval\n', {
+        sandbox: { mode: spec.sandboxPolicy?.mode ?? 'read-only', denied: false, enforcement: 'full' },
+      })
+
+    const result = await call(ctx, 'pwsh', { command: 'Write-Output ok', description: 'inline escalation' }, sandboxAgent())
+
+    expect(result.isError).toBe(false)
+    expect(text(result)).toBe('ok after approval\n')
+    expect(bash.modes).toEqual(['read-only', 'workspace-write'])
+    expect(prompted).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not rerun an inline-denied foreground command when the approval is rejected', async () => {
+    const { ctx, bash } = await setupSandboxed(true)
+    ctx.on('approval/request', () => Promise.resolve<ApprovalOutcome>('rejected'))
+    bash.handler = spec => runResult('', {
+      exitCode: 1,
+      stderr: { text: 'Access to the path is denied.\n', truncated: false },
+      sandbox: { mode: spec.sandboxPolicy?.mode ?? 'read-only', denied: true, enforcement: 'full' },
+    })
+
+    const result = await call(ctx, 'pwsh', { command: 'Write-Output ok', description: 'inline escalation' }, sandboxAgent())
+
+    expect(result.isError).toBe(true)
+    expect(text(result)).toContain('user rejected')
+    expect(bash.modes).toEqual(['read-only'])
+  })
+
+  it('does not ask inline after a foreground denial when the call already used explicit escalation', async () => {
+    const { ctx, bash } = await setupSandboxed(true)
+    const prompted = vi.fn(() => Promise.resolve<ApprovalOutcome>('allowed-once'))
+    ctx.on('approval/request', prompted)
+    bash.handler = spec => runResult('', {
+      exitCode: 1,
+      stderr: { text: 'Access to the path is denied.\n', truncated: false },
+      sandbox: { mode: spec.sandboxPolicy?.mode ?? 'read-only', denied: true, enforcement: 'full' },
+    })
+
+    const result = await call(ctx, 'pwsh', escalate, sandboxAgent())
+
+    expect(result.isError).toBe(false)
+    expect(text(result)).toContain('[sandbox: file access denied under workspace-write mode]')
+    expect(bash.modes).toEqual(['workspace-write'])
+    expect(prompted).toHaveBeenCalledTimes(1)
   })
 
   it('does not publish detached work when cancellation follows the escalation grant', async () => {

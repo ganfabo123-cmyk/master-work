@@ -15,9 +15,10 @@ export const name = 'memory-invariant'
 export const inject = ['invariants']
 
 /**
- * No runtime invariant: the Markdown store is authoritative, retrieval results
- * are derived from it, and the process-local write queue owns no independently
- * observable event relationship. Tool registries validate their registrations.
+ * No runtime invariant: the Markdown stores are authoritative, retrieval
+ * results and the injected fact section are derived from them, and the
+ * process-local write queues own no independently observable event
+ * relationship. Tool registries validate their registrations.
  */
 const install: InvariantInstaller = () => {}
 

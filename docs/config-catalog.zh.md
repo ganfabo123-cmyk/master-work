@@ -1279,6 +1279,26 @@ export interface ReconnectConfig {
 
 来源：[`packages/mcp/mcp-client/src/index.ts:98`](../packages/mcp/mcp-client/src/index.ts)
 
+<a id="deepseek-aidsh-memory"></a>
+
+## `@deepseek-ai/dsh-memory`
+
+需要：`tools` · `systemPrompt`
+
+```ts config-catalog
+/** Plugin config for `@deepseek-ai/dsh-memory`. */
+export interface Config {
+  /** Absolute host path to the process-shared experience store. */
+  memoryFile?: string
+  /** Absolute directory owning per-cwd fact files (auto-injected long-term memory). */
+  factsDir?: string
+  /** Maximum facts injected into the system prompt per cwd. */
+  maxFacts?: number
+}
+```
+
+来源：[`packages/memory/memory/src/config.ts:22`](../packages/memory/memory/src/config.ts)
+
 <a id="deepseek-aidsh-message-feedback"></a>
 
 ## `@deepseek-ai/dsh-message-feedback`
@@ -2374,6 +2394,22 @@ export interface Config {
 
 来源：[`packages/shell/tool-bash-persistent/src/index.ts:405`](../packages/shell/tool-bash-persistent/src/index.ts)
 
+<a id="deepseek-aidsh-tool-cross-session-search"></a>
+
+## `@deepseek-ai/dsh-tool-cross-session-search`
+
+需要：`tools` · `systemPrompt` · `sessionQuery` · `approval`
+
+```ts config-catalog
+/** Deployment-owned search count bound. */
+export interface Config {
+  /** Maximum approved cross-workspace hits returned by one search call. Defaults to 20. */
+  maxSearchResults?: number
+}
+```
+
+来源：[`packages/session-query/tool-cross-session-search/src/index.ts:34`](../packages/session-query/tool-cross-session-search/src/index.ts)
+
 <a id="deepseek-aidsh-tool-fs"></a>
 
 ## `@deepseek-ai/dsh-tool-fs`
@@ -3086,7 +3122,8 @@ export interface Config {
 - `@deepseek-ai/dsh-subagent`（[`packages/subagent/subagent/src/index.ts`](../packages/subagent/subagent/src/index.ts)）
 - `@deepseek-ai/dsh-subprocess-local`（[`packages/subprocess/subprocess-local/src/index.ts`](../packages/subprocess/subprocess-local/src/index.ts)）
 - `@deepseek-ai/dsh-terminal`（[`packages/terminal/terminal/src/index.ts`](../packages/terminal/terminal/src/index.ts)）
-- `@deepseek-ai/dsh-tool-ask-user` — 需要 `tools` · `userInteraction`（[`packages/interaction/tool-ask-user/src/index.ts`](../packages/interaction/tool-ask-user/src/index.ts)）
+- `@deepseek-ai/dsh-think-zh` — 需要 `systemPrompt`（[`packages/preset/think-zh/src/index.ts`](../packages/preset/think-zh/src/index.ts)）
+- `@deepseek-ai/dsh-tool-ask-user` — 需要 `tools` · `userQuestions`（[`packages/interaction/tool-ask-user/src/index.ts`](../packages/interaction/tool-ask-user/src/index.ts)）
 - `@deepseek-ai/dsh-tool-call-timeout-policy` — 需要 `tools`（[`packages/guard/timeout-policy/src/index.ts`](../packages/guard/timeout-policy/src/index.ts)）
 - `@deepseek-ai/dsh-tool-cordis` — 需要 `tools` · `systemPrompt` · `dynamicCordisRunner` · `cordisInspect`（[`packages/extensions/tool-cordis/src/index.ts`](../packages/extensions/tool-cordis/src/index.ts)）
 - `@deepseek-ai/dsh-tool-subagent-control` — 需要 `tools` · `subagents`（[`packages/subagent/tool-subagent-control/src/index.ts`](../packages/subagent/tool-subagent-control/src/index.ts)）

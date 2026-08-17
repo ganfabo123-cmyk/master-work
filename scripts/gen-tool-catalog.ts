@@ -27,6 +27,7 @@ import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
 import { AttachmentStore } from '@deepseek-ai/dsh-attachment'
 import type { ImageAttachmentLimits, ImageAttachmentRef, SaveImageAttachment, StoredImageAttachment } from '@deepseek-ai/dsh-attachment'
 import UserQuestionService from '@deepseek-ai/dsh-user-questions'
+import ApprovalService from '@deepseek-ai/dsh-user-approval'
 import PlanModeController from '@deepseek-ai/dsh-plan-mode'
 import WebRuntime from '@deepseek-ai/dsh-web'
 import * as WebSearchExa from '@deepseek-ai/dsh-web-search-exa'
@@ -56,6 +57,7 @@ import Lsp from '@deepseek-ai/dsh-lsp'
 import * as ToolLsp from '@deepseek-ai/dsh-tool-lsp'
 import * as ToolSkill from '@deepseek-ai/dsh-tool-skill'
 import * as ToolSessionQuery from '@deepseek-ai/dsh-tool-session-query'
+import * as ToolCrossSessionSearch from '@deepseek-ai/dsh-tool-cross-session-search'
 import * as Memory from '@deepseek-ai/dsh-memory'
 import * as ToolTasks from '@deepseek-ai/dsh-tool-jobs'
 import * as ToolTodo from '@deepseek-ai/dsh-tool-todo'
@@ -215,12 +217,12 @@ const TOOL_PACKAGES: ToolPackage[] = [
     dir: 'memory',
     source: 'packages/memory/memory/src/index.ts',
     requires: ['ctx.tools', 'ctx.systemPrompt', 'ctx.userQuestions (record approval, optional)'],
-    writes: ['tool/call', 'memory.md after approval', 'tool/result'],
+    writes: ['tool/call', 'memory.md after approval', 'per-cwd fact file after remember/forget', 'tool/result'],
     async mount(ctx) {
       await ctx.plugin(Memory)
     },
     note:
-      'memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append.',
+      'memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append; fact_remember/fact_forget manage per-cwd facts injected into the system prompt on every assembly.',
   },
   {
     pkg: '@deepseek-ai/dsh-plan-mode',
@@ -447,6 +449,21 @@ const TOOL_PACKAGES: ToolPackage[] = [
     },
     note:
       'The five read-only tools hide provider cursors and authorize every result from the immutable calling agent session. The package is opt-in; compositions that need enforced deadlines or bounded inline output also mount the generic timeout or spill policies.',
+  },
+  {
+    pkg: '@deepseek-ai/dsh-tool-cross-session-search',
+    dir: 'tool-cross-session-search',
+    source: 'packages/session-query/tool-cross-session-search/src/index.ts',
+    requires: ['ctx.tools', 'ctx.systemPrompt', 'ctx.sessionQuery', 'ctx.approval', 'a calling Agent for the per-call approval gate'],
+    writes: ['tool/call', 'tool/result', 'approval/asked + approval/decided audit pair on the caller session'],
+    async mount(ctx) {
+      await ctx.plugin(SessionStore)
+      await ctx.plugin(ApprovalService)
+      await ctx.plugin(SqliteSessionQueryEngine, { path: ':memory:' })
+      await ctx.plugin(ToolCrossSessionSearch)
+    },
+    note:
+      'The single read-only search tool reaches sessions in every workspace, so each call passes a per-call user-approval gate through ctx.approval; only an allowed-once answer authorizes the search, and the audit pair lands on the caller session. The package is opt-in.',
   },
   {
     pkg: '@deepseek-ai/dsh-tool-subagent',

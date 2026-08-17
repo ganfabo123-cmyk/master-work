@@ -31,7 +31,7 @@ import type {} from '@deepseek-ai/dsh-jobs'
 import type {} from '@deepseek-ai/dsh-shell-env'
 import type {} from '@deepseek-ai/dsh-user-approval'
 import type { SandboxExecutionPolicy, SandboxMode } from '@deepseek-ai/dsh-sandbox'
-import { ESCALATION_TARGETS, approveEscalation, validateEscalationArgs } from '@deepseek-ai/dsh-sandbox'
+import { ESCALATION_TARGETS, WIDER_MODES, approveEscalation, validateEscalationArgs } from '@deepseek-ai/dsh-sandbox'
 import type { SandboxPolicyService } from '@deepseek-ai/dsh-sandbox-policy'
 import type { ShellRunResult } from '@deepseek-ai/dsh-shell'
 import { parseExitStatus } from '@deepseek-ai/dsh-shell'
@@ -183,6 +183,11 @@ function canonicalPwshResult(result: ShellRunResult): PwshForegroundResult {
       },
     } : {},
   }
+}
+
+function nextInlineEscalationMode(policy: SandboxExecutionPolicy | undefined): SandboxMode | undefined {
+  if (policy === undefined || policy.mode === 'danger-full-access') return undefined
+  return WIDER_MODES[policy.mode]?.[0]
 }
 
 /** Canonical background-handle properties shared by the pwsh output union. */
@@ -394,10 +399,31 @@ export function apply(ctx: Context, config: Config = {}): void {
         })
         return { kind: 'background' as const, jobId: id }
       }
-      const result = await ctx.shell.run(ctx.shell.resolve({
+      let result = await ctx.shell.run(ctx.shell.resolve({
         ...request,
         signal: exec.signal,
       }))
+      if (
+        approvedMode === undefined
+        && result.sandbox?.denied === true
+        && exec.agent !== undefined
+        && ctx.get('approval') !== undefined
+      ) {
+        const inlineMode = nextInlineEscalationMode(standingPolicy)
+        if (inlineMode !== undefined) {
+          const grantedMode = await approvePwshEscalation(
+            inlineMode,
+            `the sandbox denied this command under ${standingPolicy?.mode ?? 'unknown'} mode; rerun the same command once under ${inlineMode}`,
+            exec,
+            standingPolicy,
+          )
+          result = await ctx.shell.run(ctx.shell.resolve({
+            ...request,
+            sandboxPolicy: { ...(standingPolicy as SandboxExecutionPolicy), mode: grantedMode },
+            signal: exec.signal,
+          }))
+        }
+      }
       if (result.aborted) {
         const error = new HarnessError('tool call aborted', TOOL_ABORTED)
         error.name = 'AbortError'
