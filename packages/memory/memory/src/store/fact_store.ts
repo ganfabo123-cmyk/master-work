@@ -1,5 +1,5 @@
 /**
- * Durable cwd-scoped fact storage over per-cwd Markdown files.
+ * Durable cwd-scoped fact storage over per-cwd JSON files.
  *
  * Each absolute cwd owns one fact file under the shared facts directory. Writes
  * are serialized per cwd with process-wide tails so concurrent remember/forget
@@ -12,7 +12,7 @@ import { mkdir, readFile, rm, stat } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
 import type { FactMemory } from '../fact.ts'
-import { factFileFor, parseFacts, serializeFacts } from '../fact.ts'
+import { factFileFor, parseFactsJson, serializeFactsJson } from '../fact.ts'
 
 /** Read operations required by fact consumers and the injection renderer. */
 export interface FactSource {
@@ -25,7 +25,7 @@ export interface FactSource {
 }
 
 /**
- * Markdown-backed source of truth for cwd-scoped facts.
+ * JSON-backed source of truth for cwd-scoped facts.
  *
  * The active file is derived per cwd rather than fixed at construction because
  * the session cwd is only known at request time.
@@ -51,18 +51,18 @@ export class FactStore implements FactSource {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []
       throw error
     }
-    return parseFacts(await readFile(file, { encoding: 'utf8', signal }))
+    return parseFactsJson(await readFile(file, { encoding: 'utf8', signal }))
   }
 
   /**
    * Set one fact for a cwd, upserting by key, then persist the file.
    * @param cwd - absolute session working directory.
-   * @param fact - the fact to persist (key/value/recordedAt).
+   * @param fact - the fact to persist (title/body).
    * @param signal - operation cancellation.
    */
   async set(cwd: string, fact: FactMemory, signal?: AbortSignal): Promise<void> {
     await this.mutate(cwd, (facts) => {
-      const next = facts.filter(existing => existing.key !== fact.key)
+      const next = facts.filter(existing => existing.title !== fact.title)
       next.push(fact)
       return next
     }, signal)
@@ -78,7 +78,7 @@ export class FactStore implements FactSource {
   async remove(cwd: string, key: string, signal?: AbortSignal): Promise<boolean> {
     let removed = false
     await this.mutate(cwd, (facts) => {
-      const remaining = facts.filter(existing => existing.key !== key)
+      const remaining = facts.filter(existing => existing.title !== key)
       removed = remaining.length !== facts.length
       return remaining
     }, signal)
@@ -105,7 +105,7 @@ export class FactStore implements FactSource {
       if (next.length === 0) {
         await rm(file, { force: true })
       } else {
-        await writeFileAtomic(file, serializeFacts(next), { mode: 0o600, dirMode: 0o700 })
+        await writeFileAtomic(file, serializeFactsJson(next), { mode: 0o600, dirMode: 0o700 })
       }
     })
     const tail = operation.then(() => undefined, () => undefined)

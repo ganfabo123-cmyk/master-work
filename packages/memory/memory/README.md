@@ -98,17 +98,17 @@ Fact memory is stored per absolute cwd under `factsDir` (defaults to `$DSH_HOME/
 
 ## Fact memory (per-cwd long-term memory)
 
-Unlike experience memory, facts are never searched: `fact_remember` and `fact_forget` manage a key/value store scoped to the absolute session working directory, and every fact for the current cwd is injected into the system prompt on each assembly.
+Unlike experience memory, facts are never searched: `fact_remember` and `fact_forget` manage a title/body store scoped to the absolute session working directory, and every fact for the current cwd is injected into the system prompt on each assembly.
 
 ```text
 user says "我叫 gan" or asks to remember the name
-  → fact_remember({ key: 'user name', value: 'gan' })
+  → fact_remember({ title: 'user name', body: 'gan' })
   → persisted to <factsDir>/<sha256(cwd)>.md
-  → injected every turn as "user name: gan" for this cwd only
+  → injected every turn as "## 1. user name" plus body content for this cwd only
 ```
 
 - Isolation is by absolute cwd: a fact saved in `D:/project-a` is never visible in `D:/project-b`, or in the same path spelled with a different casing or separator.
-- Keys are trimmed and lowercased; `fact_remember` upserts, so a later value for the same key replaces the earlier one.
+- Titles are trimmed and lowercased; `fact_remember` upserts, so a later body for the same title replaces the earlier one.
 - The injected block tells the model to treat the facts as known, current facts unless the user contradicts them, and to remember stable personal or project facts proactively and forget corrected or revoked ones on request.
 - Injection is a dynamic `system-prompt/assemble` contribution, so facts appear on every turn and update immediately after a `fact_remember` or `fact_forget` call without a restart.
 
@@ -139,11 +139,11 @@ Blank titles, bodies, or keyword lists are rejected. Bodies may contain `##` thr
 
 ### `fact_remember`
 
-Saves one key/value fact for the current session cwd. A blank key or value is rejected; the key is trimmed and lowercased before persistence.
+Saves one title/body fact for the current session cwd. A blank title or body is rejected; the title is trimmed and lowercased before persistence.
 
 ### `fact_forget`
 
-Removes one saved fact by key for the current session cwd. A missing key returns an explicit model-readable message instead of failing.
+Removes one saved fact by title for the current session cwd. A missing title returns an explicit model-readable message instead of failing.
 
 ## Architecture
 
@@ -192,13 +192,12 @@ Coverage percentage is diagnostic rather than the release definition; product co
 
 The plugin tells the model to generate several specific search keywords, treat results as candidates rather than truth, explicitly load only worthwhile records, and record reusable lessons rather than routine errors or complete session history. It also instructs the model to keep the injected per-cwd facts as known context, to save stable personal or project facts with `fact_remember`, and to drop corrected or revoked facts with `fact_forget`.
 
-Tool schemas and fixed guidance remain prefix-stable while plugin visibility is unchanged. Search cost grows with lightweight selected metadata; complete body tokens enter context only through explicit `memory_get` calls. Injected facts add at most `maxFacts` short `key: value` lines per cwd per turn.
+Tool schemas and fixed guidance remain prefix-stable while plugin visibility is unchanged. Search cost grows with lightweight selected metadata; complete body tokens enter context only through explicit `memory_get` calls. Injected facts add at most `maxFacts` short `title + body` records per cwd per turn.
 
 ## Known limitations and roadmap
 
 - Experience memory is process-global and exact-keyword only; there is no project-root scope, BM25, embedding, vector, reranking, or hybrid retrieval. Fact memory is cwd-scoped only — it does not follow a project to its subdirectories.
 - There is no automatic session mining, migration, deletion, merge, semantic deduplication, contradiction handling, or decay.
 - The write queue protects one process only.
-- Fact keys are case-insensitive by design (trimmed and lowercased), so `User Name` and `user name` are the same fact.
+- Fact titles are case-insensitive by design (trimmed and lowercased), so `User Name` and `user name` are the same fact.
 - Performance benchmarking and large-corpus retrieval evaluation are deferred until real usage invalidates the current linear-scan assumption.
-

@@ -64,7 +64,7 @@ export function formatExperience(memory: ExperienceMemory): string {
 
 /**
  * Render the injected per-cwd facts the model should treat as known context.
- * Facts are stable key/value pairs the user or the model deliberately saved for
+ * Facts are stable title/body pairs the user or the model deliberately saved for
  * this working directory; they are not retrieval candidates and are not stale
  * few-shot — each is asserted as a current fact for this cwd.
  * @param facts - durable cwd-scoped facts in file order.
@@ -72,6 +72,10 @@ export function formatExperience(memory: ExperienceMemory): string {
  */
 export function formatFactSection(facts: readonly FactMemory[]): string {
   if (facts.length === 0) return ''
-  const lines = facts.map(fact => `${fact.key}: ${fact.value}`)
-  return 'Remembered facts for this working directory (saved by the user or the model; treat them as known, current facts unless contradicted by the user):\n' + lines.join('\n')
+  const lines = facts.map((fact, index) => [
+    `## ${String(index + 1)}. ${fact.title}`,
+    '',
+    fact.body,
+  ].join('\n'))
+  return 'Remembered facts for this working directory (saved by the user or the model; treat them as known, current facts unless contradicted by the user):\n' + lines.join('\n\n')
 }

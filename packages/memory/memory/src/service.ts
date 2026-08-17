@@ -6,7 +6,7 @@
 
 import { Service, type Context } from '@deepseek-ai/cordis'
 import type { FactMemory } from './fact.ts'
-import { normalizeFactKey } from './fact.ts'
+import { normalizeFactTitle } from './fact.ts'
 import {
   normalizeKeywords,
   type ExperienceMemory,
@@ -137,31 +137,31 @@ export class MemoryService extends Service {
   }
 
   /**
-   * Upsert one fact for a cwd, normalizing the key and assigning a timestamp.
+   * Upsert one fact for a cwd, normalizing the title.
    * @param cwd - absolute session working directory.
-   * @param input - the key/value to persist; the key is trimmed and lowercased.
+   * @param input - the title/body to persist; the title is trimmed and lowercased.
    * @param signal - operation cancellation.
-   * @returns the durable fact assigned a Harness-generated ISO timestamp.
+   * @returns the durable fact.
    */
-  async rememberFact(cwd: string, input: { key: string; value: string }, signal?: AbortSignal): Promise<FactMemory> {
-    const key = normalizeFactKey(input.key)
-    const value = input.value.trim()
-    if (key.length === 0) throw new MemoryError('fact key must not be blank', 'FACT_EMPTY_KEY')
-    if (value.length === 0) throw new MemoryError('fact value must not be blank', 'FACT_EMPTY_VALUE')
-    const fact: FactMemory = { key, value, recordedAt: this.now().toISOString() }
+  async rememberFact(cwd: string, input: { title: string; body: string }, signal?: AbortSignal): Promise<FactMemory> {
+    const title = normalizeFactTitle(input.title)
+    const body = input.body.trim()
+    if (title.length === 0) throw new MemoryError('fact title must not be blank', 'FACT_EMPTY_TITLE')
+    if (body.length === 0) throw new MemoryError('fact body must not be blank', 'FACT_EMPTY_BODY')
+    const fact: FactMemory = { title, body }
     await this.factStore.set(cwd, fact, signal)
     return fact
   }
 
   /**
-   * Remove one fact by normalized key for a cwd.
+   * Remove one fact by normalized title for a cwd.
    * @param cwd - absolute session working directory.
-   * @param key - the fact key to remove; trimmed and lowercased before lookup.
+   * @param title - the fact title to remove; trimmed and lowercased before lookup.
    * @param signal - operation cancellation.
-   * @returns whether a fact with that key was removed.
+   * @returns whether a fact with that title was removed.
    */
-  forgetFact(cwd: string, key: string, signal?: AbortSignal): Promise<boolean> {
-    return this.factStore.remove(cwd, normalizeFactKey(key), signal)
+  forgetFact(cwd: string, title: string, signal?: AbortSignal): Promise<boolean> {
+    return this.factStore.remove(cwd, normalizeFactTitle(title), signal)
   }
 
   /**

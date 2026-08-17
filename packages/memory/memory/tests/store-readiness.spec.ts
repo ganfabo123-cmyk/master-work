@@ -18,9 +18,10 @@ async function fixture() {
   const root = await mkdtemp(join(tmpdir(), 'dsh-memory-store-'))
   roots.push(root)
   const memoryFile = join(root, 'missing-parent', 'memory.md')
+  const factsDir = join(root, 'facts')
   const ctx = new Context()
   contexts.push(ctx)
-  await ctx.plugin(Memory.MemoryService, { memoryFile, now: () => new Date('2026-08-16T02:34:23.123Z') })
+  await ctx.plugin(Memory.MemoryService, { memoryFile, factsDir, maxFacts: 5, now: () => new Date('2026-08-16T02:34:23.123Z') })
   return { ctx, memoryFile }
 }
 

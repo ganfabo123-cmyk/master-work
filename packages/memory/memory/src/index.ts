@@ -13,7 +13,7 @@ import { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { PromptAssembly } from '@deepseek-ai/dsh-system-prompt'
 import { resolveConfig, type Config } from './config.ts'
-import { normalizeFactKey } from './fact.ts'
+import { normalizeFactTitle } from './fact.ts'
 import { EXPERIENCE_BODY_TEMPLATE, formatExperience, formatFactSection, formatSearchCandidates } from './model.ts'
 import { MemoryError, MemoryService, type MemoryRuntime } from './service.ts'
 
@@ -24,7 +24,7 @@ declare module '@deepseek-ai/cordis' {
 }
 
 export { Config, resolveConfig } from './config.ts'
-export { factFileFor, factFileNameFor, normalizeFactKey, parseFacts, serializeFacts } from './fact.ts'
+export { factFileFor, factFileNameFor, normalizeFactTitle, parseFactsJson, serializeFactsJson } from './fact.ts'
 export type { FactMemory } from './fact.ts'
 export { MEMORY_ID_PREFIX, normalizeKeywords } from './memory.ts'
 export type { ExperienceMemory, MemoryOutcome, MemorySearchDocument, NewExperienceMemory } from './memory.ts'
@@ -148,39 +148,39 @@ export function apply(ctx: Context, config: Config): void {
 
   ctx.tools.register(defineTool({
     name: 'fact_remember',
-    description: 'Save one stable fact for the current working directory. The fact is injected into your context on every future turn in this cwd until forgotten. Use it when the user asks you to remember something or states a stable personal or project fact.',
+    description: 'Save one stable fact for the current working directory. Write the fact title as a markdown heading without numbering, and write the concrete fact body below it. The fact is injected into your context on every future turn in this cwd until forgotten. Use it when the user asks you to remember something or states a stable personal or project fact.',
     parameters: {
-      key: { type: 'string', required: true, description: 'Short fact key, e.g. "user name"; trimmed and lowercased.' },
-      value: { type: 'string', required: true, description: 'The fact value, e.g. "gan".' },
+      title: { type: 'string', required: true, description: 'Markdown heading text without numbering, e.g. "严格遵守当前指令范围"; trimmed and lowercased.' },
+      body: { type: 'string', required: true, description: 'Concrete fact body for that title, written below the heading.' },
     },
     output: TEXT_OUTPUT,
     execute: async (args, exec) => {
       const cwd = exec.agent?.session.header.cwd
       if (cwd === undefined) throw new MemoryError('fact_remember requires a session working directory', 'FACT_NO_CWD')
       try {
-        const fact = await resolveMemory(ctx).rememberFact(cwd, { key: args.key, value: args.value }, exec.signal)
-        return `Remembered: ${fact.key}: ${fact.value}`
+        const fact = await resolveMemory(ctx).rememberFact(cwd, { title: args.title, body: args.body }, exec.signal)
+        return `Remembered: ${fact.title}`
       } catch (error: unknown) {
         if (error instanceof MemoryError) return `Fact store failed: ${error.message}`
         throw error
       }
     },
-    presentCall: ({ key, value }) => ({ card: 'generic' as const, kind: 'edit' as const, title: `Remember fact "${key}"`, rawInput: value }),
+    presentCall: ({ title, body }) => ({ card: 'generic' as const, kind: 'edit' as const, title: `Remember fact "${title}"`, rawInput: body }),
   }))
 
   ctx.tools.register(defineTool({
     name: 'fact_forget',
-    description: 'Remove one saved fact for the current working directory by its key. Use it when the user says a remembered fact is wrong or asks you to forget it.',
-    parameters: { key: { type: 'string', required: true, description: 'The fact key to forget, e.g. "user name"; trimmed and lowercased.' } },
+    description: 'Remove one saved fact for the current working directory by its title. Use it when the user says a remembered fact is wrong or asks you to forget it.',
+    parameters: { title: { type: 'string', required: true, description: 'The fact title to forget, e.g. "user name"; trimmed and lowercased.' } },
     output: TEXT_OUTPUT,
     execute: async (args, exec) => {
       const cwd = exec.agent?.session.header.cwd
       if (cwd === undefined) throw new MemoryError('fact_forget requires a session working directory', 'FACT_NO_CWD')
-      const key = normalizeFactKey(args.key)
-      const removed = await resolveMemory(ctx).forgetFact(cwd, key, exec.signal)
-      return removed ? `Forgot: ${key}` : `No saved fact with key "${key}".`
+      const title = normalizeFactTitle(args.title)
+      const removed = await resolveMemory(ctx).forgetFact(cwd, title, exec.signal)
+      return removed ? `Forgot: ${title}` : `No saved fact with title "${title}".`
     },
-    presentCall: ({ key }) => ({ card: 'generic' as const, kind: 'edit' as const, title: `Forget fact "${key}"`, rawInput: '' }),
+    presentCall: ({ title }) => ({ card: 'generic' as const, kind: 'edit' as const, title: `Forget fact "${title}"`, rawInput: '' }),
   }))
 }
 
