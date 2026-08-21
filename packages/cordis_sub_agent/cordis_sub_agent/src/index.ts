@@ -5,12 +5,8 @@ import {
   type Config as PluginConfig,
 } from './config.js'
 
-import {
-  PluginBuilder,
-} from './services/plugin-builder.js'
-
 import { readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import type {} from '@deepseek-ai/dsh-skill'
@@ -20,20 +16,9 @@ import {
 } from './services/acceptance-service.js'
 
 import {
-  DevelopmentTaskStore,
-} from './services/development-task-store.js'
-
-import {
-  PluginDevelopmentService,
-} from './services/plugin-development-service.js'
-
-import {
-  DevelopmentWorkflow,
-} from './workflow/development-workflow.js'
-
-import {
-  WorkspaceManager,
-} from './services/workspace-manager.js'
+  EngineeringVerificationService,
+} from './services/engineering-verification-service.js'
+import { DocumentationWorkflow } from './workflow/documentation-workflow.js'
 
 import {
   createPluginTool,
@@ -52,8 +37,13 @@ import {
 } from './tools/stop-acceptance.js'
 
 import { getTaskStatusTool } from './tools/get-task-status.js'
-import { resumeDevelopmentTool } from './tools/resume-development.js'
 import { discardDevelopmentTool } from './tools/discard-development.js'
+import { verifyDevelopmentTool } from './tools/verify-development.js'
+import { documentDevelopmentTool } from './tools/document-development.js'
+import { ReaderConclusionStore, readerConclusionTool } from './tools/reader-conclusion.js'
+import { submitPluginMetadataTool } from './tools/submit-plugin-metadata.js'
+import { PluginMetadataTaskStore } from './services/plugin-metadata-task-store.js'
+import { PluginMetadataReadWorkflow } from './workflow/plugin-metadata-read-workflow.js'
 
 
 export const name =
@@ -75,43 +65,26 @@ export function apply(
   ctx: Context,
   config: PluginConfig,
 ): void {
-  const builder =
-    new PluginBuilder(
-      ctx,
-      {
-        workspaceRoot:
-          config.workspaceRoot,
-      },
-    )
-
-  const workspaces =
-    new WorkspaceManager(
-      ctx,
-      {
-        repoRoot:
-          config.repoRoot,
-        workspaceRoot:
-          config.workspaceRoot,
-      },
-    )
-
-  const workflow =
-    new DevelopmentWorkflow(
-      ctx,
-    )
-
-  const tasks =
-    new DevelopmentTaskStore()
-
   const acceptance =
     new AcceptanceService()
 
-  const development =
-    new PluginDevelopmentService(
-      builder,
-      workflow,
-      tasks,
-      workspaces,
+  const verification =
+    new EngineeringVerificationService(ctx)
+
+  const documentation =
+    new DocumentationWorkflow(ctx)
+
+  const readerConclusions = new ReaderConclusionStore()
+
+  const metadataTasks = new PluginMetadataTaskStore(
+    join(resolve(config.repoRoot), 'packages', 'generated'),
+  )
+
+  const metadataReader =
+    new PluginMetadataReadWorkflow(
+      ctx,
+      readerConclusions,
+      resolve(config.repoRoot),
     )
 
   /*
@@ -123,22 +96,16 @@ export function apply(
   ctx.effect(() => {
     const disposers = [
       ctx.tools.register(
-        createPluginTool(
-          development,
-          {
-            preferredProvider:
-              config.developmentProvider,
-          },
-        ),
+        createPluginTool(metadataTasks, metadataReader),
       ),
 
       ctx.tools.register(
         startAcceptanceTool(
           acceptance,
-          tasks,
+          metadataTasks,
           {
-            command:
-              config.acceptanceCommand,
+            repoRoot:
+              resolve(config.repoRoot),
 
             provider:
               config.acceptanceProvider,
@@ -165,13 +132,31 @@ export function apply(
       ctx.tools.register(
         stopAcceptanceTool(
           acceptance,
-          tasks,
+          metadataTasks,
         ),
       ),
 
-      ctx.tools.register(getTaskStatusTool(tasks)),
-      ctx.tools.register(resumeDevelopmentTool(development)),
-      ctx.tools.register(discardDevelopmentTool(development)),
+      ctx.tools.register(getTaskStatusTool(metadataTasks)),
+      ctx.tools.register(discardDevelopmentTool(metadataTasks, acceptance)),
+      ctx.tools.register(documentDevelopmentTool(
+        metadataTasks,
+        documentation,
+        resolve(config.repoRoot),
+      )),
+      ctx.tools.register(verifyDevelopmentTool(
+        metadataTasks,
+        verification,
+        {
+          repositoryPath: resolve(config.repoRoot),
+          ...(config.engineeringTypecheckCommand !== undefined ? { typecheckCommand: config.engineeringTypecheckCommand } : {}),
+          ...(config.engineeringBuildCommand !== undefined ? { buildCommand: config.engineeringBuildCommand } : {}),
+          ...(config.engineeringTestCommand !== undefined ? { testCommand: config.engineeringTestCommand } : {}),
+          ...(config.engineeringDocSyncCommand !== undefined ? { docSyncCommand: config.engineeringDocSyncCommand } : {}),
+          ...(config.engineeringTimeoutMs !== undefined ? { timeoutMs: config.engineeringTimeoutMs } : {}),
+        },
+      )),
+      ctx.tools.register(readerConclusionTool(readerConclusions)),
+      ctx.tools.register(submitPluginMetadataTool(metadataTasks)),
     ]
 
     return () => {

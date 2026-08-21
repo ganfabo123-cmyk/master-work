@@ -2,10 +2,11 @@ import z from '@deepseek-ai/schemastery'
 
 export interface Config {
   repoRoot: string
-  workspaceRoot: string
-  developmentProvider: string
-
-  acceptanceCommand: string
+  engineeringTypecheckCommand?: string
+  engineeringBuildCommand?: string
+  engineeringTestCommand?: string
+  engineeringDocSyncCommand?: string
+  engineeringTimeoutMs?: number
   acceptanceProvider: string
   acceptanceModel: string
 
@@ -16,17 +17,14 @@ export const Config: z<Config> = z.object({
   repoRoot: z.string()
     .default('.'),
 
-  workspaceRoot: z.string()
-    .default('./.cordis/worktrees'),
-
-  developmentProvider: z.string()
-    .default('spawn'),
-
-  acceptanceCommand: z.string()
-    .default('dsh'),
+  engineeringTypecheckCommand: z.string(),
+  engineeringBuildCommand: z.string(),
+  engineeringTestCommand: z.string(),
+  engineeringDocSyncCommand: z.string(),
+  engineeringTimeoutMs: z.number().min(1),
 
   acceptanceProvider: z.string()
-    .default('deepseek-official'),
+    .default('opencode'),
 
   acceptanceModel: z.string()
     .default('deepseek-v4-flash'),

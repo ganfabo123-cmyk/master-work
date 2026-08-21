@@ -5,22 +5,21 @@ import type {
 } from '../services/acceptance-service.js'
 
 import type {
-  DevelopmentTaskStore,
-} from '../services/development-task-store.js'
+  PluginMetadataTaskStore,
+} from '../services/plugin-metadata-task-store.js'
 
 
 export interface StartAcceptanceToolOptions {
-  command: string
+  repoRoot: string
   provider: string
   model: string
   maxTokens?: number
-  env?: Record<string, string>
 }
 
 
 export function startAcceptanceTool(
   acceptanceService: AcceptanceService,
-  tasks: DevelopmentTaskStore,
+  tasks: PluginMetadataTaskStore,
   options: StartAcceptanceToolOptions,
 ) {
   return defineTool({
@@ -29,11 +28,11 @@ export function startAcceptanceTool(
     description: [
       'Start real-host acceptance testing for a generated DeepSeek Harness plugin.',
       '',
-      'Use this tool only after create_plugin has completed engineering verification.',
+      'Use this tool only after verify_development has recorded a successful engineering verification.',
       '',
-      'The task_id must refer to an existing development task that has passed engineering verification.',
+      'The task_id must refer to an existing V3 metadata task with a successful engineering verification.',
       '',
-      'The verified workspace path and plugin build artifact are loaded from the trusted development task store.',
+      'The verified workspace path and plugin build artifact are loaded from the trusted V3 metadata task store.',
       'Do not provide or guess filesystem paths manually.',
       '',
       'This launches a fresh isolated DSH runtime and returns an acceptance_id.',
@@ -45,7 +44,7 @@ export function startAcceptanceTool(
         type: 'string',
         required: true,
         description:
-          'The development task id returned by create_plugin.',
+          'The V3 task id returned by submit_plugin_metadata.',
       },
 
       plugin_config_json: {
@@ -86,6 +85,21 @@ export function startAcceptanceTool(
             required: true,
           },
 
+          cwd: {
+            type: 'string',
+            required: true,
+          },
+
+          provider: {
+            type: 'string',
+            required: true,
+          },
+
+          model: {
+            type: 'string',
+            required: true,
+          },
+
           plugin_entry_path: {
             type: 'string',
             required: true,
@@ -107,6 +121,9 @@ export function startAcceptanceTool(
             `Child session: ${value.child_session_id}`,
             `Status: ${value.status}`,
             `Workspace: ${value.workspace_path}`,
+            `Child cwd: ${value.cwd}`,
+            `Provider: ${value.provider}`,
+            `Model: ${value.model}`,
             `Plugin entry: ${value.plugin_entry_path}`,
             '',
             value.message,
@@ -129,30 +146,17 @@ export function startAcceptanceTool(
           args.task_id,
         )
 
-      if (
-        record.task.status !==
-        'accepting'
-      ) {
-        throw new Error(
-          [
-            `Development task is not ready for acceptance: ${args.task_id}.`,
-            `Current status: ${record.task.status}.`,
-          ].join(' '),
-        )
-      }
-
       /*
        * Engineering verification 是进入
        * Acceptance 的硬前置条件。
        */
-      const verification =
-        record.verification
+      const verification = record.verification
 
       if (
-        verification === undefined
+        verification === undefined || !verification.success
       ) {
         throw new Error(
-          `Development task has no engineering verification result: ${args.task_id}`,
+          `Plugin metadata task has no successful engineering verification result: ${args.task_id}`,
         )
       }
 
@@ -215,16 +219,13 @@ export function startAcceptanceTool(
       const acceptance =
         await acceptanceService.start({
           taskId:
-            record.task.id,
-
-          workspacePath:
-            record.task.workspacePath,
+            record.id,
 
           pluginEntryPath:
             verification.pluginEntryPath,
 
-          command:
-            options.command,
+          repoRoot:
+            options.repoRoot,
 
           provider:
             options.provider,
@@ -245,12 +246,6 @@ export function startAcceptanceTool(
             }
             : {}),
 
-          ...(options.env !== undefined
-            ? {
-              env:
-                  options.env,
-            }
-            : {}),
         })
 
       if (
@@ -282,16 +277,15 @@ export function startAcceptanceTool(
        * 才把 acceptanceId 写入 TaskStore。
        */
       tasks.setAcceptanceId(
-        record.task.id,
+        record.id,
         acceptance.id,
       )
-
       return {
         acceptance_id:
           acceptance.id,
 
         task_id:
-          record.task.id,
+          record.id,
 
         child_session_id:
           acceptance.childSessionId,
@@ -300,14 +294,26 @@ export function startAcceptanceTool(
           acceptance.status,
 
         workspace_path:
-          record.task.workspacePath,
+          record.pluginRoot,
+
+        cwd:
+          options.repoRoot,
+
+        provider:
+          options.provider,
+
+        model:
+          options.model,
 
         plugin_entry_path:
           verification.pluginEntryPath,
 
         message: [
           'Isolated DSH acceptance runtime started successfully.',
-          'Use send_acceptance_message with this acceptance_id to perform real-host acceptance.',
+          `cwd: ${options.repoRoot}`,
+          `provider: ${options.provider}`,
+          `model: ${options.model}`,
+          'The child DSH service is ready; send a message with send_acceptance_message.',
         ].join(' '),
       }
     },

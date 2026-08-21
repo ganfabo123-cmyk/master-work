@@ -21,6 +21,12 @@ export interface AcceptanceSession {
 
   taskId: string
 
+  cwd: string
+
+  provider: string
+
+  model: string
+
   status: AcceptanceSessionStatus
 
   /**

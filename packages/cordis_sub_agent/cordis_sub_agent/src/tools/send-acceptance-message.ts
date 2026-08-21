@@ -64,6 +64,21 @@ export function sendAcceptanceMessageTool(
             required: true,
           },
 
+          cwd: {
+            type: 'string',
+            required: true,
+          },
+
+          provider: {
+            type: 'string',
+            required: true,
+          },
+
+          model: {
+            type: 'string',
+            required: true,
+          },
+
           actor: {
             type: 'string',
             required: true,
@@ -91,6 +106,9 @@ export function sendAcceptanceMessageTool(
           type: 'text',
           text: [
             `Acceptance: ${value.acceptance_id}`,
+            `cwd: ${value.cwd}`,
+            `Provider: ${value.provider}`,
+            `Model: ${value.model}`,
             `Input actor: ${value.actor}`,
             `Status: ${value.status}`,
             `Interactions: ${value.message_count}`,
@@ -135,6 +153,15 @@ export function sendAcceptanceMessageTool(
       return {
         acceptance_id:
           result.acceptance.id,
+
+        cwd:
+          result.acceptance.cwd,
+
+        provider:
+          result.acceptance.provider,
+
+        model:
+          result.acceptance.model,
 
         actor:
           args.actor,

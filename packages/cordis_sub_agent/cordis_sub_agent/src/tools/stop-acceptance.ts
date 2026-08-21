@@ -5,8 +5,8 @@ import type {
 } from '../services/acceptance-service.js'
 
 import type {
-  DevelopmentTaskStore,
-} from '../services/development-task-store.js'
+  PluginMetadataTaskStore,
+} from '../services/plugin-metadata-task-store.js'
 
 
 const FINAL_ACCEPTANCE_STATUSES = [
@@ -21,7 +21,7 @@ type FinalAcceptanceStatus =
 
 export function stopAcceptanceTool(
   acceptanceService: AcceptanceService,
-  tasks: DevelopmentTaskStore,
+  tasks: PluginMetadataTaskStore,
 ) {
   return defineTool({
     name: 'stop_acceptance',
@@ -36,7 +36,7 @@ export function stopAcceptanceTool(
       'Use final_status="failed" when acceptance exposed a real failure.',
       'Use final_status="stopped" when terminating the runtime without declaring success or failure.',
       '',
-      'A passed acceptance that satisfies all required evidence marks the development task as completed.',
+      'A passed acceptance that satisfies all required evidence moves the task to permanent integration.',
     ].join('\n'),
 
     parameters: {
@@ -224,7 +224,7 @@ export function stopAcceptanceTool(
         /*
          * AcceptanceService.stop() 已经开始终止这个 runtime，
          * 因此无论 shutdown 最后是否抛异常，都不能继续让
-         * TaskStore 把它当 active runtime。
+       * metadata task 把它当 active runtime。
          */
         tasks.clearAcceptanceId(
           current.taskId,
@@ -234,35 +234,13 @@ export function stopAcceptanceTool(
       /*
        * 更新 development task 生命周期。
        */
-      if (
-        state.status === 'passed'
-      ) {
-        taskRecord.task.status =
-          'completed'
-
-        delete taskRecord.task.error
-      } else if (
-        state.status === 'failed'
-      ) {
-        taskRecord.task.status =
-          'failed'
-
-        taskRecord.task.error =
-          'Real-host acceptance failed.'
-      } else {
-        /*
-         * stopped 不代表开发失败。
-         *
-         * Plugin 已经完成工程验证，
-         * 只是 Acceptance 尚未得出最终结论，
-         * 因此回到 accepting。
-         */
-        taskRecord.task.status =
-          'accepting'
-      }
-
-      taskRecord.task.updatedAt =
-        Date.now()
+      tasks.recordAcceptance(current.taskId, {
+        acceptanceId: state.id,
+        status: state.status,
+        messageCount: state.messages.length,
+        agentMessageCount: completedAgentMessages.length,
+        userMessageCount: completedUserMessages.length,
+      }, state.status === 'passed' ? true : state.status === 'failed' ? false : undefined)
 
       return {
         acceptance_id:
@@ -275,7 +253,7 @@ export function stopAcceptanceTool(
           state.status,
 
         task_status:
-          taskRecord.task.status,
+          state.status === 'passed' ? 'accepted' : state.status === 'failed' ? 'repair_needed' : 'stopped',
 
         message_count:
           state.messages.length,
@@ -291,12 +269,12 @@ export function stopAcceptanceTool(
             ? [
               'Real-host acceptance passed.',
               'Both automated agent acceptance and user-originated acceptance evidence were recorded.',
-              'The development task is now completed.',
+              'The task is ready for permanent integration. The temporary acceptance composition has been removed.',
             ].join(' ')
             : state.status === 'failed'
               ? [
                 'Real-host acceptance failed.',
-                'The development task has been marked as failed.',
+                'The task is ready for Main Agent repair in the same plugin root.',
               ].join(' ')
               : [
                 'Acceptance runtime stopped without a final pass or failure.',

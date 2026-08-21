@@ -20,6 +20,12 @@ export interface AcceptanceCompositionInput {
    * 传给被测试插件的 Cordis config。
    */
   pluginConfig?: Record<string, unknown>
+
+  /** Provider route used by the child JSON-RPC runtime. */
+  provider: string
+
+  /** Environment variable name containing the provider credential. */
+  apiKeyEnv: string
 }
 
 export interface AcceptanceComposition {
@@ -77,6 +83,18 @@ export async function createAcceptanceComposition(
     '  name: \'@deepseek-ai/dsh-agent-spine-demo\'',
     '  config:',
     '    workspaceContext: false',
+    '',
+
+    '- id: llm-pi-ai',
+    "  name: '@deepseek-ai/dsh-llm-pi-ai'",
+    '  config:',
+    '    providers:',
+    `      ${escapeYamlKey(input.provider)}:`,
+    `        apiKeyEnv: ${escapeYamlString(input.apiKeyEnv)}`,
+    '',
+
+    '- id: sdk-jsonrpc-server',
+    "  name: '@deepseek-ai/dsh-sdk-jsonrpc-server'",
     '',
 
     /*
@@ -168,4 +186,9 @@ function escapeYamlString(
     '\'',
     '\'\'',
   )
+}
+
+function escapeYamlKey(value: string): string {
+  if (/^[A-Za-z0-9_-]+$/.test(value)) return value
+  return `'${escapeYamlString(value)}'`
 }

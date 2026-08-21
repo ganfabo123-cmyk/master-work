@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { resolve } from 'node:path'
 
 import {
   DeepSeekHarness,
@@ -28,17 +29,8 @@ export interface StartAcceptanceInput {
    */
   pluginEntryPath: string
 
-  /**
-   * 被测试插件所在 workspace。
-   *
-   * Child DSH process 和 session 都使用这个 cwd。
-   */
-  workspacePath: string
-
-  /**
-   * 用于启动 DSH SDK runtime 的 command。
-   */
-  command: string
+  /** The repository cwd used by the child runtime and its SDK session. */
+  repoRoot: string
 
   /**
    * Child DSH 使用的 LLM provider。
@@ -56,15 +48,6 @@ export interface StartAcceptanceInput {
   pluginConfig?: Record<string, unknown>
 
   maxTokens?: number
-
-  /**
-   * 额外环境变量。
-   *
-   * 注意：
-   * AcceptanceService 会将其与 process.env 合并，
-   * 避免覆盖 PATH 等父进程环境。
-   */
-  env?: Record<string, string>
 }
 
 
@@ -144,46 +127,28 @@ export class AcceptanceService {
                 input.pluginConfig,
           }
           : {}),
+        provider: input.provider,
+        apiKeyEnv: 'open_code_api',
       })
 
-    /*
-     * SDK 的 launch.env 不是自动和 process.env merge。
-     *
-     * 如果直接：
-     *
-     *   env: { DEEPSEEK_API_KEY: '...' }
-     *
-     * 可能导致 PATH 等环境变量消失。
-     *
-     * 因此这里显式 merge。
-     */
-    const env =
-      input.env === undefined
-        ? undefined
-        : {
-          ...process.env,
-          ...input.env,
-        }
-
-    /*
-     * process.env 的类型是：
-     *
-     * Record<string, string | undefined>
-     *
-     * SDK 需要的 env 是否接受 undefined，
-     * 由它自己的 TS 类型决定。
-     *
-     * 如果这里发生类型错误，
-     * 后面再根据 DeepSeekHarnessOptions 的真实 env 类型调整。
-     */
+    const repoRoot = resolve(input.repoRoot)
+    const runtimeBin = resolve(
+      repoRoot,
+      'packages',
+      'examples',
+      'jsonrpc-demo',
+      'lib',
+      'packaged-bin.js',
+    )
     const harness = new DeepSeekHarness({
       launch: {
-        command: input.command,
+        command: process.execPath,
 
         /*
          * Child runtime 使用这份临时 cordis.yml。
          */
         args: [
+          runtimeBin,
           composition.configPath,
         ],
 
@@ -192,13 +157,7 @@ export class AcceptanceService {
          *
          * Acceptance 应该站在真实插件 workspace 中运行。
          */
-        cwd: input.workspacePath,
-
-        ...(env !== undefined
-          ? {
-            env,
-          }
-          : {}),
+        cwd: repoRoot,
       },
 
       /*
@@ -206,7 +165,7 @@ export class AcceptanceService {
        *
        * 也会成为 child session 的 workspace。
        */
-      cwd: input.workspacePath,
+      cwd: repoRoot,
 
       provider: input.provider,
       model: input.model,
@@ -222,6 +181,12 @@ export class AcceptanceService {
     const state: AcceptanceSession = {
       id: acceptanceId,
       taskId: input.taskId,
+
+      cwd: repoRoot,
+
+      provider: input.provider,
+
+      model: input.model,
 
       status: 'starting',
 
