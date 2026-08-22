@@ -3,10 +3,9 @@ import type { ContentBlock } from '@deepseek-ai/dsh-llm'
 import { relative } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import type { DocumentationEvidence } from '../models/documentation-evidence.js'
-import { DOCUMENTATION_ROLE, DOCUMENTATION_TOOLS } from './agent-roles.js'
+import { TRANSLATE_README_ROLE, TRANSLATE_README_TOOLS } from './agent-roles.js'
 
 export interface DocumentationWorkflowInput {
-  requirementMetadata: unknown
   workspacePath: string
   repositoryPath: string
 }
@@ -26,43 +25,47 @@ export class DocumentationWorkflow {
     const before = await this.status(input.workspacePath, input.repositoryPath, options.signal)
     const provider = this.resolveProvider(options.provider)
     const run = await this.ctx.subagents.start(provider, {
-      persona: DOCUMENTATION_ROLE,
+      label: 'translate_readme_agent',
+      persona: TRANSLATE_README_ROLE,
       prompt: [{ type: 'text', text: [
         `Assigned pluginRoot (and cwd): ${input.workspacePath}`,
-        `Submitted requirement metadata:\n${JSON.stringify(input.requirementMetadata, null, 2)}`,
+        `English README source: ${input.workspacePath}/README.md`,
+        `Chinese README target: ${input.workspacePath}/README.zh.md`,
         '',
-        'Read the actual source, package manifest, tools, tests, build results, and repository documentation rules.',
-        'Update only README.md, README.zh.md, and README.i18n.yaml inside pluginRoot.',
-        'Do not edit business source, scripts, tests, package configuration, root configuration, or generated root documentation.',
-        'Run the requested foreground documentation checks after writing. Report complete command output.',
+        'Read only README.md as the translation source.',
+        'Write only README.zh.md as the Simplified Chinese translation.',
+        'Do not edit README.md, README.i18n.yaml, business source, scripts, tests, package configuration, or repository-root files.',
+        'Do not run commands. The parent document_development tool will generate README.i18n.yaml after this translation completes.',
       ].join('\n') }],
       parent: options.parent,
       signal: options.signal,
-      toolFilter: { allow: DOCUMENTATION_TOOLS },
+      toolFilter: { allow: TRANSLATE_README_TOOLS },
     })
     let output: ContentBlock[]
     try {
       const result = await run.result
-      if (result.stopReason !== 'completed') throw new Error(`Documentation Agent stopped with reason ${result.stopReason}`)
+      if (result.stopReason !== 'completed') throw new Error(`translate_readme_agent stopped with reason ${result.stopReason}`)
       output = result.output
     } finally {
       await run.dispose()
     }
 
-    const after = await this.status(input.workspacePath, input.repositoryPath, options.signal)
-    const changedFiles = [...after].filter(file => !before.has(file))
-    const allowed = new Set(['README.md', 'README.zh.md', 'README.i18n.yaml'])
-    const outOfScopeFiles = changedFiles.filter(file => !allowed.has(file))
+    const afterTranslation = await this.status(input.workspacePath, input.repositoryPath, options.signal)
+    const translatedFiles = [...afterTranslation].filter(file => !before.has(file))
+    const translatorAllowed = new Set(['README.zh.md'])
+    const outOfScopeFiles = translatedFiles.filter(file => !translatorAllowed.has(file))
     const commands: string[] = []
     const pairPath = `${relative(input.repositoryPath, input.workspacePath).replaceAll('\\', '/')}/README.md`
-    const pairing = await this.command(options.pairingCommand ?? `pnpm run verify-translation-pairing ${pairPath}`, input.repositoryPath, options.signal)
+    const pairing = await this.command(options.pairingCommand ?? `pnpm run verify-translation-pairing --write ${pairPath}`, input.repositoryPath, options.signal)
     commands.push(pairing.command)
     const docSync = options.docSyncCommand === undefined
       ? undefined
       : await this.command(options.docSyncCommand, input.repositoryPath, options.signal)
     if (docSync !== undefined) commands.push(docSync.command)
+    const after = await this.status(input.workspacePath, input.repositoryPath, options.signal)
+    const changedFiles = [...after].filter(file => !before.has(file))
     const unresolved = [
-      ...(outOfScopeFiles.length > 0 ? [`Documentation Agent changed out-of-scope files: ${outOfScopeFiles.join(', ')}`] : []),
+      ...(outOfScopeFiles.length > 0 ? [`translate_readme_agent changed out-of-scope files: ${outOfScopeFiles.join(', ')}`] : []),
       ...(pairing.exitCode === 0 ? [] : ['Translation pairing failed.']),
       ...(docSync === undefined || docSync.exitCode === 0 ? [] : ['Documentation check failed.']),
     ]
@@ -97,6 +100,6 @@ export class DocumentationWorkflow {
       const provider = this.ctx.subagents.getProvider(name)
       if (provider?.capabilities.toolFilter) return name
     }
-    throw new Error('Documentation workflow requires a subagent provider with toolFilter capability.')
+    throw new Error('translate_readme_agent requires a subagent provider with toolFilter capability.')
   }
 }

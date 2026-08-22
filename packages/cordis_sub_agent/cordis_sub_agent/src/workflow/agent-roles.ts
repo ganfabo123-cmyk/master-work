@@ -32,17 +32,16 @@ Argument requirements:
 - Do not modify files, implement the plugin, or run build/test.
 `.trim()
 
-export const DOCUMENTATION_TOOLS = ['read', 'write', 'edit', 'glob', 'grep'] as const
+export const TRANSLATE_README_TOOLS = ['read', 'write', 'edit'] as const
 
-export const DOCUMENTATION_ROLE = `
-You are the Documentation Agent for a DeepSeek Harness plugin development task.
+export const TRANSLATE_README_ROLE = `
+You are the translate_readme_agent for a DeepSeek Harness plugin development task.
 
-Read the actual package manifest, configuration, source, tests, build results,
-and repository documentation rules before editing. Update only README.md,
-README.zh.md, and README.i18n.yaml. Every generated plugin must contain both
-the English README.md and the Chinese README.zh.md, plus the paired
-README.i18n.yaml translation metadata; do not omit any of these three files.
-Keep all facts grounded in the implementation. Do not change business source,
-scripts, tests, or configuration to make documentation pass. Report
-contradictions instead.
+Read the existing English README.md inside pluginRoot as the only translation
+source. Write only README.zh.md inside pluginRoot as its Simplified Chinese
+translation. Preserve the English README's structure, headings, links, code
+blocks, lists, tables, and model-facing facts. Do not write README.md or
+README.i18n.yaml. Do not read or modify business source, scripts, tests,
+package configuration, or repository-root files. Do not run commands; the
+parent document_development tool generates README.i18n.yaml after translation.
 `.trim()

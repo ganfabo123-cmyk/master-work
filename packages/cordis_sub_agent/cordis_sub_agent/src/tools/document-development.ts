@@ -3,7 +3,7 @@ import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { PluginMetadataTaskStore } from '../services/plugin-metadata-task-store.js'
 import type { DocumentationWorkflow } from '../workflow/documentation-workflow.js'
 
-/** Register the Documentation Agent wrapper for an in-memory metadata task. */
+/** Register the translate_readme_agent wrapper for an in-memory metadata task. */
 export function documentDevelopmentTool(
   tasks: PluginMetadataTaskStore,
   documentation: DocumentationWorkflow,
@@ -11,7 +11,7 @@ export function documentDevelopmentTool(
 ) {
   return defineTool({
     name: 'document_development',
-    description: 'Run the Documentation Agent for the plugin directory stored by submit_plugin_metadata.',
+    description: 'Run translate_readme_agent and generate README.i18n.yaml for the plugin directory stored by submit_plugin_metadata.',
     parameters: {
       task_id: { type: 'string', required: true, description: 'Task id returned by submit_plugin_metadata.' },
     },
@@ -24,7 +24,6 @@ export function documentDevelopmentTool(
       if (parent === undefined) throw new Error('document_development requires a calling Main Agent.')
       const task = tasks.require(args.task_id)
       const documentationEvidence = await documentation.run({
-        requirementMetadata: task.metadata,
         workspacePath: task.pluginRoot,
         repositoryPath,
       }, { parent, signal: exec.signal })
