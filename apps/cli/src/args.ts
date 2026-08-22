@@ -44,8 +44,17 @@ interface PluginInvocation {
   args: string[]
 }
 
+/** Run a persistent, interactive JSON-RPC acceptance session. */
+interface AcceptanceInvocation {
+  mode: 'acceptance'
+  patch: string
+  repoRoot?: string
+  provider?: string
+  model?: string
+}
+
 /** The resolved `dsh` invocation. Help, version, and errors exit inside {@link parseDshArgs}. */
-export type DshInvocation = ProfileInvocation | DumpConfigInvocation | PluginInvocation
+export type DshInvocation = ProfileInvocation | DumpConfigInvocation | PluginInvocation | AcceptanceInvocation
 
 /** Launcher flags shared by the default command and the `web` alias. */
 interface BootOptions {
@@ -69,6 +78,7 @@ Examples:
   dsh --profile tui --resume <session>       arguments after the launcher flags reach the app
   dsh --profile web --help                   the web app's own flags and help
   dsh plugin --profile tui add <package>     install a plugin into the tui profile
+  dsh acceptance --patch <path>             run a persistent CLI acceptance session
 `
 
 /**
@@ -178,6 +188,24 @@ export function parseDshArgs(argv: readonly string[], version: string): DshInvoc
       if (options.profile === '') program.error('error: --profile needs a name')
       if (args.length === 0) program.error('error: plugin needs pnpm arguments to forward (e.g. add <package>)')
       resolved = { mode: 'plugin', profile: options.profile, args }
+    })
+
+  const acceptance = program.command('acceptance').description('run a persistent JSON-RPC acceptance session with a patch')
+  acceptance
+    .requiredOption('--patch <path>', 'Cordis patch file, for example packages/generated/say-hello/cordis.yml')
+    .option('--repo-root <path>', 'DSH repository root; defaults to the current directory')
+    .option('--provider <name>', 'LLM provider route; defaults to opencode-go')
+    .option('--model <name>', 'LLM model; defaults to deepseek-v4-flash')
+    .action((options: { patch: string; repoRoot?: string; provider?: string; model?: string }) => {
+      rejectParentOptions('acceptance')
+      if (options.patch === '') program.error('error: acceptance --patch needs a path')
+      resolved = {
+        mode: 'acceptance',
+        patch: options.patch,
+        ...(options.repoRoot !== undefined ? { repoRoot: options.repoRoot } : {}),
+        ...(options.provider !== undefined ? { provider: options.provider } : {}),
+        ...(options.model !== undefined ? { model: options.model } : {}),
+      }
     })
 
   try {

@@ -1,0 +1,36 @@
+{
+  "name": "install-test",
+  "description": "A generated plugin used to verify workspace dependency installation.",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/index.d.ts",
+    "lib/index.d.ts.map",
+    "lib/index.js.map"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "say-hello": "workspace:*"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "workspace:*",
+    "@deepseek-ai/dsh-tools": "workspace:*"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "workspace:*",
+    "@deepseek-ai/dsh-tools": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

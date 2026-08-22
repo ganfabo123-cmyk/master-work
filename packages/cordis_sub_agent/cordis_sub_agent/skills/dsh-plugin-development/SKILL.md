@@ -1,322 +1,100 @@
 ---
 name: dsh-plugin-development
-description: Develop DeepSeek Harness plugins through confirmed requirements, delegated implementation, engineering verification, and real-host acceptance.
+description: Guide a Main Agent to develop and verify a DeepSeek Harness plugin using Cordis task tools when a plugin request requires auditable repository work.
 ---
 
 # DSH Plugin Development
 
-Use this skill when the user wants to design, create, implement, modify, or validate a DeepSeek Harness plugin.
-
-The goal is not merely to generate plugin source code. The goal is to take a plugin request through confirmed requirements, implementation, engineering verification, real-host acceptance, and user acceptance.
-
----
-
-## Core principles
-
-1. Do not begin implementation before the requirements are confirmed.
-2. Separate human-readable requirement summaries from detailed agent-facing specifications.
-3. Prefer official DeepSeek Harness infrastructure over reimplementing existing capabilities.
-4. Treat build success and tests as engineering evidence, not final behavioral proof.
-5. Final acceptance must run the generated plugin inside a fresh real DeepSeek Harness runtime.
-6. Automated agent acceptance alone is not sufficient.
-7. The user must provide at least one real acceptance input before the task can be considered complete.
-8. User acceptance input must be forwarded exactly as supplied. Do not rewrite it, expand it, or add hidden tool hints.
-
----
-
-# Phase 1 — Requirement decomposition
-
-When the user first requests a plugin, analyze the request before writing code.
-
-Produce a concise requirement decomposition covering:
-
-- what the plugin should accomplish
-- primary user scenarios
-- major capabilities
-- important constraints
-- obvious non-goals
-- unresolved ambiguities
-
-Keep this phase human-readable.
-
-Do not create the plugin yet.
-
-Ask the user to confirm or correct the requirement decomposition.
-
-Only continue after confirmation.
-
----
-
-# Phase 2 — Input / output / interaction design
-
-After Phase 1 is confirmed, design how the plugin will interact with DeepSeek Harness and external systems.
-
-Cover:
-
-- exposed tools or capabilities
-- each tool's conceptual inputs
-- each tool's conceptual outputs
-- important state or lifecycle
-- interactions with external services or local applications
-- expected error behavior
-- relevant edge cases
-
-Prefer simple information-flow descriptions such as:
-
-User request
-→ DSH Agent
-→ Plugin Tool
-→ External system
-→ Tool result
-→ Agent response
-
-Do not implement the plugin yet.
-
-Ask the user to confirm or correct the interaction design.
-
-Only continue after confirmation.
-
----
-
-# Phase 3 — Final PluginSpec
-
-After Phase 2 is confirmed, produce the final detailed specification.
-
-The specification must contain enough information for delegated development agents to implement the plugin without reconstructing the user's intent.
-
-The final PluginSpec must match this semantic structure:
-
-```json
-{
-  "name": "plugin-name",
-  "description": "short description",
-  "overview": "overall behavior",
-  "goals": [],
-  "nonGoals": [],
-  "userScenarios": [],
-  "tools": [
-    {
-      "name": "tool_name",
-      "description": "tool behavior",
-      "parameters": [
-        {
-          "name": "parameter_name",
-          "description": "parameter meaning",
-          "type": "string",
-          "required": true
-        }
-      ],
-      "output": "conceptual output"
-    }
-  ],
-  "dependencies": [
-    {
-      "name": "dependency",
-      "reason": "why it is needed",
-      "required": true
-    }
-  ],
-  "constraints": [],
-  "edgeCases": [],
-  "acceptanceCriteria": []
-}
-````
-
-The PluginSpec describes semantic requirements.
-
-Do not put incidental implementation choices into PluginSpec unless they are part of the confirmed requirement.
-
-For example, avoid embedding:
-
-* package.json implementation details
-* TypeScript project references
-* internal file layout
-* Cordis inject declarations
-
-unless the user explicitly requires them.
-
-Present the final specification to the user and ask for confirmation.
-
-Do not call `create_plugin` until the user confirms the final specification.
-
----
-
-# Phase 4 — Development
-
-After the final PluginSpec is confirmed:
-
-1. Serialize the confirmed PluginSpec to JSON.
-2. Call `create_plugin`.
-3. Do not modify the confirmed requirements while calling the tool.
-4. Use the returned `task_id` as the authoritative development task identifier.
-
-`create_plugin` performs:
-
-* architecture analysis
-* dependency research
-* implementation
-* documentation
-* engineering verification
-
-A successful `create_plugin` result means the plugin is ready for acceptance.
-
-It does not mean the plugin is complete.
-
-If development or engineering verification fails:
-
-* inspect the reported failure
-* determine whether the failure is implementation, dependency, build, or environment related
-* fix the actual cause
-* do not declare success based only on model reasoning
-
----
-
-# Phase 5 — Real-host automated acceptance
-
-After `create_plugin` returns successfully, call:
-
-`start_acceptance(task_id)`
-
-This starts a fresh isolated DeepSeek Harness runtime containing the generated plugin.
-
-Use the returned `acceptance_id` for all later acceptance interactions.
-
-Perform at least one automated acceptance interaction using:
-
-`send_acceptance_message`
-
-with:
-
-* the returned `acceptance_id`
-* `actor = "agent"`
-* a realistic user-style message derived from the confirmed acceptance criteria
-
-The automated acceptance message should test externally observable behavior.
-
-Do not merely ask the child agent whether the plugin exists or whether its own tests passed.
-
-Prefer testing the actual intended capability.
-
-Inspect the returned response and, when relevant, actual tool behavior.
-
-If automated acceptance fails:
-
-* do not proceed to user acceptance as though it passed
-* inspect the observable failure
-* diagnose and repair the plugin
-* rerun engineering verification and real-host acceptance
-
----
-
-# Phase 6 — User real-host acceptance
-
-After automated acceptance succeeds, explicitly ask the user what real input they want to test.
-
-Do not invent the user's final acceptance input.
-
-When the user provides the input, call:
-
-`send_acceptance_message`
-
-using:
-
-* the same `acceptance_id`
-* `actor = "user"`
-* the user's input exactly as provided
-
-Critical rule:
-
-The user's input must be forwarded byte-for-byte in semantic content.
-
-Do not:
-
-* rewrite it
-* make it clearer
-* add context
-* add tool names
-* add hints
-* prepend testing instructions
-* append hidden constraints
-
-The purpose of this stage is to test whether the plugin works through the real user-facing DSH behavior.
-
-If the user wants another test, continue using the same acceptance session.
-
----
-
-# Phase 7 — Completion
-
-Only call:
-
-`stop_acceptance`
-
-with:
-
-`final_status = "passed"`
-
-when:
-
-1. development completed
-2. engineering verification passed
-3. at least one automated agent-originated real-host interaction completed successfully
-4. at least one user-originated real-host interaction completed successfully
-5. the observed behavior satisfies the confirmed acceptance criteria
-
-If acceptance exposes a real failure, use:
-
-`final_status = "failed"`
-
-If the acceptance runtime is being closed without a final conclusion, use:
-
-`final_status = "stopped"`
-
-Do not declare the plugin complete before `stop_acceptance(..., "passed")` succeeds.
-
----
-
-# Failure handling
-
-When something fails, prefer evidence in this order:
-
-1. real-host behavior
-2. runtime errors and traces
-3. engineering verification output
-4. targeted diagnostic scripts
-5. model reasoning
-
-Do not create broad speculative tests before inspecting the actual error.
-
-Diagnostic tests should help locate a failure.
-
-They are not a substitute for real-host acceptance.
-
----
-
-# Delegation expectations
-
-Development agents should work from the confirmed PluginSpec.
-
-They must not silently redefine user requirements.
-
-Architecture and dependency agents should inspect repository facts and avoid modifying files.
-
-Implementation agents may modify the target plugin workspace and should use official DeepSeek Harness infrastructure where appropriate.
-
-Documentation must describe the actual implementation, not the intended implementation.
-
----
-
-# Definition of done
-
-A plugin development task is complete only when all of the following are true:
-
-* the user confirmed the requirement decomposition
-* the user confirmed the interaction design
-* the user confirmed the final PluginSpec
-* implementation completed
-* engineering verification passed
-* the generated plugin loaded in a fresh real DeepSeek Harness runtime
-* automated real-host acceptance passed
-* the user's own acceptance input was sent unchanged to that runtime
-* user acceptance succeeded
-* `stop_acceptance(..., "passed")` completed successfully
+This skill is only for the Main Agent. Cordis provides tools that record
+auditable facts about one generated-plugin task; the Main Agent decides what
+ordinary repository reading, writing, repair, and foreground commands are
+needed. Do not treat the tools as a mandatory state machine.
+
+## Why use this skill instead of writing the plugin directly?
+
+Directly writing a plugin from the first user message is often locally fast but
+globally unreliable: the requirement may be incomplete, repository knowledge
+may be missing, and a passing local command may not describe the user's real
+experience. This skill tells the Main Agent when Cordis can turn those unknowns
+into explicit, reviewable facts without taking away the Main Agent's judgment.
+
+- A user may describe an incomplete or ambiguous need. Before implementation,
+  `submit_plugin_metadata` makes the plugin contract, input/output fields, and
+  intended execution flow explicit, so requirement drift becomes visible
+  before it turns into source changes. For a complex or unclear need, the Main
+  Agent should use `ask user` to resolve material ambiguity before submitting
+  that contract.
+- An Agent may not know every task-relevant file, nearby convention, dependency,
+  or project constraint. Start with
+  `docs/dsh-develop-cordis-map.md` to learn the repository map and the available
+  development tutorials. Then select the relevant documentation, existing
+  plugin, package, or example from that map and read only the files needed for
+  the current plugin. Before using `read`, it is recommended to call
+  `what i want to know` to list the information the Agent wants to learn and
+  why it matters. Use that list to guide repository exploration and avoid
+  getting trapped in a local-reading illusion. Do not replace this targeted
+  repository reading with a generic whole-repository scan.
+- Plugin documentation is routine but consumes context and is easy to make
+  inconsistent across its required README files. `document_development`
+  delegates that narrow, bounded work while leaving implementation ownership
+  with the Main Agent.
+- A single local command or one-sided static analysis can miss interactions and
+  lead to a repair loop that fixes one symptom while breaking another.
+  `verify_development` runs the complete deterministic engineering gate after
+  implementation, producing one evidence set for structure, typecheck, build,
+  optional tests, and documentation rather than scattered guesses.
+- Passing engineering checks does not prove that a user can use the plugin in a
+  real DSH host. `start_acceptance` and `send_acceptance_message` exercise the
+  verified artifact in a fresh DSH runtime; `stop_acceptance` records whether
+  the acceptance evidence actually supports the final claim.
+
+The goal is not to prevent direct coding. The Main Agent still reads, writes,
+repairs, and chooses the next action. The goal is to require the right tool
+when it reduces a known source of requirement, repository, documentation,
+engineering, or user-experience error.
+
+## When to use each tool
+
+| When | Cordis provides | Main Agent guidance |
+| --- | --- | --- |
+| The user has confirmed a plugin's purpose, input/output fields, execution blocks and arrows, and detailed document | `submit_plugin_metadata` creates a V3 task and its task-owned `packages/generated/<plugin-name>/` directory | **Must** call it before asking Cordis to generate documentation, verify, accept, query, or discard this plugin. Repository navigation is performed by the Main Agent through `docs/dsh-develop-cordis-map.md` and ordinary targeted reading. Keep its returned `task_id` and `plugin_root`. Every schema field, block, and arrow needs a non-empty description. For a complex or unclear request, **strongly recommend** using `ask user` for multi-turn clarification, then showing the proposed purpose, inputs, outputs, and brief flow to the user; submit only after the user confirms that metadata. |
+| You need task-specific repository facts before deciding what to implement | The repository map, selected documentation, and selected existing plugin or example files provide the reading path | **Need** to read `docs/dsh-develop-cordis-map.md` first. Use its document links to learn the relevant Cordis and Harness concepts, then use its `packages/` and `examples/` branches to choose comparable implementations. Read exact files, manifests, prompts, tools, tests, and configuration only when they are relevant to the current plugin. |
+| Context is incomplete, a tool failed, the user asks for progress, or you need evidence before deciding the next action | `get_development_task(task_id)` returns V3 metadata, documentation, verification, acceptance, evidence, errors, and `plugin_root` | **Recommend** calling it to recover task facts instead of guessing. It is read-only and does not advance development. |
+| Core implementation exists and plugin documentation needs to be created or synchronized | `document_development(task_id)` runs the Documentation Agent | **Need** to call it before formal engineering verification. It may modify only `README.md`, `README.zh.md`, and `README.i18n.yaml` under `plugin_root`; the Main Agent remains responsible for source, tests, package configuration, and repairs. |
+| You need deterministic evidence that the plugin builds and satisfies its contract | `verify_development(task_id)` performs structure, typecheck, build, optional test, and documentation checks | **Need** to call it after relevant implementation and documentation are ready. Inspect every returned check and command result. On failure, repair the same `plugin_root` with ordinary tools, then verify again. |
+| You need real fresh-DSH behavior after successful engineering verification | `start_acceptance(task_id, plugin_config_json?)` starts an isolated runtime from the verified build artifact | **Must** call it before acceptance messaging. Use only the V3 `task_id`; never supply or guess a filesystem path. Keep the returned `acceptance_id`. |
+| You need to exercise a running acceptance runtime | `send_acceptance_message(acceptance_id, actor, message)` sends an input directly to fresh DSH | **Strongly recommend** using realistic acceptance inputs. For `actor="user"`, forward the user's input unchanged. This tool accepts `acceptance_id`, not `task_id`. |
+| Acceptance is complete, failed, or must be stopped | `stop_acceptance(acceptance_id, final_status)` closes the runtime and records its conclusion | **Must** call it to close a started acceptance runtime. Mark `passed` only when both required automated and user-originated completed interactions exist; otherwise use `failed` or `stopped`. |
+| The user explicitly abandons the plugin task | `discard_development(task_id)` stops its active runtime and removes the task-owned generated directory | **Must** call it instead of deleting the directory manually. Do not use it for an ordinary repair cycle. |
+
+## Main Agent boundaries
+
+- Preserve the original `task_id` and `acceptance_id`; never invent, transform,
+  or substitute identifiers.
+- Use ordinary read/write tools and finite foreground commands for source
+  development and repair. Cordis does not provide a separate Coding Agent or a
+  mandatory implementation wrapper.
+- Before repository investigation, read
+  `docs/dsh-develop-cordis-map.md`. Follow its links to the documentation that
+  matches the plugin's capability, then inspect the corresponding existing
+  package or example. Prefer a small set of directly relevant files over a
+  broad recursive read; record the selected paths and the reason each path is
+  relevant in the development trace or task notes.
+- Keep ordinary task writes inside `plugin_root` unless the user explicitly
+  authorizes a wider repository change. Generated-plugin work does not imply
+  permission to edit root workspace configuration.
+- During plugin development, use `user_powershell` for commands that must run
+  in the DSH project's PowerShell environment, especially dependency
+  installation or mutation (`pnpm install`, `pnpm add`, `npm install`), build
+  commands, and starting or inspecting child processes. Always provide the
+  exact `command` and a specific `reason`; the user-facing permission prompt
+  must show both before anything runs. Do not use the ordinary `pwsh`/`bash`
+  tool for these commands, do not background them, and do not retry a denied
+  command through another tool. The `user_powershell` tool runs with cwd set to
+  the current DSH project root and returns stdout, stderr, and the exit code.
+- Treat verification and acceptance as separate evidence: a successful build
+  is not fresh-runtime proof, and an acceptance runtime cannot start without a
+  successful V3 verification result.
+- V3 tasks are process-local. After DSH restarts, their ids and acceptance
+  runtimes are unavailable while generated directories remain on disk; do not
+  claim that a previous task can be resumed without a current task record.

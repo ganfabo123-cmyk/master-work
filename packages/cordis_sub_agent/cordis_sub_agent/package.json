@@ -17,6 +17,10 @@
       "types": "./lib/index.d.ts",
       "default": "./lib/index.js"
     },
+    "./acceptance": {
+      "types": "./lib/acceptance.d.ts",
+      "default": "./lib/acceptance.js"
+    },
     "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
@@ -37,7 +41,8 @@
     "@deepseek-ai/dsh-shell": "workspace:^",
     "@deepseek-ai/dsh-skill": "workspace:^",
     "@deepseek-ai/dsh-subagent": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^"
+    "@deepseek-ai/dsh-session": "workspace:^",
+    "@deepseek-ai/dsh-user-approval": "workspace:^"
   },
 
   "devDependencies": {
@@ -48,7 +53,8 @@
     "@deepseek-ai/dsh-shell": "workspace:^",
     "@deepseek-ai/dsh-skill": "workspace:^",
     "@deepseek-ai/dsh-subagent": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^"
+    "@deepseek-ai/dsh-session": "workspace:^",
+    "@deepseek-ai/dsh-user-approval": "workspace:^"
   },
 
   "dependencies": {

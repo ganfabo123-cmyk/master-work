@@ -5,7 +5,7 @@
  */
 
 import { existsSync } from 'node:fs'
-import { boot, installFailLoud, loadEnv, resolveConfigPath } from '@deepseek-ai/dsh-app-boot'
+import { boot, installFailLoud, loadEnv, loadOverlayPatches, resolveConfigPath } from '@deepseek-ai/dsh-app-boot'
 
 /* v8 ignore start -- composition over tested app-boot/jsonrpc and executable acceptance paths */
 const NAME = 'dsh-jsonrpc-agent'
@@ -24,6 +24,7 @@ export async function runJsonrpcAgent(bareModuleBaseUrl?: string): Promise<void>
   // Env wins over argv; empty values are absent. External config defines the deployment.
   const fromEnv = process.env['DSH_CORDIS_CONFIG']
   const fromArgv = process.argv[2]
+  const patchArgv = process.argv[3]
   const requested = fromEnv !== undefined && fromEnv !== ''
     ? fromEnv
     : fromArgv !== undefined && fromArgv !== '' ? fromArgv : undefined
@@ -35,7 +36,10 @@ export async function runJsonrpcAgent(bareModuleBaseUrl?: string): Promise<void>
     process.exit(1)
   }
 
-  const ctx = await boot(NAME, configPath, undefined, undefined, bareModuleBaseUrl)
+  const patches = patchArgv === undefined || patchArgv === ''
+    ? undefined
+    : loadOverlayPatches(NAME, patchArgv)
+  const ctx = await boot(NAME, configPath, patches, undefined, bareModuleBaseUrl)
   let exiting = false
 
   async function disposeAndExit(code: number): Promise<void> {

@@ -24,7 +24,7 @@ The Chinese text asks that step-by-step reasoning, drafting, and intermediate no
 
 #### What the model sees
 
-One Chinese prose section instructing that intermediate reasoning and drafting use Chinese. It constrains the language of non-final model output only; it does not change the persona, identity, or tool guidance language.
+One Chinese prose section, registered as `i18n:think-zh`, instructing that intermediate reasoning and drafting use Chinese. It constrains the language of non-final model output only; it does not change the persona, identity, or tool guidance language.
 
 #### Token effect
 

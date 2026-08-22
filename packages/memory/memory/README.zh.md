@@ -188,13 +188,23 @@ pnpm exec tsc -p packages/memory/memory/tsconfig.json --noEmit
 
 覆盖率百分比是诊断指标而不是发布定义；产品契约和可复现的集成行为才是验收标准。
 
-## 模型指导与 Token 行为
+## Model Experience
 
-插件指导模型生成多个具体搜索关键词，把搜索结果视为候选而不是真相，只显式加载值得读取的记录，并且只记录可复用经验，而不是普通错误或完整 Session 历史。它还指导模型把注入的按 cwd 事实视为已知上下文，用 `fact_remember` 保存稳定的个人或项目事实，并用 `fact_forget` 删除被更正或撤销的事实。
+### Experience and fact interaction
+
+#### What the model sees
+
+模型能看到 `memory_search`、`memory_get`、`memory_record`、`fact_remember` 和 `fact_forget` 工具 Schema。指导内容要求模型生成多个具体搜索关键词，把搜索结果视为候选而不是真相，只显式加载值得读取的记录，并且只记录可复用经验，而不是普通错误或完整 Session 历史。按 cwd 注入的事实会作为已知上下文出现，`fact_remember` 和 `fact_forget` 会更新该 cwd 范围内的上下文。
+
+#### Token effect
 
 插件可见性不变时，Tool Schema 和固定指导保持 Prefix Stable。搜索成本随轻量候选元数据增长；只有显式调用 `memory_get` 才会把完整正文 Token 加入上下文。注入的事实每个 cwd 每轮最多增加 `maxFacts` 条简短的 `标题 + 正文` 记录。
 
-## 已知限制与路线图
+#### KV Cache effect
+
+工具视图和事实集合不变时，请求前缀保持稳定。调用 `memory_get` 或修改 cwd 事实会在稳定前缀之后追加依赖数据的上下文；这不承诺固定的 Token 节省。
+
+## Known Limitations and Deferred Work
 
 - 经验记忆是进程全局、仅精确关键词检索；没有项目根 Scope、BM25、Embedding、Vector、Reranking 或 Hybrid Retrieval。事实记忆仅按 cwd 隔离——不会随项目进入其子目录。
 - 没有自动 Session 挖掘、迁移、删除、合并、语义去重、矛盾处理或衰减。

@@ -1,0 +1,6 @@
+# Load the say-hello plugin (built artifact) into the Web UI.
+# Start from the repository root with:
+#   pnpm dsh web --patch ./packages/generated/say-hello/cordis.yml
+- insert:
+    - id: say-hello
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/say-hello/lib/index.js'

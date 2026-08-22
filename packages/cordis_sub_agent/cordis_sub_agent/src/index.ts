@@ -10,6 +10,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import type {} from '@deepseek-ai/dsh-skill'
+import type {} from '@deepseek-ai/dsh-user-approval'
 
 import {
   AcceptanceService,
@@ -42,8 +43,11 @@ import { verifyDevelopmentTool } from './tools/verify-development.js'
 import { documentDevelopmentTool } from './tools/document-development.js'
 import { ReaderConclusionStore, readerConclusionTool } from './tools/reader-conclusion.js'
 import { submitPluginMetadataTool } from './tools/submit-plugin-metadata.js'
+import { whatIWantToKnowTool } from './tools/what-i-want-to-know.js'
+import { userPowerShellTool } from './tools/user-powershell.js'
 import { PluginMetadataTaskStore } from './services/plugin-metadata-task-store.js'
 import { PluginMetadataReadWorkflow } from './workflow/plugin-metadata-read-workflow.js'
+import { createDangerousCommandGuard } from './services/dangerous-command-cwd-policy.js'
 
 
 export const name =
@@ -95,6 +99,10 @@ export function apply(
    */
   ctx.effect(() => {
     const disposers = [
+      ctx.tools.guard(
+        createDangerousCommandGuard(resolve(config.repoRoot)),
+      ),
+
       ctx.tools.register(
         createPluginTool(metadataTasks, metadataReader),
       ),
@@ -102,7 +110,6 @@ export function apply(
       ctx.tools.register(
         startAcceptanceTool(
           acceptance,
-          metadataTasks,
           {
             repoRoot:
               resolve(config.repoRoot),
@@ -157,6 +164,11 @@ export function apply(
       )),
       ctx.tools.register(readerConclusionTool(readerConclusions)),
       ctx.tools.register(submitPluginMetadataTool(metadataTasks)),
+      ctx.tools.register(whatIWantToKnowTool()),
+      ctx.tools.register(userPowerShellTool(
+        ctx,
+        resolve(config.repoRoot),
+      )),
     ]
 
     return () => {

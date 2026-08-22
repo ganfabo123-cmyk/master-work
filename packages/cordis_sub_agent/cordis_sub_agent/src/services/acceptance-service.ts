@@ -6,6 +6,7 @@ import {
   type HarnessSession,
   type RunResult,
 } from '@deepseek-ai/dsh-sdk-client'
+import type { HarnessNotification } from '@deepseek-ai/dsh-sdk-client'
 
 import type {
   AcceptanceActor,
@@ -27,7 +28,10 @@ export interface StartAcceptanceInput {
    * 例如：
    * D:/project/my-plugin/lib/index.js
    */
-  pluginEntryPath: string
+  pluginEntryPath?: string
+
+  /** Patch file loaded by the child DSH runtime. */
+  patchPath?: string
 
   /** The repository cwd used by the child runtime and its SDK session. */
   repoRoot: string
@@ -67,6 +71,9 @@ export interface SendAcceptanceInput {
    * Human Acceptance 时必须原样发送。
    */
   message: string
+
+  /** Optional live observer used by CLI diagnostics. */
+  onNotification?: (notification: HarnessNotification) => void
 }
 
 
@@ -103,6 +110,10 @@ export class AcceptanceService {
   async start(
     input: StartAcceptanceInput,
   ): Promise<AcceptanceSession> {
+    if (input.pluginEntryPath === undefined && input.patchPath === undefined) {
+      throw new Error('Acceptance requires either pluginEntryPath or patchPath.')
+    }
+
     const acceptanceId = randomUUID()
 
     const childSessionId =
@@ -118,8 +129,9 @@ export class AcceptanceService {
      */
     const composition =
       await createAcceptanceComposition({
-        pluginEntryPath:
-          input.pluginEntryPath,
+        ...(input.patchPath === undefined
+          ? { pluginEntryPath: input.pluginEntryPath }
+          : {}),
 
         ...(input.pluginConfig !== undefined
           ? {
@@ -150,6 +162,7 @@ export class AcceptanceService {
         args: [
           runtimeBin,
           composition.configPath,
+          ...(input.patchPath === undefined ? [] : [resolve(input.patchPath)]),
         ],
 
         /*
@@ -307,6 +320,9 @@ export class AcceptanceService {
       const result =
         await runtime.session.run(
           input.message,
+          input.onNotification === undefined
+            ? undefined
+            : { onNotification: input.onNotification },
         )
 
       record.output =

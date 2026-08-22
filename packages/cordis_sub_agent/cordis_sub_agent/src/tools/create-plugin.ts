@@ -32,11 +32,7 @@ export function createPluginTool(
       },
       render: (_args, value) => [{
         type: 'text',
-        text: [
-          `Plugin metadata task: ${value.task_id}`,
-          '',
-          value.next_step,
-        ].join('\n'),
+        text: JSON.stringify(value, null, 2),
       }],
     },
     async execute(args, exec) {

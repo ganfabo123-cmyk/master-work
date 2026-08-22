@@ -16,7 +16,16 @@ function isBuildFaceClient(value: unknown): boolean {
 export default defineConfig(({ env }) => {
   const client = isBuildFaceClient(env?.DSH_BUILD_FACE)
   return {
-    workspace: ['vendor/*', 'packages/*/*', 'apps/cli'],
+    // cordis_sub_agent is a standalone plugin with a package-local lib/index.js
+    // entry, not a standard lib/types/* aggregate package.
+    workspace: [
+      'vendor/*',
+      'packages/*/*',
+      'apps/cli',
+      '!packages/cordis_sub_agent/cordis_sub_agent',
+      '!packages/examples/plugin-reference',
+      '!packages/generated/say-hello',
+    ],
     entry: client ? '' : ['lib/types/{index,invariant,startup}.js'],
     outDir: 'lib',
     format: ['esm'],

@@ -1,0 +1,1948 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "task": {
+        "id": "6007a5b4-b2c0-4309-a5b4-f423597de0f9",
+        "spec": {
+          "name": "say-hello",
+          "description": "提供 say_hello 工具的最小 DSH 插件",
+          "overview": "插件向 DSH Agent 注册一个名为 say_hello 的工具：输入一个必填字符串参数 name，返回固定格式问候语 \"Hello, <name>!\"。工具无状态、无外部依赖。",
+          "goals": [
+            "向 DSH Agent 注册 say_hello 工具",
+            "工具接受必填参数 name（string）",
+            "工具返回字符串 \"Hello, <name>!\"，name 原样拼接"
+          ],
+          "nonGoals": [
+            "不集成任何外部服务或本地应用",
+            "不维护状态、不做持久化",
+            "不做多语言、模板扩展或 name 的内容校验/转义"
+          ],
+          "userScenarios": [
+            "用户在对话中让 Agent 打招呼，Agent 调用 say_hello 工具并展示返回的问候语"
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "生成问候语：接收名字并返回 \"Hello, <name>!\"",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "被问候者的名字，原样拼入返回值",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "字符串 \"Hello, <name>!\""
+            }
+          ],
+          "dependencies": [
+            {
+              "name": "dsh-core 工具注册 API",
+              "reason": "以官方机制向 Agent 注册工具",
+              "required": true
+            }
+          ],
+          "constraints": [
+            "输出格式固定为 \"Hello, <name>!\"，<name> 为输入参数原样拼接",
+            "name 是必填字符串参数"
+          ],
+          "edgeCases": [
+            "name 为空字符串：返回 \"Hello, !\"",
+            "name 为纯空白：原样保留并拼接",
+            "name 含换行或特殊字符：原样拼接，不转义"
+          ],
+          "acceptanceCriteria": [
+            "插件能够在全新真实 DSH 运行时中被加载",
+            "Agent 可以调用 say_hello，传入任意识别名后返回 \"Hello, <name>!\"",
+            "缺失 name 或 name 非字符串时按 DSH 工具框架的参数校验行为处理"
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\6007a5b4-b2c0-4309-a5b4-f423597de0f9",
+        "status": "discarded",
+        "workspace": {
+          "repoRoot": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness",
+          "worktreePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\6007a5b4-b2c0-4309-a5b4-f423597de0f9",
+          "branchName": "cordis-sub-agent/6007a5b4-b2c0-4309-a5b4-f423597de0f9",
+          "baseCommit": "1f749f4beb54afb50c1cd34543bc49fc7e599682",
+          "createdAt": 1787193959957,
+          "status": "discarded"
+        },
+        "ownerParentSessionId": "session-913befa5-b43e-41ae-92c5-d9f2d3d9a211",
+        "evidence": [
+          {
+            "type": "coding",
+            "createdAt": 1787193959961,
+            "summary": "Development startup failed.",
+            "details": {
+              "error": "Plugin workspace already exists: D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\6007a5b4-b2c0-4309-a5b4-f423597de0f9"
+            }
+          },
+          {
+            "type": "discard",
+            "createdAt": 1787194468382,
+            "summary": "Task-owned Coding Agent, acceptance, worktree, and branch were discarded."
+          }
+        ],
+        "artifacts": [],
+        "createdAt": 1787193956659,
+        "updatedAt": 1787194468382
+      }
+    },
+    {
+      "task": {
+        "id": "17ffe288-80f1-4ff7-970c-05970a0d4fa7",
+        "spec": {
+          "name": "say-hello",
+          "description": "A minimal DSH plugin exposing a say_hello tool that returns a greeting.",
+          "overview": "Registers a single local tool named say_hello with no external dependencies. The tool takes a required non-empty string parameter name and returns the plain text greeting `Hello, <name>!`. It is stateless and performs no I/O beyond producing the greeting string.",
+          "goals": [
+            "Expose a say_hello tool to the DSH agent",
+            "Return `Hello, <name>!` for a given non-empty name"
+          ],
+          "nonGoals": [
+            "External services or file I/O",
+            "State or persistence",
+            "Configurable behavior"
+          ],
+          "userScenarios": [
+            "User asks the agent to greet someone by name; the agent calls say_hello with that name and reports the greeting."
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "Greet a person by name, returning the text `Hello, <name>!`.",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "The name to greet; must be a non-empty string.",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "A plain text greeting string of the form `Hello, <name>!`; name content is inserted verbatim."
+            }
+          ],
+          "dependencies": [
+            {
+              "name": "dsh-core tool registration infrastructure",
+              "reason": "Required to register a tool in the DSH runtime",
+              "required": true
+            }
+          ],
+          "constraints": [
+            "Tool is registered as a local plugin inside the DSH runtime",
+            "name is required and non-empty; empty or whitespace-only input is rejected at the parameter-schema level",
+            "No state, no side effects, no network or file access"
+          ],
+          "edgeCases": [
+            "Special characters, Unicode, and inner whitespace in name are inserted verbatim into the output",
+            "Missing, empty, or whitespace-only name is rejected by parameter validation before the tool body runs"
+          ],
+          "acceptanceCriteria": [
+            "The plugin loads in a fresh real DSH runtime without errors",
+            "Calling say_hello with name=\"World\" returns \"Hello, World!\"",
+            "Calling say_hello without name or with an empty name is rejected by parameter validation"
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\17ffe288-80f1-4ff7-970c-05970a0d4fa7\\say-hello",
+        "status": "failed",
+        "workspace": {
+          "repoRoot": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness",
+          "worktreePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\17ffe288-80f1-4ff7-970c-05970a0d4fa7",
+          "branchName": "cordis-sub-agent/17ffe288-80f1-4ff7-970c-05970a0d4fa7",
+          "baseCommit": "1f749f4beb54afb50c1cd34543bc49fc7e599682",
+          "createdAt": 1787204436045,
+          "status": "discarded"
+        },
+        "ownerParentSessionId": "session-5864d84c-16c2-4af5-a998-9b5d87dd2a17",
+        "evidence": [
+          {
+            "type": "coding",
+            "createdAt": 1787204792361,
+            "summary": "Development startup failed.",
+            "details": {
+              "error": "Reader output is not valid JSON."
+            }
+          },
+          {
+            "type": "discard",
+            "createdAt": 1787204794702,
+            "summary": "Development startup failed; the newly created worktree and branch were cleaned up."
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\17ffe288-80f1-4ff7-970c-05970a0d4fa7\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\17ffe288-80f1-4ff7-970c-05970a0d4fa7\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\17ffe288-80f1-4ff7-970c-05970a0d4fa7\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787204432513,
+        "updatedAt": 1787204794702,
+        "error": "Reader output is not valid JSON."
+      }
+    },
+    {
+      "task": {
+        "id": "33b36157-2d96-4e7e-84df-4664ba8a3e25",
+        "spec": {
+          "name": "say-hello",
+          "description": "A minimal DSH plugin exposing a say_hello tool that returns a greeting.",
+          "overview": "Registers a single local tool named say_hello with no external dependencies. The tool takes a required non-empty string parameter name and returns the plain text greeting `Hello, <name>!`. It is stateless and performs no I/O beyond producing the greeting string.",
+          "goals": [
+            "Expose a say_hello tool to the DSH agent",
+            "Return `Hello, <name>!` for a given non-empty name"
+          ],
+          "nonGoals": [
+            "External services or file I/O",
+            "State or persistence",
+            "Configurable behavior"
+          ],
+          "userScenarios": [
+            "User asks the agent to greet someone by name; the agent calls say_hello with that name and reports the greeting."
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "Greet a person by name, returning the text `Hello, <name>!`.",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "The name to greet; must be a non-empty string.",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "A plain text greeting string of the form `Hello, <name>!`; name content is inserted verbatim."
+            }
+          ],
+          "dependencies": [
+            {
+              "name": "dsh-core tool registration infrastructure",
+              "reason": "Required to register a tool in the DSH runtime",
+              "required": true
+            }
+          ],
+          "constraints": [
+            "Tool is registered as a local plugin inside the DSH runtime",
+            "name is required and non-empty; empty or whitespace-only input is rejected at the parameter-schema level",
+            "No state, no side effects, no network or file access"
+          ],
+          "edgeCases": [
+            "Special characters, Unicode, and inner whitespace in name are inserted verbatim into the output",
+            "Missing, empty, or whitespace-only name is rejected by parameter validation before the tool body runs"
+          ],
+          "acceptanceCriteria": [
+            "The plugin loads in a fresh real DSH runtime without errors",
+            "Calling say_hello with name=\"World\" returns \"Hello, World!\"",
+            "Calling say_hello without name or with an empty name is rejected by parameter validation"
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\33b36157-2d96-4e7e-84df-4664ba8a3e25\\say-hello",
+        "status": "failed",
+        "workspace": {
+          "repoRoot": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness",
+          "worktreePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\33b36157-2d96-4e7e-84df-4664ba8a3e25",
+          "branchName": "cordis-sub-agent/33b36157-2d96-4e7e-84df-4664ba8a3e25",
+          "baseCommit": "1f749f4beb54afb50c1cd34543bc49fc7e599682",
+          "createdAt": 1787204806613,
+          "status": "active"
+        },
+        "ownerParentSessionId": "session-5864d84c-16c2-4af5-a998-9b5d87dd2a17",
+        "evidence": [
+          {
+            "type": "coding",
+            "createdAt": 1787204807879,
+            "summary": "Development startup failed.",
+            "details": {
+              "error": "Reader / Scout Agent stopped with reason: aborted"
+            }
+          },
+          {
+            "type": "discard",
+            "createdAt": 1787204807944,
+            "summary": "Development startup failed and automatic worktree cleanup also failed.",
+            "details": {
+              "error": "Refusing to discard unmanaged workspace: D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\33b36157-2d96-4e7e-84df-4664ba8a3e25"
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\33b36157-2d96-4e7e-84df-4664ba8a3e25\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\33b36157-2d96-4e7e-84df-4664ba8a3e25\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\33b36157-2d96-4e7e-84df-4664ba8a3e25\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787204803544,
+        "updatedAt": 1787204807944,
+        "error": "Reader / Scout Agent stopped with reason: aborted"
+      }
+    },
+    {
+      "task": {
+        "id": "e619fe71-acf8-44d1-a998-788d1c541cff",
+        "spec": {
+          "name": "say-hello",
+          "description": "最简单的 DSH 插件：提供一个 say_hello 工具，向指定名字打招呼。",
+          "overview": "插件注册一个名为 say_hello 的工具。工具接收一个必填字符串参数 name，返回字符串 \"Hello, <name>!\"。纯本地字符串拼接，无外部依赖、无状态、无网络访问。",
+          "goals": [
+            "在 DSH 运行时中注册并暴露 say_hello 工具",
+            "say_hello 接收必填字符串参数 name",
+            "say_hello 返回结果字符串 \"Hello, <name>!\""
+          ],
+          "nonGoals": [
+            "国际化或多语言问候",
+            "对 name 做额外校验、清洗、截断或转义",
+            "持久化、状态管理、并发或异步任务",
+            "提供其他工具或能力"
+          ],
+          "userScenarios": [
+            "用户说“用 say_hello 问候 Alice”，Agent 调用 say_hello(name=\"Alice\")，结果返回 \"Hello, Alice!\"，Agent 将问候语反馈给用户。"
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "向指定名字打招呼，返回 \"Hello, <name>!\"。",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "要被问候的对象名称",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "字符串 \"Hello, <name>!\"，其中 <name> 为调用时传入的 name 值；name 为空字符串时输出 \"Hello, !\"，不做特殊处理。"
+            }
+          ],
+          "dependencies": [],
+          "constraints": [
+            "遵循 DSH 插件机制（Cordis 插件），使用官方工具注册扩展点",
+            "无外部服务、无网络、无持久化，纯本地字符串拼接"
+          ],
+          "edgeCases": [
+            "name 为空字符串：原样拼接，输出 \"Hello, !\"",
+            "name 含特殊字符或空白：原样拼接，不转义、不截断",
+            "name 缺失或类型非 string：由模型侧 JSON 参数校验拒绝调用，插件内不额外处理"
+          ],
+          "acceptanceCriteria": [
+            "插件能在全新 DSH 运行时中加载并注册 say_hello 工具",
+            "调用 say_hello(name=\"Alice\") 返回 \"Hello, Alice!\"",
+            "调用 say_hello(name=\"\") 返回 \"Hello, !\""
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello",
+        "status": "developing",
+        "workspace": {
+          "repoRoot": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness",
+          "worktreePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff",
+          "branchName": "cordis-sub-agent/e619fe71-acf8-44d1-a998-788d1c541cff",
+          "baseCommit": "1f749f4beb54afb50c1cd34543bc49fc7e599682",
+          "createdAt": 1787210121130,
+          "status": "active"
+        },
+        "ownerParentSessionId": "session-3ee64bd6-7abe-42ec-9b62-4f5069bfdbe3",
+        "evidence": [
+          {
+            "type": "reader",
+            "createdAt": 1787210721841,
+            "summary": "Reader / Scout completed and Coding Agent session started.",
+            "details": {
+              "readPlan": {
+                "mustRead": [
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\src\\index.ts",
+                    "reason": "The scaffolded Cordis plugin entry the Coding Agent must fully replace: currently only export name = \"say-hello\" and a no-op apply(). Final plugin must be a function plugin with named name/inject/apply exports (no default export); register the say_hello tool here."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\package.json",
+                    "reason": "Scaffold manifest produced by PluginBuilder.createBaseProjectAt. name must stay exactly say-hello, main/types/exports must keep lib/index.js and lib/index.d.ts and scripts.build = tsc -b — the engineering gate checks these exact strings."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\tsconfig.json",
+                    "reason": "Standalone build config (rootDir src, outDir lib, NodeNext, strict). It has no project references or paths aliases, so type resolution of @deepseek-ai/cordis and @deepseek-ai/dsh-tools depends on installed node_modules reachable from the worktree, not on repo source references."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\README.md",
+                    "reason": "Authoritative contract for the official tool-registration extension point: ctx.tools.register(defineTool({...})), the mandatory output { schema, render }, ParameterSchemaSpec/ValueSchemaSpec DSL, typed args, arg validation before execute, and the exact minimal working example to copy."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\src\\schema.ts",
+                    "reason": "defineTool option types and the schema DSL: parameters is an implicit open object root with per-property required: true; output.schema may be { type: 'string' }; render(args, value) returns ContentBlock[]. Confirms the { name: { type: 'string', required: true } } shape and that a plain string output needs no object envelope."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\src\\index.ts",
+                    "reason": "ToolRuntime.register(), ToolDefinition, and ToolRunContext signatures — registration returns a disposer, registration is effect-based (tool unregisters with the plugin fiber), output must declare render, and a body returns only the canonical JSON value (no content blocks from execute)."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\cookbook\\adding-a-tool.md",
+                    "reason": "The ordered tool-authoring reference: the minimal plugin shape with inject = ['tools'], execute() contract (args already schema-validated; honor exec.signal; throw = isError), output.schema/render rules, and the note that schemas flow into prompt assembly automatically."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\user\\develop\\basic\\tool.md",
+                    "reason": "The beginner greet tutorial whose tool is structurally identical to say_hello — the exact Hello, ${name}! template string, render: (_args, value) => [{ type: 'text', text: value }], and execute returning the canonical string."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\plugin-contract-validator.ts",
+                    "reason": "Defines the engineering gate the plugin must pass: package.json name === 'say-hello', main/types/exports exact values, pnpm build and pnpm exec tsc -b --pretty false commands, artifacts lib/index.js + lib/index.d.ts, and the documentation checklist (README.md/README.zh.md/README.i18n.yaml with Model Experience + Known Limitations sections and language switchers — handled by the separate Documentation phase)."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\acceptance-service.ts",
+                    "reason": "Shows acceptance loading the built plugin (lib/index.js via file:// URL in a temp cordis.yml beside @deepseek-ai/dsh-agent-spine-demo) into a fresh child DSH runtime whose cwd is the plugin workspace, then sending the raw user message verbatim — the plugin must load cleanly in that composition for the acceptance criteria to pass."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\acceptance-composition.ts",
+                    "reason": "The exact generated cordis.yml: 'agent-spine' (@deepseek-ai/dsh-agent-spine-demo, workspaceContext: false) plus 'acceptance-plugin' pointing at the plugin entry file:// URL — confirms the plugin is consumed as a bare function plugin by the Loader and must not require config."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\plugin-spec.ts",
+                    "reason": "The schema of the confirmed PluginSpec given in the prompt (name/description/overview/goals/nonGoals/userScenarios/tools/dependencies/constraints/edgeCases/acceptanceCriteria) — the single say_hello tool maps 1:1 to a defineTool registration with one required string parameter."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\coding-report.ts",
+                    "reason": "The exact payload contract for report_development_status the Coding Agent must emit when it finishes a round: status in_progress/ready/blocked/failed plus changedFiles/commands/testEvidence/unresolvedIssues/documentationRequired."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\workflow\\agent-roles.ts",
+                    "reason": "CODING_ROLE instructions for the long-lived Coding Agent and its allowed tool set (read/write/edit/glob/grep/pwsh/report_development_status): build/typecheck/local tests are allowed, dependency installs and full-repo suites are not."
+                  }
+                ],
+                "recommendedRead": [
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\todo\\tool-todo\\src\\index.ts",
+                    "reason": "A real shipped tool plugin reference: named exports + inject = ['tools'] + apply(ctx) calling ctx.tools.register(defineTool(...)) with parameters/output/execute — minimal enough to model style on while staying simpler (no config, session events, or projections needed for say_hello)."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\engineering-verification-service.ts",
+                    "reason": "The verification orchestration order (structure checks → typecheck → build → artifact → optional test → documentation) and that doc-sync runs at the repository root — clarifies what the Coding Agent must pre-verify locally before reporting ready."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\workflow\\development-workflow.ts",
+                    "reason": "Shows exactly how the Reader child's ReadPlan is handed to the Coding Agent and that follow-up/repair rounds reuse the same worktree — the Coding Agent should expect to iterate in place and re-run its local regression before reporting ready."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\development-task.ts",
+                    "reason": "Task state machine (reading → developing → documenting → engineering_verifying → accepting → repairing/completed) and the workspace record — context for where the plugin work sits in the pipeline and what artifact/evidence fields are recorded."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\cordis-primer.md",
+                    "reason": "Loader/configuration semantics for cordis.yml (plugin entries, Config objects, loader injection) — useful background for how inject: ['tools'] and apply(ctx, config) are resolved when the temp composition loads the plugin by file URL."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\AGENTS.md",
+                    "reason": "Repo-wide standing orders (registrations are effects; trust TypeScript at typed same-process boundaries so no extra runtime validation in the plugin; ESM everywhere; files end with exactly one trailing newline). Injected into every session, but the file is the source of truth if the injected draft drifts."
+                  },
+                  {
+                    "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\architecture.md",
+                    "reason": "High-level composition map of the harness (tools, agent-loop, seams) — optional deep context; the tool registration contract is fully pinned by the dsh-tools README and adding-a-tool cookbook, so this is background only."
+                  }
+                ],
+                "confirmedFacts": [
+                  "The target worktree is a full git worktree checkout of the repo on branch cordis-sub-agent/e619fe71-acf8-44d1-a998-788d1c541cff at the base commit; the plugin project lives at <worktree>/say-hello with exactly package.json, tsconfig.json, src/index.ts (no node_modules, no READMEs yet).",
+                  "The scaffold was generated by PluginBuilder.createBaseProjectAt: name: say-hello, version 0.1.0, type: module, scripts.build = tsc -b, main: lib/index.js, types: lib/index.d.ts, exports['.'] = {types, default} pointing at lib/; tsconfig: rootDir src, outDir lib, NodeNext, strict, declaration, no references/paths.",
+                  "The plugin must be a Cordis function plugin with named exports only: name ('say-hello'), inject (['tools']), optional Config, and apply(ctx) — a default export would make the Loader drop the inject metadata (postmortem 0001) and break loading.",
+                  "The official tool-registration extension point is ctx.tools.register(defineTool({...})) from @deepseek-ai/dsh-tools: parameters as ParameterSchemaSpec (implicit open object; per-property { type: 'string', required: true, description }), output: { schema: ValueSchemaSpec, render(args, value) => ContentBlock[] }, and execute(args, exec) returning only the canonical JSON value (Hello, ${name}!).",
+                  "defineTool compiles parameters to JSON Schema and validates model arguments before execute: a missing or non-string name fails as ToolArgsError (INVALID_ARGS → isError result) — matching the PluginSpec edge case that the plugin itself does no extra validation; a string '' passes validation (no minLength) and must yield Hello, !.",
+                  "Registration is an effect: disposing the plugin fiber unregisters the tool; register() returns the exact disposer. Schemas flow into the agent's system-prompt assembly automatically once the global registry has the tool."
+                ],
+                "risks": [
+                  "Environment: the repository node_modules is not fully installed — top-level links such as node_modules/@deepseek-ai/dsh-tools and node_modules/typescript are absent (only .modules.yaml and .pnpm virtual-store residue exist). Before pnpm build / pnpm exec tsc, verify package resolution from the worktree (e.g. node -p require.resolve check from say-hello) and run pnpm install if it fails; the worktree is a fresh checkout with no node_modules of its own.",
+                  "The scaffold tsconfig has no project references or path aliases, so typechecking relies on installed package types: packages/core/tools/lib/types/*.d.ts exists (repo was built at least once), but the top-level links needed to reach them from the worktree must exist — otherwise tsc fails immediately.",
+                  "Acceptance runs in a real child DSH runtime with an LLM (default deepseek-v4-flash) sending the user's message verbatim; the model must autonomously discover and call say_hello. A flaky model turn can fail acceptance without any plugin defect — the plugin's only duty is to register the tool so its schema is visible to that agent.",
+                  "Do not add behavior beyond the spec: no trimming, no escaping, no validation, no async/state/deps — Hello, ${name}! verbatim including the empty-string case; keep the module to named exports only and keep package.json fields exactly as the gate expects.",
+                  "The engineering/documentation gates expect README.md + README.zh.md + README.i18n.yaml with ## Model Experience and ## Known Limitations and Deferred Work sections and language switchers — these are produced by the separate Documentation phase, so the Coding Agent should not block on them, but must not delete or rename scaffold files the later phases depend on.",
+                  "Windows host: commands run through the repo's pwsh/shell tooling; paths are absolute Windows paths and the accepted plugin entry is lib/index.js — ensure the build actually emits lib at the worktree path and that no case/spacing mismatches creep into the final artifact check."
+                ],
+                "irrelevantOrAvoid": [
+                  "Workspace-package governance: say-hello is a standalone plugin project outside the pnpm workspaces (not under packages/<group>/<pkg>), so packages/AGENTS.md package rules (tsconfig.base extends, ./invariant companions, verify-package-invariants, README gates, add-to-root-configs, tool-catalog registration, verify-cordis-config resolver manifests) do not apply to it and must not be forced onto it.",
+                  "docs/tool-catalog.md and scripts/gen-tool-catalog.ts: generated from shipped workspace tool packages; a temp worktree plugin is not registered there.",
+                  "Code Mode internals (run_code, tools:sdk, SDK renderers, mode: 'code'/'both'): the default agent spine presents tools natively; say_hello is registered the same way regardless.",
+                  "Client/UI/web packages, apps/web, websites, hooks/ACP bridges, session persistence details, and the .agents/notes archives (frozen history, not current authority) — none of these affect a pure string-returning tool plugin.",
+                  "Vendored vendor/cordis internals: the plugin only consumes the public @deepseek-ai/cordis Context API; do not patch or vendor anything.",
+                  "Repo-wide test gates (vitest coverage per package, snapshots, e2e) target workspace packages and examples; the Coding Agent runs only focused local build/typecheck/functional checks in the worktree per the CODING_ROLE."
+                ]
+              }
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787210117776,
+        "updatedAt": 1787210721843,
+        "readPlan": {
+          "mustRead": [
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\src\\index.ts",
+              "reason": "The scaffolded Cordis plugin entry the Coding Agent must fully replace: currently only export name = \"say-hello\" and a no-op apply(). Final plugin must be a function plugin with named name/inject/apply exports (no default export); register the say_hello tool here."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\package.json",
+              "reason": "Scaffold manifest produced by PluginBuilder.createBaseProjectAt. name must stay exactly say-hello, main/types/exports must keep lib/index.js and lib/index.d.ts and scripts.build = tsc -b — the engineering gate checks these exact strings."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\tsconfig.json",
+              "reason": "Standalone build config (rootDir src, outDir lib, NodeNext, strict). It has no project references or paths aliases, so type resolution of @deepseek-ai/cordis and @deepseek-ai/dsh-tools depends on installed node_modules reachable from the worktree, not on repo source references."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\README.md",
+              "reason": "Authoritative contract for the official tool-registration extension point: ctx.tools.register(defineTool({...})), the mandatory output { schema, render }, ParameterSchemaSpec/ValueSchemaSpec DSL, typed args, arg validation before execute, and the exact minimal working example to copy."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\src\\schema.ts",
+              "reason": "defineTool option types and the schema DSL: parameters is an implicit open object root with per-property required: true; output.schema may be { type: 'string' }; render(args, value) returns ContentBlock[]. Confirms the { name: { type: 'string', required: true } } shape and that a plain string output needs no object envelope."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\src\\index.ts",
+              "reason": "ToolRuntime.register(), ToolDefinition, and ToolRunContext signatures — registration returns a disposer, registration is effect-based (tool unregisters with the plugin fiber), output must declare render, and a body returns only the canonical JSON value (no content blocks from execute)."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\cookbook\\adding-a-tool.md",
+              "reason": "The ordered tool-authoring reference: the minimal plugin shape with inject = ['tools'], execute() contract (args already schema-validated; honor exec.signal; throw = isError), output.schema/render rules, and the note that schemas flow into prompt assembly automatically."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\user\\develop\\basic\\tool.md",
+              "reason": "The beginner greet tutorial whose tool is structurally identical to say_hello — the exact Hello, ${name}! template string, render: (_args, value) => [{ type: 'text', text: value }], and execute returning the canonical string."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\plugin-contract-validator.ts",
+              "reason": "Defines the engineering gate the plugin must pass: package.json name === 'say-hello', main/types/exports exact values, pnpm build and pnpm exec tsc -b --pretty false commands, artifacts lib/index.js + lib/index.d.ts, and the documentation checklist (README.md/README.zh.md/README.i18n.yaml with Model Experience + Known Limitations sections and language switchers — handled by the separate Documentation phase)."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\acceptance-service.ts",
+              "reason": "Shows acceptance loading the built plugin (lib/index.js via file:// URL in a temp cordis.yml beside @deepseek-ai/dsh-agent-spine-demo) into a fresh child DSH runtime whose cwd is the plugin workspace, then sending the raw user message verbatim — the plugin must load cleanly in that composition for the acceptance criteria to pass."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\acceptance-composition.ts",
+              "reason": "The exact generated cordis.yml: 'agent-spine' (@deepseek-ai/dsh-agent-spine-demo, workspaceContext: false) plus 'acceptance-plugin' pointing at the plugin entry file:// URL — confirms the plugin is consumed as a bare function plugin by the Loader and must not require config."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\plugin-spec.ts",
+              "reason": "The schema of the confirmed PluginSpec given in the prompt (name/description/overview/goals/nonGoals/userScenarios/tools/dependencies/constraints/edgeCases/acceptanceCriteria) — the single say_hello tool maps 1:1 to a defineTool registration with one required string parameter."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\coding-report.ts",
+              "reason": "The exact payload contract for report_development_status the Coding Agent must emit when it finishes a round: status in_progress/ready/blocked/failed plus changedFiles/commands/testEvidence/unresolvedIssues/documentationRequired."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\workflow\\agent-roles.ts",
+              "reason": "CODING_ROLE instructions for the long-lived Coding Agent and its allowed tool set (read/write/edit/glob/grep/pwsh/report_development_status): build/typecheck/local tests are allowed, dependency installs and full-repo suites are not."
+            }
+          ],
+          "recommendedRead": [
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\todo\\tool-todo\\src\\index.ts",
+              "reason": "A real shipped tool plugin reference: named exports + inject = ['tools'] + apply(ctx) calling ctx.tools.register(defineTool(...)) with parameters/output/execute — minimal enough to model style on while staying simpler (no config, session events, or projections needed for say_hello)."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\engineering-verification-service.ts",
+              "reason": "The verification orchestration order (structure checks → typecheck → build → artifact → optional test → documentation) and that doc-sync runs at the repository root — clarifies what the Coding Agent must pre-verify locally before reporting ready."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\workflow\\development-workflow.ts",
+              "reason": "Shows exactly how the Reader child's ReadPlan is handed to the Coding Agent and that follow-up/repair rounds reuse the same worktree — the Coding Agent should expect to iterate in place and re-run its local regression before reporting ready."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\development-task.ts",
+              "reason": "Task state machine (reading → developing → documenting → engineering_verifying → accepting → repairing/completed) and the workspace record — context for where the plugin work sits in the pipeline and what artifact/evidence fields are recorded."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\cordis-primer.md",
+              "reason": "Loader/configuration semantics for cordis.yml (plugin entries, Config objects, loader injection) — useful background for how inject: ['tools'] and apply(ctx, config) are resolved when the temp composition loads the plugin by file URL."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\AGENTS.md",
+              "reason": "Repo-wide standing orders (registrations are effects; trust TypeScript at typed same-process boundaries so no extra runtime validation in the plugin; ESM everywhere; files end with exactly one trailing newline). Injected into every session, but the file is the source of truth if the injected draft drifts."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\architecture.md",
+              "reason": "High-level composition map of the harness (tools, agent-loop, seams) — optional deep context; the tool registration contract is fully pinned by the dsh-tools README and adding-a-tool cookbook, so this is background only."
+            }
+          ],
+          "confirmedFacts": [
+            "The target worktree is a full git worktree checkout of the repo on branch cordis-sub-agent/e619fe71-acf8-44d1-a998-788d1c541cff at the base commit; the plugin project lives at <worktree>/say-hello with exactly package.json, tsconfig.json, src/index.ts (no node_modules, no READMEs yet).",
+            "The scaffold was generated by PluginBuilder.createBaseProjectAt: name: say-hello, version 0.1.0, type: module, scripts.build = tsc -b, main: lib/index.js, types: lib/index.d.ts, exports['.'] = {types, default} pointing at lib/; tsconfig: rootDir src, outDir lib, NodeNext, strict, declaration, no references/paths.",
+            "The plugin must be a Cordis function plugin with named exports only: name ('say-hello'), inject (['tools']), optional Config, and apply(ctx) — a default export would make the Loader drop the inject metadata (postmortem 0001) and break loading.",
+            "The official tool-registration extension point is ctx.tools.register(defineTool({...})) from @deepseek-ai/dsh-tools: parameters as ParameterSchemaSpec (implicit open object; per-property { type: 'string', required: true, description }), output: { schema: ValueSchemaSpec, render(args, value) => ContentBlock[] }, and execute(args, exec) returning only the canonical JSON value (Hello, ${name}!).",
+            "defineTool compiles parameters to JSON Schema and validates model arguments before execute: a missing or non-string name fails as ToolArgsError (INVALID_ARGS → isError result) — matching the PluginSpec edge case that the plugin itself does no extra validation; a string '' passes validation (no minLength) and must yield Hello, !.",
+            "Registration is an effect: disposing the plugin fiber unregisters the tool; register() returns the exact disposer. Schemas flow into the agent's system-prompt assembly automatically once the global registry has the tool."
+          ],
+          "risks": [
+            "Environment: the repository node_modules is not fully installed — top-level links such as node_modules/@deepseek-ai/dsh-tools and node_modules/typescript are absent (only .modules.yaml and .pnpm virtual-store residue exist). Before pnpm build / pnpm exec tsc, verify package resolution from the worktree (e.g. node -p require.resolve check from say-hello) and run pnpm install if it fails; the worktree is a fresh checkout with no node_modules of its own.",
+            "The scaffold tsconfig has no project references or path aliases, so typechecking relies on installed package types: packages/core/tools/lib/types/*.d.ts exists (repo was built at least once), but the top-level links needed to reach them from the worktree must exist — otherwise tsc fails immediately.",
+            "Acceptance runs in a real child DSH runtime with an LLM (default deepseek-v4-flash) sending the user's message verbatim; the model must autonomously discover and call say_hello. A flaky model turn can fail acceptance without any plugin defect — the plugin's only duty is to register the tool so its schema is visible to that agent.",
+            "Do not add behavior beyond the spec: no trimming, no escaping, no validation, no async/state/deps — Hello, ${name}! verbatim including the empty-string case; keep the module to named exports only and keep package.json fields exactly as the gate expects.",
+            "The engineering/documentation gates expect README.md + README.zh.md + README.i18n.yaml with ## Model Experience and ## Known Limitations and Deferred Work sections and language switchers — these are produced by the separate Documentation phase, so the Coding Agent should not block on them, but must not delete or rename scaffold files the later phases depend on.",
+            "Windows host: commands run through the repo's pwsh/shell tooling; paths are absolute Windows paths and the accepted plugin entry is lib/index.js — ensure the build actually emits lib at the worktree path and that no case/spacing mismatches creep into the final artifact check."
+          ],
+          "irrelevantOrAvoid": [
+            "Workspace-package governance: say-hello is a standalone plugin project outside the pnpm workspaces (not under packages/<group>/<pkg>), so packages/AGENTS.md package rules (tsconfig.base extends, ./invariant companions, verify-package-invariants, README gates, add-to-root-configs, tool-catalog registration, verify-cordis-config resolver manifests) do not apply to it and must not be forced onto it.",
+            "docs/tool-catalog.md and scripts/gen-tool-catalog.ts: generated from shipped workspace tool packages; a temp worktree plugin is not registered there.",
+            "Code Mode internals (run_code, tools:sdk, SDK renderers, mode: 'code'/'both'): the default agent spine presents tools natively; say_hello is registered the same way regardless.",
+            "Client/UI/web packages, apps/web, websites, hooks/ACP bridges, session persistence details, and the .agents/notes archives (frozen history, not current authority) — none of these affect a pure string-returning tool plugin.",
+            "Vendored vendor/cordis internals: the plugin only consumes the public @deepseek-ai/cordis Context API; do not patch or vendor anything.",
+            "Repo-wide test gates (vitest coverage per package, snapshots, e2e) target workspace packages and examples; the Coding Agent runs only focused local build/typecheck/functional checks in the worktree per the CODING_ROLE."
+          ]
+        },
+        "codingAgentId": "9b76d174-732d-4430-8898-38c3443818fe",
+        "codingSessionStatus": "active",
+        "repairRound": 0
+      },
+      "workflow": {
+        "readPlan": {
+          "mustRead": [
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\src\\index.ts",
+              "reason": "The scaffolded Cordis plugin entry the Coding Agent must fully replace: currently only export name = \"say-hello\" and a no-op apply(). Final plugin must be a function plugin with named name/inject/apply exports (no default export); register the say_hello tool here."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\package.json",
+              "reason": "Scaffold manifest produced by PluginBuilder.createBaseProjectAt. name must stay exactly say-hello, main/types/exports must keep lib/index.js and lib/index.d.ts and scripts.build = tsc -b — the engineering gate checks these exact strings."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\.cordis\\worktrees\\e619fe71-acf8-44d1-a998-788d1c541cff\\say-hello\\tsconfig.json",
+              "reason": "Standalone build config (rootDir src, outDir lib, NodeNext, strict). It has no project references or paths aliases, so type resolution of @deepseek-ai/cordis and @deepseek-ai/dsh-tools depends on installed node_modules reachable from the worktree, not on repo source references."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\README.md",
+              "reason": "Authoritative contract for the official tool-registration extension point: ctx.tools.register(defineTool({...})), the mandatory output { schema, render }, ParameterSchemaSpec/ValueSchemaSpec DSL, typed args, arg validation before execute, and the exact minimal working example to copy."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\src\\schema.ts",
+              "reason": "defineTool option types and the schema DSL: parameters is an implicit open object root with per-property required: true; output.schema may be { type: 'string' }; render(args, value) returns ContentBlock[]. Confirms the { name: { type: 'string', required: true } } shape and that a plain string output needs no object envelope."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\core\\tools\\src\\index.ts",
+              "reason": "ToolRuntime.register(), ToolDefinition, and ToolRunContext signatures — registration returns a disposer, registration is effect-based (tool unregisters with the plugin fiber), output must declare render, and a body returns only the canonical JSON value (no content blocks from execute)."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\cookbook\\adding-a-tool.md",
+              "reason": "The ordered tool-authoring reference: the minimal plugin shape with inject = ['tools'], execute() contract (args already schema-validated; honor exec.signal; throw = isError), output.schema/render rules, and the note that schemas flow into prompt assembly automatically."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\user\\develop\\basic\\tool.md",
+              "reason": "The beginner greet tutorial whose tool is structurally identical to say_hello — the exact Hello, ${name}! template string, render: (_args, value) => [{ type: 'text', text: value }], and execute returning the canonical string."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\plugin-contract-validator.ts",
+              "reason": "Defines the engineering gate the plugin must pass: package.json name === 'say-hello', main/types/exports exact values, pnpm build and pnpm exec tsc -b --pretty false commands, artifacts lib/index.js + lib/index.d.ts, and the documentation checklist (README.md/README.zh.md/README.i18n.yaml with Model Experience + Known Limitations sections and language switchers — handled by the separate Documentation phase)."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\acceptance-service.ts",
+              "reason": "Shows acceptance loading the built plugin (lib/index.js via file:// URL in a temp cordis.yml beside @deepseek-ai/dsh-agent-spine-demo) into a fresh child DSH runtime whose cwd is the plugin workspace, then sending the raw user message verbatim — the plugin must load cleanly in that composition for the acceptance criteria to pass."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\acceptance-composition.ts",
+              "reason": "The exact generated cordis.yml: 'agent-spine' (@deepseek-ai/dsh-agent-spine-demo, workspaceContext: false) plus 'acceptance-plugin' pointing at the plugin entry file:// URL — confirms the plugin is consumed as a bare function plugin by the Loader and must not require config."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\plugin-spec.ts",
+              "reason": "The schema of the confirmed PluginSpec given in the prompt (name/description/overview/goals/nonGoals/userScenarios/tools/dependencies/constraints/edgeCases/acceptanceCriteria) — the single say_hello tool maps 1:1 to a defineTool registration with one required string parameter."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\coding-report.ts",
+              "reason": "The exact payload contract for report_development_status the Coding Agent must emit when it finishes a round: status in_progress/ready/blocked/failed plus changedFiles/commands/testEvidence/unresolvedIssues/documentationRequired."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\workflow\\agent-roles.ts",
+              "reason": "CODING_ROLE instructions for the long-lived Coding Agent and its allowed tool set (read/write/edit/glob/grep/pwsh/report_development_status): build/typecheck/local tests are allowed, dependency installs and full-repo suites are not."
+            }
+          ],
+          "recommendedRead": [
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\todo\\tool-todo\\src\\index.ts",
+              "reason": "A real shipped tool plugin reference: named exports + inject = ['tools'] + apply(ctx) calling ctx.tools.register(defineTool(...)) with parameters/output/execute — minimal enough to model style on while staying simpler (no config, session events, or projections needed for say_hello)."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\services\\engineering-verification-service.ts",
+              "reason": "The verification orchestration order (structure checks → typecheck → build → artifact → optional test → documentation) and that doc-sync runs at the repository root — clarifies what the Coding Agent must pre-verify locally before reporting ready."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\workflow\\development-workflow.ts",
+              "reason": "Shows exactly how the Reader child's ReadPlan is handed to the Coding Agent and that follow-up/repair rounds reuse the same worktree — the Coding Agent should expect to iterate in place and re-run its local regression before reporting ready."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\cordis_sub_agent\\cordis_sub_agent\\src\\models\\development-task.ts",
+              "reason": "Task state machine (reading → developing → documenting → engineering_verifying → accepting → repairing/completed) and the workspace record — context for where the plugin work sits in the pipeline and what artifact/evidence fields are recorded."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\cordis-primer.md",
+              "reason": "Loader/configuration semantics for cordis.yml (plugin entries, Config objects, loader injection) — useful background for how inject: ['tools'] and apply(ctx, config) are resolved when the temp composition loads the plugin by file URL."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\AGENTS.md",
+              "reason": "Repo-wide standing orders (registrations are effects; trust TypeScript at typed same-process boundaries so no extra runtime validation in the plugin; ESM everywhere; files end with exactly one trailing newline). Injected into every session, but the file is the source of truth if the injected draft drifts."
+            },
+            {
+              "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\docs\\architecture.md",
+              "reason": "High-level composition map of the harness (tools, agent-loop, seams) — optional deep context; the tool registration contract is fully pinned by the dsh-tools README and adding-a-tool cookbook, so this is background only."
+            }
+          ],
+          "confirmedFacts": [
+            "The target worktree is a full git worktree checkout of the repo on branch cordis-sub-agent/e619fe71-acf8-44d1-a998-788d1c541cff at the base commit; the plugin project lives at <worktree>/say-hello with exactly package.json, tsconfig.json, src/index.ts (no node_modules, no READMEs yet).",
+            "The scaffold was generated by PluginBuilder.createBaseProjectAt: name: say-hello, version 0.1.0, type: module, scripts.build = tsc -b, main: lib/index.js, types: lib/index.d.ts, exports['.'] = {types, default} pointing at lib/; tsconfig: rootDir src, outDir lib, NodeNext, strict, declaration, no references/paths.",
+            "The plugin must be a Cordis function plugin with named exports only: name ('say-hello'), inject (['tools']), optional Config, and apply(ctx) — a default export would make the Loader drop the inject metadata (postmortem 0001) and break loading.",
+            "The official tool-registration extension point is ctx.tools.register(defineTool({...})) from @deepseek-ai/dsh-tools: parameters as ParameterSchemaSpec (implicit open object; per-property { type: 'string', required: true, description }), output: { schema: ValueSchemaSpec, render(args, value) => ContentBlock[] }, and execute(args, exec) returning only the canonical JSON value (Hello, ${name}!).",
+            "defineTool compiles parameters to JSON Schema and validates model arguments before execute: a missing or non-string name fails as ToolArgsError (INVALID_ARGS → isError result) — matching the PluginSpec edge case that the plugin itself does no extra validation; a string '' passes validation (no minLength) and must yield Hello, !.",
+            "Registration is an effect: disposing the plugin fiber unregisters the tool; register() returns the exact disposer. Schemas flow into the agent's system-prompt assembly automatically once the global registry has the tool."
+          ],
+          "risks": [
+            "Environment: the repository node_modules is not fully installed — top-level links such as node_modules/@deepseek-ai/dsh-tools and node_modules/typescript are absent (only .modules.yaml and .pnpm virtual-store residue exist). Before pnpm build / pnpm exec tsc, verify package resolution from the worktree (e.g. node -p require.resolve check from say-hello) and run pnpm install if it fails; the worktree is a fresh checkout with no node_modules of its own.",
+            "The scaffold tsconfig has no project references or path aliases, so typechecking relies on installed package types: packages/core/tools/lib/types/*.d.ts exists (repo was built at least once), but the top-level links needed to reach them from the worktree must exist — otherwise tsc fails immediately.",
+            "Acceptance runs in a real child DSH runtime with an LLM (default deepseek-v4-flash) sending the user's message verbatim; the model must autonomously discover and call say_hello. A flaky model turn can fail acceptance without any plugin defect — the plugin's only duty is to register the tool so its schema is visible to that agent.",
+            "Do not add behavior beyond the spec: no trimming, no escaping, no validation, no async/state/deps — Hello, ${name}! verbatim including the empty-string case; keep the module to named exports only and keep package.json fields exactly as the gate expects.",
+            "The engineering/documentation gates expect README.md + README.zh.md + README.i18n.yaml with ## Model Experience and ## Known Limitations and Deferred Work sections and language switchers — these are produced by the separate Documentation phase, so the Coding Agent should not block on them, but must not delete or rename scaffold files the later phases depend on.",
+            "Windows host: commands run through the repo's pwsh/shell tooling; paths are absolute Windows paths and the accepted plugin entry is lib/index.js — ensure the build actually emits lib at the worktree path and that no case/spacing mismatches creep into the final artifact check."
+          ],
+          "irrelevantOrAvoid": [
+            "Workspace-package governance: say-hello is a standalone plugin project outside the pnpm workspaces (not under packages/<group>/<pkg>), so packages/AGENTS.md package rules (tsconfig.base extends, ./invariant companions, verify-package-invariants, README gates, add-to-root-configs, tool-catalog registration, verify-cordis-config resolver manifests) do not apply to it and must not be forced onto it.",
+            "docs/tool-catalog.md and scripts/gen-tool-catalog.ts: generated from shipped workspace tool packages; a temp worktree plugin is not registered there.",
+            "Code Mode internals (run_code, tools:sdk, SDK renderers, mode: 'code'/'both'): the default agent spine presents tools natively; say_hello is registered the same way regardless.",
+            "Client/UI/web packages, apps/web, websites, hooks/ACP bridges, session persistence details, and the .agents/notes archives (frozen history, not current authority) — none of these affect a pure string-returning tool plugin.",
+            "Vendored vendor/cordis internals: the plugin only consumes the public @deepseek-ai/cordis Context API; do not patch or vendor anything.",
+            "Repo-wide test gates (vitest coverage per package, snapshots, e2e) target workspace packages and examples; the Coding Agent runs only focused local build/typecheck/functional checks in the worktree per the CODING_ROLE."
+          ]
+        },
+        "codingAgentId": "9b76d174-732d-4430-8898-38c3443818fe"
+      }
+    },
+    {
+      "task": {
+        "id": "9962791c-301b-4dec-a9b2-1abef92b16d8",
+        "spec": {
+          "name": "say-hello",
+          "description": "提供 say_hello 工具，向指定名称输出问候语。",
+          "overview": "一个最简单的 DeepSeek Harness 插件，注册一个 say_hello 工具：接收必填字符串参数 name，返回 Hello, <name>!。",
+          "goals": [
+            "注册一个名为 say_hello 的 Tool",
+            "say_hello 接收必填字符串参数 name",
+            "say_hello 返回问候语 Hello, <name>!"
+          ],
+          "nonGoals": [
+            "不做多语言、个性化或模板定制",
+            "不校验、修剪或规范化 name 的值",
+            "不依赖外部服务或持久化"
+          ],
+          "userScenarios": [
+            "Agent 在对话中需要向用户或实体输出问候语时调用 say_hello"
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "向指定的 name 输出问候语 Hello, <name>!",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "被问候的名称",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "Hello, <name>!"
+            }
+          ],
+          "dependencies": [],
+          "constraints": [
+            "插件位于 packages/generated/say-hello",
+            "遵循仓库包规范：ESM、TypeScript strict、导出 JSDoc",
+            "name 原样拼接入输出，不做修剪或默认值"
+          ],
+          "edgeCases": [
+            "name 为空字符串时返回 \"Hello, !\"",
+            "name 含首尾空白时原样保留"
+          ],
+          "acceptanceCriteria": [
+            "say_hello 工具注册成功且参数 schema 正确",
+            "调用 say_hello 传入 name 返回 \"Hello, <name>!\"",
+            "单元测试通过",
+            "工程验证通过",
+            "全新 DSH 运行时接受测试通过"
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello",
+        "ownerParentSessionId": "session-ea45bd0a-39bc-4b35-b30a-f0b5d2e22ce6",
+        "status": "developing",
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787216809302,
+        "updatedAt": 1787216809338,
+        "evidence": [
+          {
+            "type": "development",
+            "createdAt": 1787216809338,
+            "summary": "Generated plugin workspace is ready for Main Agent development.",
+            "details": {
+              "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "task": {
+        "id": "12f2c022-9418-49bd-b7d0-ffee4c2f5529",
+        "spec": {
+          "name": "say-hello",
+          "description": "提供 say_hello tool，向用户返回问候语。",
+          "overview": "一个最简 DSH 插件，向模型暴露一个 say_hello tool：传入 name（字符串），返回 'Hello, <name>!'。",
+          "goals": [
+            "暴露一个名为 say_hello 的 tool",
+            "接受必填参数 name（string）",
+            "返回格式为 'Hello, <name>!' 的问候输出"
+          ],
+          "nonGoals": [
+            "不实现多语言、格式化或其他额外参数",
+            "不做任何持久化或外部调用"
+          ],
+          "userScenarios": [
+            "模型在对话中需要向用户返回一条简单的问候消息"
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "返回一条向指定 name 问候的消息，格式为 'Hello, <name>!'。",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "要问候的对象名称。",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "返回字符串 'Hello, <name>!'。"
+            }
+          ],
+          "dependencies": [],
+          "constraints": [
+            "遵循仓库 packages/{group}/{pkg} 包布局与 dsh 插件约定（named-export name/inject/Config/apply，无 default export）",
+            "所有注册通过 ctx.effect()/ctx.on() 完成",
+            "编译通过 strict:true"
+          ],
+          "edgeCases": [
+            "name 为空字符串时，仍按 'Hello, !' 返回（模型负责传入合理值）"
+          ],
+          "acceptanceCriteria": [
+            "在 fresh DSH 运行时中，Agent 能调用 say_hello tool 并得到 'Hello, <name>!' 输出",
+            "say_hello tool 的 name 参数为必填 string",
+            "工程验证（build/test）通过"
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello",
+        "ownerParentSessionId": "session-c13d533d-31e0-47c1-84c5-d8e4b18bf05e",
+        "status": "failed",
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787220045372,
+        "updatedAt": 1787220339273,
+        "error": "Reader Agent did not return a valid reader_conclusion JSON reading plan.",
+        "evidence": [
+          {
+            "type": "discard",
+            "createdAt": 1787220339273,
+            "summary": "Development startup failed; generated plugin directory was removed."
+          }
+        ]
+      }
+    },
+    {
+      "task": {
+        "id": "196aec31-856f-4075-afa3-486fd864b479",
+        "spec": {
+          "name": "say-hello",
+          "description": "A minimal DSH plugin that provides a single say_hello tool.",
+          "overview": "This plugin registers one tool, say_hello, which takes a string argument name and returns the string \"Hello, <name>!\". It is the simplest possible DSH plugin demonstrating tool registration.",
+          "goals": [
+            "Provide a say_hello tool registered through the DSH tool registry",
+            "Take a single string argument name",
+            "Return exactly \"Hello, <name>!\" for any name value"
+          ],
+          "nonGoals": [
+            "No additional tools",
+            "No persistence or state",
+            "No external API or network dependencies",
+            "No configurable behavior"
+          ],
+          "userScenarios": [
+            "A user asks the agent to greet a person by name; the agent invokes say_hello and replies with the returned greeting"
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "Greets a person by name.",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "The name to greet",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "The greeting string \"Hello, <name>!\""
+            }
+          ],
+          "dependencies": [
+            {
+              "name": "@deepseek-ai/cordis",
+              "reason": "Plugin runtime and context injection",
+              "required": true
+            },
+            {
+              "name": "dsh tool registry / tool registration API",
+              "reason": "Register the say_hello tool with the agent loop",
+              "required": true
+            }
+          ],
+          "constraints": [
+            "Handle empty string and arbitrary string values: always return \"Hello, <name>!\" verbatim without validation, trimming, or fallback"
+          ],
+          "edgeCases": [
+            "name is an empty string -> returns \"Hello, !\"",
+            "name contains arbitrary characters/spaces -> returns \"Hello, <name>!\""
+          ],
+          "acceptanceCriteria": [
+            "In a fresh DSH runtime, invoking say_hello with a name returns exactly \"Hello, <name>!\"",
+            "The plugin loads without configuration and registers the tool",
+            "Engineering verification and documentation gates pass"
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello",
+        "ownerParentSessionId": "session-7338d840-1bdb-4a50-894d-02f089b8c442",
+        "status": "failed",
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787221973633,
+        "updatedAt": 1787221975290,
+        "error": "Reader / Scout Agent stopped with reason aborted",
+        "evidence": [
+          {
+            "type": "discard",
+            "createdAt": 1787221975289,
+            "summary": "Development startup failed; generated plugin directory was removed."
+          }
+        ]
+      }
+    },
+    {
+      "task": {
+        "id": "6c5705ce-a85d-4aae-a5c1-300557fbe0c0",
+        "spec": {
+          "name": "say-hello",
+          "description": "A minimal DSH plugin that provides a single say_hello tool.",
+          "overview": "This plugin registers one tool, say_hello, which takes a string argument name and returns the string \"Hello, <name>!\". It is the simplest possible DSH plugin demonstrating tool registration.",
+          "goals": [
+            "Provide a say_hello tool registered through the DSH tool registry",
+            "Take a single string argument name",
+            "Return exactly \"Hello, <name>!\" for any name value"
+          ],
+          "nonGoals": [
+            "No additional tools",
+            "No persistence or state",
+            "No external API or network dependencies",
+            "No configurable behavior"
+          ],
+          "userScenarios": [
+            "A user asks the agent to greet a person by name; the agent invokes say_hello and replies with the returned greeting"
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "Greets a person by name.",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "The name to greet",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "The greeting string \"Hello, <name>!\""
+            }
+          ],
+          "dependencies": [
+            {
+              "name": "@deepseek-ai/cordis",
+              "reason": "Plugin runtime and context injection",
+              "required": true
+            },
+            {
+              "name": "dsh tool registry / tool registration API",
+              "reason": "Register the say_hello tool with the agent loop",
+              "required": true
+            }
+          ],
+          "constraints": [
+            "Handle empty string and arbitrary string values: always return \"Hello, <name>!\" verbatim without validation, trimming, or fallback"
+          ],
+          "edgeCases": [
+            "name is an empty string -> returns \"Hello, !\"",
+            "name contains arbitrary characters/spaces -> returns \"Hello, <name>!\""
+          ],
+          "acceptanceCriteria": [
+            "In a fresh DSH runtime, invoking say_hello with a name returns exactly \"Hello, <name>!\"",
+            "The plugin loads without configuration and registers the tool",
+            "Engineering verification and documentation gates pass"
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello",
+        "ownerParentSessionId": "session-7338d840-1bdb-4a50-894d-02f089b8c442",
+        "status": "ready_for_acceptance",
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787222162665,
+        "updatedAt": 1787223885790,
+        "readPlan": {
+          "mustRead": [
+            {
+              "path": "packages/generated/say-hello/src/index.ts",
+              "reason": "The bare generated entry the Main Agent must implement: currently only `export const name = \"say-hello\"; export function apply(): void {}`. It must become a Cordis function plugin registering say_hello via the tool registry."
+            },
+            {
+              "path": "packages/generated/say-hello/package.json",
+              "reason": "The minimal generated manifest (type: module, main/types/exports -> lib/index.js + lib/index.d.ts, build=tc -b). It currently declares NO dependencies, which is the central thing the Main Agent must extend for @deepseek-ai/cordis and @deepseek-ai/dsh-tools."
+            },
+            {
+              "path": "packages/core/tools/src/schema.ts",
+              "reason": "defines `defineTool()` and the exact ToolDefinition contract the say_hello tool must satisfy: name, description, parameters (ParameterSchemaSpec with required: true per property), output { schema, render(args,value)->ContentBlock[] }, execute(args, exec). This is the load-bearing API for registering the tool."
+            },
+            {
+              "path": "packages/core/tools/src/index.ts",
+              "reason": "The tool registry: `ctx.tools.register(ToolDefinition)` returns a disposer; the craft/tools augmentation on Context; the ToolRunContext and execute contract. Confirms how a plugin contributes a tool (registrations are effects)."
+            },
+            {
+              "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/plugin-contract-validator.ts",
+              "reason": "The exact deterministic Engineering Gate the Main Agent's output must pass: package.json name=plugin-name, build script, main/types/exports to lib/index.js + lib/index.d.ts, plus documentation checks (README.md, README.zh.md, README.i18n.yaml with `## Known Limitations and Deferred Work`, `## Model Experience`, language switchers)."
+            },
+            {
+              "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/engineering-verification-service.ts",
+              "reason": "Shows how the gate runs: `pnpm exec tsc -b --pretty false` then `pnpm build`, then requires artifacts lib/index.js and lib/index.d.ts to exist; a test script only runs if declared. Confirms what 'engineering verification passes' means for the acceptanceCriteria."
+            },
+            {
+              "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/plugin-builder.ts",
+              "reason": "The generator that created the workspace: shows the exact base template (package.json/tsconfig.json/src/index.ts) and that the folder lives under packages/generated/. Explains the starting point and that business src is left for the Main Agent."
+            },
+            {
+              "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/acceptance-service.ts",
+              "reason": "Shows acceptance runs a real child DSH (command `dsh`) that loads the built `lib/index.js` via file:// URL with cwd = plugin root. Determines how @deepseek-ai/cordis / @deepseek-ai/dsh-tools imports must resolve at runtime."
+            },
+            {
+              "path": "packages/todo/tool-todo/src/index.ts",
+              "reason": "A real, minimal-ish first-party tool plugin template: `export const name`, `export const inject = ['tools']`, `export function apply(ctx, config)`, registering via `ctx.tools.register(defineTool({...}))`. The closest pattern to copy for say_hello."
+            },
+            {
+              "path": "packages/todo/tool-todo/package.json",
+              "reason": "Shows the dependency/peerDependency contract for a tool plugin: `@deepseek-ai/cordis` peer, `@deepseek-ai/dsh-tools` peer, ESM, main/types layouts. Reference for what say-hello's manifest must declare."
+            }
+          ],
+          "recommendedRead": [
+            {
+              "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/acceptance-composition.ts",
+              "reason": "Renders the temporary cordis.yml that loads agent-spine plus the plugin entry; how the child DSH composition is built and the plugin's imports must resolve."
+            },
+            {
+              "path": "packages/core/tools/tests/tools.spec.ts",
+              "reason": "Behavioral examples of ctx.tools.register/execute incl. output validation and disposal; useful for writing the unit test and confirming say_hello returns exactly the canonical value."
+            },
+            {
+              "path": "docs/cookbook/adding-a-tool.md",
+              "reason": "Repository guidance on tool design: render intent, schema authoring, output contract — helps keep the say_hello tool conformant with DSH conventions."
+            },
+            {
+              "path": "packages/cordis_sub_agent/cordis_sub_agent/src/models/read-plan.ts",
+              "reason": "The exact ReadPlan shape (mustRead/recommendedRead/confirmedFacts/risks/irrelevantOrAvoid) produced by this scout; confirms what the Main Agent receives."
+            },
+            {
+              "path": "packages/todo/tool-todo/src/invariant.ts",
+              "reason": "Shows the package-owned `./invariant` companion pattern for reference; say_hello has no durable state so it likely needs only an explained empty invariant, if any."
+            }
+          ],
+          "confirmedFacts": [
+            "The generated plugin root packages/generated/say-hello contains exactly three files: package.json, tsconfig.json, src/index.ts. src/index.ts is a bare stub: `export const name = \"say-hello\"; export function apply(): void {}`.",
+            "The generated package.json is minimal: type: module, main/types/exports to lib/index.js and lib/index.d.ts, build script `tsc -b`, and NO dependencies/peerDependencies. It is a standalone project.",
+            "The generated tsconfig.json is standalone: it sets rootDir: src, outDir: lib, module/moduleResolution NodeNext, target ES2022, strict, skipLibCheck, and does NOT extend the repo tsconfig.base.json (unlike normal packages which use outDir lib/types and extend tsconfig.base.json).",
+            "The DSH tool-registration API is `ctx.tools.register(ToolDefinition)` / `defineTool({...})` exported from `@deepseek-ai/dsh-tools` (packages/core/tools). ToolDefinition requires name, description, parameters, output { schema, render }, execute(args, exec). register() returns a disposer.",
+            "defineTool requires an `output` with `schema` (ValueSchemaSpec) and `render(args, value): ContentBlock[]`; `execute(args, exec)` must return the canonical value matching output.schema; parameters use per-property `required: true`.",
+            "A Cordis function plugin for the harness exports `export const name` and `export function apply(ctx, config?)`, optionally `export const inject`; the tool-todo plugin is the reference example.",
+            "@deepseek-ai/cordis is the vendored Cordis and is a peerDependency (+ dev) of every harness package; tool plugins also peer-depend on @deepseek-ai/dsh-tools.",
+            "The engineering verification gate (PluginContractValidator + EngineeringVerificationService) requires: package.json name == plugin name, a build script, main/types/exports pointing to lib/index.js + lib/index.d.ts; runs `pnpm exec tsc -b --pretty false` then `pnpm build`; then requires lib/index.js and lib/index.d.ts artifacts to exist.",
+            "The engineering gate documentation checks require README.md, README.zh.md, and README.i18n.yaml to exist, with `## Known Limitations and Deferred Work` in English, `## Model Experience` present in both languages, and cross language-switcher links. Bilingual docs are mandatory.",
+            "The engineering gate runs a test script only if the manifest declares `scripts.test`; with no test script the gate skips tests, so test coverage is the Main Agent's decision.",
+            "Acceptance runs a real child DSH process (`dsh`) that loads the built plugin `lib/index.js` through a file:// URL in a temporary cordis.yml, with cwd = the plugin workspace path (acceptance-service.ts + acceptance-composition.ts).",
+            "The generated plugin folder packages/generated/say-hello is NOT covered by the root pnpm workspaces glob (`packages/*/*`) nor by the root tsconfig.host.json / tsconfig.client.json aggregates, so it is isolated from the repo-wide build/typecheck/hygiene gates.",
+            "The repo root .gitignore ignores `lib/` globally (any lib directory), so the generated plugin's build output lib/ is untracked; there is no .npmrc in the repo.",
+            "The say-hello task_id for reader_conclusion is 6c5705ce-a85d-4aae-a5c1-300557fbe0c0."
+          ],
+          "risks": [
+            "Dependency resolution is the top risk: packages/generated/say-hello is not a pnpm workspace member (glob is `packages/*/*`) and has no node_modules, yet the plugin must import `@deepseek-ai/cordis` and `@deepseek-ai/dsh-tools` for both the `tsc -b` build and the runtime acceptance where a child DSH loads `lib/index.js` with cwd = plugin root. The Main Agent must determine how these ESM imports resolve (manifest dependencies/peerDependencies + install/workspace link, or another mechanism) before build succeeds.",
+            "There is no default test script in the generated package. packages/AGENTS.md and the PluginSpec acceptance ('invoking say_hello with a name returns exactly Hello, <name>!') imply behavior verification, but the engineering gate only runs tests if a `test` script is declared; the Main Agent must decide whether to add one and whether a real-composition test is warranted for a plugin with no state/events.",
+            "The bilingual documentation gate is mandatory: README.zh.md (Chinese) plus README.i18n.yaml and specific section headings must exist, so a code-only implementation will fail verify_development until READMEs are added.",
+            "The generated package.json/tsconfig.json deliberately diverge from repo package conventions (standalone tsconfig, no peerDependencies, outDir lib instead of lib/types). Conforming them to repo convention could break the fixed gate's expectations (which require main/types/exports to lib/index.js + lib/index.d.ts), so the Main Agent must not over-modify the contract fields the validator checks.",
+            "Acceptance is a real LLM-driven child DSH run (needs the `dsh` command and a configured provider/model). If it cannot launch or resolve the plugin's imports in this environment, the acceptance gate may not be runnable here; the Main Agent can still satisfy the deterministic engineering gate.",
+            "The root .gitignore ignores all lib/ directories, so the built lib/index.js and lib/index.d.ts the artifact gate requires will be untracked/ignored; the gate still checks their on-disk existence after build, which is fine, but the folder's git state may look unusual."
+          ],
+          "irrelevantOrAvoid": [
+            "The repo-wide root build/typecheck/lint/hygiene/coverage gates do not cover packages/generated/* — the Main Agent should not try to run full `pnpm run typecheck`, `test:coverage`, or `doc-sync` repo-wide; only the generated plugin's own build (tsc -b) and the engineering gate matter.",
+            "packages/todo/tool-todo session-projection, todo/write session events, zod schemas, and the `./invariant` companion plumbing are out of scope: say-hello has no persistence/state/events, so that machinery must not be copied.",
+            "The root vendor/ internals and packages/core/tools internals beyond the published API (index.ts/schema.ts) are not needed to register a single stateless tool; avoid reading implementation plumbing like code-mode.ts, py-types.ts, ts-types.ts, and scoped-layers internals.",
+            "The web/client/server API and Typert/api-gateway subsystems are irrelevant to a single stateless tool plugin; avoid them.",
+            "The .cordis/ worktree copies (duplicate node_modules, tsconfigs) are not authoritative; read only the live checkout at D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness."
+          ]
+        },
+        "evidence": [
+          {
+            "type": "development",
+            "createdAt": 1787222529142,
+            "summary": "Reader Agent returned a JSON reading plan for Main Agent repository inspection.",
+            "details": {
+              "readPlan": {
+                "mustRead": [
+                  {
+                    "path": "packages/generated/say-hello/src/index.ts",
+                    "reason": "The bare generated entry the Main Agent must implement: currently only `export const name = \"say-hello\"; export function apply(): void {}`. It must become a Cordis function plugin registering say_hello via the tool registry."
+                  },
+                  {
+                    "path": "packages/generated/say-hello/package.json",
+                    "reason": "The minimal generated manifest (type: module, main/types/exports -> lib/index.js + lib/index.d.ts, build=tc -b). It currently declares NO dependencies, which is the central thing the Main Agent must extend for @deepseek-ai/cordis and @deepseek-ai/dsh-tools."
+                  },
+                  {
+                    "path": "packages/core/tools/src/schema.ts",
+                    "reason": "defines `defineTool()` and the exact ToolDefinition contract the say_hello tool must satisfy: name, description, parameters (ParameterSchemaSpec with required: true per property), output { schema, render(args,value)->ContentBlock[] }, execute(args, exec). This is the load-bearing API for registering the tool."
+                  },
+                  {
+                    "path": "packages/core/tools/src/index.ts",
+                    "reason": "The tool registry: `ctx.tools.register(ToolDefinition)` returns a disposer; the craft/tools augmentation on Context; the ToolRunContext and execute contract. Confirms how a plugin contributes a tool (registrations are effects)."
+                  },
+                  {
+                    "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/plugin-contract-validator.ts",
+                    "reason": "The exact deterministic Engineering Gate the Main Agent's output must pass: package.json name=plugin-name, build script, main/types/exports to lib/index.js + lib/index.d.ts, plus documentation checks (README.md, README.zh.md, README.i18n.yaml with `## Known Limitations and Deferred Work`, `## Model Experience`, language switchers)."
+                  },
+                  {
+                    "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/engineering-verification-service.ts",
+                    "reason": "Shows how the gate runs: `pnpm exec tsc -b --pretty false` then `pnpm build`, then requires artifacts lib/index.js and lib/index.d.ts to exist; a test script only runs if declared. Confirms what 'engineering verification passes' means for the acceptanceCriteria."
+                  },
+                  {
+                    "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/plugin-builder.ts",
+                    "reason": "The generator that created the workspace: shows the exact base template (package.json/tsconfig.json/src/index.ts) and that the folder lives under packages/generated/. Explains the starting point and that business src is left for the Main Agent."
+                  },
+                  {
+                    "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/acceptance-service.ts",
+                    "reason": "Shows acceptance runs a real child DSH (command `dsh`) that loads the built `lib/index.js` via file:// URL with cwd = plugin root. Determines how @deepseek-ai/cordis / @deepseek-ai/dsh-tools imports must resolve at runtime."
+                  },
+                  {
+                    "path": "packages/todo/tool-todo/src/index.ts",
+                    "reason": "A real, minimal-ish first-party tool plugin template: `export const name`, `export const inject = ['tools']`, `export function apply(ctx, config)`, registering via `ctx.tools.register(defineTool({...}))`. The closest pattern to copy for say_hello."
+                  },
+                  {
+                    "path": "packages/todo/tool-todo/package.json",
+                    "reason": "Shows the dependency/peerDependency contract for a tool plugin: `@deepseek-ai/cordis` peer, `@deepseek-ai/dsh-tools` peer, ESM, main/types layouts. Reference for what say-hello's manifest must declare."
+                  }
+                ],
+                "recommendedRead": [
+                  {
+                    "path": "packages/cordis_sub_agent/cordis_sub_agent/src/services/acceptance-composition.ts",
+                    "reason": "Renders the temporary cordis.yml that loads agent-spine plus the plugin entry; how the child DSH composition is built and the plugin's imports must resolve."
+                  },
+                  {
+                    "path": "packages/core/tools/tests/tools.spec.ts",
+                    "reason": "Behavioral examples of ctx.tools.register/execute incl. output validation and disposal; useful for writing the unit test and confirming say_hello returns exactly the canonical value."
+                  },
+                  {
+                    "path": "docs/cookbook/adding-a-tool.md",
+                    "reason": "Repository guidance on tool design: render intent, schema authoring, output contract — helps keep the say_hello tool conformant with DSH conventions."
+                  },
+                  {
+                    "path": "packages/cordis_sub_agent/cordis_sub_agent/src/models/read-plan.ts",
+                    "reason": "The exact ReadPlan shape (mustRead/recommendedRead/confirmedFacts/risks/irrelevantOrAvoid) produced by this scout; confirms what the Main Agent receives."
+                  },
+                  {
+                    "path": "packages/todo/tool-todo/src/invariant.ts",
+                    "reason": "Shows the package-owned `./invariant` companion pattern for reference; say_hello has no durable state so it likely needs only an explained empty invariant, if any."
+                  }
+                ],
+                "confirmedFacts": [
+                  "The generated plugin root packages/generated/say-hello contains exactly three files: package.json, tsconfig.json, src/index.ts. src/index.ts is a bare stub: `export const name = \"say-hello\"; export function apply(): void {}`.",
+                  "The generated package.json is minimal: type: module, main/types/exports to lib/index.js and lib/index.d.ts, build script `tsc -b`, and NO dependencies/peerDependencies. It is a standalone project.",
+                  "The generated tsconfig.json is standalone: it sets rootDir: src, outDir: lib, module/moduleResolution NodeNext, target ES2022, strict, skipLibCheck, and does NOT extend the repo tsconfig.base.json (unlike normal packages which use outDir lib/types and extend tsconfig.base.json).",
+                  "The DSH tool-registration API is `ctx.tools.register(ToolDefinition)` / `defineTool({...})` exported from `@deepseek-ai/dsh-tools` (packages/core/tools). ToolDefinition requires name, description, parameters, output { schema, render }, execute(args, exec). register() returns a disposer.",
+                  "defineTool requires an `output` with `schema` (ValueSchemaSpec) and `render(args, value): ContentBlock[]`; `execute(args, exec)` must return the canonical value matching output.schema; parameters use per-property `required: true`.",
+                  "A Cordis function plugin for the harness exports `export const name` and `export function apply(ctx, config?)`, optionally `export const inject`; the tool-todo plugin is the reference example.",
+                  "@deepseek-ai/cordis is the vendored Cordis and is a peerDependency (+ dev) of every harness package; tool plugins also peer-depend on @deepseek-ai/dsh-tools.",
+                  "The engineering verification gate (PluginContractValidator + EngineeringVerificationService) requires: package.json name == plugin name, a build script, main/types/exports pointing to lib/index.js + lib/index.d.ts; runs `pnpm exec tsc -b --pretty false` then `pnpm build`; then requires lib/index.js and lib/index.d.ts artifacts to exist.",
+                  "The engineering gate documentation checks require README.md, README.zh.md, and README.i18n.yaml to exist, with `## Known Limitations and Deferred Work` in English, `## Model Experience` present in both languages, and cross language-switcher links. Bilingual docs are mandatory.",
+                  "The engineering gate runs a test script only if the manifest declares `scripts.test`; with no test script the gate skips tests, so test coverage is the Main Agent's decision.",
+                  "Acceptance runs a real child DSH process (`dsh`) that loads the built plugin `lib/index.js` through a file:// URL in a temporary cordis.yml, with cwd = the plugin workspace path (acceptance-service.ts + acceptance-composition.ts).",
+                  "The generated plugin folder packages/generated/say-hello is NOT covered by the root pnpm workspaces glob (`packages/*/*`) nor by the root tsconfig.host.json / tsconfig.client.json aggregates, so it is isolated from the repo-wide build/typecheck/hygiene gates.",
+                  "The repo root .gitignore ignores `lib/` globally (any lib directory), so the generated plugin's build output lib/ is untracked; there is no .npmrc in the repo.",
+                  "The say-hello task_id for reader_conclusion is 6c5705ce-a85d-4aae-a5c1-300557fbe0c0."
+                ],
+                "risks": [
+                  "Dependency resolution is the top risk: packages/generated/say-hello is not a pnpm workspace member (glob is `packages/*/*`) and has no node_modules, yet the plugin must import `@deepseek-ai/cordis` and `@deepseek-ai/dsh-tools` for both the `tsc -b` build and the runtime acceptance where a child DSH loads `lib/index.js` with cwd = plugin root. The Main Agent must determine how these ESM imports resolve (manifest dependencies/peerDependencies + install/workspace link, or another mechanism) before build succeeds.",
+                  "There is no default test script in the generated package. packages/AGENTS.md and the PluginSpec acceptance ('invoking say_hello with a name returns exactly Hello, <name>!') imply behavior verification, but the engineering gate only runs tests if a `test` script is declared; the Main Agent must decide whether to add one and whether a real-composition test is warranted for a plugin with no state/events.",
+                  "The bilingual documentation gate is mandatory: README.zh.md (Chinese) plus README.i18n.yaml and specific section headings must exist, so a code-only implementation will fail verify_development until READMEs are added.",
+                  "The generated package.json/tsconfig.json deliberately diverge from repo package conventions (standalone tsconfig, no peerDependencies, outDir lib instead of lib/types). Conforming them to repo convention could break the fixed gate's expectations (which require main/types/exports to lib/index.js + lib/index.d.ts), so the Main Agent must not over-modify the contract fields the validator checks.",
+                  "Acceptance is a real LLM-driven child DSH run (needs the `dsh` command and a configured provider/model). If it cannot launch or resolve the plugin's imports in this environment, the acceptance gate may not be runnable here; the Main Agent can still satisfy the deterministic engineering gate.",
+                  "The root .gitignore ignores all lib/ directories, so the built lib/index.js and lib/index.d.ts the artifact gate requires will be untracked/ignored; the gate still checks their on-disk existence after build, which is fine, but the folder's git state may look unusual."
+                ],
+                "irrelevantOrAvoid": [
+                  "The repo-wide root build/typecheck/lint/hygiene/coverage gates do not cover packages/generated/* — the Main Agent should not try to run full `pnpm run typecheck`, `test:coverage`, or `doc-sync` repo-wide; only the generated plugin's own build (tsc -b) and the engineering gate matter.",
+                  "packages/todo/tool-todo session-projection, todo/write session events, zod schemas, and the `./invariant` companion plumbing are out of scope: say-hello has no persistence/state/events, so that machinery must not be copied.",
+                  "The root vendor/ internals and packages/core/tools internals beyond the published API (index.ts/schema.ts) are not needed to register a single stateless tool; avoid reading implementation plumbing like code-mode.ts, py-types.ts, ts-types.ts, and scoped-layers internals.",
+                  "The web/client/server API and Typert/api-gateway subsystems are irrelevant to a single stateless tool plugin; avoid them.",
+                  "The .cordis/ worktree copies (duplicate node_modules, tsconfigs) are not authoritative; read only the live checkout at D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness."
+                ]
+              }
+            }
+          },
+          {
+            "type": "development",
+            "createdAt": 1787222529145,
+            "summary": "Generated plugin workspace is ready for Main Agent development.",
+            "details": {
+              "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello"
+            }
+          },
+          {
+            "type": "documentation",
+            "createdAt": 1787223545437,
+            "summary": "Documentation Agent completed with unresolved checks.",
+            "details": {
+              "changedFiles": [
+                "abea743452d4d16e03b53c348",
+                "../../examples/plugin-reference/README.i18n.yaml",
+                "../../examples/plugin-reference/README.md",
+                "../../examples/plugin-reference/README.zh.md",
+                "../../examples/plugin-reference/package.json",
+                "../../examples/plugin-reference/src/config.ts",
+                "../../examples/plugin-reference/src/index.ts",
+                "../../examples/plugin-reference/src/service.ts",
+                "../../examples/plugin-reference/src/types.ts",
+                "../../examples/plugin-reference/tsconfig.json",
+                "README.md",
+                "README.zh.md"
+              ],
+              "sourceFilesRead": [
+                "packages/generated/say-hello/README.md",
+                "packages/generated/say-hello/README.zh.md",
+                "packages/generated/say-hello/README.md\\n",
+                "packages/generated/say-hello/README.md"
+              ],
+              "commands": [
+                "pnpm run verify-translation-pairing packages/generated/say-hello/README.md"
+              ],
+              "pairing": {
+                "command": "pnpm run verify-translation-pairing packages/generated/say-hello/README.md",
+                "exitCode": 1,
+                "stdout": "[ELIFECYCLE] Command failed with exit code 1.\n",
+                "stderr": "$ tsx scripts/verify-translation-pairing.ts \"packages/generated/say-hello/README.md\"\nnode:internal/modules/run_main:107\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nError: spawn EPERM\r\n    at ChildProcess.spawn (node:internal/child_process:421:11)\r\n    at Object.spawn (node:child_process:796:9)\r\n    at ensureServiceIsRunning (D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\node_modules\\.pnpm\\esbuild@0.28.1\\node_modules\\esbuild\\lib\\main.js:2268:29)\r\n    at startSyncServiceWorker (D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\node_modules\\.pnpm\\esbuild@0.28.1\\node_modules\\esbuild\\lib\\main.js:2474:19)\r\n    at Object.<anonymous> (D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\node_modules\\.pnpm\\esbuild@0.28.1\\node_modules\\esbuild\\lib\\main.js:2515:3)\r\n    at Module._compile (node:internal/modules/cjs/loader:1761:14)\r\n    at Object..js (node:internal/modules/cjs/loader:1893:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1481:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1300:12)\r\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14) {\r\n  errno: -4048,\r\n  code: 'EPERM',\r\n  syscall: 'spawn',\r\n  name: 'TransformError'\r\n}\r\n\r\nNode.js v24.12.0\r\n",
+                "stdoutTruncated": false,
+                "stderrTruncated": false
+              },
+              "outOfScopeFiles": [
+                "abea743452d4d16e03b53c348",
+                "../../examples/plugin-reference/README.i18n.yaml",
+                "../../examples/plugin-reference/README.md",
+                "../../examples/plugin-reference/README.zh.md",
+                "../../examples/plugin-reference/package.json",
+                "../../examples/plugin-reference/src/config.ts",
+                "../../examples/plugin-reference/src/index.ts",
+                "../../examples/plugin-reference/src/service.ts",
+                "../../examples/plugin-reference/src/types.ts",
+                "../../examples/plugin-reference/tsconfig.json"
+              ],
+              "unresolved": [
+                "Documentation Agent changed out-of-scope files: abea743452d4d16e03b53c348, ../../examples/plugin-reference/README.i18n.yaml, ../../examples/plugin-reference/README.md, ../../examples/plugin-reference/README.zh.md, ../../examples/plugin-reference/package.json, ../../examples/plugin-reference/src/config.ts, ../../examples/plugin-reference/src/index.ts, ../../examples/plugin-reference/src/service.ts, ../../examples/plugin-reference/src/types.ts, ../../examples/plugin-reference/tsconfig.json",
+                "Translation pairing failed."
+              ]
+            }
+          },
+          {
+            "type": "verification",
+            "createdAt": 1787223885789,
+            "summary": "Engineering verification passed.",
+            "details": {
+              "success": true,
+              "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello",
+              "pluginEntryPath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello/lib/index.js",
+              "checks": [
+                {
+                  "id": "package-name",
+                  "passed": true,
+                  "evidence": "package name: say-hello",
+                  "type": "structure"
+                },
+                {
+                  "id": "build-script",
+                  "passed": true,
+                  "evidence": "build script: tsc -b",
+                  "type": "structure"
+                },
+                {
+                  "id": "main",
+                  "passed": true,
+                  "evidence": "main: lib/index.js",
+                  "type": "structure"
+                },
+                {
+                  "id": "types",
+                  "passed": true,
+                  "evidence": "types: lib/index.d.ts",
+                  "type": "structure"
+                },
+                {
+                  "id": "exports-default",
+                  "passed": true,
+                  "evidence": "exports.default: ./lib/index.js",
+                  "type": "structure"
+                },
+                {
+                  "id": "exports-types",
+                  "passed": true,
+                  "evidence": "exports.types: ./lib/index.d.ts",
+                  "type": "structure"
+                },
+                {
+                  "id": "typecheck",
+                  "type": "static",
+                  "passed": true,
+                  "command": "pnpm exec tsc -b --pretty false",
+                  "exitCode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "evidence": "typecheck passed."
+                },
+                {
+                  "id": "build",
+                  "type": "build",
+                  "passed": true,
+                  "command": "pnpm build",
+                  "exitCode": 0,
+                  "stdout": "",
+                  "stderr": "$ tsc -b\n",
+                  "evidence": "build passed."
+                },
+                {
+                  "id": "artifact",
+                  "type": "artifact",
+                  "passed": true,
+                  "evidence": "Expected artifacts exist."
+                },
+                {
+                  "id": "readme-en",
+                  "passed": true,
+                  "evidence": "README.md exists.",
+                  "type": "documentation"
+                },
+                {
+                  "id": "readme-zh",
+                  "passed": true,
+                  "evidence": "README.zh.md exists.",
+                  "type": "documentation"
+                },
+                {
+                  "id": "readme-i18n",
+                  "passed": true,
+                  "evidence": "README.i18n.yaml exists.",
+                  "type": "documentation"
+                },
+                {
+                  "id": "known-limitations",
+                  "passed": true,
+                  "evidence": "Known limitations section exists.",
+                  "type": "documentation"
+                },
+                {
+                  "id": "model-experience",
+                  "passed": true,
+                  "evidence": "Model Experience sections exist.",
+                  "type": "documentation"
+                },
+                {
+                  "id": "language-switchers",
+                  "passed": true,
+                  "evidence": "Language switchers exist.",
+                  "type": "documentation"
+                }
+              ],
+              "artifact": {
+                "packagePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\package.json",
+                "entryPath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\lib\\index.js",
+                "typesPath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\lib\\index.d.ts",
+                "packageName": "say-hello",
+                "passed": true,
+                "errors": []
+              },
+              "typecheck": {
+                "command": "pnpm exec tsc -b --pretty false",
+                "exitCode": 0,
+                "stdout": "",
+                "stderr": "",
+                "stdoutTruncated": false,
+                "stderrTruncated": false
+              },
+              "build": {
+                "command": "pnpm build",
+                "exitCode": 0,
+                "stdout": "",
+                "stderr": "$ tsc -b\n",
+                "stdoutTruncated": false,
+                "stderrTruncated": false
+              }
+            }
+          }
+        ],
+        "documentation": {
+          "changedFiles": [
+            "abea743452d4d16e03b53c348",
+            "../../examples/plugin-reference/README.i18n.yaml",
+            "../../examples/plugin-reference/README.md",
+            "../../examples/plugin-reference/README.zh.md",
+            "../../examples/plugin-reference/package.json",
+            "../../examples/plugin-reference/src/config.ts",
+            "../../examples/plugin-reference/src/index.ts",
+            "../../examples/plugin-reference/src/service.ts",
+            "../../examples/plugin-reference/src/types.ts",
+            "../../examples/plugin-reference/tsconfig.json",
+            "README.md",
+            "README.zh.md"
+          ],
+          "sourceFilesRead": [
+            "packages/generated/say-hello/README.md",
+            "packages/generated/say-hello/README.zh.md",
+            "packages/generated/say-hello/README.md\\n",
+            "packages/generated/say-hello/README.md"
+          ],
+          "commands": [
+            "pnpm run verify-translation-pairing packages/generated/say-hello/README.md"
+          ],
+          "pairing": {
+            "command": "pnpm run verify-translation-pairing packages/generated/say-hello/README.md",
+            "exitCode": 1,
+            "stdout": "[ELIFECYCLE] Command failed with exit code 1.\n",
+            "stderr": "$ tsx scripts/verify-translation-pairing.ts \"packages/generated/say-hello/README.md\"\nnode:internal/modules/run_main:107\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nError: spawn EPERM\r\n    at ChildProcess.spawn (node:internal/child_process:421:11)\r\n    at Object.spawn (node:child_process:796:9)\r\n    at ensureServiceIsRunning (D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\node_modules\\.pnpm\\esbuild@0.28.1\\node_modules\\esbuild\\lib\\main.js:2268:29)\r\n    at startSyncServiceWorker (D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\node_modules\\.pnpm\\esbuild@0.28.1\\node_modules\\esbuild\\lib\\main.js:2474:19)\r\n    at Object.<anonymous> (D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\node_modules\\.pnpm\\esbuild@0.28.1\\node_modules\\esbuild\\lib\\main.js:2515:3)\r\n    at Module._compile (node:internal/modules/cjs/loader:1761:14)\r\n    at Object..js (node:internal/modules/cjs/loader:1893:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1481:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1300:12)\r\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14) {\r\n  errno: -4048,\r\n  code: 'EPERM',\r\n  syscall: 'spawn',\r\n  name: 'TransformError'\r\n}\r\n\r\nNode.js v24.12.0\r\n",
+            "stdoutTruncated": false,
+            "stderrTruncated": false
+          },
+          "outOfScopeFiles": [
+            "abea743452d4d16e03b53c348",
+            "../../examples/plugin-reference/README.i18n.yaml",
+            "../../examples/plugin-reference/README.md",
+            "../../examples/plugin-reference/README.zh.md",
+            "../../examples/plugin-reference/package.json",
+            "../../examples/plugin-reference/src/config.ts",
+            "../../examples/plugin-reference/src/index.ts",
+            "../../examples/plugin-reference/src/service.ts",
+            "../../examples/plugin-reference/src/types.ts",
+            "../../examples/plugin-reference/tsconfig.json"
+          ],
+          "unresolved": [
+            "Documentation Agent changed out-of-scope files: abea743452d4d16e03b53c348, ../../examples/plugin-reference/README.i18n.yaml, ../../examples/plugin-reference/README.md, ../../examples/plugin-reference/README.zh.md, ../../examples/plugin-reference/package.json, ../../examples/plugin-reference/src/config.ts, ../../examples/plugin-reference/src/index.ts, ../../examples/plugin-reference/src/service.ts, ../../examples/plugin-reference/src/types.ts, ../../examples/plugin-reference/tsconfig.json",
+            "Translation pairing failed."
+          ]
+        }
+      },
+      "verification": {
+        "success": true,
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello",
+        "pluginEntryPath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello/lib/index.js",
+        "checks": [
+          {
+            "id": "package-name",
+            "passed": true,
+            "evidence": "package name: say-hello",
+            "type": "structure"
+          },
+          {
+            "id": "build-script",
+            "passed": true,
+            "evidence": "build script: tsc -b",
+            "type": "structure"
+          },
+          {
+            "id": "main",
+            "passed": true,
+            "evidence": "main: lib/index.js",
+            "type": "structure"
+          },
+          {
+            "id": "types",
+            "passed": true,
+            "evidence": "types: lib/index.d.ts",
+            "type": "structure"
+          },
+          {
+            "id": "exports-default",
+            "passed": true,
+            "evidence": "exports.default: ./lib/index.js",
+            "type": "structure"
+          },
+          {
+            "id": "exports-types",
+            "passed": true,
+            "evidence": "exports.types: ./lib/index.d.ts",
+            "type": "structure"
+          },
+          {
+            "id": "typecheck",
+            "type": "static",
+            "passed": true,
+            "command": "pnpm exec tsc -b --pretty false",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": "",
+            "evidence": "typecheck passed."
+          },
+          {
+            "id": "build",
+            "type": "build",
+            "passed": true,
+            "command": "pnpm build",
+            "exitCode": 0,
+            "stdout": "",
+            "stderr": "$ tsc -b\n",
+            "evidence": "build passed."
+          },
+          {
+            "id": "artifact",
+            "type": "artifact",
+            "passed": true,
+            "evidence": "Expected artifacts exist."
+          },
+          {
+            "id": "readme-en",
+            "passed": true,
+            "evidence": "README.md exists.",
+            "type": "documentation"
+          },
+          {
+            "id": "readme-zh",
+            "passed": true,
+            "evidence": "README.zh.md exists.",
+            "type": "documentation"
+          },
+          {
+            "id": "readme-i18n",
+            "passed": true,
+            "evidence": "README.i18n.yaml exists.",
+            "type": "documentation"
+          },
+          {
+            "id": "known-limitations",
+            "passed": true,
+            "evidence": "Known limitations section exists.",
+            "type": "documentation"
+          },
+          {
+            "id": "model-experience",
+            "passed": true,
+            "evidence": "Model Experience sections exist.",
+            "type": "documentation"
+          },
+          {
+            "id": "language-switchers",
+            "passed": true,
+            "evidence": "Language switchers exist.",
+            "type": "documentation"
+          }
+        ],
+        "artifact": {
+          "packagePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\package.json",
+          "entryPath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\lib\\index.js",
+          "typesPath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\lib\\index.d.ts",
+          "packageName": "say-hello",
+          "passed": true,
+          "errors": []
+        },
+        "typecheck": {
+          "command": "pnpm exec tsc -b --pretty false",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "",
+          "stdoutTruncated": false,
+          "stderrTruncated": false
+        },
+        "build": {
+          "command": "pnpm build",
+          "exitCode": 0,
+          "stdout": "",
+          "stderr": "$ tsc -b\n",
+          "stdoutTruncated": false,
+          "stderrTruncated": false
+        }
+      }
+    },
+    {
+      "task": {
+        "id": "5b731483-f116-443d-8532-bbf3f4358fb1",
+        "spec": {
+          "name": "say-hello",
+          "description": "Adds a say_hello tool that greets a user by name.",
+          "overview": "A minimal DSH plugin that provides a single say_hello tool. The tool takes a name:string parameter and returns the greeting string 'Hello, <name>!'. It demonstrates the canonical structure and flow for generating a DSH plugin.",
+          "goals": [
+            "Provide a say_hello tool callable by the agent.",
+            "The tool accepts one required parameter name of type string.",
+            "The tool returns the string 'Hello, <name>!' substituting the provided name."
+          ],
+          "nonGoals": [
+            "No additional tools or capabilities beyond say_hello.",
+            "No persistence, configuration, or external dependencies.",
+            "No localization or custom formatting beyond the fixed greeting pattern."
+          ],
+          "userScenarios": [
+            "A user asks the agent to greet someone by name; the agent calls say_hello with that name and reports the greeting.",
+            "A developer inspects the plugin to learn the minimal required structure of a DSH tool plugin."
+          ],
+          "tools": [
+            {
+              "name": "say_hello",
+              "description": "Returns the greeting 'Hello, <name>!' for the given name.",
+              "parameters": [
+                {
+                  "name": "name",
+                  "description": "The name to include in the greeting.",
+                  "type": "string",
+                  "required": true
+                }
+              ],
+              "output": "A string in the exact form 'Hello, <name>!'."
+            }
+          ],
+          "dependencies": [],
+          "constraints": [
+            "The plugin implements only a single tool named say_hello.",
+            "The tool must be registered through ctx.on/ctx.effect following repository conventions.",
+            "The parameter name is required and of type string; the output format is exactly 'Hello, <name>!'.",
+            "The plugin lives under packages/generated/say-hello/ matching the repository workspace glob."
+          ],
+          "edgeCases": [
+            "Empty string name still yields 'Hello, !' (no validation added beyond required).",
+            "The tool handles any string name without additional processing."
+          ],
+          "acceptanceCriteria": [
+            "The plugin builds and passes repository verification gates.",
+            "Calling say_hello with name='World' returns 'Hello, World!'.",
+            "The tool is registered and appears in the runtime so a fresh agent can invoke it."
+          ]
+        },
+        "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello",
+        "ownerParentSessionId": "session-532bdab6-d902-4e27-b7f6-5112ba899086",
+        "status": "developing",
+        "artifacts": [
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\package.json",
+            "description": "Plugin package manifest"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\tsconfig.json",
+            "description": "TypeScript project configuration"
+          },
+          {
+            "path": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello\\src\\index.ts",
+            "description": "Cordis plugin entry point"
+          }
+        ],
+        "createdAt": 1787231547206,
+        "updatedAt": 1787231794558,
+        "readPlan": {
+          "mustRead": [
+            {
+              "path": "docs/cookbook/adding-a-tool.md",
+              "reason": "Canonical tool authoring reference: the minimal defineTool shape, execute() contract, render/presentation purity rules, and UI render-intent requirements a say_hello tool must satisfy."
+            },
+            {
+              "path": "docs/cookbook/adding-a-package.md",
+              "reason": "File-by-file checklist for a new package: package.json invariants, tsconfig layout, aggregate registration, README/Model Experience and Known Limitations requirements — the say-hello package.json/tsconfig currently violate many of these."
+            },
+            {
+              "path": "packages/core/tools/src/schema.ts",
+              "reason": "Defines defineTool, ParameterSchemaSpec (required:true per-property), InferArgs, and the output schema/render contract — must read to implement the exact tool schema and return type."
+            },
+            {
+              "path": "packages/core/tools/src/index.ts",
+              "reason": "ToolRuntime.register (effect-based disposer), tool events (tools/pre-execute etc.), ToolDefinition output schema requirements, and the ctx.tools registration convention."
+            },
+            {
+              "path": "packages/todo/tool-todo/src/index.ts",
+              "reason": "Canonical real reference of a model-facing tool plugin (name/inject/apply + ctx.tools.register(defineTool(...))) to mirror for say-hello."
+            },
+            {
+              "path": "packages/todo/tool-todo/src/invariant.ts",
+              "reason": "Canonical package invariant companion pattern (name/inject/apply, ctx.invariants.register(PACKAGE_NAME, install)) the say-hello invariant.ts must follow."
+            },
+            {
+              "path": "scripts/package-invariants.ts",
+              "reason": "The verify-package-invariants gate: every packages/*/* package needs src/invariant.ts registering exactly its package name, plus empty-install 'No runtime invariant:' marker rules — say-hello has no events/data so needs an empty installer with the marker."
+            },
+            {
+              "path": "scripts/check-workspace-constraints.ts",
+              "reason": "The constraints gate: private:true, @deepseek-ai/cordis peer+dev same range, version matches root, type:module, main/types/exports paths, files list — say-hello package.json currently fails these."
+            },
+            {
+              "path": "tsconfig.base.json",
+              "reason": "The @deepseek-ai/dsh-* and @deepseek-ai/dsh-*/invariant wildcards list group dirs; the new 'generated' group is missing and must be added for source resolution of @deepseek-ai/dsh-say-hello and its invariant."
+            },
+            {
+              "path": "tsconfig.host.json",
+              "reason": "Host aggregate where the new non-client package must get a project reference so `pnpm run typecheck`/`build` (tsc -b tsconfig.host.json) compile it."
+            },
+            {
+              "path": "tsdown.config.ts",
+              "reason": "Host build bundles lib/types/{index,invariant}.js for every packages/*/* package; confirms say-hello must emit both lib/types/index.js and lib/types/invariant.js via tsc (typertPlugin also reflects the package)."
+            }
+          ],
+          "recommendedRead": [
+            {
+              "path": "packages/core/tools/package.json",
+              "reason": "Template for a conformant tool-plugins package.json (dsh scope naming, cordis peer/dev, dsh-tools/dsh-invariants deps, exports/files)."
+            },
+            {
+              "path": "packages/todo/tool-todo/package.json",
+              "reason": "Reference for exact peer/dev dependency set and exports/files layout for a tool plugin, including ./invariant export."
+            },
+            {
+              "path": "docs/AGENTS.md",
+              "reason": "Documentation standard: README Model Experience/Known Limitations section structure and doc gates that apply to the new package README."
+            },
+            {
+              "path": "docs/cookbook/adding-a-package.md#the-model-experience-contract and README requirements",
+              "reason": "README Model Experience + Known Limitations sections verify-package-readme-model-experience and verify-package-readme-limitations require for every package README."
+            },
+            {
+              "path": "packages/core/tools/src/json-schema.ts",
+              "reason": "The supported JSON-schema subset assertSupportedJsonSchema enforces on output.schema; useful to confirm the scalar string output schema is valid."
+            },
+            {
+              "path": "scripts/run-gates.ts",
+              "reason": "Defines the CI static gates (constraints, package-invariants, typecheck, build, knip, publint, node-next-types) the acceptance criterion 'passes repository verification gates' refers to."
+            }
+          ],
+          "confirmedFacts": [
+            "The say-hello scaffold already exists at packages/generated/say-hello with package.json (name 'say-hello'), tsconfig.json (not extending tsconfig.base.json), and src/index.ts exporting only `name`/`apply` that does nothing — it is a non-conformant placeholder, not a real plugin.",
+            "The canonical minimal tool plugin shape (docs/cookbook/adding-a-tool.md) is: named-export `name`, `inject = ['tools']`, and `apply(ctx)` that calls ctx.tools.register(defineTool({ name, description, parameters, output, execute })).",
+            "defineTool registers a tool as an effect, so disposing the plugin fiber unregisters the tool — this satisfies the PluginSpec's 'registered through ctx.on/ctx.effect' constraint (ToolRuntime.register uses layers.effect internally).",
+            "Required parameters are declared per-property as `{ type:'string', required: true, description }` in the `parameters` map (ParameterSchemaSpec / ParameterPropertySpec in packages/core/tools/src/schema.ts).",
+            "output.schema must be a supported JSON Schema under assertSupportedJsonSchema; a string root is valid, and execute must return the canonical value (a simple string 'Hello, <name>!' satisfies it).",
+            "pnpm-workspace.yaml glob is `packages/*/*`, so packages/generated/say-hello is a workspace member; tsdown.config.ts bundles every packages/*/* package's lib/types/{index,invariant,startup}.js on host build.",
+            "verify-package-invariants (scripts/package-invariants.ts) scans packages/*/*/package.json and requires every package to have src/invariant.ts that: named-exports name/inject/apply, registers exactly its own package name via ctx.invariants.register, has an empty installer marked with 'No runtime invariant:' when it owns no events/data, exports ./invariant (types ./lib/types/invariant.d.ts, default ./lib/invariant.js), files including lib/invariant.js, @deepseek-ai/dsh-invariants as workspace:^ peer AND dev dependency, and tsconfig references including ../../runtime-diagnostics/invariants.",
+            "check-workspace-constraints (scripts/check-workspace-constraints.ts) requires for packages/ data packages: private:true, version matching root, type:module, main lib/index.js, types lib/types/index.d.ts, exports.types ./lib/types/index.d.ts, exports.default ./lib/index.js, @deepseek-ai/cordis peer AND dev with matching ranges.",
+            "tsconfig.base.json maps @deepseek-ai/dsh-* and @deepseek-ai/dsh-*/invariant source per group via `./packages/<group>/*/src` candidates; the new `generated` group is NOT listed in either wildcard and must be added.",
+            "tsconfig.host.json is the host aggregate; a new non-client package must get a { path: './packages/generated/say-hello' } reference there for `tsc -b tsconfig.host.json` (typecheck/build) to compile it.",
+            "verify-package-readme-model-experience and verify-package-readme-limitations both scan all packages/*/*/package.json, so say-hello needs a README.md with a Model Experience section and a Known Limitations & Deferred Work section (or allowlist entries).",
+            "The tool must be registered on ctx.tools to appear in the runtime; injecting ['tools'] makes it available and the tool flows into system-prompt assembly automatically, satisfying 'a fresh agent can invoke it'."
+          ],
+          "risks": [
+            "The current say-hello package.json (`name: 'say-hello'`, no private, wrong main/types) and tsconfig.json (no extends/references) satisfy none of the constraints/package-invariant/build gates; a full rewrite is required, not an incremental edit.",
+            "The package name must become @deepseek-ai/dsh-say-hello (convention `@deepseek-ai/dsh-<name>`); the plugin `name` export should be the short name (mirroring tool-todo which exports name 'tool-todo' under npm name @deepseek-ai/dsh-tool-todo). The PluginSpec pins tool name 'say_hello' (snake_case) which differs from the package short name — keep them distinct.",
+            "tsconfig.base.json lacks the `generated` group in both the @deepseek-ai/dsh-* and @deepseek-ai/dsh-*/invariant wildcards; without adding them, source-level resolution of @deepseek-ai/dsh-say-hello and its invariant companion fails typecheck.",
+            "verify-package-invariants requires the invariant.ts to register exactly its own npm package name (@deepseek-ai/dsh-say-hello) as a string constant — the empty installer must carry a 'No runtime invariant:' comment and the package needs @deepseek-ai/dsh-invariants as peer+dev workspace deps plus tsconfig reference to ../../runtime-diagnostics/invariants.",
+            "tsdown host build and typertPlugin reflect every packages/*/* package; say-hello must compile to lib/types/index.js and lib/types/invariant.js or the host build breaks.",
+            "The build is orchestrated by `tsc -b tsconfig.host.json` followed by tsdown; the package's own `\"build\": \"tsc -b\"` script is not what gates run, and the package must be registered in tsconfig.host.json references to be compiled at all.",
+            "README gates require Model Experience and Known Limitations sections; package READMEs are also in the i18n translation-pairing scope (`**/*.md`), so an English README may need a Chinese pair and an .i18n.yaml record to pass doc-sync.",
+            "knip, publint, duplication, and verify-node-next-types also run over every package; the new package exports and deps must not trigger unused/uncovered-export or node-next violations.",
+            "The PluginSpec is deliberately minimal (single tool, no config/deps), but the repo's package gates impose a non-trivial metadata/invariant/README/aggregate surface — the acceptance criterion 'passes repository verification gates' cannot be met by the current 3-file scaffold alone."
+          ],
+          "irrelevantOrAvoid": [
+            "packages/client/* (client aggregate, tsconfig.base.client.json, ./client export) — say-hello is a host-side tool plugin, not a client package; do not add a ./client namespace.",
+            "docs/architecture.md subsystem-level deep-dives beyond the tool/package cookbooks — not needed for this minimal single-tool plugin.",
+            "The Web GUI / apps/web shell — out of scope; the plugin does not touch rendering or app shell artifacts.",
+            "Vendor/cordis internals beyond the plugin name/inject/apply contract — not needed for a non-service function plugin."
+          ]
+        },
+        "evidence": [
+          {
+            "type": "development",
+            "createdAt": 1787231794553,
+            "summary": "Reader Agent returned a JSON reading plan for Main Agent repository inspection.",
+            "details": {
+              "readPlan": {
+                "mustRead": [
+                  {
+                    "path": "docs/cookbook/adding-a-tool.md",
+                    "reason": "Canonical tool authoring reference: the minimal defineTool shape, execute() contract, render/presentation purity rules, and UI render-intent requirements a say_hello tool must satisfy."
+                  },
+                  {
+                    "path": "docs/cookbook/adding-a-package.md",
+                    "reason": "File-by-file checklist for a new package: package.json invariants, tsconfig layout, aggregate registration, README/Model Experience and Known Limitations requirements — the say-hello package.json/tsconfig currently violate many of these."
+                  },
+                  {
+                    "path": "packages/core/tools/src/schema.ts",
+                    "reason": "Defines defineTool, ParameterSchemaSpec (required:true per-property), InferArgs, and the output schema/render contract — must read to implement the exact tool schema and return type."
+                  },
+                  {
+                    "path": "packages/core/tools/src/index.ts",
+                    "reason": "ToolRuntime.register (effect-based disposer), tool events (tools/pre-execute etc.), ToolDefinition output schema requirements, and the ctx.tools registration convention."
+                  },
+                  {
+                    "path": "packages/todo/tool-todo/src/index.ts",
+                    "reason": "Canonical real reference of a model-facing tool plugin (name/inject/apply + ctx.tools.register(defineTool(...))) to mirror for say-hello."
+                  },
+                  {
+                    "path": "packages/todo/tool-todo/src/invariant.ts",
+                    "reason": "Canonical package invariant companion pattern (name/inject/apply, ctx.invariants.register(PACKAGE_NAME, install)) the say-hello invariant.ts must follow."
+                  },
+                  {
+                    "path": "scripts/package-invariants.ts",
+                    "reason": "The verify-package-invariants gate: every packages/*/* package needs src/invariant.ts registering exactly its package name, plus empty-install 'No runtime invariant:' marker rules — say-hello has no events/data so needs an empty installer with the marker."
+                  },
+                  {
+                    "path": "scripts/check-workspace-constraints.ts",
+                    "reason": "The constraints gate: private:true, @deepseek-ai/cordis peer+dev same range, version matches root, type:module, main/types/exports paths, files list — say-hello package.json currently fails these."
+                  },
+                  {
+                    "path": "tsconfig.base.json",
+                    "reason": "The @deepseek-ai/dsh-* and @deepseek-ai/dsh-*/invariant wildcards list group dirs; the new 'generated' group is missing and must be added for source resolution of @deepseek-ai/dsh-say-hello and its invariant."
+                  },
+                  {
+                    "path": "tsconfig.host.json",
+                    "reason": "Host aggregate where the new non-client package must get a project reference so `pnpm run typecheck`/`build` (tsc -b tsconfig.host.json) compile it."
+                  },
+                  {
+                    "path": "tsdown.config.ts",
+                    "reason": "Host build bundles lib/types/{index,invariant}.js for every packages/*/* package; confirms say-hello must emit both lib/types/index.js and lib/types/invariant.js via tsc (typertPlugin also reflects the package)."
+                  }
+                ],
+                "recommendedRead": [
+                  {
+                    "path": "packages/core/tools/package.json",
+                    "reason": "Template for a conformant tool-plugins package.json (dsh scope naming, cordis peer/dev, dsh-tools/dsh-invariants deps, exports/files)."
+                  },
+                  {
+                    "path": "packages/todo/tool-todo/package.json",
+                    "reason": "Reference for exact peer/dev dependency set and exports/files layout for a tool plugin, including ./invariant export."
+                  },
+                  {
+                    "path": "docs/AGENTS.md",
+                    "reason": "Documentation standard: README Model Experience/Known Limitations section structure and doc gates that apply to the new package README."
+                  },
+                  {
+                    "path": "docs/cookbook/adding-a-package.md#the-model-experience-contract and README requirements",
+                    "reason": "README Model Experience + Known Limitations sections verify-package-readme-model-experience and verify-package-readme-limitations require for every package README."
+                  },
+                  {
+                    "path": "packages/core/tools/src/json-schema.ts",
+                    "reason": "The supported JSON-schema subset assertSupportedJsonSchema enforces on output.schema; useful to confirm the scalar string output schema is valid."
+                  },
+                  {
+                    "path": "scripts/run-gates.ts",
+                    "reason": "Defines the CI static gates (constraints, package-invariants, typecheck, build, knip, publint, node-next-types) the acceptance criterion 'passes repository verification gates' refers to."
+                  }
+                ],
+                "confirmedFacts": [
+                  "The say-hello scaffold already exists at packages/generated/say-hello with package.json (name 'say-hello'), tsconfig.json (not extending tsconfig.base.json), and src/index.ts exporting only `name`/`apply` that does nothing — it is a non-conformant placeholder, not a real plugin.",
+                  "The canonical minimal tool plugin shape (docs/cookbook/adding-a-tool.md) is: named-export `name`, `inject = ['tools']`, and `apply(ctx)` that calls ctx.tools.register(defineTool({ name, description, parameters, output, execute })).",
+                  "defineTool registers a tool as an effect, so disposing the plugin fiber unregisters the tool — this satisfies the PluginSpec's 'registered through ctx.on/ctx.effect' constraint (ToolRuntime.register uses layers.effect internally).",
+                  "Required parameters are declared per-property as `{ type:'string', required: true, description }` in the `parameters` map (ParameterSchemaSpec / ParameterPropertySpec in packages/core/tools/src/schema.ts).",
+                  "output.schema must be a supported JSON Schema under assertSupportedJsonSchema; a string root is valid, and execute must return the canonical value (a simple string 'Hello, <name>!' satisfies it).",
+                  "pnpm-workspace.yaml glob is `packages/*/*`, so packages/generated/say-hello is a workspace member; tsdown.config.ts bundles every packages/*/* package's lib/types/{index,invariant,startup}.js on host build.",
+                  "verify-package-invariants (scripts/package-invariants.ts) scans packages/*/*/package.json and requires every package to have src/invariant.ts that: named-exports name/inject/apply, registers exactly its own package name via ctx.invariants.register, has an empty installer marked with 'No runtime invariant:' when it owns no events/data, exports ./invariant (types ./lib/types/invariant.d.ts, default ./lib/invariant.js), files including lib/invariant.js, @deepseek-ai/dsh-invariants as workspace:^ peer AND dev dependency, and tsconfig references including ../../runtime-diagnostics/invariants.",
+                  "check-workspace-constraints (scripts/check-workspace-constraints.ts) requires for packages/ data packages: private:true, version matching root, type:module, main lib/index.js, types lib/types/index.d.ts, exports.types ./lib/types/index.d.ts, exports.default ./lib/index.js, @deepseek-ai/cordis peer AND dev with matching ranges.",
+                  "tsconfig.base.json maps @deepseek-ai/dsh-* and @deepseek-ai/dsh-*/invariant source per group via `./packages/<group>/*/src` candidates; the new `generated` group is NOT listed in either wildcard and must be added.",
+                  "tsconfig.host.json is the host aggregate; a new non-client package must get a { path: './packages/generated/say-hello' } reference there for `tsc -b tsconfig.host.json` (typecheck/build) to compile it.",
+                  "verify-package-readme-model-experience and verify-package-readme-limitations both scan all packages/*/*/package.json, so say-hello needs a README.md with a Model Experience section and a Known Limitations & Deferred Work section (or allowlist entries).",
+                  "The tool must be registered on ctx.tools to appear in the runtime; injecting ['tools'] makes it available and the tool flows into system-prompt assembly automatically, satisfying 'a fresh agent can invoke it'."
+                ],
+                "risks": [
+                  "The current say-hello package.json (`name: 'say-hello'`, no private, wrong main/types) and tsconfig.json (no extends/references) satisfy none of the constraints/package-invariant/build gates; a full rewrite is required, not an incremental edit.",
+                  "The package name must become @deepseek-ai/dsh-say-hello (convention `@deepseek-ai/dsh-<name>`); the plugin `name` export should be the short name (mirroring tool-todo which exports name 'tool-todo' under npm name @deepseek-ai/dsh-tool-todo). The PluginSpec pins tool name 'say_hello' (snake_case) which differs from the package short name — keep them distinct.",
+                  "tsconfig.base.json lacks the `generated` group in both the @deepseek-ai/dsh-* and @deepseek-ai/dsh-*/invariant wildcards; without adding them, source-level resolution of @deepseek-ai/dsh-say-hello and its invariant companion fails typecheck.",
+                  "verify-package-invariants requires the invariant.ts to register exactly its own npm package name (@deepseek-ai/dsh-say-hello) as a string constant — the empty installer must carry a 'No runtime invariant:' comment and the package needs @deepseek-ai/dsh-invariants as peer+dev workspace deps plus tsconfig reference to ../../runtime-diagnostics/invariants.",
+                  "tsdown host build and typertPlugin reflect every packages/*/* package; say-hello must compile to lib/types/index.js and lib/types/invariant.js or the host build breaks.",
+                  "The build is orchestrated by `tsc -b tsconfig.host.json` followed by tsdown; the package's own `\"build\": \"tsc -b\"` script is not what gates run, and the package must be registered in tsconfig.host.json references to be compiled at all.",
+                  "README gates require Model Experience and Known Limitations sections; package READMEs are also in the i18n translation-pairing scope (`**/*.md`), so an English README may need a Chinese pair and an .i18n.yaml record to pass doc-sync.",
+                  "knip, publint, duplication, and verify-node-next-types also run over every package; the new package exports and deps must not trigger unused/uncovered-export or node-next violations.",
+                  "The PluginSpec is deliberately minimal (single tool, no config/deps), but the repo's package gates impose a non-trivial metadata/invariant/README/aggregate surface — the acceptance criterion 'passes repository verification gates' cannot be met by the current 3-file scaffold alone."
+                ],
+                "irrelevantOrAvoid": [
+                  "packages/client/* (client aggregate, tsconfig.base.client.json, ./client export) — say-hello is a host-side tool plugin, not a client package; do not add a ./client namespace.",
+                  "docs/architecture.md subsystem-level deep-dives beyond the tool/package cookbooks — not needed for this minimal single-tool plugin.",
+                  "The Web GUI / apps/web shell — out of scope; the plugin does not touch rendering or app shell artifacts.",
+                  "Vendor/cordis internals beyond the plugin name/inject/apply contract — not needed for a non-service function plugin."
+                ]
+              }
+            }
+          },
+          {
+            "type": "development",
+            "createdAt": 1787231794558,
+            "summary": "Generated plugin workspace is ready for Main Agent development.",
+            "details": {
+              "workspacePath": "D:\\PycharmProjects\\CodeHarness\\harness\\deepseek-harness\\packages\\generated\\say-hello"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -188,13 +188,23 @@ pnpm exec tsc -p packages/memory/memory/tsconfig.json --noEmit
 
 Coverage percentage is diagnostic rather than the release definition; product contracts and reproducible integration behavior are the acceptance criteria.
 
-## Model guidance and token behavior
+## Model Experience
 
-The plugin tells the model to generate several specific search keywords, treat results as candidates rather than truth, explicitly load only worthwhile records, and record reusable lessons rather than routine errors or complete session history. It also instructs the model to keep the injected per-cwd facts as known context, to save stable personal or project facts with `fact_remember`, and to drop corrected or revoked facts with `fact_forget`.
+### Experience and fact interaction
+
+#### What the model sees
+
+The model sees the `memory_search`, `memory_get`, `memory_record`, `fact_remember`, and `fact_forget` tool schemas. The guidance tells it to generate several specific search keywords, treat results as candidates rather than truth, explicitly load only worthwhile records, and record reusable lessons rather than routine errors or complete session history. Injected per-cwd facts arrive as known context, while `fact_remember` and `fact_forget` update that cwd-scoped context.
+
+#### Token effect
 
 Tool schemas and fixed guidance remain prefix-stable while plugin visibility is unchanged. Search cost grows with lightweight selected metadata; complete body tokens enter context only through explicit `memory_get` calls. Injected facts add at most `maxFacts` short `title + body` records per cwd per turn.
 
-## Known limitations and roadmap
+#### KV Cache effect
+
+An unchanged tool view and unchanged fact set preserve the request prefix. Calling `memory_get` or changing cwd facts appends data-dependent context after that stable prefix; it does not claim a fixed token saving.
+
+## Known Limitations and Deferred Work
 
 - Experience memory is process-global and exact-keyword only; there is no project-root scope, BM25, embedding, vector, reranking, or hybrid retrieval. Fact memory is cwd-scoped only — it does not follow a project to its subdirectories.
 - There is no automatic session mining, migration, deletion, merge, semantic deduplication, contradiction handling, or decay.

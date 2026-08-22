@@ -1,5 +1,7 @@
 # cordis_sub_agent V2 需求文档
 
+> 注意：本文保留的是旧版 worktree、Reader 和独立 Coding Agent 设计，已不再是当前实现契约。当前流程以 README 和 `skills/dsh-plugin-development/SKILL.md` 为准：插件位于 `packages/generated/<plugin-name>/`，由 Main Agent 直接开发和修复，仅保留 Documentation 子代理。
+
 > 目标：将现有 `cordis_sub_agent` 从“多 Agent 生成插件的实验性工作流”重构为一个可恢复、可隔离、可验证、可持续迭代的 DSH Plugin Development Harness。
 >
 > 本文档以当前讨论确定的架构为准，允许对现有实现进行大范围重构；不要求兼容当前内部代码结构，但应尽量复用已经验证可用的 DSH 官方 API 与现有能力。

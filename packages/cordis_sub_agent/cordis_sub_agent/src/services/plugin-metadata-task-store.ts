@@ -42,6 +42,13 @@ export class PluginMetadataTaskStore {
 
   constructor(private readonly generatedRoot: string) {}
 
+  /** Return exact task-owned roots where dependency commands may run. */
+  listActiveWorktreeRoots(): string[] {
+    return [...this.tasks.values()]
+      .filter(task => task.discardedAt === undefined)
+      .map(task => task.pluginRoot)
+  }
+
   /** Create an empty task-owned generated plugin directory and retain its metadata in memory. */
   async create(pluginName: string, metadata: PluginMetadata): Promise<PluginMetadataTask> {
     const pluginRoot = this.resolvePluginRoot(pluginName)

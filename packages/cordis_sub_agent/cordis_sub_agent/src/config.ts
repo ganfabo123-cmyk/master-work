@@ -24,7 +24,7 @@ export const Config: z<Config> = z.object({
   engineeringTimeoutMs: z.number().min(1),
 
   acceptanceProvider: z.string()
-    .default('opencode'),
+    .default('opencode-go'),
 
   acceptanceModel: z.string()
     .default('deepseek-v4-flash'),

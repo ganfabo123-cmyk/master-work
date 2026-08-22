@@ -8,13 +8,8 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 export interface AcceptanceCompositionInput {
-  /**
-   * Build 后真正要被 child DSH 加载的插件入口。
-   *
-   * 例如：
-   * D:/xxx/my-plugin/lib/index.js
-   */
-  pluginEntryPath: string
+  /** Optional built plugin entry for the legacy direct-plugin path. */
+  pluginEntryPath?: string
 
   /**
    * 传给被测试插件的 Cordis config。
@@ -67,10 +62,9 @@ export async function createAcceptanceComposition(
    *
    * pathToFileURL 同时正确处理 Windows / POSIX 路径。
    */
-  const pluginUrl =
-    pathToFileURL(
-      input.pluginEntryPath,
-    ).href
+  const pluginUrl = input.pluginEntryPath === undefined
+    ? undefined
+    : pathToFileURL(input.pluginEntryPath).href
 
   const yaml = [
     /*
@@ -85,23 +79,32 @@ export async function createAcceptanceComposition(
     '    workspaceContext: false',
     '',
 
-    '- id: llm-pi-ai',
-    "  name: '@deepseek-ai/dsh-llm-pi-ai'",
-    '  config:',
-    '    providers:',
-    `      ${escapeYamlKey(input.provider)}:`,
-    `        apiKeyEnv: ${escapeYamlString(input.apiKeyEnv)}`,
+    ...(input.provider === 'deepseek-official'
+      ? [
+        '- id: llm-deepseek',
+        "  name: '@deepseek-ai/dsh-llm-deepseek'",
+      ]
+      : [
+        '- id: llm-pi-ai',
+        "  name: '@deepseek-ai/dsh-llm-pi-ai'",
+        '  config:',
+        '    providers:',
+        `      ${escapeYamlKey(input.provider)}:`,
+        `        apiKeyEnv: ${escapeYamlString(input.apiKeyEnv)}`,
+      ]),
     '',
 
     '- id: sdk-jsonrpc-server',
     "  name: '@deepseek-ai/dsh-sdk-jsonrpc-server'",
     '',
 
-    /*
-     * 当前真正被测试的插件。
-     */
-    '- id: acceptance-plugin',
-    `  name: '${escapeYamlString(pluginUrl)}'`,
+    ...(pluginUrl === undefined
+      ? []
+      : [
+        /* Current plugin under test for the legacy direct-plugin path. */
+        '- id: acceptance-plugin',
+        `  name: '${escapeYamlString(pluginUrl)}'`,
+      ]),
 
     ...renderConfig(
       input.pluginConfig ?? {},
