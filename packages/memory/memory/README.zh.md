@@ -4,7 +4,7 @@
 
 **Session 保存发生过什么；Experience Memory 保存值得复用什么。**
 
-`@deepseek-ai/dsh-memory` 是 DeepSeek Harness 的追加式经验记忆插件。它把可复用的成功与失败提炼成独立 Markdown 记录，而不是保存对话或重建完整 Session。它还提供按 cwd 隔离的事实记忆：关于用户或工作空间的稳定事实会在每一轮自动注入模型上下文。
+`@deepseek-ai/dsh-memory` 是 DeepSeek Harness 的仅追加经验记忆插件。它把可复用的成功与失败隔离到具名块文件中，每个文件包含独立 Markdown 记录，而不是保存对话或重建完整 Session。它还提供按 cwd 隔离的事实记忆：关于用户或工作空间的稳定事实会在每一轮自动注入模型上下文。
 
 ![Experience Memory 核心流程](assets/memory-flow.svg)
 
@@ -22,7 +22,7 @@
 pnpm exec tsx packages/memory/memory/examples/encoding-experience/demo.ts
 ```
 
-完整示例包含真实的 [`cordis.yml`](examples/encoding-experience/cordis.yml) 和预置 [`memory.md`](examples/encoding-experience/memory.md)。
+完整示例包含真实的 [`cordis.yml`](examples/encoding-experience/cordis.yml) 和预置 [`global_memory.md`](examples/encoding-experience/global_memory.md)。
 
 ## 为什么需要 Experience Memory？
 
@@ -32,7 +32,7 @@ pnpm exec tsx packages/memory/memory/examples/encoding-experience/demo.ts
 | 通用 RAG Memory | 从广泛语料检索出的 Chunk | 查找可能相关的信息 | Chunk 不一定是经过验证的经验 |
 | Experience Memory | 提炼后的成功/失败记录 | 复用已验证的调试和任务经验 | 需要有意识地提炼经验 |
 
-Experience Memory 是 Session 存储的补充。Session 数据保留完整历史证据；`memory.md` 只保存被选中供未来复用的紧凑经验。
+Experience Memory 是 Session 存储的补充。Session 数据保留完整历史证据；每个块文件只保存被选中供未来复用的紧凑经验。
 
 ## 一个真实的 UTF-8 调试案例
 
@@ -72,7 +72,7 @@ matched keywords: deepseek-harness, encoding, typescript
 outcome: success
 ```
 
-只有 `memory_get("memory-17")` 才会把完整经验加入模型上下文。
+只有 `memory_get({ block_name: "global", id: "memory-17" })` 才会把完整经验加入模型上下文。
 
 ## 安装与配置
 
@@ -89,10 +89,12 @@ pnpm add @deepseek-ai/dsh-memory
 - name: '@deepseek-ai/dsh-tools'
 - name: '@deepseek-ai/dsh-memory'
   config:
-    memoryFile: 'C:/Users/you/.dsh/memory.md'
+    memoryDir: 'C:/Users/you/.dsh/memory'
 ```
 
-`memoryFile` 默认为 `$DSH_HOME/memory.md`。该路径由 Host 所有，模型不能选择 Workspace 文件。第一次成功调用 `memory_record` 时，会自动创建父目录和文件。
+`memoryDir` 默认为 `$DSH_HOME/memory`。该目录由 Host 所有；模型只能选择经过校验的块名，不能选择工作空间路径。每个块映射为 `<block_name>_memory.md`，因此 `global`、`python` 和 `dsh` 分别使用 `global_memory.md`、`python_memory.md` 和 `dsh_memory.md`。块名会转为小写，并且只能包含 1–64 个 ASCII 字母、数字、下划线或连字符。
+
+使用默认配置时，首次访问 `global` 会把旧 `$DSH_HOME/memory.md` 移动到 `$DSH_HOME/memory/global_memory.md`，不解析或重写文件字节。如果两个文件同时存在，迁移会失败而不是覆盖。
 
 事实记忆按绝对 cwd 存储在 `factsDir` 下（默认为 `$DSH_HOME/memory-facts`），每个 cwd 一个 Markdown 文件，文件名是该绝对路径的短 SHA-256 摘要。`maxFacts` 限制每个 cwd 注入到系统提示中的事实数量（默认 `100`）。
 
@@ -116,22 +118,27 @@ user says "我叫 gan" or asks to remember the name
 
 ### `memory_search`
 
-接收具体关键词与可选 limit，返回 `id`、标题、规范化关键词、匹配关键词和 outcome，绝不返回正文或内部 Ranking Score。
+要求提供 `block_name`，接收具体关键词与可选 limit，只从该块返回 `id`、标题、规范化关键词、匹配关键词和 outcome，绝不返回正文或内部 Ranking Score。
+
+### `memory_list_blocks`
+
+无参数，按字典序返回所有当前拥有持久块文件的块名。清单来自磁盘目录，因此由其他进程或会话写出的块即使本进程未加载也会出现。内存目录不存在时返回空清单而不是报错。
 
 ### `memory_get`
 
-通过稳定的 `memory-N` ID 加载一条完整记录。ID 不存在时返回明确、模型可读的提示。
+要求提供 `block_name`，通过块内稳定的 `memory-N` ID 加载一条完整记录。该块内不存在对应 ID 时返回明确、模型可读的提示。
 
 ### `memory_record`
 
-校验并直接持久化模型 Tool Call 提交的字段。Harness 生成 ID 和 ISO 8601 `recordedAt`；缺省 outcome 变为 `unknown`。当前没有用户确认步骤。
+要求提供 `block_name`，校验模型工具调用提交的字段，并把整个批次直接持久化到该块。Harness 生成块内 ID 和 ISO 8601 `recordedAt`；缺省 outcome 变为 `unknown`。当前没有用户确认步骤。
 
 ```text
 model Tool Call
+  → validate block_name and select <block_name>_memory.md
   → validate title, keywords, body, outcome
   → normalize keywords
   → serialize the write
-  → reload memory.md and allocate max(memory-N) + 1
+  → reload the selected block file and allocate max(memory-N) + 1
   → atomic replace
 ```
 
@@ -149,20 +156,20 @@ model Tool Call
 
 ![Experience Memory 架构](assets/architecture.svg)
 
-`MemoryStore` 拥有 Markdown 唯一事实源，`MemoryRetriever` 拥有候选筛选职责。V1 的 `KeywordRetriever` 使用规范化关键词精确交集与线性扫描。
+每个具名块拥有一个 `MemoryStore` 和格式不变的 Markdown 真源，`MemoryRetriever` 负责在所选块内筛选候选。V1 的 `KeywordRetriever` 使用规范化关键词精确交集与线性扫描。
 
 内部匹配关键词数量只用于选出 Top-K。入选候选随后按 `memory-N` 升序展示，因此展示顺序不表达相关性。面向模型的输出永不暴露 `score`、`rankingScore` 或 `similarity`。
 
-`MemoryRetriever` 接收 `MemorySearchSource`。未来 BM25、Vector 或 Hybrid Provider 可以维护派生 Index，而不用改变 Store、Service 或模型工具。这些是扩展点，不是 V1 功能。
+`MemoryRetriever` 接收已经按块选定的 `MemorySearchSource`。未来 BM25、Vector 或 Hybrid Provider 可以维护派生 Index，而不用改变块文件、Service 或模型工具。这些是扩展点，不是 V1 功能。
 
 `FactStore` 拥有按 cwd 的事实文件；`FactSource` 是它面向系统提示注入的只读投影。`MemoryService` 同时暴露两个 Store，是所有工具的唯一入口。
 
 ## 持久化与并发
 
-- 每次读取和每次 Append 内都会重新加载 `memory.md`，因此可以看到外部编辑。
+- 每次读取和每次 Append 内都会重新加载所选块文件，因此可以看到外部编辑。
 - 写入采用原子替换，并设置仅 Owner 可访问的文件与目录权限。
-- 进程内串行队列覆盖重新加载、ID 分配和写入。同一进程内的并发 Session 不会产生重复 ID 或丢失 Append。
-- 不支持多个进程并发写入同一个文件。
+- 每个块拥有独立的进程内串行队列，覆盖重新加载、块内 ID 分配和写入。同一进程内的并发 Session 不会在同一块产生重复 ID 或丢失 Append。
+- 不支持多个进程并发写入同一个块文件。
 - 每个 cwd 的事实文件有自己的串行写队列，因此同一 cwd 上并发的 `fact_remember` 不会丢失事实；`fact_forget` 清空存储时会删除该文件。
 
 ## 验证
@@ -170,12 +177,12 @@ model Tool Call
 面向发布的测试覆盖：
 
 - 空、单条、多条、损坏及嵌套 Heading 的 Markdown 记录；
-- 最大 ID 分配、缺失文件创建、外部修改重载和 Batch 原子拒绝；
-- 三条并发 Append，不重复 ID、不丢失内容；
+- 块内最大 ID 分配、缺失文件创建、外部修改重载和 Batch 原子拒绝；
+- 块间隔离、安全块名校验、旧全局文件迁移，以及三条并发 Append 不重复 ID、不丢失内容；
 - 关键词精确匹配、规范化、零匹配、limit 以及 Top-K 选择与展示分离；
 - Tool 输出契约，包括 Search 不泄露正文或 Score；
 - 事实 round-trip、并发 remember、按 cwd 隔离以及注入 Section 渲染；
-- 真实 Cordis Loader 装配及完整 `record → search → get` Tool 执行；
+- 真实 Cordis Loader 装配及完整的块内 `record → search → get` 工具执行；
 - 插件卸载后清理 Tool、Service 和 System Prompt Section；
 - 多语言 UTF-8 round-trip，包含中文、English、日本語、Emoji、Markdown、代码片段和中文 Windows 路径。
 
@@ -194,11 +201,11 @@ pnpm exec tsc -p packages/memory/memory/tsconfig.json --noEmit
 
 #### What the model sees
 
-模型能看到 `memory_search`、`memory_get`、`memory_record`、`fact_remember` 和 `fact_forget` 工具 Schema。指导内容要求模型生成多个具体搜索关键词，把搜索结果视为候选而不是真相，只显式加载值得读取的记录，并且只记录可复用经验，而不是普通错误或完整 Session 历史。按 cwd 注入的事实会作为已知上下文出现，`fact_remember` 和 `fact_forget` 会更新该 cwd 范围内的上下文。
+模型能看到 `memory_list_blocks`、`memory_search`、`memory_get`、`memory_record`、`fact_remember` 和 `fact_forget` 工具 schema。除 `memory_list_blocks` 外每个经验工具都要求 `block_name`；指导内容要求模型先用 `memory_list_blocks` 发现当前块集合，再选择一个块，生成多个具体搜索关键词，把搜索结果视为候选而不是真相，只从同一块加载值得读取的记录，并且只记录可复用经验，而不是普通错误或完整 Session 历史。按 cwd 注入的事实会作为已知上下文出现，`fact_remember` 和 `fact_forget` 会更新该 cwd 范围内的上下文。
 
 #### Token effect
 
-插件可见性不变时，Tool Schema 和固定指导保持 Prefix Stable。搜索成本随轻量候选元数据增长；只有显式调用 `memory_get` 才会把完整正文 Token 加入上下文。注入的事实每个 cwd 每轮最多增加 `maxFacts` 条简短的 `标题 + 正文` 记录。
+插件可见性不变时，工具 schema 和固定指导保持 Prefix Stable。搜索成本随所选块内的轻量元数据增长；只有显式调用块内 `memory_get` 才会把完整正文 Token 加入上下文。注入的事实每个 cwd 每轮最多增加 `maxFacts` 条简短的 `标题 + 正文` 记录。
 
 #### KV Cache effect
 
@@ -206,7 +213,7 @@ pnpm exec tsc -p packages/memory/memory/tsconfig.json --noEmit
 
 ## Known Limitations and Deferred Work
 
-- 经验记忆是进程全局、仅精确关键词检索；没有项目根 Scope、BM25、Embedding、Vector、Reranking 或 Hybrid Retrieval。事实记忆仅按 cwd 隔离——不会随项目进入其子目录。
+- 经验块是显式文件命名空间，不是访问控制规则：任何拥有这些工具的模型都能指定任意块。检索只支持精确关键词，没有项目根作用域、BM25、Embedding、Vector、Reranking、Hybrid Retrieval、跨块搜索或整块读取工具。事实记忆仅按 cwd 隔离——不会随项目进入其子目录。
 - 没有自动 Session 挖掘、迁移、删除、合并、语义去重、矛盾处理或衰减。
 - 写队列只保护单个进程。
 - 事实标题按设计不区分大小写（去空格并转小写），所以 `User Name` 与 `user name` 是同一条事实。

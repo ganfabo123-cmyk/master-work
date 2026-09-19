@@ -30,7 +30,7 @@ async function fixture(): Promise<{ ctx: Context; factsDir: string; cwdA: string
   contexts.push(ctx)
   await ctx.plugin(SystemPrompt)
   await ctx.plugin(ToolRuntime)
-  await ctx.plugin(Memory, { memoryFile: join(root, 'memory.md'), factsDir })
+  await ctx.plugin(Memory, { memoryDir: join(root, 'memory'), factsDir })
   return { ctx, factsDir, cwdA, cwdB }
 }
 
@@ -171,7 +171,7 @@ describe('fact injection', () => {
     contexts.push(noCwdVariable)
     await noCwdVariable.plugin(SystemPrompt)
     await noCwdVariable.plugin(ToolRuntime)
-    await noCwdVariable.plugin(Memory, { memoryFile: join(await mkdtemp(join(tmpdir(), 'dsh-memory-nocwd-')), 'memory.md') })
+    await noCwdVariable.plugin(Memory, { memoryDir: join(await mkdtemp(join(tmpdir(), 'dsh-memory-nocwd-')), 'memory') })
     const noCwd = await noCwdVariable.systemPrompt.assemble()
     expect(noCwd.sections.some(section => section.name === 'memory:facts:injected')).toBe(false)
   })
@@ -192,7 +192,7 @@ describe('actual agent prompt assembly', () => {
     await ctx.plugin(ToolRuntime)
     await ctx.plugin(AgentRegistry)
     await ctx.plugin(AgentLoop, { agents: [] })
-    await ctx.plugin(Memory, { memoryFile: join(root, 'memory.md'), factsDir })
+    await ctx.plugin(Memory, { memoryDir: join(root, 'memory'), factsDir })
     ctx.llm.registerAdapter(['mock'], adapter)
     await ctx.memory.rememberFact(cwd, { title: '协作规范', body: '严格遵守当前指令范围' })
 

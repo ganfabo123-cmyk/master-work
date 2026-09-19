@@ -67,14 +67,9 @@ export async function createAcceptanceComposition(
     : pathToFileURL(input.pluginEntryPath).href
 
   const yaml = [
-    /*
-     * 官方预组装 Agent Runtime。
-     *
-     * Acceptance 不自己重新拼 llm / agent /
-     * session / tools / loop 等基础组件。
-     */
+    /* Official preassembled agent runtime used by SDK acceptance. */
     '- id: agent-spine',
-    '  name: \'@deepseek-ai/dsh-agent-spine-demo\'',
+    "  name: '@deepseek-ai/dsh-agent-spine-demo'",
     '  config:',
     '    workspaceContext: false',
     '',

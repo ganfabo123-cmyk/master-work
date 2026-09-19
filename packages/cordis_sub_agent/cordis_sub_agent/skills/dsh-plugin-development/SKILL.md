@@ -10,6 +10,18 @@ auditable facts about one generated-plugin task; the Main Agent decides what
 ordinary repository reading, writing, repair, and foreground commands are
 needed. Do not treat the tools as a mandatory state machine.
 
+## Learn from prior Cordis Sub Agent experience
+
+Before starting plugin development, **strongly recommend** calling
+`memory_list({ block_name: "cordis_sub_agent" })` to read every experience in
+the `cordis_sub_agent` memory block. Use the returned successes, failures, and
+transferable lessons to avoid repeating known mistakes, while still checking
+their applicability against the current task and repository state.
+
+If the current task produces a reusable experience that should be recorded,
+call `memory_record` with `block_name: "cordis_sub_agent"`. Do not write
+Cordis Sub Agent plugin-development experience to another memory block.
+
 ## Why use this skill instead of writing the plugin directly?
 
 Directly writing a plugin from the first user message is often locally fast but
@@ -30,7 +42,7 @@ into explicit, reviewable facts without taking away the Main Agent's judgment.
   development tutorials. Then select the relevant documentation, existing
   plugin, package, or example from that map and read only the files needed for
   the current plugin. Before using `read`, it is recommended to call
-  `what i want to know` to list the information the Agent wants to learn and
+  `what_i_want_to_know` to list the information the Agent wants to learn and
   why it matters. Use that list to guide repository exploration and avoid
   getting trapped in a local-reading illusion. Do not replace this targeted
   repository reading with a generic whole-repository scan.
@@ -59,7 +71,7 @@ engineering, or user-experience error.
 
 | When | Cordis provides | Main Agent guidance |
 | --- | --- | --- |
-| The user has confirmed a plugin's purpose, input/output fields, execution blocks and arrows, and detailed document | `submit_plugin_metadata` creates a V3 task and its task-owned `packages/generated/<plugin-name>/` directory | **Must** call it before asking Cordis to generate documentation, verify, accept, query, or discard this plugin. Repository navigation is performed by the Main Agent through `docs/dsh-develop-cordis-map.md` and ordinary targeted reading. Keep its returned `task_id` and `plugin_root`. Every schema field, block, and arrow needs a non-empty description. For a complex or unclear request, **strongly recommend** using `ask user` for multi-turn clarification, then showing the proposed purpose, inputs, outputs, and brief flow to the user; submit only after the user confirms that metadata. |
+| The user has confirmed a plugin's purpose, input/output fields, execution blocks and arrows, and detailed document | `submit_plugin_metadata` creates a V3 task, its task-owned `packages/generated/<plugin-name>/` directory, and a common plugin scaffold | **Must** call it before asking Cordis to generate documentation, verify, accept, query, or discard this plugin. Repository navigation is performed by the Main Agent through `docs/dsh-develop-cordis-map.md` and ordinary targeted reading. Keep its returned `task_id` and `plugin_root`. Every schema field, block, and arrow needs a non-empty description. For a complex or unclear request, **strongly recommend** using `ask user` for multi-turn clarification, then showing the proposed purpose, inputs, outputs, and brief flow to the user; submit only after the user confirms that metadata. |
 | You need task-specific repository facts before deciding what to implement | The repository map, selected documentation, and selected existing plugin or example files provide the reading path | **Need** to read `docs/dsh-develop-cordis-map.md` first. Use its document links to learn the relevant Cordis and Harness concepts, then use its `packages/` and `examples/` branches to choose comparable implementations. Read exact files, manifests, prompts, tools, tests, and configuration only when they are relevant to the current plugin. |
 | Context is incomplete, a tool failed, the user asks for progress, or you need evidence before deciding the next action | `get_development_task(task_id)` returns V3 metadata, documentation, verification, acceptance, evidence, errors, and `plugin_root` | **Recommend** calling it to recover task facts instead of guessing. It is read-only and does not advance development. |
 | The first complete implementation and English README are ready, or repaired behavior has passed acceptance and its final documentation now needs synchronization | `document_development(task_id)` runs `translate_readme_agent`, then generates the i18n sidecar | **Need** to call it before the first formal engineering verification, then call it once more after a repair cycle only when the accepted behavior requires README updates. Do not call it between each code repair and verification attempt. The translator reads only `README.md` and writes only `README.zh.md`; the parent tool runs `pnpm run verify-translation-pairing --write <pluginRoot-relative>/README.md` to generate `README.i18n.yaml`. The Main Agent remains responsible for source, the English README, tests, package configuration, and repairs. |
@@ -99,10 +111,54 @@ require another engineering-verification or acceptance cycle. Start another
 cycle only if that final documentation work also changes source, tests, package
 configuration, or runtime behavior.
 
+### When the Main Agent should call `explorer`
+
+`explorer` is an optional read-only repository exploration assistant. It accepts
+one natural-language question and returns a concise string containing evidence
+from the DSH repository. The Main Agent remains responsible for deciding what to
+change and for reading the load-bearing files before editing them.
+
+Call `explorer` when:
+
+- the relevant directories or files are not known;
+- the question requires locating related paths across the DSH repository;
+- many files must be compared but the Main Agent only needs a semantic pattern,
+  contrast, or root-cause conclusion;
+- the result can be represented by file or directory evidence and a concise
+  answer rather than full source contents.
+
+Do not call `explorer` when:
+
+- the target file or a small set of target files is already known;
+- the Main Agent needs to edit, build, test, or run a command;
+- the question requires complete source text rather than an evidence-backed
+  summary;
+- the Main Agent can answer directly from the repository map and targeted reads.
+
+The Explorer Agent may choose `explore_paths` for path discovery, choose
+`explore_semantics` for multi-file semantic analysis, or use both. It must stay
+read-only, explore only the DSH repository, submit its findings through the
+structured result tools, and include real repository paths as evidence. Its
+answer is navigation and analysis evidence, not implementation or verification
+evidence.
+
 ## Main Agent boundaries
 
 - Preserve the original `task_id` and `acceptance_id`; never invent, transform,
   or substitute identifiers.
+- `submit_plugin_metadata` creates the plugin starting point before returning:y
+  `package.json`, `tsconfig.json`, `src/index.ts`, `src/invariant.ts`, and
+  `README.md` already exist under `plugin_root`. Treat these files as the
+  task-owned scaffold: inspect them first, then fill or replace the
+  placeholders with the plugin's actual entry point, dependencies, TypeScript
+  references, invariant companion, implementation, tests, and documentation.
+  The scaffold is not an implementation and does not count as build, test, or
+  acceptance evidence.
+- After submission, use the returned `plugin_root` as the sole ordinary write
+  root for plugin development. Do not recreate the directory, delete the
+  scaffold before implementation, or create a second package elsewhere. Add
+  files and revise the scaffold in place; keep the same `task_id` through
+  reading, implementation, documentation, verification, and acceptance.
 - Use ordinary read/write tools and finite foreground commands for source
   development and repair. Cordis does not provide a separate Coding Agent or a
   mandatory implementation wrapper.
@@ -118,12 +174,15 @@ configuration, or runtime behavior.
 - During plugin development, use `user_powershell` for commands that must run
   in the DSH project's PowerShell environment, especially dependency
   installation or mutation (`pnpm install`, `pnpm add`, `npm install`), build
-  commands, and starting or inspecting child processes. Always provide the
-  exact `command` and a specific `reason`; the user-facing permission prompt
-  must show both before anything runs. Do not use the ordinary `pwsh`/`bash`
-  tool for these commands, do not background them, and do not retry a denied
-  command through another tool. The `user_powershell` tool runs with cwd set to
-  the current DSH project root and returns stdout, stderr, and the exit code.
+  commands, and starting or inspecting child processes. In particular, start
+  `vite`, `vitest`, and `tsx` child processes through `user_powershell`; the
+  Microsoft sandbox may intercept or block these processes when they are
+  started through another execution tool. Always provide the exact `command`
+  and a specific `reason`; the user-facing permission prompt must show both
+  before anything runs. Do not use the ordinary `pwsh`/`bash` tool for these
+  commands, do not background them, and do not retry a denied command through
+  another tool. The `user_powershell` tool runs with cwd set to the current DSH
+  project root and returns stdout, stderr, and the exit code.
 - Treat verification and acceptance as separate evidence: a successful build
   is not fresh-runtime proof, and an acceptance runtime cannot start without a
   successful V3 verification result.

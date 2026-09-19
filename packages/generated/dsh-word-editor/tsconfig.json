@@ -1,0 +1,17 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../../vendor/cordis" },
+    { "path": "../../../vendor/schemastery" },
+    { "path": "../../../vendor/cosmokit" },
+    { "path": "../../core/tools" },
+    { "path": "../../subprocess/subprocess" },
+    { "path": "../../subagent/subagent" },
+    { "path": "../../runtime-diagnostics/invariants" }
+  ]
+}

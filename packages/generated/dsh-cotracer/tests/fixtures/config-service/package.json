@@ -1,0 +1,9 @@
+{
+  "name": "config-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fixture repository with a deliberate configuration bug for CoTracer acceptance: the CLI override branch reads a different key than the env/config branches, so a CLI flag silently falls back to the default.",
+  "scripts": {
+    "start": "python main.py"
+  }
+}

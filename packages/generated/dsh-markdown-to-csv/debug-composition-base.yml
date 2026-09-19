@@ -1,0 +1,13 @@
+# Debug base composition (no overlay): agent-spine + llm only. The plugin and
+# web server arrive through the overlay patch, exactly like `dsh web --patch`.
+- id: agent-spine
+  name: '@deepseek-ai/dsh-agent-spine-demo'
+  config:
+    workspaceContext: false
+
+- id: llm-pi-ai
+  name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      opencode-go:
+        apiKeyEnv: open_code_api

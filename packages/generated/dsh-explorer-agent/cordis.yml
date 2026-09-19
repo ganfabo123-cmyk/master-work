@@ -1,0 +1,6 @@
+# Load the plugin in `dsh web` by direct file URL (same pattern as
+# temp-cordis-sub-agent.yml): the built entry bypasses bare-name resolution,
+# so no bundle manifest declaration is required.
+- insert:
+    - id: explorer-agent
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-explorer-agent/lib/index.js'

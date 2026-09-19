@@ -36,7 +36,7 @@ export function startAcceptanceTool(
         type: 'string',
         required: true,
         description:
-          'A Cordis patch file selecting the plugin to test, for example packages/generated/say-hello/cordis.yml.',
+          'A Cordis patch file applied unchanged over the dsh web profile, for example packages/generated/say-hello/cordis.yml.',
       },
 
     },
@@ -82,6 +82,11 @@ export function startAcceptanceTool(
             required: true,
           },
 
+          web_port: {
+            type: 'integer',
+            required: true,
+          },
+
           plugin_entry_path: {
             type: 'string',
           },
@@ -108,6 +113,7 @@ export function startAcceptanceTool(
             `Child cwd: ${value.cwd}`,
             `Provider: ${value.provider}`,
             `Model: ${value.model}`,
+            `Web port: ${value.web_port}`,
             `Patch: ${value.patch}`,
             '',
             value.message,
@@ -175,6 +181,9 @@ export function startAcceptanceTool(
         model:
           options.model,
 
+        web_port:
+          acceptance.webPort,
+
         patch:
           patchPath,
 
@@ -189,4 +198,3 @@ export function startAcceptanceTool(
     },
   })
 }
-

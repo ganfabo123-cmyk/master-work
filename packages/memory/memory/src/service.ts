@@ -5,6 +5,8 @@
  */
 
 import { Service, type Context } from '@deepseek-ai/cordis'
+import { lstat, mkdir, readdir, rename } from 'node:fs/promises'
+import { join } from 'node:path'
 import type { FactMemory } from './fact.ts'
 import { normalizeFactTitle } from './fact.ts'
 import {
@@ -28,7 +30,9 @@ export class MemoryError extends Error {
 
 /** Runtime-owned dependencies for the memory service. */
 export interface MemoryRuntime {
-  readonly memoryFile: string
+  readonly memoryDir: string
+  /** Old single global file moved without rewriting on first global-block access. */
+  readonly legacyMemoryFile?: string
   readonly factsDir: string
   readonly maxFacts: number
   readonly now?: () => Date
@@ -50,32 +54,37 @@ export interface MemorySearchRequest {
   readonly limit?: number
 }
 
-/** Process-global memory service backed by the configured experience file and per-cwd fact files. */
+/** Process-global memory service backed by block files and per-cwd fact files. */
 export class MemoryService extends Service {
-  private readonly store: MemoryStore
+  private readonly stores = new Map<string, MemoryStore>()
   private readonly factStore: FactStore
   private readonly retriever: MemoryRetriever
   private readonly now: () => Date
   private readonly maxFacts: number
+  private readonly memoryDir: string
+  private readonly legacyMemoryFile: string | undefined
+  private globalMigration: Promise<void> | undefined
 
   constructor(ctx: Context, runtime: MemoryRuntime) {
     super(ctx, 'memory')
-    this.store = new MemoryStore(runtime.memoryFile)
     this.factStore = new FactStore(runtime.factsDir)
     this.retriever = runtime.retriever ?? new KeywordRetriever()
     this.now = runtime.now ?? (() => new Date())
     this.maxFacts = runtime.maxFacts
+    this.memoryDir = runtime.memoryDir
+    this.legacyMemoryFile = runtime.legacyMemoryFile
   }
 
   /**
    * Validate and append one or more experiences to the formal memory store.
    * Keywords are persisted in canonical form, omitted outcomes become
    * `unknown`, and one Harness-generated ISO timestamp applies to the batch.
+   * @param blockName - block whose file receives the complete batch.
    * @param entries - model-authored experience fields supplied for persistence.
    * @param signal - operation cancellation.
    * @returns durable experiences with assigned ids and timestamps.
    */
-  async record(entries: readonly NewExperienceMemory[], signal?: AbortSignal): Promise<ExperienceMemory[]> {
+  async record(blockName: string, entries: readonly NewExperienceMemory[], signal?: AbortSignal): Promise<ExperienceMemory[]> {
     if (entries.length === 0) throw new MemoryError('memory record requires at least one entry', 'MEMORY_EMPTY_BATCH')
     const recordedAt = this.now().toISOString()
     const durable = entries.map((entry) => {
@@ -88,22 +97,24 @@ export class MemoryService extends Service {
       if (keywords.length === 0) throw new MemoryError('memory keywords must contain at least one non-blank value', 'MEMORY_EMPTY_KEYWORDS')
       return { title, body, keywords, outcome: entry.outcome ?? 'unknown', recordedAt }
     })
-    return this.store.append(durable, signal)
+    return (await this.storeFor(blockName, signal)).append(durable, signal)
   }
 
   /**
    * Select lightweight candidates. Internal ranking chooses Top-K only; the
    * returned order is stable id order and does not express relevance.
+   * @param blockName - block whose file supplies retrieval candidates.
    * @param request - query keywords and optional candidate limit.
    * @param signal - operation cancellation.
    * @returns candidate metadata without bodies or ranking scores.
    */
-  async search(request: MemorySearchRequest, signal?: AbortSignal): Promise<MemorySearchCandidate[]> {
+  async search(blockName: string, request: MemorySearchRequest, signal?: AbortSignal): Promise<MemorySearchCandidate[]> {
     const keywords = normalizeKeywords(request.keywords)
     const limit = request.limit ?? 10
     if (!Number.isSafeInteger(limit) || limit < 1) throw new MemoryError('memory search limit must be a positive safe integer', 'MEMORY_INVALID_LIMIT')
-    const selected = await this.retriever.search({ keywords, limit, ...signal === undefined ? {} : { signal } }, this.store)
-    const documents = new Map((await this.store.listDocuments(signal)).map(document => [document.id, document]))
+    const store = await this.storeFor(blockName, signal)
+    const selected = await this.retriever.search({ keywords, limit, ...signal === undefined ? {} : { signal } }, store)
+    const documents = new Map((await store.listDocuments(signal)).map(document => [document.id, document]))
     return selected.flatMap((result) => {
       const document = documents.get(result.id)
       return document === undefined ? [] : [{
@@ -118,12 +129,51 @@ export class MemoryService extends Service {
 
   /**
    * Read one complete experience by stable id.
+   * @param blockName - block containing the requested id.
    * @param id - stable `memory-N` identity.
    * @param signal - operation cancellation.
    * @returns the complete experience, or `undefined` when absent.
    */
-  get(id: string, signal?: AbortSignal): Promise<ExperienceMemory | undefined> {
-    return this.store.get(id, signal)
+  async get(blockName: string, id: string, signal?: AbortSignal): Promise<ExperienceMemory | undefined> {
+    return (await this.storeFor(blockName, signal)).get(id, signal)
+  }
+
+  /**
+   * Read every complete experience from one block in durable file order.
+   * @param blockName - block whose complete contents should be returned.
+   * @param signal - operation cancellation.
+   * @returns every experience stored in the block.
+   */
+  async list(blockName: string, signal?: AbortSignal): Promise<ExperienceMemory[]> {
+    return (await this.storeFor(blockName, signal)).list(signal)
+  }
+
+  /**
+   * Enumerate every block that currently owns a durable block file, without
+   * loading the blocks whose stores have not been touched in this process.
+   * A block exists whenever its `<block_name>_memory.md` file is present on
+   * disk; the disk listing is authoritative because files may be written by
+   * another process or session that never shared this service's store cache.
+   * @param signal - operation cancellation.
+   * @returns normalized block names owning files, in lexicographic order.
+   */
+  async listBlocks(signal?: AbortSignal): Promise<string[]> {
+    signal?.throwIfAborted()
+    let entries: string[]
+    try {
+      entries = await readdir(this.memoryDir)
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []
+      throw error
+    }
+    const blocks: string[] = []
+    for (const entry of entries) {
+      const blockName = BLOCK_FILE_PATTERN.exec(entry)?.[1]
+      if (blockName === undefined) continue
+      if (await pathKind(join(this.memoryDir, entry)) !== 'file') continue
+      blocks.push(blockName)
+    }
+    return blocks.sort()
   }
 
   /**
@@ -170,5 +220,57 @@ export class MemoryService extends Service {
    */
   factBudget(): number {
     return this.maxFacts
+  }
+
+  private async storeFor(blockName: string, signal?: AbortSignal): Promise<MemoryStore> {
+    signal?.throwIfAborted()
+    const normalized = normalizeBlockName(blockName)
+    if (normalized === 'global') await this.ensureGlobalMigration()
+    signal?.throwIfAborted()
+    let store = this.stores.get(normalized)
+    if (store === undefined) {
+      store = new MemoryStore(join(this.memoryDir, `${normalized}_memory.md`))
+      this.stores.set(normalized, store)
+    }
+    return store
+  }
+
+  private ensureGlobalMigration(): Promise<void> {
+    if (this.globalMigration === undefined) this.globalMigration = this.migrateLegacyGlobalFile()
+    return this.globalMigration
+  }
+
+  private async migrateLegacyGlobalFile(): Promise<void> {
+    if (this.legacyMemoryFile === undefined) return
+    const target = join(this.memoryDir, 'global_memory.md')
+    if (this.legacyMemoryFile === target) return
+    const legacy = await pathKind(this.legacyMemoryFile)
+    if (legacy === 'missing') return
+    if (legacy !== 'file') throw new MemoryError(`legacy memory path is not a file: ${this.legacyMemoryFile}`, 'MEMORY_LEGACY_NOT_FILE')
+    if (await pathKind(target) !== 'missing') {
+      throw new MemoryError(`cannot migrate legacy memory because target already exists: ${target}`, 'MEMORY_MIGRATION_CONFLICT')
+    }
+    await mkdir(this.memoryDir, { recursive: true, mode: 0o700 })
+    await rename(this.legacyMemoryFile, target)
+  }
+}
+
+function normalizeBlockName(blockName: string): string {
+  const normalized = blockName.trim().toLowerCase()
+  if (!/^[a-z0-9][a-z0-9_-]{0,63}$/u.test(normalized)) {
+    throw new MemoryError('memory block name must contain 1-64 ASCII letters, digits, underscores, or hyphens', 'MEMORY_INVALID_BLOCK_NAME')
+  }
+  return normalized
+}
+
+/** Block store file naming used both when creating a store and when listing blocks. */
+const BLOCK_FILE_PATTERN = /^([a-z0-9][a-z0-9_-]{0,63})_memory\.md$/u
+
+async function pathKind(path: string): Promise<'file' | 'other' | 'missing'> {
+  try {
+    return (await lstat(path)).isFile() ? 'file' : 'other'
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return 'missing'
+    throw error
   }
 }

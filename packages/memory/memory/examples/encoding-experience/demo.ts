@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -30,9 +30,10 @@ context.loader.internal = {
 } as NonNullable<typeof context.loader.internal>
 
 try {
-  const memoryPath = join(runtimeDirectory, 'memory.md')
-  await writeFile(memoryPath, await readFile(join(directory, 'memory.md'), 'utf8'))
-  const config = (await readFile(join(directory, 'cordis.yml'), 'utf8')).replace("'./memory.md'", `'${memoryPath.replace(/\\/gu, '/')}'`)
+  const memoryDirectory = join(runtimeDirectory, 'memory')
+  await mkdir(memoryDirectory)
+  await writeFile(join(memoryDirectory, 'global_memory.md'), await readFile(join(directory, 'global_memory.md'), 'utf8'))
+  const config = (await readFile(join(directory, 'cordis.yml'), 'utf8')).replace("'./memory'", `'${memoryDirectory.replace(/\\/gu, '/')}'`)
   const runtimeConfig = join(runtimeDirectory, 'cordis.yml')
   await writeFile(runtimeConfig, config)
   await context.loader.create({ name: 'cordis:include', config: { path: pathToFileURL(runtimeConfig).href } })
@@ -41,17 +42,17 @@ try {
   const signal = new AbortController().signal
   const search = await context.tools.execute({
     name: 'memory_search',
-    arguments: { keywords: ['deepseek-harness', 'encoding', 'typescript'] },
+    arguments: { block_name: 'global', keywords: ['deepseek-harness', 'encoding', 'typescript'] },
     callId: CallId('memory-demo-search'),
     signal,
   })
-  console.log('$ memory_search(deepseek-harness, encoding, typescript)')
+  console.log('$ memory_search(global; deepseek-harness, encoding, typescript)')
   console.log(textOf(search))
 
   const get = await context.tools.execute({
-    name: 'memory_get', arguments: { id: 'memory-17' }, callId: CallId('memory-demo-get'), signal,
+    name: 'memory_get', arguments: { block_name: 'global', id: 'memory-17' }, callId: CallId('memory-demo-get'), signal,
   })
-  console.log('\n$ memory_get(memory-17)')
+  console.log('\n$ memory_get(global, memory-17)')
   console.log(textOf(get))
 } finally {
   await context.fiber.dispose()

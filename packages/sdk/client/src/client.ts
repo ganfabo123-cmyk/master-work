@@ -265,8 +265,8 @@ export class HarnessClient {
    * @param params - workspace cwd plus the provider/model route.
    * @returns the runtime's wire identity.
    */
-  async initialize(params: InitializeParams): Promise<InitializeResult> {
-    const result = await this.request('initialize', { ...params })
+  async initialize(params: InitializeParams, timeoutMs?: number): Promise<InitializeResult> {
+    const result = await this.request('initialize', { ...params }, timeoutMs)
     if (!isRecord(result) || !isRecord(result.serverInfo)
       || typeof result.serverInfo.name !== 'string' || typeof result.serverInfo.version !== 'string') {
       throw new SdkProtocolError(`initialize returned no server identity: ${JSON.stringify(result)}`)

@@ -216,13 +216,13 @@ const TOOL_PACKAGES: ToolPackage[] = [
     pkg: '@deepseek-ai/dsh-memory',
     dir: 'memory',
     source: 'packages/memory/memory/src/index.ts',
-    requires: ['ctx.tools', 'ctx.systemPrompt', 'ctx.userQuestions (record approval, optional)'],
-    writes: ['tool/call', 'memory.md after approval', 'per-cwd fact file after remember/forget', 'tool/result'],
+    requires: ['ctx.tools', 'ctx.systemPrompt'],
+    writes: ['tool/call', 'selected <block_name>_memory.md after record', 'per-cwd fact file after remember/forget', 'tool/result'],
     async mount(ctx) {
       await ctx.plugin(Memory)
     },
     note:
-      'memory_search returns lightweight candidates in stable non-ranking order; memory_get loads one complete experience; memory_record confirms reusable experience bodies before append; fact_remember/fact_forget manage per-cwd facts injected into the system prompt on every assembly.',
+      'memory_list_blocks lists every current block name from the disk directory without arguments; memory_search returns lightweight candidates from one required block_name in stable non-ranking order; memory_get loads one complete experience from that block; memory_record appends directly to that block; fact_remember/fact_forget manage per-cwd facts injected into the system prompt on every assembly.',
   },
   {
     pkg: '@deepseek-ai/dsh-plan-mode',

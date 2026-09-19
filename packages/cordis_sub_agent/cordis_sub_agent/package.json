@@ -6,7 +6,8 @@
 
   "scripts": {
     "build": "tsc -b",
-    "clean": "tsc -b --clean"
+    "clean": "tsc -b --clean",
+    "test:acceptance-tool": "node tests/acceptance/start-acceptance-tool.mjs"
   },
 
   "main": "lib/index.js",
@@ -58,6 +59,11 @@
   },
 
   "dependencies": {
+    "@deepseek-ai/dsh-app-boot": "workspace:^",
+    "@deepseek-ai/dsh-cmdline": "workspace:^",
+    "@deepseek-ai/dsh-home-paths": "workspace:^",
+    "@deepseek-ai/dsh-launch-environment": "workspace:^",
+    "@deepseek-ai/dsh-sdk-jsonrpc-server": "workspace:^",
     "@deepseek-ai/dsh-sdk-client": "workspace:^",
     "@deepseek-ai/schemastery": "workspace:^"
   }

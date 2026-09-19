@@ -1,0 +1,39 @@
+{
+  "name": "@deepseek-ai/dsh-experiment-state",
+  "description": "Shared external experiment-tree state for hypothesis-driven multi-agent debugging: the main agent creates experiments (suspected cause, falsifiable question, scope, shared info) and investigation agents write back evidence and conclusions",
+  "version": "0.1.0-rc.5",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "workspace:*"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "workspace:*"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "workspace:*",
+    "@deepseek-ai/dsh-invariants": "workspace:*",
+    "@deepseek-ai/dsh-tools": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "node tests/run.mjs"
+  }
+}

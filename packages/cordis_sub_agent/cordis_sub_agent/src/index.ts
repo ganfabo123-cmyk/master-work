@@ -11,6 +11,8 @@ import { fileURLToPath } from 'node:url'
 
 import type {} from '@deepseek-ai/dsh-skill'
 import type {} from '@deepseek-ai/dsh-user-approval'
+import type {} from './services/explorer-agent.js'
+import type {} from './services/powershell.js'
 
 import {
   AcceptanceService,
@@ -41,12 +43,9 @@ import { getTaskStatusTool } from './tools/get-task-status.js'
 import { discardDevelopmentTool } from './tools/discard-development.js'
 import { verifyDevelopmentTool } from './tools/verify-development.js'
 import { documentDevelopmentTool } from './tools/document-development.js'
-import { ReaderConclusionStore, readerConclusionTool } from './tools/reader-conclusion.js'
 import { submitPluginMetadataTool } from './tools/submit-plugin-metadata.js'
 import { whatIWantToKnowTool } from './tools/what-i-want-to-know.js'
-import { userPowerShellTool } from './tools/user-powershell.js'
 import { PluginMetadataTaskStore } from './services/plugin-metadata-task-store.js'
-import { PluginMetadataReadWorkflow } from './workflow/plugin-metadata-read-workflow.js'
 import { createDangerousCommandGuard } from './services/dangerous-command-cwd-policy.js'
 
 
@@ -60,6 +59,8 @@ export const inject = [
   'subagents',
   'skills',
   'tools',
+  'explorerAgent',
+  'powershell',
 ] as const
 
 
@@ -78,18 +79,9 @@ export function apply(
   const documentation =
     new DocumentationWorkflow(ctx)
 
-  const readerConclusions = new ReaderConclusionStore()
-
   const metadataTasks = new PluginMetadataTaskStore(
     join(resolve(config.repoRoot), 'packages', 'generated'),
   )
-
-  const metadataReader =
-    new PluginMetadataReadWorkflow(
-      ctx,
-      readerConclusions,
-      resolve(config.repoRoot),
-    )
 
   /*
    * Tool registrations.
@@ -104,7 +96,7 @@ export function apply(
       ),
 
       ctx.tools.register(
-        createPluginTool(metadataTasks, metadataReader),
+        createPluginTool(metadataTasks, ctx.explorerAgent, resolve(config.repoRoot)),
       ),
 
       ctx.tools.register(
@@ -139,7 +131,6 @@ export function apply(
       ctx.tools.register(
         stopAcceptanceTool(
           acceptance,
-          metadataTasks,
         ),
       ),
 
@@ -162,13 +153,9 @@ export function apply(
           ...(config.engineeringTimeoutMs !== undefined ? { timeoutMs: config.engineeringTimeoutMs } : {}),
         },
       )),
-      ctx.tools.register(readerConclusionTool(readerConclusions)),
       ctx.tools.register(submitPluginMetadataTool(metadataTasks)),
       ctx.tools.register(whatIWantToKnowTool()),
-      ctx.tools.register(userPowerShellTool(
-        ctx,
-        resolve(config.repoRoot),
-      )),
+      ctx.tools.register(ctx.powershell.createUserPowerShellTool(resolve(config.repoRoot))),
     ]
 
     return () => {

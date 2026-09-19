@@ -296,6 +296,30 @@ interface ModelReasoning {
 }
 
 /**
+ * Normalize the OpenCode Go DeepSeek V4 catalog entries to that gateway's
+ * disable-thinking wire protocol. Its `none` effort turns thinking off; the
+ * generic DeepSeek `thinking: { type: 'disabled' }` object is ignored.
+ * @param provider - configured provider route.
+ * @param model - installed catalog model before profile overrides.
+ * @returns the model unchanged unless it needs the OpenCode Go compatibility fix.
+ */
+function normalizeOpenCodeGoDeepSeekV4(model: Model<Api>, provider: string): Model<Api> {
+  const compat = model.api === 'openai-completions'
+    ? model.compat as OpenAICompletionsCompat | undefined
+    : undefined
+  if (provider !== 'opencode-go'
+    || !['deepseek-v4-flash', 'deepseek-v4-pro'].includes(model.id)
+    || compat?.thinkingFormat !== 'deepseek') {
+    return model
+  }
+  return {
+    ...model,
+    thinkingLevelMap: { ...model.thinkingLevelMap, off: 'none' },
+    compat: { ...compat, thinkingFormat: 'openai' },
+  }
+}
+
+/**
  * Resolve one model's reasoning capability from its declared efforts.
  *
  * A declared dict translates to pi-ai's `thinkingLevelMap` with every level
@@ -493,7 +517,8 @@ export function resolveRouteModels(request: RouteCatalogRequest): RouteCatalog {
     if (entry.id.length === 0) invalid(provider, 'has a model with an empty id')
     if (seen.has(entry.id)) invalid(provider, `lists model "${entry.id}" more than once`)
     seen.add(entry.id)
-    const base = defaults.get(entry.id)
+    const installed = defaults.get(entry.id)
+    const base = installed === undefined ? undefined : normalizeOpenCodeGoDeepSeekV4(installed, provider)
     const api = request.api ?? base?.api ?? routeApi
     if (api === undefined) {
       invalid(provider, `model "${entry.id}" needs an api; the installed catalog does not describe it, so set the`

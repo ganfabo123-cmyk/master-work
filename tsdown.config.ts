@@ -24,7 +24,9 @@ export default defineConfig(({ env }) => {
       'apps/cli',
       '!packages/cordis_sub_agent/cordis_sub_agent',
       '!packages/examples/plugin-reference',
-      '!packages/generated/say-hello',
+      // Generated plugins are built and accepted package-locally. Their
+      // lib/index.js layout is not the root Host aggregate's lib/types/* API.
+      '!packages/generated/**',
     ],
     entry: client ? '' : ['lib/types/{index,invariant,startup}.js'],
     outDir: 'lib',

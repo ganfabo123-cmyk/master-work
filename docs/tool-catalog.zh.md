@@ -19,7 +19,7 @@
 | --- | --- | --- | --- | --- | --- |
 | `@deepseek-ai/dsh-tool-ask-user` | `ask_user_question` | `ctx.tools`、`ctx.userQuestions` | `tool/call`、`tool/result after a UI/provider answers the question` | - | ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类答案。 |
 | `@deepseek-ai/dsh-tools` | `run_code` | `ctx.tools`、`ctx.codeRuntime (execution time)`、`ctx.systemPrompt` | `tool/call`、`one tool/code-dispatch-start + tool/code-dispatch pair per bridged sub-call`、`tool/result` | - | 在 `mode: code`／`mode: both` 下，它由工具注册表所有，作为可过滤能力层之外的保留传输机制（参见 Code Mode Agent Note）。在 `code` 下，它是注册表对协议格式（wire format）的唯一贡献；其他可见能力在使用已加载运行时语言生成的 SDK 章节中声明。程序通过 binding 调用这些能力，调用按照原生并发约定调度：启动顺序和策略遵循提交顺序，并发安全的函数体最多重叠执行 `maxParallelSubCalls` 个。调用会重新进入完整且受守卫保护的工具流水线，并将每个嵌套执行关联到此外层结果。 |
-| `@deepseek-ai/dsh-memory` | `fact_forget`、`fact_remember`、`memory_get`、`memory_record`、`memory_search` | `ctx.tools`、`ctx.systemPrompt`、`ctx.userQuestions (record approval, optional)` | `tool/call`、`memory.md after approval`、`per-cwd fact file after remember/forget`、`tool/result` | - | memory_search 返回稳定、非排名顺序的轻量候选；memory_get 加载一条完整经验；memory_record 在追加前确认可复用经验正文；fact_remember/fact_forget 管理每次系统提示装配都会注入的按 cwd 事实。 |
+| `@deepseek-ai/dsh-memory` | `fact_forget`、`fact_remember`、`memory_get`、`memory_list`、`memory_list_blocks`、`memory_record`、`memory_search` | `ctx.tools`、`ctx.systemPrompt` | `tool/call`、`selected <block_name>_memory.md after record`、`per-cwd fact file after remember/forget`、`tool/result` | - | memory_list_blocks 无参数、按字典序列出当前拥有持久块文件的块名；memory_search 从一个必填 `block_name` 返回稳定、非排名顺序的轻量候选；memory_get 从该块加载一条完整经验；memory_record 直接追加到该块；fact_remember/fact_forget 管理每次系统提示装配都会注入的按 cwd 事实。 |
 | `@deepseek-ai/dsh-plan-mode` | `exit_plan_mode` | `ctx.tools`、`ctx.systemPrompt`、`ctx.userQuestions (execution time, opportunistic)` | `tool/call`、`plan/mode inactive on an approved review`、`tool/result` | - | 规划未激活时，exit_plan_mode 仍保留在面向模型的 schema 中，这样状态转换不会在规划策略变更之外额外造成工具目录变动。其执行路径会拒绝规划模式之外的调用；在规划模式下，它通过用户交互 seam 提交计划（批准／根据反馈继续规划），批准后会在步骤边界记录规划模式已停用。 |
 | `@deepseek-ai/dsh-tool-bash` | `bash` | `ctx.tools`、`ctx.shell`、`ctx.systemPrompt`、`ctx.shellEnv`、`ctx.jobs at call time for run_in_background` | `tool/call`、`tool/result` | - | bash 工具是 bash 执行器 seam 面向模型的消费方。使用 `run_in_background` 的运行会注册到通用 `ctx.jobs` 运行时，并通过 `job_*` 工具（来自 `@deepseek-ai/dsh-tool-jobs`）收集／停止；禁用 `enableRunInBackground` 配置（默认为 true）后，该参数会被完全移除。 |
 | `@deepseek-ai/dsh-tool-pwsh` | `pwsh` | `ctx.tools`、`ctx.shell`、`ctx.systemPrompt`、`ctx.shellEnv`、`ctx.jobs at call time for run_in_background` | `tool/call`、`tool/result` | - | pwsh 工具是 Windows 组合中 bash 执行器 seam 的 PowerShell 方言消费方（由 `@deepseek-ai/dsh-pwsh-local` 等 PowerShell 执行器为 `ctx.shell` 提供后端）；除沙箱接口外，它逐项对应 bash 工具调用。使用 `run_in_background` 的运行会注册到通用 `ctx.jobs` 运行时，并通过 `job_*` 工具收集／停止；托管的 `DSH_*` 环境来自 `@deepseek-ai/dsh-shell-env`。每次调用都在新进程中运行，不使用持久 PTY 会话。路径采用原生 `C:\...` 形式，变量采用 `$env:NAME`。 |
@@ -156,19 +156,19 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
 
 ### `fact_forget`
 
-按键删除当前工作目录的一条已保存事实。用户说某条记忆事实错误或要求忘记时使用。
+按标题删除当前工作目录的一条已保存事实。用户说某条记忆事实错误或要求忘记时使用。
 
 ```json
 {
   "type": "object",
   "properties": {
-    "key": {
+    "title": {
       "type": "string",
-      "description": "The fact key to forget, e.g. \"user name\"; trimmed and lowercased."
+      "description": "The fact title to forget, e.g. \"user name\"; trimmed and lowercased."
     }
   },
   "required": [
-    "key"
+    "title"
   ]
 }
 ```
@@ -177,24 +177,24 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
 
 ### `fact_remember`
 
-为当前工作目录保存一条稳定事实。该事实会在此 cwd 的每个后续回合注入上下文，直到被忘记。用户要求记住内容，或陈述稳定的个人/项目事实时使用。
+为当前工作目录保存一条稳定事实。将事实标题写成不带编号的 Markdown 标题，并在下方写入具体事实正文。该事实会在此 cwd 的每个后续回合注入上下文，直到被忘记。用户要求记住内容，或陈述稳定的个人／项目事实时使用。
 
 ```json
 {
   "type": "object",
   "properties": {
-    "key": {
+    "title": {
       "type": "string",
-      "description": "Short fact key, e.g. \"user name\"; trimmed and lowercased."
+      "description": "Markdown heading text without numbering, e.g. \"严格遵守当前指令范围\"; trimmed and lowercased."
     },
-    "value": {
+    "body": {
       "type": "string",
-      "description": "The fact value, e.g. \"gan\"."
+      "description": "Concrete fact body for that title, written below the heading."
     }
   },
   "required": [
-    "key",
-    "value"
+    "title",
+    "body"
   ]
 }
 ```
@@ -203,18 +203,23 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
 
 ### `memory_get`
 
-通过稳定的 memory-N id 读取一条完整过往经验。
+通过块内稳定的 memory-N id，从一个具名记忆块读取一条完整过往经验。
 
 ```json
 {
   "type": "object",
   "properties": {
+    "block_name": {
+      "type": "string",
+      "description": "Memory block containing the candidate, such as global, python, or dsh."
+    },
     "id": {
       "type": "string",
-      "description": "The candidate experience id."
+      "description": "The candidate experience id within the block."
     }
   },
   "required": [
+    "block_name",
     "id"
   ]
 }
@@ -222,14 +227,52 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
 
 来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
 
-### `memory_record`
+### `memory_list`
 
-使用提供的工具调用字段，将一条或多条可复用经验直接追加到 memory.md。
+按文件顺序，将单个具名记忆块的每条完整经验作为一个 Markdown 字符串读取。
 
 ```json
 {
   "type": "object",
   "properties": {
+    "block_name": {
+      "type": "string",
+      "description": "Memory block to read in full, such as global, python, or dsh."
+    }
+  },
+  "required": [
+    "block_name"
+  ]
+}
+```
+
+来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `memory_list_blocks`
+
+按字典序列出当前拥有持久块文件的每个经验记忆块名。在选定 memory_search、memory_get、memory_list 或 memory_record 的 block_name 之前，用它来发现存在哪些块。
+
+```json
+{
+  "type": "object",
+  "properties": {}
+}
+```
+
+来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
+
+### `memory_record`
+
+使用提供的工具调用字段，将一条或多条可复用经验追加到一个具名记忆块。
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "block_name": {
+      "type": "string",
+      "description": "Memory block that will own every supplied experience, such as global, python, or dsh."
+    },
     "entries": {
       "type": "array",
       "description": "Reusable experiences from the current task.",
@@ -272,6 +315,7 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
     }
   },
   "required": [
+    "block_name",
     "entries"
   ]
 }
@@ -287,6 +331,10 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
 {
   "type": "object",
   "properties": {
+    "block_name": {
+      "type": "string",
+      "description": "Memory block to search, such as global, python, or dsh."
+    },
     "keywords": {
       "type": "array",
       "description": "Specific technology, system, problem, environment, and component terms.",
@@ -300,6 +348,7 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
     }
   },
   "required": [
+    "block_name",
     "keywords"
   ]
 }
@@ -307,7 +356,7 @@ ask_user_question 会暂停工具调用，直到当前 UI 提供方返回人类�
 
 来源：[`packages/memory/memory/src/index.ts`](../packages/memory/memory/src/index.ts)
 
-memory_search 返回稳定、非排名顺序的轻量候选；memory_get 加载一条完整经验；memory_record 在追加前确认可复用经验正文；fact_remember/fact_forget 管理每次系统提示装配都会注入的按 cwd 事实。
+memory_list_blocks 无参数、按字典序列出当前拥有持久块文件的块名（清单来自磁盘目录，含未在本进程加载的块）；memory_search 从一个必填 `block_name` 返回稳定、非排名顺序的轻量候选；memory_get 从该块加载一条完整经验；memory_record 直接追加到该块；fact_remember/fact_forget 管理每次系统提示装配都会注入的按 cwd 事实。
 
 <a id="deepseek-aidsh-plan-mode"></a>
 

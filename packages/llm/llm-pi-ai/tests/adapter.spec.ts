@@ -83,6 +83,17 @@ describe('PiAiAdapter provider routing', () => {
     expect(server.headers[0]?.['user-agent']).toBe(userAgent())
   })
 
+  it('injects the current session id into the configured session header', async () => {
+    const server = await mockServer([{ events: textEvents }, { events: textEvents }])
+    const ctx = await harness(server.url, { sessionHeader: 'x-opencode-session' })
+
+    await assemble(ctx, { model: 'deepseek-v4-flash', messages: [], sessionId: 'session-one' as never })
+    await assemble(ctx, { model: 'deepseek-v4-flash', messages: [], sessionId: 'session-two' as never })
+
+    expect(server.headers[0]?.['x-opencode-session']).toBe('session-one')
+    expect(server.headers[1]?.['x-opencode-session']).toBe('session-two')
+  })
+
   it('forwards common stream options and profile reasoning', async () => {
     const server = await mockServer([{ events: textEvents }])
     const ctx = await harness(server.url, {
@@ -139,6 +150,25 @@ describe('PiAiAdapter provider routing', () => {
       failure: { code: 'UNSUPPORTED_REASONING_EFFORT' },
     })
     expect(server.requests).toHaveLength(2)
+  })
+
+  it('sends OpenCode Go DeepSeek V4 Flash off as its none reasoning effort', async () => {
+    const server = await mockServer([{ events: textEvents }])
+    const ctx = new Context()
+    await ctx.plugin(LlmRuntime)
+    await ctx.plugin(LlmPiAi, {
+      providers: { 'opencode-go': { apiKeyEnv: 'PI_TEST_KEY', baseURL: `${server.url}/v1` } },
+    })
+
+    await assemble(ctx, {
+      provider: 'opencode-go',
+      model: 'deepseek-v4-flash',
+      reasoningEffort: ReasoningEffortId('off'),
+      messages: [],
+    })
+
+    expect(server.requests[0]).toMatchObject({ reasoning_effort: 'none' })
+    expect(server.requests[0]).not.toHaveProperty('thinking')
   })
 
   it('preserves omitted profile options when constructing the adapter directly', async () => {

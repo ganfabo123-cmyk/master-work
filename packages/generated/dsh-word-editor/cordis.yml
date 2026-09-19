@@ -1,0 +1,7 @@
+# dsh-word-editor plugin composition for dsh web: load the Word-editing tools
+# into the host composition via direct file URL (the generated-plugin loading
+# pattern — bare names do not resolve for these packages). The dsh web base
+# profile already provides the tools, subprocess, and spawn subagent services.
+- insert:
+    - id: word-editor
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-word-editor/lib/index.js'

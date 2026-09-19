@@ -1,0 +1,41 @@
+# Acceptance overlay: the agent-spine-based acceptance composition has no
+# subagent providers and no filesystem model tools, so this file adds the
+# subagent seam (spawn/fork providers) and the fs tool suites the Explorer
+# child agent needs, plus the plugin itself. Every row uses a direct file URL
+# (the same pattern as temp-cordis-sub-agent.yml) because the acceptance child
+# resolves plugins from the jsonrpc-demo dependency surface, which does not
+# declare these packages by name. Used only as the acceptance patch — never
+# with `dsh web`, where the base already provides these services.
+- insert:
+    - id: explorer-agent
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-explorer-agent/lib/index.js'
+
+    - id: subagent
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/subagent/subagent/lib/index.js'
+
+    - id: subagent-spawn
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/subagent/subagent-spawn-in-process/lib/index.js'
+      config:
+        providerName: spawn
+
+    - id: subagent-fork
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/subagent/subagent-fork-in-process/lib/index.js'
+      config:
+        providerName: fork
+
+    - id: fs-sandbox
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/fs/fs-sandbox/lib/index.js'
+
+    - id: sandbox-policy
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/sandbox/sandbox-policy/lib/index.js'
+
+    - id: tool-fs
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/fs/tool-fs/lib/index.js'
+
+    - id: tool-fs-search
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/fs/tool-fs-search/lib/index.js'
+      config:
+        sampleOverCapGlobResults: false
+
+    - id: subprocess
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/subprocess/subprocess-local/lib/index.js'

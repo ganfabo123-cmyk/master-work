@@ -9,25 +9,15 @@ import type { ExperienceMemory } from './memory.ts'
 import type { MemorySearchCandidate } from './service.ts'
 
 /** Recommended structure for a reusable experience body. */
-export const EXPERIENCE_BODY_TEMPLATE = `## Context
+export const EXPERIENCE_BODY_TEMPLATE = `在 {YYYY-MM-DD}（能确认时刻再补 {HH:mm}），我做了 {事情}。
+反馈为 {成功 / 失败}（根据用户反馈 {推测依据}）。
 
-Describe the task and relevant environment.
+当时我的做法是：
+{具体做法}
 
-## Problem
-
-Describe the problem or unexpected behavior.
-
-## Attempts
-
-Describe attempted approaches and their outcomes.
-
-## Resolution
-
-Describe the adopted resolution when one exists.
-
-## Lesson
-
-State the transferable lesson for future tasks.`
+我需要深刻思考一下这次成功/失败的背后原因：
+为什么我能成功/失败，我认为原因是：
+{原因分析与可迁移原则}`
 
 /**
  * Render lightweight candidates without exposing internal ranking signals.
@@ -43,6 +33,16 @@ export function formatSearchCandidates(candidates: readonly MemorySearchCandidat
     `matched keywords: ${candidate.matchedKeywords.join(', ')}`,
     `outcome: ${candidate.outcome}`,
   ].join('\n')).join('\n\n')
+}
+
+/**
+ * Render the complete block listing for model use.
+ * @param blocks - normalized block names owning durable files, in file order.
+ * @returns one named block per line, or an explicit empty message.
+ */
+export function formatBlockIndex(blocks: readonly string[]): string {
+  if (blocks.length === 0) return 'No experience memory blocks exist.'
+  return ['Experience memory blocks:', ...blocks.map(block => `- ${block}`)].join('\n')
 }
 
 /**

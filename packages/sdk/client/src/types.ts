@@ -56,6 +56,8 @@ export interface DeepSeekHarnessOptions {
   model?: string
   /** Maximum output tokens for each conversation-model request. */
   maxTokens?: number
+  /** Timeout (ms) for the process-wide initialize handshake only. */
+  initializeTimeoutMs?: number
 }
 
 /** One owned session activity interval, from enqueue receipt through idle. */

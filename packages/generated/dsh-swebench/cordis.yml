@@ -1,0 +1,6 @@
+# SweBench plugin composition for dsh web: load the swe-bench tools and skill
+# into the host composition via direct file URL (the generated-plugin loading
+# pattern — bare names do not resolve for these packages).
+- insert:
+    - id: swebench
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-swebench/lib/index.js'

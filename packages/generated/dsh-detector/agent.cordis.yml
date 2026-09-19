@@ -1,0 +1,21 @@
+# Detector agent preset: the investigation subagent role of the
+# hypothesis-driven multi-agent debugger. The host composition already
+# supplies the filesystem tools, the subagent service, and the in-process
+# spawn provider, so this composition adds only the role itself, the
+# experiment-tree tools, and the explorer agent whose read-only subagent the
+# Detector can call for cross-file reconnaissance inside its scope. It mounts
+# once per process (standing mount) and every child detector joins it through
+# composeFrom, so the experiment-state store is one instance shared by the
+# whole recursive investigation and every layer sees the same tool set.
+- id: detector
+  name: ./lib/index.js
+  config:
+    provider: spawn
+    maxDepth: 3
+    persona: true
+
+- id: experiment-state
+  name: ../dsh-experiment-state/lib/index.js
+
+- id: explorer-agent
+  name: ../dsh-explorer-agent/lib/index.js

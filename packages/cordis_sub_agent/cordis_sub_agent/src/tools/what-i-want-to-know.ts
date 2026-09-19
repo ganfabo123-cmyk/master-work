@@ -22,7 +22,7 @@ const READING_GUIDANCE =
 
 export function whatIWantToKnowTool() {
   return defineTool({
-    name: 'what i want to know',
+    name: 'what_i_want_to_know',
     description: 'Declare what you want to know before exploring the repository.',
     parameters: {
       questions: {

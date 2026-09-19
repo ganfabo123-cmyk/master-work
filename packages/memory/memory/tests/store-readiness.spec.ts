@@ -17,11 +17,12 @@ afterEach(async () => {
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), 'dsh-memory-store-'))
   roots.push(root)
-  const memoryFile = join(root, 'missing-parent', 'memory.md')
+  const memoryDir = join(root, 'missing-parent', 'memory')
+  const memoryFile = join(memoryDir, 'global_memory.md')
   const factsDir = join(root, 'facts')
   const ctx = new Context()
   contexts.push(ctx)
-  await ctx.plugin(Memory.MemoryService, { memoryFile, factsDir, maxFacts: 5, now: () => new Date('2026-08-16T02:34:23.123Z') })
+  await ctx.plugin(Memory.MemoryService, { memoryDir, factsDir, maxFacts: 5, now: () => new Date('2026-08-16T02:34:23.123Z') })
   return { ctx, memoryFile }
 }
 
@@ -46,7 +47,7 @@ describe('release-ready Markdown and Store contracts', () => {
 
   it('creates a missing parent and file, then preserves multilingual content across reload', async () => {
     const { ctx, memoryFile } = await fixture()
-    const [stored] = await ctx.memory.record([{ title: UTF8_TITLE, keywords: [' Encoding ', 'ENCODING', 'Windows'], body: UTF8_BODY }])
+    const [stored] = await ctx.memory.record('global', [{ title: UTF8_TITLE, keywords: [' Encoding ', 'ENCODING', 'Windows'], body: UTF8_BODY }])
     expect(stored).toMatchObject({ id: 'memory-1', keywords: ['encoding', 'windows'], outcome: 'unknown' })
     expect(await readFile(memoryFile, 'utf8')).toContain('C:\\Users\\测试\\项目')
 
@@ -61,25 +62,25 @@ describe('release-ready Markdown and Store contracts', () => {
     const { ctx, memoryFile } = await fixture()
     await mkdir(join(memoryFile, '..'), { recursive: true })
     await writeFile(memoryFile, Memory.serializeMemoryMarkdown(ids.map(id => durable(id))))
-    await expect(ctx.memory.record([{ title: 'Next', keywords: ['id'], body: UTF8_BODY }]))
+    await expect(ctx.memory.record('global', [{ title: 'Next', keywords: ['id'], body: UTF8_BODY }]))
       .resolves.toMatchObject([{ id: expected }])
   })
 
   it('reloads external file changes for get and search', async () => {
     const { ctx, memoryFile } = await fixture()
-    await ctx.memory.record([{ title: 'First', keywords: ['one'], body: UTF8_BODY }])
+    await ctx.memory.record('global', [{ title: 'First', keywords: ['one'], body: UTF8_BODY }])
     const records = Memory.parseMemoryMarkdown(await readFile(memoryFile, 'utf8'))
     await writeFile(memoryFile, Memory.serializeMemoryMarkdown([...records, durable('memory-8', 'External')]))
-    await expect(ctx.memory.get('memory-8')).resolves.toMatchObject({ title: 'External' })
-    await expect(ctx.memory.search({ keywords: ['encoding'] })).resolves.toEqual(expect.arrayContaining([expect.objectContaining({ id: 'memory-8' })]))
+    await expect(ctx.memory.get('global', 'memory-8')).resolves.toMatchObject({ title: 'External' })
+    await expect(ctx.memory.search('global', { keywords: ['encoding'] })).resolves.toEqual(expect.arrayContaining([expect.objectContaining({ id: 'memory-8' })]))
   })
 
   it('rejects blank title, body, and keywords without partially writing a batch', async () => {
     const { ctx, memoryFile } = await fixture()
-    await expect(ctx.memory.record([{ title: ' ', keywords: ['x'], body: UTF8_BODY }])).rejects.toMatchObject({ code: 'MEMORY_EMPTY_TITLE' })
-    await expect(ctx.memory.record([{ title: 'Body', keywords: ['x'], body: ' ' }])).rejects.toMatchObject({ code: 'MEMORY_EMPTY_BODY' })
-    await expect(ctx.memory.record([{ title: 'Keywords', keywords: [], body: UTF8_BODY }])).rejects.toMatchObject({ code: 'MEMORY_EMPTY_KEYWORDS' })
-    await expect(ctx.memory.record([
+    await expect(ctx.memory.record('global', [{ title: ' ', keywords: ['x'], body: UTF8_BODY }])).rejects.toMatchObject({ code: 'MEMORY_EMPTY_TITLE' })
+    await expect(ctx.memory.record('global', [{ title: 'Body', keywords: ['x'], body: ' ' }])).rejects.toMatchObject({ code: 'MEMORY_EMPTY_BODY' })
+    await expect(ctx.memory.record('global', [{ title: 'Keywords', keywords: [], body: UTF8_BODY }])).rejects.toMatchObject({ code: 'MEMORY_EMPTY_KEYWORDS' })
+    await expect(ctx.memory.record('global', [
       { title: 'Valid', keywords: ['x'], body: UTF8_BODY },
       { title: '', keywords: ['y'], body: UTF8_BODY },
     ])).rejects.toMatchObject({ code: 'MEMORY_EMPTY_TITLE' })
@@ -88,10 +89,50 @@ describe('release-ready Markdown and Store contracts', () => {
 
   it('keeps all records and unique ids across three concurrent appends', async () => {
     const { ctx } = await fixture()
-    const results = await Promise.all(['A', 'B', 'C'].map(title => ctx.memory.record([{ title, keywords: [title], body: UTF8_BODY }])))
+    const results = await Promise.all(['A', 'B', 'C'].map(title => ctx.memory.record('global', [{ title, keywords: [title], body: UTF8_BODY }])))
     expect(results.flat().map(record => record.id).sort()).toEqual(['memory-1', 'memory-2', 'memory-3'])
-    await expect(Promise.all(['memory-1', 'memory-2', 'memory-3'].map(id => ctx.memory.get(id))))
+    await expect(Promise.all(['memory-1', 'memory-2', 'memory-3'].map(id => ctx.memory.get('global', id))))
       .resolves.toEqual(expect.arrayContaining([expect.objectContaining({ title: 'A' }), expect.objectContaining({ title: 'B' }), expect.objectContaining({ title: 'C' })]))
   })
-})
 
+  it('moves the legacy global file without rewriting its content', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'dsh-memory-migration-'))
+    roots.push(root)
+    const memoryDir = join(root, 'memory')
+    const legacyMemoryFile = join(root, 'memory.md')
+    const source = Memory.serializeMemoryMarkdown([durable('memory-7', UTF8_TITLE)])
+    await writeFile(legacyMemoryFile, source)
+    const ctx = new Context()
+    contexts.push(ctx)
+    await ctx.plugin(Memory.MemoryService, {
+      memoryDir,
+      legacyMemoryFile,
+      factsDir: join(root, 'facts'),
+      maxFacts: 5,
+    })
+
+    await expect(ctx.memory.get('global', 'memory-7')).resolves.toMatchObject({ title: UTF8_TITLE })
+    await expect(readFile(join(memoryDir, 'global_memory.md'), 'utf8')).resolves.toBe(source)
+    await expect(readFile(legacyMemoryFile, 'utf8')).rejects.toMatchObject({ code: 'ENOENT' })
+  })
+
+  it('refuses to overwrite a global block during legacy migration', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'dsh-memory-migration-conflict-'))
+    roots.push(root)
+    const memoryDir = join(root, 'memory')
+    const legacyMemoryFile = join(root, 'memory.md')
+    await mkdir(memoryDir, { recursive: true })
+    await writeFile(legacyMemoryFile, Memory.serializeMemoryMarkdown([durable('memory-1', 'Legacy')]))
+    await writeFile(join(memoryDir, 'global_memory.md'), Memory.serializeMemoryMarkdown([durable('memory-1', 'Current')]))
+    const ctx = new Context()
+    contexts.push(ctx)
+    await ctx.plugin(Memory.MemoryService, {
+      memoryDir,
+      legacyMemoryFile,
+      factsDir: join(root, 'facts'),
+      maxFacts: 5,
+    })
+
+    await expect(ctx.memory.get('global', 'memory-1')).rejects.toMatchObject({ code: 'MEMORY_MIGRATION_CONFLICT' })
+  })
+})

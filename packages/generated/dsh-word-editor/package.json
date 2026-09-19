@@ -1,0 +1,48 @@
+{
+  "name": "@deepseek-ai/dsh-word-editor",
+  "description": "A personal Word (.docx) quick-editing plugin: exposes open/read/find/str_replace/add_to/delete/formula_scan/formula_convert/save model tools so the caller agent opens a source (or template copy), edits through in-session target ids (pure OOXML with a style whitelist, row-clone table inserts, and atomic save), converts cleaned-up linear math to native Word OMath via Windows Word COM automation, and saves a new file next to the source with a clickable local link. A formula-cleanup subagent normalizes ambiguous LaTeX candidates when formula_scan requests it; the source is never overwritten.",
+  "version": "0.1.0-rc.5",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/dsh-subagent": "workspace:*",
+    "@deepseek-ai/dsh-subprocess": "workspace:*",
+    "@deepseek-ai/dsh-tools": "workspace:*",
+    "@deepseek-ai/schemastery": "workspace:*",
+    "@xmldom/xmldom": "^0.8.10",
+    "fflate": "^0.8.2"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "workspace:*"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "workspace:*",
+    "@deepseek-ai/dsh-invariants": "workspace:*",
+    "@deepseek-ai/dsh-subagent": "workspace:*",
+    "@deepseek-ai/dsh-subprocess": "workspace:*",
+    "@deepseek-ai/dsh-tools": "workspace:*",
+    "@xmldom/xmldom": "^0.8.10",
+    "fflate": "^0.8.2"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "node tests/run.mjs"
+  }
+}

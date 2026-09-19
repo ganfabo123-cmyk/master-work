@@ -44,7 +44,7 @@ export function submitPluginMetadataTool(tasks: PluginMetadataTaskStore) {
       'Submit the structured requirement metadata for a DeepSeek Harness plugin.',
       'Use it during requirement decomposition after describing the plugin input schema, output schema, block-and-arrow execution flow, and detailed plugin document.',
       'Every input/output field and every flow block/arrow requires a non-empty description.',
-      'This tool creates one empty task-owned directory under packages/generated, records the metadata in memory, and does not start implementation.',
+      'This tool creates one task-owned plugin scaffold under packages/generated, records the metadata in memory, and does not implement business behavior.',
     ].join('\n'),
     parameters: {
       plugin_name: { type: 'string', required: true, description: 'Non-empty package or plugin name being designed.' },
@@ -112,7 +112,7 @@ export function submitPluginMetadataTool(tasks: PluginMetadataTaskStore) {
         task_id: task.id,
         plugin_root: task.pluginRoot,
         plugin_metadata: metadata,
-        summary: `Plugin metadata submitted for ${metadata.plugin_name} as task ${task.id}. Plugin directory is ready at ${task.pluginRoot}: ${metadata.input_schema.length} input field(s), ${metadata.output_schema.length} output field(s), and ${metadata.brief_execution_flow.blocks.length} execution block(s).`,
+        summary: `Plugin metadata submitted for ${metadata.plugin_name} as task ${task.id}. Plugin scaffold is ready at ${task.pluginRoot}; fill the generated source and documentation before verification. It includes package.json, tsconfig.json, src/index.ts, src/invariant.ts, and README.md. The scaffold has ${metadata.input_schema.length} input field(s), ${metadata.output_schema.length} output field(s), and ${metadata.brief_execution_flow.blocks.length} execution block(s).`,
       }
     },
   })

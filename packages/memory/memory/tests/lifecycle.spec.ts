@@ -23,17 +23,16 @@ describe('memory plugin lifecycle', () => {
     contexts.push(ctx)
     await ctx.plugin(SystemPrompt)
     await ctx.plugin(ToolRuntime)
-    const fiber = await ctx.plugin(Memory, { memoryFile: join(root, 'memory.md') })
+    const fiber = await ctx.plugin(Memory, { memoryDir: join(root, 'memory') })
 
     expect(ctx.get('memory')).toBeDefined()
-    expect(['memory_search', 'memory_get', 'memory_record'].every(name => ctx.tools.get(name) !== undefined)).toBe(true)
+    expect(['memory_search', 'memory_get', 'memory_list_blocks', 'memory_record'].every(name => ctx.tools.get(name) !== undefined)).toBe(true)
     expect((await ctx.systemPrompt.assemble()).sections.some(section => section.name === 'tool:memory')).toBe(true)
 
     await fiber.dispose()
 
     expect(ctx.get('memory')).toBeUndefined()
-    expect(['memory_search', 'memory_get', 'memory_record'].every(name => ctx.tools.get(name) === undefined)).toBe(true)
+    expect(['memory_search', 'memory_get', 'memory_list_blocks', 'memory_record'].every(name => ctx.tools.get(name) === undefined)).toBe(true)
     expect((await ctx.systemPrompt.assemble()).sections.some(section => section.name === 'tool:memory')).toBe(false)
   })
 })
-

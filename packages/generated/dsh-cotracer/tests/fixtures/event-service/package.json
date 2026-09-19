@@ -1,0 +1,10 @@
+{
+  "name": "event-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fixture repository with a deliberate event-timing bug for CoTracer acceptance: the processor emits task events synchronously during a start() that also returns the events, and the consumer attaches listeners after start() returns, so the first batch of events is missed.",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}

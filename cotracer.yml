@@ -1,0 +1,19 @@
+# CoTracer + SWE-bench overlay for the normal DSH web/headless base profiles.
+# The base profile already provides filesystem, subprocess, and spawn-subagent
+# services. This overlay adds the tracing workflow and the SWE-bench tools.
+- insert:
+    - id: cotracer
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-cotracer/lib/index.js'
+
+    - id: experiment-state
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-experiment-state/lib/index.js'
+
+    - id: detector
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-detector/lib/index.js'
+      config:
+        provider: spawn
+        maxDepth: 3
+        persona: false
+
+    - id: swebench
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-swebench/lib/index.js'

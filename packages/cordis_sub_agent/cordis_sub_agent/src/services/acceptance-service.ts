@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto'
+import { createServer } from 'node:net'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import {
   DeepSeekHarness,
@@ -91,12 +93,25 @@ interface AcceptanceRuntime {
   state: AcceptanceSession
 }
 
+export interface AcceptanceServiceOptions {
+  runtimeBin?: string
+  startupTimeoutMs?: number
+  startingWebPort?: number
+}
+
+const DEFAULT_STARTUP_TIMEOUT_MS = 60_000
+const DEFAULT_STARTING_WEB_PORT = 3079
+
 
 export class AcceptanceService {
   private readonly runtimes = new Map<
     string,
     AcceptanceRuntime
   >()
+
+  constructor(
+    private readonly options: AcceptanceServiceOptions = {},
+  ) {}
 
 
   /**
@@ -144,13 +159,11 @@ export class AcceptanceService {
       })
 
     const repoRoot = resolve(input.repoRoot)
-    const runtimeBin = resolve(
-      repoRoot,
-      'packages',
-      'examples',
-      'jsonrpc-demo',
-      'lib',
-      'packaged-bin.js',
+    const webPort = await findAvailablePort(
+      this.options.startingWebPort ?? DEFAULT_STARTING_WEB_PORT,
+    )
+    const runtimeBin = this.options.runtimeBin ?? fileURLToPath(
+      new URL('../acceptance-runner.js', import.meta.url),
     )
     const harness = new DeepSeekHarness({
       launch: {
@@ -163,6 +176,7 @@ export class AcceptanceService {
           runtimeBin,
           composition.configPath,
           ...(input.patchPath === undefined ? [] : [resolve(input.patchPath)]),
+          String(webPort),
         ],
 
         /*
@@ -182,6 +196,8 @@ export class AcceptanceService {
 
       provider: input.provider,
       model: input.model,
+      initializeTimeoutMs:
+        this.options.startupTimeoutMs ?? DEFAULT_STARTUP_TIMEOUT_MS,
 
       ...(input.maxTokens !== undefined
         ? {
@@ -201,6 +217,8 @@ export class AcceptanceService {
 
       model: input.model,
 
+      webPort,
+
       status: 'starting',
 
       childSessionId,
@@ -216,6 +234,7 @@ export class AcceptanceService {
        *
        * spawn child process
        * → 建立 JSON-RPC transport
+       * → web profile boot and patch/plugin activation
        * → initialize handshake
        */
       await harness.start()
@@ -324,6 +343,12 @@ export class AcceptanceService {
             ? undefined
             : { onNotification: input.onNotification },
         )
+
+      if (result.finalResponse.trim().length === 0) {
+        throw new Error(
+          `Acceptance child session became idle without an assistant response. Events: ${JSON.stringify(result.events)}`,
+        )
+      }
 
       record.output =
         result.finalResponse
@@ -468,6 +493,38 @@ export class AcceptanceService {
 
     return runtime
   }
+}
+
+async function findAvailablePort(startingPort: number): Promise<number> {
+  if (!Number.isInteger(startingPort) || startingPort < 1 || startingPort > 65_535) {
+    throw new Error(`Invalid starting acceptance web port: ${startingPort}`)
+  }
+
+  for (let port = startingPort; port >= 1; port -= 1) {
+    if (await canListen(port)) return port
+  }
+
+  throw new Error(`No available acceptance web port at or below ${startingPort}.`)
+}
+
+function canListen(port: number): Promise<boolean> {
+  return new Promise((resolvePromise, reject) => {
+    const server = createServer()
+    server.unref()
+    server.once('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE' || error.code === 'EACCES') {
+        resolvePromise(false)
+        return
+      }
+      reject(error)
+    })
+    server.listen(port, '127.0.0.1', () => {
+      server.close((closeError) => {
+        if (closeError !== undefined) reject(closeError)
+        else resolvePromise(true)
+      })
+    })
+  })
 }
 
 

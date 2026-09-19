@@ -1,0 +1,13 @@
+# Opt-in reference: connect pywechatcc's WeChat RPA MCP server to DSH.
+- insert:
+    - id: mcp-wechat
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: wechat
+        transport: stdio
+        command: 'C:\Users\Lenovo\miniconda3\envs\wechat-mcp\python.exe'
+        args: ['-m', 'mcp_server.server']
+        cwd: 'D:\PycharmProjects\CodeHarness\github_rep\pywechatcc\Mcp\pyweixin_rpa'
+        env:
+          PYTHONIOENCODING: utf-8
+        failOnStartupError: true

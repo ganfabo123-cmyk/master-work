@@ -1,0 +1,24 @@
+# Debug composition for the smoke: mirrors the acceptance composition plus the
+# plugin and web server as direct file URLs (the temp-cordis-sub-agent.yml
+# pattern) — no package-name resolution involved.
+- id: agent-spine
+  name: '@deepseek-ai/dsh-agent-spine-demo'
+  config:
+    workspaceContext: false
+
+- id: llm-pi-ai
+  name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      opencode-go:
+        apiKeyEnv: open_code_api
+
+- insert:
+    - id: markdown-to-csv
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-markdown-to-csv/lib/index.js'
+
+    - id: markdown-to-csv-webserver
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/host/webserver/lib/index.js'
+      config:
+        host: 127.0.0.1
+        port: 0

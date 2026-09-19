@@ -27,6 +27,8 @@ export interface AcceptanceSession {
 
   model: string
 
+  webPort: number
+
   status: AcceptanceSessionStatus
 
   /**

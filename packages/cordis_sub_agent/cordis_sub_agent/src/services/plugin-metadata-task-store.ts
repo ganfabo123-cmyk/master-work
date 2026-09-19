@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { mkdir, rm, stat } from 'node:fs/promises'
 import { isAbsolute, relative, resolve } from 'node:path'
 import type { EngineeringVerificationResult } from './engineering-verification-service.js'
+import { createPluginScaffold } from './plugin-scaffold.js'
 
 export interface PluginMetadata {
   plugin_name: string
@@ -49,22 +50,28 @@ export class PluginMetadataTaskStore {
       .map(task => task.pluginRoot)
   }
 
-  /** Create an empty task-owned generated plugin directory and retain its metadata in memory. */
+  /** Create a task-owned generated plugin directory with its common scaffold. */
   async create(pluginName: string, metadata: PluginMetadata): Promise<PluginMetadataTask> {
     const pluginRoot = this.resolvePluginRoot(pluginName)
     if (await pathExists(pluginRoot)) {
       throw new Error(`Generated plugin directory already exists and cannot be claimed by a new task: ${pluginRoot}`)
     }
     await mkdir(pluginRoot)
-    const task: PluginMetadataTask = {
-      id: randomUUID(),
-      metadata,
-      pluginRoot,
-      createdAt: Date.now(),
-      evidence: [],
+    try {
+      await createPluginScaffold(pluginRoot, metadata)
+      const task: PluginMetadataTask = {
+        id: randomUUID(),
+        metadata,
+        pluginRoot,
+        createdAt: Date.now(),
+        evidence: [],
+      }
+      this.tasks.set(task.id, task)
+      return task
+    } catch (error) {
+      await rm(pluginRoot, { recursive: true, force: true })
+      throw error
     }
-    this.tasks.set(task.id, task)
-    return task
   }
 
   /** Return the submitted metadata task or fail when the id is unknown in this process. */
@@ -80,7 +87,7 @@ export class PluginMetadataTaskStore {
     this.addEvidence(taskId, {
       type: 'reading',
       createdAt: Date.now(),
-      summary: 'Reader Agent returned a structured reading plan.',
+      summary: 'Explorer Agent returned a structured repository exploration result.',
       details: { readPlan },
     })
   }

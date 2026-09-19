@@ -1,0 +1,30 @@
+# Acceptance overlay: the acceptance profile does not carry the subagent or
+# subprocess services, so the overlay adds them (subagent service + in-process
+# spawn provider; subprocess service) plus the word-editor plugin, all by
+# direct file URL — the acceptance runtime resolves plugins from the
+# jsonrpc-demo dependency surface, which does not declare these packages by
+# name. Used only as the acceptance patch, never with `dsh web`, where the
+# base profile already provides the same services.
+- insert:
+    - id: subagent
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/subagent/subagent/lib/index.js'
+
+    - id: subagent-spawn-in-process
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/subagent/subagent-spawn-in-process/lib/index.js'
+      config:
+        providerName: spawn
+
+    - id: subprocess
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/subprocess/subprocess-local/lib/index.js'
+
+    - id: fs-sandbox
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/fs/fs-sandbox/lib/index.js'
+
+    - id: sandbox-policy
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/sandbox/sandbox-policy/lib/index.js'
+
+    - id: tool-fs
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/fs/tool-fs/lib/index.js'
+
+    - id: word-editor
+      name: 'file:///D:/PycharmProjects/CodeHarness/harness/deepseek-harness/packages/generated/dsh-word-editor/lib/index.js'
