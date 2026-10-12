@@ -1,0 +1,16 @@
+{
+  "algorithm_version": "skill-trace-cleaning-v1",
+  "slice_count": 127,
+  "event_stats": {
+    "record_metadata": 7119,
+    "kept_text": 3371,
+    "kept_tool_call": 5070,
+    "empty_tool_result": 5029,
+    "duplicate_event": 136,
+    "unusable_event": 842,
+    "kept_other_text": 19
+  },
+  "input_event_count": 21450,
+  "cleaned_event_count": 8324,
+  "policy": "drop metadata records and empty tool results; preserve user/assistant intent, tool names, paths/commands, task lists; redact IDs/absolute paths and truncate code-heavy text"
+}

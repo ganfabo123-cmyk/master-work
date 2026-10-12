@@ -1,0 +1,78 @@
+{
+  "algorithm_version": "cluster-outcome-classification-v1",
+  "domains": [
+    {
+      "domain_id": "D001",
+      "input_slice_count": 65,
+      "outcome_counts": {
+        "success": 38,
+        "failure": 19,
+        "unresolved": 8
+      }
+    },
+    {
+      "domain_id": "D002",
+      "input_slice_count": 43,
+      "outcome_counts": {
+        "success": 23,
+        "unresolved": 5,
+        "failure": 15
+      }
+    },
+    {
+      "domain_id": "D003",
+      "input_slice_count": 45,
+      "outcome_counts": {
+        "success": 30,
+        "unresolved": 5,
+        "failure": 10
+      }
+    },
+    {
+      "domain_id": "D004",
+      "input_slice_count": 29,
+      "outcome_counts": {
+        "success": 16,
+        "unresolved": 6,
+        "failure": 7
+      }
+    },
+    {
+      "domain_id": "D005",
+      "input_slice_count": 45,
+      "outcome_counts": {
+        "success": 32,
+        "unresolved": 5,
+        "failure": 8
+      }
+    },
+    {
+      "domain_id": "D006",
+      "input_slice_count": 36,
+      "outcome_counts": {
+        "success": 23,
+        "unresolved": 7,
+        "failure": 6
+      }
+    },
+    {
+      "domain_id": "D007",
+      "input_slice_count": 27,
+      "outcome_counts": {
+        "success": 14,
+        "unresolved": 4,
+        "failure": 9
+      }
+    },
+    {
+      "domain_id": "D008",
+      "input_slice_count": 24,
+      "outcome_counts": {
+        "success": 16,
+        "failure": 7,
+        "unresolved": 1
+      }
+    }
+  ],
+  "note": "unresolved is retained when the slice has no decisive terminal evidence; it is not silently forced into success or failure"
+}

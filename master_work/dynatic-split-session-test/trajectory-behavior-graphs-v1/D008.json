@@ -1,0 +1,1017 @@
+{
+  "domain_id": "D008",
+  "source_terms": [
+    "web",
+    "device",
+    "Android"
+  ],
+  "slice_count": 24,
+  "signature_count": 23,
+  "nodes": [
+    [
+      "tool_result",
+      508
+    ],
+    [
+      "record",
+      342
+    ],
+    [
+      "assistant",
+      324
+    ],
+    [
+      "assistant_thinking",
+      197
+    ],
+    [
+      "tool_call:Bash",
+      186
+    ],
+    [
+      "tool_call:Edit",
+      78
+    ],
+    [
+      "tool_call:Write",
+      73
+    ],
+    [
+      "tool_call:Read",
+      69
+    ],
+    [
+      "tool_call:PowerShell",
+      50
+    ],
+    [
+      "user",
+      31
+    ],
+    [
+      "tool_call:TodoWrite",
+      16
+    ],
+    [
+      "tool_call:ToolSearch",
+      8
+    ],
+    [
+      "tool_call:Grep",
+      7
+    ],
+    [
+      "tool_call:AskUserQuestion",
+      5
+    ],
+    [
+      "tool_call:mcp__claude-in-chrome__computer",
+      4
+    ],
+    [
+      "tool_call:WebFetch",
+      3
+    ],
+    [
+      "tool_call:Glob",
+      3
+    ],
+    [
+      "user_image",
+      2
+    ],
+    [
+      "tool_call:WebSearch",
+      2
+    ],
+    [
+      "tool_call:Skill",
+      2
+    ],
+    [
+      "tool_call:mcp__claude-in-chrome__navigate",
+      2
+    ],
+    [
+      "tool_call:mcp__haven__expose_adb",
+      2
+    ],
+    [
+      "tool_call:mcp__claude-in-chrome__tabs_context_mcp",
+      1
+    ],
+    [
+      "tool_call:mcp__haven__list_sessions",
+      1
+    ]
+  ],
+  "edges": [
+    [
+      "tool_result",
+      "record",
+      205
+    ],
+    [
+      "tool_call:Bash",
+      "tool_result",
+      177
+    ],
+    [
+      "assistant_thinking",
+      "assistant",
+      168
+    ],
+    [
+      "assistant",
+      "tool_call:Bash",
+      132
+    ],
+    [
+      "record",
+      "assistant_thinking",
+      99
+    ],
+    [
+      "tool_result",
+      "assistant_thinking",
+      96
+    ],
+    [
+      "record",
+      "assistant",
+      82
+    ],
+    [
+      "tool_call:Edit",
+      "tool_result",
+      75
+    ],
+    [
+      "tool_result",
+      "assistant",
+      73
+    ],
+    [
+      "tool_call:Read",
+      "tool_result",
+      68
+    ],
+    [
+      "assistant",
+      "record",
+      51
+    ],
+    [
+      "tool_call:PowerShell",
+      "tool_result",
+      46
+    ],
+    [
+      "record",
+      "tool_result",
+      45
+    ],
+    [
+      "assistant",
+      "tool_call:Edit",
+      39
+    ],
+    [
+      "tool_call:Write",
+      "tool_result",
+      39
+    ],
+    [
+      "record",
+      "tool_call:Write",
+      37
+    ],
+    [
+      "tool_call:Write",
+      "record",
+      31
+    ],
+    [
+      "user",
+      "record",
+      30
+    ],
+    [
+      "assistant",
+      "tool_call:Read",
+      28
+    ],
+    [
+      "tool_result",
+      "tool_call:Read",
+      27
+    ],
+    [
+      "tool_result",
+      "tool_call:Edit",
+      26
+    ],
+    [
+      "record",
+      "user",
+      25
+    ],
+    [
+      "assistant",
+      "tool_call:Write",
+      21
+    ],
+    [
+      "tool_result",
+      "tool_call:PowerShell",
+      20
+    ],
+    [
+      "assistant",
+      "tool_call:PowerShell",
+      20
+    ],
+    [
+      "tool_result",
+      "tool_call:Bash",
+      19
+    ],
+    [
+      "record",
+      "tool_call:Bash",
+      18
+    ],
+    [
+      "tool_call:TodoWrite",
+      "tool_result",
+      16
+    ],
+    [
+      "tool_result",
+      "tool_call:Write",
+      15
+    ],
+    [
+      "assistant_thinking",
+      "tool_call:Bash",
+      14
+    ],
+    [
+      "record",
+      "tool_call:Edit",
+      10
+    ],
+    [
+      "tool_result",
+      "tool_call:TodoWrite",
+      10
+    ],
+    [
+      "tool_call:ToolSearch",
+      "tool_result",
+      8
+    ],
+    [
+      "record",
+      "tool_call:Read",
+      8
+    ],
+    [
+      "tool_call:Grep",
+      "tool_result",
+      7
+    ],
+    [
+      "tool_call:Bash",
+      "record",
+      7
+    ],
+    [
+      "assistant",
+      "tool_call:ToolSearch",
+      6
+    ],
+    [
+      "record",
+      "tool_call:PowerShell",
+      6
+    ],
+    [
+      "assistant_thinking",
+      "tool_call:Read",
+      5
+    ],
+    [
+      "tool_call:AskUserQuestion",
+      "tool_result",
+      5
+    ],
+    [
+      "assistant",
+      "tool_call:Grep",
+      4
+    ],
+    [
+      "tool_result",
+      "user",
+      4
+    ],
+    [
+      "assistant_thinking",
+      "tool_call:PowerShell",
+      4
+    ],
+    [
+      "assistant",
+      "tool_call:AskUserQuestion",
+      4
+    ],
+    [
+      "tool_call:mcp__claude-in-chrome__computer",
+      "tool_result",
+      4
+    ],
+    [
+      "tool_call:Edit",
+      "record",
+      3
+    ],
+    [
+      "tool_call:PowerShell",
+      "record",
+      3
+    ],
+    [
+      "tool_call:Glob",
+      "tool_result",
+      3
+    ],
+    [
+      "assistant",
+      "tool_call:TodoWrite",
+      3
+    ],
+    [
+      "record",
+      "tool_call:TodoWrite",
+      3
+    ]
+  ],
+  "common_signatures": [
+    {
+      "count": 2,
+      "signature": "tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > record > assistant_thinking",
+      "example_slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-08"
+    },
+    {
+      "count": 1,
+      "signature": "record > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Grep > tool_result > assistant > tool_call:Grep > tool_result > record > assistant > tool_call:Grep > tool_result > assistant > record",
+      "example_slice_id": "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-03"
+    },
+    {
+      "count": 1,
+      "signature": "record > user > record > assistant_thinking > assistant > tool_call:Read > tool_result > tool_call:ToolSearch > tool_result > record > assistant > tool_call:WebFetch > tool_result > assistant_thinking > assistant > tool_call:WebSearch > tool_result > record > assistant_thinking > assistant > record > assistant > tool_call:Read > tool_result",
+      "example_slice_id": "claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-01"
+    },
+    {
+      "count": 1,
+      "signature": "record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > tool_call:Write > record > tool_result > record",
+      "example_slice_id": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02"
+    },
+    {
+      "count": 1,
+      "signature": "assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > record > tool_result > record > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Read",
+      "example_slice_id": "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-05"
+    },
+    {
+      "count": 1,
+      "signature": "record > user > record > tool_call:Skill > tool_result > user > record > assistant > tool_call:ToolSearch > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Bash > tool_result > tool_call:Bash > tool_result > tool_call:Bash > tool_result > assistant > tool_call:Bash > tool_result > tool_call:Bash > tool_result",
+      "example_slice_id": "claude_code__4130c9a7-ee88-443a-91b5-224accd13629__segment-01"
+    },
+    {
+      "count": 1,
+      "signature": "tool_result > tool_call:PowerShell > record > tool_result > user > record > assistant_thinking > tool_call:PowerShell > record > tool_result > record > assistant > record > assistant_thinking > assistant > tool_call:Read > tool_result > record > tool_call:Grep > tool_result > assistant_thinking > tool_call:Read > tool_result > assistant",
+      "example_slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05"
+    },
+    {
+      "count": 1,
+      "signature": "tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > record > tool_call:Edit > tool_result > assistant > tool_call:Bash > tool_result > assistant_thinking > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > record > assistant > record",
+      "example_slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06"
+    }
+  ],
+  "representative_profiles": [
+    {
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-07",
+      "event_count": 838,
+      "user_events": 0,
+      "assistant_events": 121,
+      "tool_events": 0,
+      "sequence": [
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "tool_call:Edit",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:ToolSearch",
+        "tool_result",
+        "record",
+        "tool_call:mcp__claude-in-chrome__tabs_context_mcp",
+        "tool_result",
+        "record",
+        "tool_call:mcp__claude-in-chrome__navigate",
+        "tool_result",
+        "assistant_thinking",
+        "tool_call:mcp__claude-in-chrome__computer",
+        "tool_result",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:mcp__claude-in-chrome__computer",
+        "tool_result",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:mcp__claude-in-chrome__computer",
+        "tool_result",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant",
+        "tool_call:mcp__claude-in-chrome__navigate",
+        "tool_result",
+        "tool_call:mcp__claude-in-chrome__computer",
+        "tool_result",
+        "record",
+        "assistant_thinking"
+      ],
+      "signature": "record > assistant_thinking > assistant > tool_call:Write > tool_result > record > assistant_thinking > assistant > tool_call:Edit > tool_result > record > tool_call:Edit > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant > tool_call:Bash > tool_result > assistant > record > assistant_thinking > assistant",
+      "operations": {
+        "read": 68,
+        "search": 31,
+        "list": 19,
+        "remove": 17,
+        "create": 16,
+        "run:python": 14,
+        "edit": 11,
+        "git:add": 11,
+        "git:commit": 11,
+        "run:glab": 9,
+        "write": 8,
+        "git:push": 6,
+        "git:log": 5,
+        "git:other": 5,
+        "git:status": 3,
+        "copy": 3,
+        "run:node": 3,
+        "git:checkout": 2,
+        "run:npm": 2,
+        "run:gh": 2,
+        "fetch": 1,
+        "typecheck:npm": 1,
+        "dev:npm": 1,
+        "run:build-apk.sh": 1,
+        "move": 1,
+        "build:gradle": 1
+      },
+      "file_types": {
+        ".yml": 32,
+        ".log": 24,
+        ".md": 5,
+        ".txt": 5,
+        ".sh": 5,
+        ".svelte": 4,
+        ".png": 4,
+        ".kts": 4,
+        ".xml": 3,
+        ".0": 3,
+        ".apk": 3,
+        ".main": 2,
+        ".x4x4": 2,
+        ".1": 2,
+        ".py": 1,
+        ".version": 1,
+        ".toml": 1,
+        ".node": 1,
+        ".ts": 1,
+        ".output": 1
+      }
+    },
+    {
+      "slice_id": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02",
+      "event_count": 733,
+      "user_events": 5,
+      "assistant_events": 88,
+      "tool_events": 0,
+      "sequence": [
+        "record",
+        "assistant",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:Write",
+        "tool_result",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "tool_result",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Write"
+      ],
+      "signature": "record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > tool_call:Write > record > tool_result > record",
+      "operations": {
+        "write": 68,
+        "read": 39,
+        "edit": 34,
+        "build:make": 14,
+        "run:yggdrasil.exe": 9,
+        "test:make": 9,
+        "search": 6,
+        "compile": 6,
+        "run:dbg6.exe": 3,
+        "list": 1,
+        "run:dbg2.exe": 1,
+        "run:dbg3.exe": 1,
+        "run:dbg4.exe": 1,
+        "run:dbg5.exe": 1
+      },
+      "file_types": {
+        ".cpp": 56,
+        ".jsx": 47,
+        ".js": 33,
+        ".ps1": 16,
+        ".exe": 6,
+        ".h": 4,
+        "makefile": 4
+      }
+    },
+    {
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-05",
+      "event_count": 461,
+      "user_events": 0,
+      "assistant_events": 60,
+      "tool_events": 0,
+      "sequence": [
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:Edit",
+        "tool_result",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:Write",
+        "tool_result",
+        "assistant",
+        "tool_call:Edit",
+        "tool_result",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "record",
+        "tool_call:Bash",
+        "tool_result",
+        "tool_call:Read",
+        "tool_result",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "tool_call:Read",
+        "tool_result",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant",
+        "record",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant_thinking",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "record",
+        "tool_call:Read",
+        "tool_result",
+        "record",
+        "assistant_thinking"
+      ],
+      "signature": "record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant > tool_call:Edit > tool_result > tool_call:Edit > tool_result > record > assistant",
+      "operations": {
+        "read": 35,
+        "edit": 27,
+        "run:adb": 12,
+        "search": 11,
+        "run:node": 10,
+        "run:gh": 9,
+        "git:add": 8,
+        "git:commit": 8,
+        "run:build-apk.sh": 7,
+        "list": 6,
+        "typecheck:npm": 5,
+        "git:status": 4,
+        "write": 2,
+        "test:npm": 2,
+        "git:push": 2,
+        "build:gradle": 2,
+        "remove": 2,
+        "git:other": 1,
+        "git:checkout": 1,
+        "git:merge": 1,
+        "git:branch": 1,
+        "git:log": 1,
+        "create": 1
+      },
+      "file_types": {
+        ".svelte": 17,
+        ".log": 13,
+        ".yml": 13,
+        ".mjs": 10,
+        ".kt": 10,
+        ".png": 8,
+        ".kts": 8,
+        ".ts": 2,
+        ".css": 1,
+        ".output": 1
+      }
+    },
+    {
+      "slice_id": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-02",
+      "event_count": 429,
+      "user_events": 3,
+      "assistant_events": 75,
+      "tool_events": 0,
+      "sequence": [
+        "tool_result",
+        "assistant",
+        "tool_call:Edit",
+        "record",
+        "tool_result",
+        "assistant",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "record",
+        "user",
+        "record",
+        "assistant",
+        "tool_call:Read",
+        "tool_result",
+        "tool_call:Read",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "tool_call:Read",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:Edit",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "record",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "record",
+        "user",
+        "record",
+        "assistant"
+      ],
+      "signature": "tool_result > assistant > tool_call:Edit > record > tool_result > assistant > tool_call:Edit > tool_result > record > tool_call:PowerShell > tool_result > assistant > record > user > record > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > record > assistant > tool_call:PowerShell > tool_result",
+      "operations": {
+        "edit": 40,
+        "read": 20,
+        "list": 10,
+        "search": 9,
+        "write": 7,
+        "run:dmls.exe": 2,
+        "run:dxdiag.exe": 1,
+        "run:gflags.exe": 1,
+        "run:where.exe": 1,
+        "copy": 1,
+        "run:cmd": 1,
+        "run:handle64.exe": 1,
+        "remove": 1
+      },
+      "file_types": {
+        ".odin": 66,
+        ".dll": 3,
+        ".bat": 2,
+        ".exe": 2,
+        ".html": 2,
+        ".md": 1
+      }
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01",
+      "event_count": 411,
+      "user_events": 13,
+      "assistant_events": 59,
+      "tool_events": 0,
+      "sequence": [
+        "record",
+        "user",
+        "record",
+        "assistant",
+        "tool_call:Read",
+        "tool_result",
+        "assistant",
+        "tool_call:Bash",
+        "record",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "assistant",
+        "record",
+        "user",
+        "record",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result",
+        "record",
+        "tool_call:PowerShell",
+        "tool_result",
+        "tool_call:Bash",
+        "tool_result",
+        "assistant",
+        "tool_call:Read",
+        "tool_result",
+        "tool_call:Read",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:Write",
+        "record",
+        "tool_result",
+        "assistant",
+        "tool_call:Bash",
+        "tool_result",
+        "record",
+        "assistant",
+        "tool_call:PowerShell",
+        "tool_result",
+        "assistant",
+        "tool_call:PowerShell",
+        "record",
+        "tool_result",
+        "record",
+        "tool_call:Bash",
+        "tool_result",
+        "tool_call:Bash",
+        "tool_result",
+        "tool_call:Bash",
+        "tool_result",
+        "tool_call:PowerShell",
+        "tool_result"
+      ],
+      "signature": "record > user > record > assistant > tool_call:Read > tool_result > assistant > tool_call:Bash > record > tool_result > tool_call:PowerShell > tool_result > assistant > tool_call:Write > record > tool_result > tool_call:Write > record > tool_result > record > tool_call:Write > record > tool_result > assistant",
+      "operations": {
+        "read": 20,
+        "write": 16,
+        "list": 14,
+        "edit": 14,
+        "search": 9,
+        "run:cmd": 6,
+        "remove": 4,
+        "dev:npm": 4,
+        "build:npm": 3,
+        "run:node": 2,
+        "run:npm": 2,
+        "run:npx": 2,
+        "install:npm": 2,
+        "typecheck:npm": 1
+      },
+      "file_types": {
+        ".js": 16,
+        ".tsx": 16,
+        ".css": 12,
+        ".md": 6,
+        ".html": 4,
+        ".json": 4,
+        ".ts": 3,
+        "dockerfile": 1,
+        ".gitignore": 1,
+        ".output": 1
+      }
+    }
+  ]
+}

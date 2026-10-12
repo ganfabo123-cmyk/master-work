@@ -1,0 +1,114 @@
+{
+  "slice_id": "claude_code__da6566ff-0116-4424-bb59-660623f9eb31__segment-01",
+  "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da6566ff-0116-4424-bb59-660623f9eb31\\segment-01.json",
+  "original_event_count": 62,
+  "cleaned_event_count": 16,
+  "events": [
+    {
+      "kind": "assistant",
+      "text": "Let me look up how to install custom skills in Claude Code."
+    },
+    {
+      "kind": "tool",
+      "tool": "ToolSearch",
+      "arguments": {
+        "query": "WebSearch"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "WebSearch",
+      "arguments": {
+        "query": "Claude Code install skill from GitHub repository 2026"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "claude skill install --help 2>&1 || claude --help 2>&1 | head -50",
+        "description": "Check Claude Code CLI skill install command"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "claude plugin --help 2>&1",
+        "description": "Check Claude Code plugin management commands"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "claude plugin marketplace --help 2>&1",
+        "description": "Check marketplace subcommands"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "claude plugin install --help 2>&1",
+        "description": "Check plugin install command options"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The workflow is: add the GitHub repo as a marketplace, then install from it. Let me first check what's in the humanizer repo to understand its structure."
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "claude plugin marketplace add httphumanizer.git 2>&1",
+        "description": "Add humanizer GitHub repo as a marketplace"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "It's not a marketplace. Let me check the repo structure directly."
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "git clone httphumanizer.git \"$env:TEMP\\humanizer\" 2>&1 && ls \"$env:TEMP\\humanizer\"",
+        "description": "Clone humanizer repo to temp dir and list contents"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "PowerShell",
+      "arguments": {
+        "command": "git clone httphumanizer.git \"$env:TEMP\\humanizer\" 2>&1; if (Test-Path \"$env:TEMP\\humanizer\") { Get-ChildItem \"$env:TEMP\\humanizer\" }",
+        "description": "Clone humanizer repo and list files"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "It has a `SKILL.md` file — this is a skill, not a marketplace plugin. Skills go in `~/.claude/skills/<name>/`. Let me install it there."
+    },
+    {
+      "kind": "tool",
+      "tool": "PowerShell",
+      "arguments": {
+        "command": "New-Item -ItemType Directory -Force \"$env:USERPROFILE\\.claude\\skills\\humanizer\" | Out-Null; Copy-Item \"$env:TEMP\\humanizer\\SKILL.md\" \"$env:USERPROFILE\\.claude\\skills\\humanizer\\SKILL.md\"; Write-Host \"Installed successfully\"",
+        "description": "Install humanizer skill to ~/.claude/skills/humanizer/"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "PowerShell",
+      "arguments": {
+        "command": "Get-Content \"$env:USERPROFILE\\.claude\\skills\\humanizer\\SKILL.md\" -TotalCount 30",
+        "description": "Preview first 30 lines of installed skill"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The `humanizer` skill is now installed and active — you can see it already appears in the available skills list. Use it with `/humanizer` in any Claude Code session.\n\nIt removes AI writing patterns like em dash overuse, \"rule of three\" phrasing, AI vocabulary words, passive voice, vague attributions, and more. Version 2.8.0, MIT licensed.\n\nSources:\n- [How to install a Claude Code skill from GitHub - Taivo Pungas](http)"
+    }
+  ]
+}

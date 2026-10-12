@@ -1,0 +1,39 @@
+{
+  "algorithm_version": "three-layer-domain-outcome-pipeline-v1",
+  "input": {
+    "slice_count": 97,
+    "source": "vibecoding-trace-data-bundle/dynatic-split-session-test/calibrated-confidence-length-banded-v3-slices"
+  },
+  "layers": [
+    {
+      "layer": 1,
+      "name": "LLM-normalized broad domains",
+      "domain_count": 3,
+      "path": "llm-assisted-domain-v3/domains.json",
+      "outcome_path": "cluster-outcome-classification-broad-v1"
+    },
+    {
+      "layer": 2,
+      "name": "unsupervised fine domains",
+      "domain_count": 8,
+      "path": "unsupervised-domain-complete-v6/domains.json",
+      "outcome_path": "cluster-outcome-classification-v1"
+    },
+    {
+      "layer": 3,
+      "name": "success/failure split inside fine domains",
+      "path": "cluster-outcome-classification-v1",
+      "labels": [
+        "success",
+        "failure",
+        "unresolved"
+      ],
+      "rule": "terminal 20 text-bearing events; evidence score comparison"
+    }
+  ],
+  "notes": [
+    "Broad domains overlap because the LLM normalization preserves source-cluster evidence.",
+    "Fine domains are mathematical candidate clusters.",
+    "Outcome labels are terminal-evidence partitions; unresolved is retained rather than forced."
+  ]
+}

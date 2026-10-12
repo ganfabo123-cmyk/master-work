@@ -1,0 +1,1284 @@
+[
+  {
+    "candidate_id": "P001",
+    "evidence_score": 0.6361,
+    "suggested_name_terms": [
+      "multiboot",
+      "gop",
+      "grub"
+    ],
+    "member_count": 3,
+    "session_count": 1,
+    "members": [
+      "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-01",
+      "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02",
+      "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-03"
+    ],
+    "minimum_pair_similarity": 0.2336,
+    "mean_pair_similarity": 0.301,
+    "shared_features": {
+      "task": [
+        "multiboot",
+        "gop",
+        "grub",
+        "mb2",
+        "multiboot2",
+        "uefi",
+        "bios",
+        "iso"
+      ],
+      "action_object": [
+        "run+uefi",
+        "run+iso",
+        "update+iso"
+      ],
+      "operation_file": [
+        "edit+makefile",
+        "read+pmm.c",
+        "read+grub.cfg",
+        "read+kernel.c"
+      ],
+      "operation_type": [
+        "read+.c",
+        "read+.h",
+        "edit+makefile",
+        "read+.cfg"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-01",
+        "right": "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02",
+        "joint_similarity": 0.3587,
+        "view_similarities": {
+          "task": 0.6561,
+          "action_object": 0.0,
+          "operation_file": 0.0738,
+          "operation_type": 0.1225
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "multiboot",
+            "pmm",
+            "gop",
+            "vga",
+            "asm",
+            "pmm_init",
+            "ld",
+            "mb2hdr"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "read+pmm.c"
+          ],
+          "operation_type": [
+            "read+.h",
+            "read+.c"
+          ]
+        }
+      },
+      {
+        "left": "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-01",
+        "right": "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-03",
+        "joint_similarity": 0.2336,
+        "view_similarities": {
+          "task": 0.3512,
+          "action_object": 0.0,
+          "operation_file": 0.1373,
+          "operation_type": 0.2364
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "multiboot",
+            "gop",
+            "grub",
+            "multiboot2",
+            "mb2",
+            "uefi",
+            "framebuffer"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "read+grub.cfg",
+            "read+kernel.c"
+          ],
+          "operation_type": [
+            "read+.cfg",
+            "read+.h",
+            "read+.c"
+          ]
+        }
+      },
+      {
+        "left": "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02",
+        "right": "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-03",
+        "joint_similarity": 0.3108,
+        "view_similarities": {
+          "task": 0.3959,
+          "action_object": 0.3558,
+          "operation_file": 0.1375,
+          "operation_type": 0.2509
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "mb2",
+            "grub",
+            "multiboot2",
+            "gop",
+            "multiboot",
+            "iso",
+            "uefi",
+            "bios"
+          ],
+          "action_object": [
+            "update+iso",
+            "run+iso",
+            "run+uefi"
+          ],
+          "operation_file": [
+            "edit+makefile"
+          ],
+          "operation_type": [
+            "edit+makefile",
+            "read+.h",
+            "read+.c"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P002",
+    "evidence_score": 0.7809,
+    "suggested_name_terms": [
+      "cfml",
+      "cryptoscam",
+      "milestone"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01",
+      "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02"
+    ],
+    "minimum_pair_similarity": 0.2935,
+    "mean_pair_similarity": 0.2935,
+    "shared_features": {
+      "task": [
+        "cfml",
+        "cryptoscam",
+        "milestone",
+        "directive",
+        "nyancat",
+        "directives"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "run:python+main.py",
+        "edit+interpreter.py",
+        "read+interpreter.py"
+      ],
+      "operation_type": [
+        "run:python+.cfml",
+        "edit+.py",
+        "run:python+.py",
+        "write+.cfml",
+        "write+.py",
+        "read+.py",
+        "write+.md",
+        "read+.md"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01",
+        "right": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+        "joint_similarity": 0.2935,
+        "view_similarities": {
+          "task": 0.3408,
+          "action_object": 0.0,
+          "operation_file": 0.2016,
+          "operation_type": 0.7269
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "cryptoscam",
+            "directive",
+            "milestone",
+            "cfml",
+            "directives",
+            "nyancat"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "edit+interpreter.py",
+            "run:python+main.py",
+            "read+interpreter.py"
+          ],
+          "operation_type": [
+            "edit+.py",
+            "run:python+.cfml",
+            "write+.py",
+            "run:python+.py",
+            "write+.cfml",
+            "read+.py",
+            "write+.md",
+            "read+.md"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P003",
+    "evidence_score": 0.6171,
+    "suggested_name_terms": [
+      "cryptoscam",
+      "cfml",
+      "directive"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+      "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03"
+    ],
+    "minimum_pair_similarity": 0.2234,
+    "mean_pair_similarity": 0.2234,
+    "shared_features": {
+      "task": [
+        "cryptoscam",
+        "cfml",
+        "directive",
+        "dangerous",
+        "dangerous_codeberg"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "run:python+test_dangerous.cfml",
+        "run:python+main.py"
+      ],
+      "operation_type": [
+        "edit+.py",
+        "run:python+.py",
+        "run:python+.cfml",
+        "write+.py",
+        "read+.py"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+        "right": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03",
+        "joint_similarity": 0.2234,
+        "view_similarities": {
+          "task": 0.2457,
+          "action_object": 0.0,
+          "operation_file": 0.1556,
+          "operation_type": 0.6168
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "cryptoscam",
+            "cfml",
+            "dangerous_codeberg",
+            "dangerous",
+            "directive"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "run:python+test_dangerous.cfml",
+            "run:python+main.py"
+          ],
+          "operation_type": [
+            "edit+.py",
+            "run:python+.cfml",
+            "write+.py",
+            "run:python+.py",
+            "read+.py"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P004",
+    "evidence_score": 0.9,
+    "suggested_name_terms": [
+      "taskbar",
+      "peppertino",
+      "icons"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01",
+      "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03"
+    ],
+    "minimum_pair_similarity": 0.3514,
+    "mean_pair_similarity": 0.3514,
+    "shared_features": {
+      "task": [
+        "taskbar",
+        "peppertino",
+        "icons",
+        "clock",
+        "alpine",
+        "scss"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "edit+index.scss",
+        "edit+core.ts",
+        "read+index.scss",
+        "read+clock.ts",
+        "read+core.ts",
+        "read+desktop.ts",
+        "edit+desktop.ts"
+      ],
+      "operation_type": [
+        "read+.scss",
+        "edit+.scss",
+        "edit+.ts",
+        "read+.ts",
+        "write+.ts"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01",
+        "right": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03",
+        "joint_similarity": 0.3514,
+        "view_similarities": {
+          "task": 0.3676,
+          "action_object": 0.0,
+          "operation_file": 0.3801,
+          "operation_type": 0.7258
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "taskbar",
+            "icons",
+            "clock",
+            "alpine",
+            "peppertino",
+            "scss"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "edit+index.scss",
+            "edit+core.ts",
+            "read+index.scss",
+            "edit+desktop.ts",
+            "read+clock.ts",
+            "read+core.ts",
+            "read+desktop.ts"
+          ],
+          "operation_type": [
+            "edit+.scss",
+            "read+.scss",
+            "read+.ts",
+            "edit+.ts",
+            "write+.ts"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P005",
+    "evidence_score": 0.7383,
+    "suggested_name_terms": [
+      "lucide",
+      "clock",
+      "icon"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02",
+      "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03"
+    ],
+    "minimum_pair_similarity": 0.2143,
+    "mean_pair_similarity": 0.2143,
+    "shared_features": {
+      "task": [
+        "lucide",
+        "clock",
+        "icon",
+        "icontosvg",
+        "svg"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "edit+clock.ts",
+        "edit+core.ts"
+      ],
+      "operation_type": [
+        "edit+.ts",
+        "write+.ts"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02",
+        "right": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03",
+        "joint_similarity": 0.2143,
+        "view_similarities": {
+          "task": 0.2567,
+          "action_object": 0.0,
+          "operation_file": 0.2537,
+          "operation_type": 0.2255
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "lucide",
+            "clock",
+            "icontosvg",
+            "svg",
+            "icon"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "edit+clock.ts",
+            "edit+core.ts"
+          ],
+          "operation_type": [
+            "edit+.ts",
+            "write+.ts"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P006",
+    "evidence_score": 0.7613,
+    "suggested_name_terms": [
+      "vercel"
+    ],
+    "member_count": 2,
+    "session_count": 2,
+    "members": [
+      "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01",
+      "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04"
+    ],
+    "minimum_pair_similarity": 0.2163,
+    "mean_pair_similarity": 0.2163,
+    "shared_features": {
+      "task": [
+        "vercel"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "read+vercel.json",
+        "read+main.js",
+        "edit+vercel.json",
+        "read+index.html"
+      ],
+      "operation_type": [
+        "read+.json",
+        "edit+.json",
+        "read+.js",
+        "read+.html"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01",
+        "right": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04",
+        "joint_similarity": 0.2163,
+        "view_similarities": {
+          "task": 0.1432,
+          "action_object": 0.0,
+          "operation_file": 0.4052,
+          "operation_type": 0.4336
+        },
+        "same_session": false,
+        "shared_features": {
+          "task": [
+            "vercel"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "edit+vercel.json",
+            "read+vercel.json",
+            "read+main.js",
+            "read+index.html"
+          ],
+          "operation_type": [
+            "read+.json",
+            "edit+.json",
+            "read+.html",
+            "read+.js"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P007",
+    "evidence_score": 0.7578,
+    "suggested_name_terms": [
+      "lexer",
+      "codegen",
+      "jsx"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-01",
+      "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-03"
+    ],
+    "minimum_pair_similarity": 0.2627,
+    "mean_pair_similarity": 0.2627,
+    "shared_features": {
+      "task": [
+        "lexer",
+        "codegen",
+        "jsx",
+        "cpp",
+        "diagnostics",
+        "ast",
+        "parser"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "write+codegen.cpp",
+        "write+codegen.h",
+        "write+diagnostics.h",
+        "write+main.cpp"
+      ],
+      "operation_type": [
+        "write+.h",
+        "write+.cpp"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-01",
+        "right": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-03",
+        "joint_similarity": 0.2627,
+        "view_similarities": {
+          "task": 0.3521,
+          "action_object": 0.0,
+          "operation_file": 0.1994,
+          "operation_type": 0.368
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "lexer",
+            "cpp",
+            "diagnostics",
+            "codegen",
+            "jsx",
+            "parser",
+            "ast"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "write+codegen.cpp",
+            "write+codegen.h",
+            "write+diagnostics.h",
+            "write+main.cpp"
+          ],
+          "operation_type": [
+            "write+.cpp",
+            "write+.h"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P008",
+    "evidence_score": 0.8127,
+    "suggested_name_terms": [
+      "sysinfo",
+      "smp",
+      "cpio"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-03",
+      "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05"
+    ],
+    "minimum_pair_similarity": 0.2664,
+    "mean_pair_similarity": 0.2664,
+    "shared_features": {
+      "task": [
+        "sysinfo",
+        "smp",
+        "cpio",
+        "initrd",
+        "rdinit"
+      ],
+      "action_object": [
+        "run+sysinfo"
+      ],
+      "operation_file": [
+        "edit+build.sh",
+        "edit+sysinfo.c",
+        "edit+minit.c",
+        "read+build.sh",
+        "write+makefile",
+        "read+minit.c"
+      ],
+      "operation_type": [
+        "edit+.sh",
+        "edit+.c",
+        "write+.c",
+        "write+.sh",
+        "write+makefile",
+        "read+.sh",
+        "read+.c"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-03",
+        "right": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05",
+        "joint_similarity": 0.2664,
+        "view_similarities": {
+          "task": 0.2444,
+          "action_object": 0.0748,
+          "operation_file": 0.3126,
+          "operation_type": 0.5485
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "sysinfo",
+            "smp",
+            "cpio",
+            "initrd",
+            "rdinit"
+          ],
+          "action_object": [
+            "run+sysinfo"
+          ],
+          "operation_file": [
+            "edit+build.sh",
+            "edit+sysinfo.c",
+            "edit+minit.c",
+            "read+build.sh",
+            "write+makefile",
+            "read+minit.c"
+          ],
+          "operation_type": [
+            "edit+.sh",
+            "edit+.c",
+            "read+.sh",
+            "write+makefile",
+            "write+.c",
+            "read+.c",
+            "write+.sh"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P009",
+    "evidence_score": 0.6276,
+    "suggested_name_terms": [
+      "bochs",
+      "ko",
+      "cpio"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05",
+      "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06"
+    ],
+    "minimum_pair_similarity": 0.3125,
+    "mean_pair_similarity": 0.3125,
+    "shared_features": {
+      "task": [
+        "bochs",
+        "ko",
+        "cpio",
+        "smp",
+        "initrd",
+        "rdinit",
+        "tty1",
+        "ovmf"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "write+makefile",
+        "run:wsl.exe+setup-bochs-module.sh",
+        "write+setup-bochs-module.sh"
+      ],
+      "operation_type": [
+        "write+.sh",
+        "run:wsl.exe+.sh",
+        "edit+.sh",
+        "read+.output",
+        "write+makefile",
+        "read+.sh",
+        "write+.c"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05",
+        "right": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06",
+        "joint_similarity": 0.3125,
+        "view_similarities": {
+          "task": 0.4916,
+          "action_object": 0.0,
+          "operation_file": 0.0665,
+          "operation_type": 0.5011
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "bochs",
+            "ko",
+            "cpio",
+            "ovmf",
+            "initrd",
+            "rdinit",
+            "smp",
+            "tty1"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "write+makefile",
+            "run:wsl.exe+setup-bochs-module.sh",
+            "write+setup-bochs-module.sh"
+          ],
+          "operation_type": [
+            "write+.sh",
+            "edit+.sh",
+            "write+makefile",
+            "run:wsl.exe+.sh",
+            "read+.sh",
+            "read+.output",
+            "write+.c"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P010",
+    "evidence_score": 0.8738,
+    "suggested_name_terms": [
+      "frostcore",
+      "rt",
+      "ng"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-01",
+      "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-03"
+    ],
+    "minimum_pair_similarity": 0.3125,
+    "mean_pair_similarity": 0.3125,
+    "shared_features": {
+      "task": [
+        "frostcore",
+        "rt",
+        "ng",
+        "quickjs",
+        "runtimes",
+        "js_eval"
+      ],
+      "action_object": [
+        "add+frostcore"
+      ],
+      "operation_file": [
+        "search+quickjs.h",
+        "edit+frostcore.c",
+        "search+quickjs.c",
+        "read+quickjs.h",
+        "read+quickjs.c",
+        "edit+makefile",
+        "read+frostcore.c",
+        "read+frostcore.h"
+      ],
+      "operation_type": [
+        "search+.h",
+        "search+.c",
+        "write+.c",
+        "edit+.c",
+        "edit+makefile",
+        "read+.c",
+        "read+.h",
+        "write+.md"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-01",
+        "right": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-03",
+        "joint_similarity": 0.3125,
+        "view_similarities": {
+          "task": 0.2775,
+          "action_object": 0.1293,
+          "operation_file": 0.3765,
+          "operation_type": 0.6026
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "frostcore",
+            "rt",
+            "ng",
+            "runtimes",
+            "quickjs",
+            "js_eval"
+          ],
+          "action_object": [
+            "add+frostcore"
+          ],
+          "operation_file": [
+            "search+quickjs.h",
+            "edit+frostcore.c",
+            "read+frostcore.c",
+            "read+frostcore.h",
+            "write+frostcore.h",
+            "read+quickjs.c",
+            "read+quickjs.h",
+            "search+quickjs.c"
+          ],
+          "operation_type": [
+            "search+.h",
+            "edit+.c",
+            "write+.c",
+            "write+.h",
+            "read+.h",
+            "read+.c",
+            "search+.c",
+            "edit+.h"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P011",
+    "evidence_score": 0.5616,
+    "suggested_name_terms": [
+      "subreddit",
+      "reddit",
+      "carbon"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01",
+      "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03"
+    ],
+    "minimum_pair_similarity": 0.2038,
+    "mean_pair_similarity": 0.2038,
+    "shared_features": {
+      "task": [
+        "subreddit",
+        "reddit",
+        "carbon",
+        "md3"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "read+global.css"
+      ],
+      "operation_type": [
+        "read+.tsx",
+        "read+.css",
+        "write+.tsx",
+        "read+.json"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01",
+        "right": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03",
+        "joint_similarity": 0.2038,
+        "view_similarities": {
+          "task": 0.2749,
+          "action_object": 0.0,
+          "operation_file": 0.09,
+          "operation_type": 0.4381
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "carbon",
+            "reddit",
+            "subreddit",
+            "md3"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "read+global.css"
+          ],
+          "operation_type": [
+            "read+.tsx",
+            "write+.tsx",
+            "read+.css",
+            "read+.json"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P012",
+    "evidence_score": 0.9,
+    "suggested_name_terms": [
+      "eve",
+      "timeline",
+      "beginnings"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+      "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-04"
+    ],
+    "minimum_pair_similarity": 0.3467,
+    "mean_pair_similarity": 0.3467,
+    "shared_features": {
+      "task": [
+        "eve",
+        "timeline",
+        "beginnings",
+        "books",
+        "connections",
+        "abel"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "edit+connections.tsx",
+        "edit+project_uriel_canon.md",
+        "edit+app.tsx",
+        "edit+index.tsx",
+        "read+connections.tsx"
+      ],
+      "operation_type": [
+        "edit+.tsx",
+        "write+.css",
+        "edit+.md",
+        "read+.tsx",
+        "write+.tsx"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+        "right": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-04",
+        "joint_similarity": 0.3467,
+        "view_similarities": {
+          "task": 0.3251,
+          "action_object": 0.0,
+          "operation_file": 0.4251,
+          "operation_type": 0.7787
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "eve",
+            "timeline",
+            "books",
+            "beginnings",
+            "abel",
+            "connections"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "edit+connections.tsx",
+            "read+connections.tsx",
+            "edit+project_uriel_canon.md",
+            "edit+app.tsx",
+            "edit+index.tsx"
+          ],
+          "operation_type": [
+            "edit+.tsx",
+            "write+.css",
+            "write+.tsx",
+            "read+.tsx",
+            "edit+.md"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P013",
+    "evidence_score": 0.8149,
+    "suggested_name_terms": [
+      "michael",
+      "lucifer",
+      "yhwh"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+      "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-05"
+    ],
+    "minimum_pair_similarity": 0.2731,
+    "mean_pair_similarity": 0.2731,
+    "shared_features": {
+      "task": [
+        "michael",
+        "lucifer",
+        "yhwh",
+        "gabriel",
+        "timeline"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "edit+project_uriel_canon.md",
+        "edit+app.tsx",
+        "edit+index.tsx"
+      ],
+      "operation_type": [
+        "edit+.tsx",
+        "write+.css",
+        "edit+.md",
+        "write+.tsx"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+        "right": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-05",
+        "joint_similarity": 0.2731,
+        "view_similarities": {
+          "task": 0.2424,
+          "action_object": 0.0,
+          "operation_file": 0.3206,
+          "operation_type": 0.7171
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "timeline",
+            "lucifer",
+            "yhwh",
+            "gabriel",
+            "michael"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "edit+project_uriel_canon.md",
+            "edit+app.tsx",
+            "edit+index.tsx"
+          ],
+          "operation_type": [
+            "edit+.tsx",
+            "edit+.md",
+            "write+.css",
+            "write+.tsx"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P014",
+    "evidence_score": 0.8111,
+    "suggested_name_terms": [
+      "libyggdrasil",
+      "shim",
+      "yggdrasil"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01",
+      "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-02"
+    ],
+    "minimum_pair_similarity": 0.2611,
+    "mean_pair_similarity": 0.2611,
+    "shared_features": {
+      "task": [
+        "libyggdrasil",
+        "shim",
+        "yggdrasil",
+        "ygg_alloc",
+        "yggdrasil_c_api",
+        "yggdrasil_transpile_file",
+        "ygg_free",
+        "ps1"
+      ],
+      "action_object": [
+        "build+ps1"
+      ],
+      "operation_file": [],
+      "operation_type": []
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01",
+        "right": "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-02",
+        "joint_similarity": 0.2611,
+        "view_similarities": {
+          "task": 0.4608,
+          "action_object": 0.205,
+          "operation_file": 0.0,
+          "operation_type": 0.0
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "yggdrasil",
+            "ygg_alloc",
+            "yggdrasil_c_api",
+            "libyggdrasil",
+            "ygg_free",
+            "ps1",
+            "shim",
+            "yggdrasil_transpile_file"
+          ],
+          "action_object": [
+            "build+ps1"
+          ],
+          "operation_file": [],
+          "operation_type": []
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P015",
+    "evidence_score": 0.5063,
+    "suggested_name_terms": [
+      "orv",
+      "backend",
+      "db"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-01",
+      "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04"
+    ],
+    "minimum_pair_similarity": 0.2345,
+    "mean_pair_similarity": 0.2345,
+    "shared_features": {
+      "task": [
+        "orv",
+        "backend",
+        "db",
+        "server"
+      ],
+      "action_object": [],
+      "operation_file": [],
+      "operation_type": [
+        "edit+.ts",
+        "read+.ts",
+        "write+.ts"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-01",
+        "right": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04",
+        "joint_similarity": 0.2345,
+        "view_similarities": {
+          "task": 0.3622,
+          "action_object": 0.0,
+          "operation_file": 0.0,
+          "operation_type": 0.5335
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "orv",
+            "db",
+            "backend",
+            "server"
+          ],
+          "action_object": [],
+          "operation_file": [],
+          "operation_type": [
+            "write+.ts",
+            "edit+.ts",
+            "read+.ts"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "candidate_id": "P016",
+    "evidence_score": 0.8417,
+    "suggested_name_terms": [
+      "orv",
+      "db",
+      "frontend"
+    ],
+    "member_count": 2,
+    "session_count": 1,
+    "members": [
+      "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-03",
+      "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04"
+    ],
+    "minimum_pair_similarity": 0.2609,
+    "mean_pair_similarity": 0.2609,
+    "shared_features": {
+      "task": [
+        "orv",
+        "db",
+        "frontend",
+        "page"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "read++page.server.ts",
+        "write++page.server.ts"
+      ],
+      "operation_type": [
+        "read+.ts",
+        "write+.ts"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-03",
+        "right": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04",
+        "joint_similarity": 0.2609,
+        "view_similarities": {
+          "task": 0.2724,
+          "action_object": 0.0,
+          "operation_file": 0.3878,
+          "operation_type": 0.2773
+        },
+        "same_session": true,
+        "shared_features": {
+          "task": [
+            "orv",
+            "db",
+            "page",
+            "frontend"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "write++page.server.ts",
+            "read++page.server.ts"
+          ],
+          "operation_type": [
+            "write+.ts",
+            "read+.ts"
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,733 @@
+{
+  "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-09",
+  "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f\\segment-09.json",
+  "original_event_count": 368,
+  "cleaned_event_count": 122,
+  "events": [
+    {
+      "kind": "tool",
+      "tool": "AskUserQuestion",
+      "arguments": {}
+    },
+    {
+      "kind": "assistant",
+      "text": "Both are the same device (the Pixel = your Haven host), and I'm cleared to post factual reports directly. Good — I'll keep reports strictly objective (tested-on-device facts + build observations, no approve/reject calls) and run anything sketchy through static analysis rather than executing it on your phone.\n\nLet me start the first full review. Pulling a clean candidate's recipe, source, pipeline failure, and APK availability:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "for iid in 30678 35514 34924; do\n  echo \"===================== MR !$iid =====================\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new ... [text omitted] ... 25\n  echo \"--- pipeline ---\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);hp=d.get('head_pipeline') or {};print('  status:',hp.get('status'),'| id:',hp.get('id'))\"\ndone",
+        "description": "Get recipes + pipelines for normal-app candidates"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Three candidates here actually have **passing pipelines** (they build). Best first target: **Where It Went** (`com.pixelpen.whereitwent`) — MIT, a benign expense tracker, `Binaries:` (so F-Droid's build is RB-verified against the upstream release), normal launchable app. Let me start its full on-device review — fetch the release APK and static-scan it first:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp && rm -f wiw.apk\necho \"=== find the v2.0 release APK ===\" && gh release view v2.0 -R PIXEL-PEN/Where-It-Went --json assets --jq '.assets[] | \"\\(.name)  \\(.url)\"' 2>&1 | head\nURL=$(gh release view v2.0 -R PIXEL-PEN/Where-It-Went --json assets --jq '.assets[] | select(.name|endswith(\".apk\")) | .url' 2>/dev/null | head -1)\necho \"apk url: $URL\"\ngh release download v2.0 -R PIXEL-PEN/Where-It-Went -p '*.apk' -O wiw.apk 2>&1 | tail -2\nls -la wiw.apk 2>/dev/null && file wiw.apk",
+        "description": "Download Where It Went release APK"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Downloaded (6.5 MB). Static analysis — permissions, version match, trackers, signature:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"; APK=wiw.apk\necho \"=== package + version (recipe expects 2.0 / 20001) ===\" && $AAPT dump badging \"$APK\" 2>/dev/null | grep -E \"package:|application-label:|sdkVersion:|targetSdkVersion:\"\necho \"=== permi ... [text omitted] ... ook/ads|yandex/metrica\" && echo \"⚠ possible tracker strings\" || echo \"no tracker signatures ✓\") && echo \"=== namespaces ===\" && strings -a classes*.dex | grep -oE \"^L(com|io|org|androidx|kotlin)/[a-z0-9]+/[a-z0-9]+\" | sort | uniq -c | sort -rn | head",
+        "description": "Static analysis of Where It Went APK"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Statically it's clean and notably privacy-respecting: **no INTERNET permission at all** (fully offline), **zero trackers**, MIT, version matches the recipe (2.0/20001). One minor note: the launcher label is \"ExpenseTrack\" while AutoName is \"WhereItWent\". Now install and exercise it on the Pixel:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging wiw.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"launchable: $ACT\"\n$adb i ... [text omitted] ... logcat ===\" && $adb logcat -d -v brief AndroidRuntime:E \"com.pixelpen.whereitwent.stable:*\" '*:S' 2>/dev/null | grep -iE \"FATAL|exception|crash\" | head -5 || echo \"(none)\"\n$adb exec-out screencap -p > wiw-1.png 2>/dev/null && echo \"screenshot saved\"",
+        "description": "Install, launch, screenshot Where It Went"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "bnm1qi3m5.output"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The wireless adb connection dropped (port likely changed when the phone re-toggled). Let me stop the stuck command and reconnect:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adbbin=\"$HOME/Android/Sdk/platform-tools/adb\"; $adbbin kill-server 2>/dev/null; sleep 1; $adbbin start-server 2>/dev/null\necho \"=== try known address ===\" && timeout 10 $adbbin connect [REDACTED_IP]:40859 2>&1\necho \"=== try haven adb forward (localhost:5555) ===\" && timeout 10 $adbbin connect 127.0.0.1:5555 2>&1\necho \"=== devices ===\" && $adbbin devices -l 2>&1",
+        "description": "Reconnect adb to the Pixel"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "adb's wireless port changed (connection refused), but the Pixel **is** the Haven device — so I can drive it through Haven's Shizuku/adb tooling instead of the flaky wireless port. There's already a Haven adb forward on `:5555` (showing offline). Let me load Haven's adb tools to re-expose it:"
+    },
+    {
+      "kind": "tool",
+      "tool": "ToolSearch",
+      "arguments": {
+        "query": "select:mcp__haven__expose_adb,mcp__haven__enable_wireless_adb,mcp__haven__capture_desktop,mcp__haven__list_guest_services"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "`expose_adb` is the fix — it exposes the device's adb on loopback via Shizuku, reachable through Haven's tunnel. Let me re-establish it:"
+    },
+    {
+      "kind": "tool",
+      "tool": "mcp__haven__expose_adb",
+      "arguments": {}
+    },
+    {
+      "kind": "assistant",
+      "text": "`expose_adb` was denied, and the wireless adb port has changed (connection refused), so I currently have no live channel to drive the device for the launch/screenshot part. I don't want to keep poking at device access without your steer.\n\nWhat I *can* already report on **Where It Went** from static analysis (strong on its own):\n- MIT; package/version match the recipe (2.0 / 20001); pipeline passes (F-Droid builds it).\n- **No INTERNET permission at all** — fully offline; only a self-scoped `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.\n- **Zero trackers** (dex scan clean; namespaces are androidx/kotlin/Room).\n- Minor: launcher label is \"ExpenseTrack\" vs `AutoName: WhereItWent`.\n\nTo do the on-device part (install → launch → screenshot → logcat), how do you want me to reach the phone?"
+    },
+    {
+      "kind": "tool",
+      "tool": "AskUserQuestion",
+      "arguments": {}
+    },
+    {
+      "kind": "assistant",
+      "text": "adb is `[REDACTED_IP]:40495`. Let me reconnect and run the on-device review:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adbbin=\"$HOME/Android/Sdk/platform-tools/adb\"; $adbbin connect [REDACTED_IP]:40495 2>&1\nadb=\"$adbbin -s [REDACTED_IP]:40495\"\nACT=com.pixelpen.whereitwent.MainScreen\n$adb install -r wiw.apk 2>&1 | tail -1\n$adb logcat -c\n$adb shell am start -n \"com.pix ... [text omitted] ... in logcat? ===\" && $adb logcat -d 2>/dev/null | grep -iE \"com.pixelpen|whereitwent\" | grep -iE \"http|connect|socket|dns|network\" | head -3 || echo \"(no network log lines)\"\n$adb exec-out screencap -p > wiw-1.png 2>/dev/null && echo \"screenshot saved\"",
+        "description": "Reconnect adb, install, launch, screenshot Where It Went"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Launched cleanly (pid 8719, no crash, no network). Let me see it:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "wiw-1.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "API Error: an image in the conversation could not be processed and was removed. Double press esc to edit your message, or re-read the file if you still need it."
+    },
+    {
+      "kind": "assistant",
+      "text": "Screenshot's too tall to read (2992px). Let me downscale and view:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "magick wiw-1.png -resize 760x wiw-1s.png && identify -format \"%wx%h\\n\" wiw-1s.png",
+        "description": "Downscale screenshot"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "wiw-1s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "It works — a clean offline expense tracker (Expenditures, last-12-months breakdown, \"+\" FAB). Let me exercise the add-expense flow:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"\n$adb shell input tap 1211 2581\nuntil [ 1 = 0 ]; do break; done; sleep 2\n$adb exec-out screencap -p > wiw-2.png 2>/dev/null\nmagick wiw-2.png -resize 760x wiw-2s.png && echo \"captured ad ... [text omitted] ... shes/network since launch ===\" && $adb logcat -d 2>/dev/null | grep -iE \"FATAL|whereitwent|pixelpen\" | grep -ivE \"Background|ActivityManager: Start\" | grep -iE \"FATAL|exception|http|socket|connect failed\" | head -5 || echo \"(no crashes / no network)\"",
+        "description": "Tap add-expense FAB, screenshot, check logcat"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "wiw-2s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The add-expense dialog works fully (category, item, amount, date). That's a clean, functional, offline expense tracker. Let me post the factual on-device report (you chose direct posting), then clean up:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cat > wiw-review.md <<'MD'\n**On-device test** — Pixel 8 Pro, Android 15, release APK `WhereItWent-stable-release-v2.0.apk` (matches the recipe's `2.0` / `20001`).\n\n- Installs and launches cleanly; no crash in logcat.\n- Functional: the *Expenditures* ... [text omitted] ... id'),'on MR !30678')\nexcept Exception: print('post response:', open(0).read()[:300])\"\necho \"=== cleanup: uninstall review app ===\" \n\"$HOME/Android/Sdk/platform-tools/adb\" -s [REDACTED_IP]:40495 uninstall com.pixelpen.whereitwent.stable 2>&1 | tail -1",
+        "description": "Post review comment and uninstall app"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "✅ First review posted (note `<N>` on MR !30678), app uninstalled. That's one full on-device review end to end.\n\nNext: **ScenePeek** (`com.divinelink.scenepeek`, MR !34924) — a TMDB movie browser. More to scrutinize: it's a network app whose recipe bakes in API tokens and declares `NonFreeNet` for TMDB only. Let me decode those tokens and static-analyze the APK:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\necho \"=== decode the API tokens the recipe bakes in (which servers?) ===\"\necho '[REDACTED_API_KEYS]' | base64 -d | sed 's/=.*/= <redacted>/'\necho \"=== download release APK ===\"\ngh release download v0.31.2 -R Divinelink/scenepeek-android -p 's ... [text omitted] ... acebook/ads\" && echo \"⚠ tracker strings\" || echo \"no tracker signatures ✓\")\necho \"=== network hosts referenced in dex ===\" && strings -a classes*.dex | grep -oiE \"(api\\.)?(themoviedb|tmdb|omdbapi|trakt|google-analytics|doubleclick)\\.[a-z]+\" | sort -u",
+        "description": "Decode tokens, download + static-analyze ScenePeek"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "ScenePeek static: no trackers, modern (targetSdk 36), but it references **three** third-party services — `api.themoviedb.org`, `api.trakt.tv`, **and** `omdbapi.com` (confirmed by both the baked-in keys and dex host strings). The recipe's `NonFreeNet` only declares TMDB. That's a useful finding. Let me confirm it works on-device and capture what it actually contacts:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging scenepeek.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\n$adb install scenepeek.a ... [text omitted] ... b logcat -d 2>/dev/null | grep -oiE \"(api\\.)?(themoviedb|trakt|omdbapi|tmdb)\\.[a-z]+\" | sort -u || echo \"(no host lines in logcat)\"\n$adb exec-out screencap -p > sp-1.png 2>/dev/null && magick sp-1.png -resize 760x sp-1s.png && echo \"screenshot saved\"",
+        "description": "Install, launch, screenshot ScenePeek; capture hosts"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sp-1s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Revealing — on launch ScenePeek shows an **\"Update available\" dialog** (\"Current 0.31.2 → Latest 0.33.0\", with an **Update** button). That's a **built-in self-updater** — an F-Droid anti-feature concern that static analysis wouldn't surface. The welcome screen also lists **Jellyseerr** integration. Let me dismiss the dialog (find the button reliably) and confirm TMDB browsing works:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"\n$adb shell uiautomator dump /sdcard/u.xml >/dev/null 2>&1 && $adb shell cat /sdcard/u.xml 2>/dev/null | tr '>' '\\n' | grep -iE 'text=\"(Cancel|Update|Get Started|Continue)\"' | grep -oiE ... [text omitted] ... /adb -s [REDACTED_IP]:40495 shell input tap '+str(x)+' '+str(y), shell=True)\nelse: print('no Cancel bounds found')\n\"\nsleep 3; $adb exec-out screencap -p > sp-2.png 2>/dev/null && magick sp-2.png -resize 760x sp-2s.png && echo \"main-screen shot saved\"",
+        "description": "Dismiss update dialog, screenshot main screen"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sp-2s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "ScenePeek's onboarding renders fine (TMDB / Jellyseerr / link-handling, \"Get started\"). I have enough for a substantive review — the self-updater is the headline finding. Posting it and cleaning up (I won't tap \"Update\" to avoid triggering an APK download on your phone):"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cat > sp-review.md <<'MD'\n**On-device test** — Pixel 8 Pro, Android 15, release APK `scenepeek-fdroid-0.31.2.apk` (versionCode 49; versionName reports `0.31.2 F-Droid`).\n\nWorks: installs, launches, onboarding renders (TMDB / Jellyseerr / link-handlin ... [text omitted] ... n\ntry: d=json.load(sys.stdin); print('✅ posted: note', d.get('id'),'on MR !34924')\nexcept Exception: print('resp:', open(0).read()[:300])\"\n\"$HOME/Android/Sdk/platform-tools/adb\" -s [REDACTED_IP]:40495 uninstall com.divinelink.scenepeek 2>&1 | tail -1",
+        "description": "Post ScenePeek review, uninstall"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Two solid reviews posted (both apps uninstalled). Let me do a third with a different angle — scrutinizing one of the templated-looking \"*Tech*\" submissions (same author, three generic apps same day, all failed pipelines). I'll **static-analyze only** (not run a suspicious app on your phone):"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\necho \"=== AI Tech: releases available? ===\" && gh release list -R gitubpatrice/ai_tech 2>&1 | head -5\necho \"=== why did the pipeline fail? (last job log tail) ===\" \nPID=$(glab api \"projects/fdroid%2Ffdroiddata/merge_requests/37886\" 2>/dev/nul ... [text omitted] ... n).get('head_pipeline') or {}).get('id',''))\")\necho \"pipeline $PID\"\nglab api \"projects/fdroid%2Ffdroiddata/pipelines/$PID/jobs\" 2>/dev/null | python3 -c \"import sys,json;[print(j['name'],j['status']) for j in json.load(sys.stdin)]\" 2>/dev/null | head",
+        "description": "Check AI Tech releases and pipeline failure"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "AI Tech actually has a real release history (v0.8.0→v0.9.2 over weeks) — so it's a maintained app, not obvious spam. Let me do a quick static scan to have a factual data point:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp && gh release download v0.9.2 -R gitubpatrice/ai_tech -p '*.apk' -O aitech.apk 2>&1 | tail -1; ls -la aitech.apk 2>/dev/null | awk '{print \"size\", $5}'\nAAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nif [ -f aitech.apk ]; then\n  $AAPT dump b ... [text omitted] ... n app\") \n  strings -a classes*.dex 2>/dev/null | grep -qiE \"firebase|gms/ads|crashlytics|admob|applovin|unity3d/ads\" && echo \"⚠ ads/tracker SDK strings found\" || echo \"no obvious ad/tracker SDK in main dex\"\nelse echo \"no APK asset on the release\"; fi",
+        "description": "Quick static scan of AI Tech"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Two full on-device reviews done and posted — a good \"bit for F-Droid.\" I'll wrap here rather than force a weaker third (the *Tech* app turns out to be a maintained multi-ABI app with a currently-failing pipeline — a different kind of review).\n\n## What I contributed to the backlog\n\nSurveyed the **302** open \"New App\" MRs, then did **2 complete on-device reviews** on the Pixel (your Haven device), each posted as a factual report under your GitLab account:\n\n**1. Where It Went** — [MR !30678](http30678) (note posted)\n> Clean offline expense tracker. **No `INTERNET` permission**, **zero trackers**, ... [text omitted] ... tracker scan, signer) → install on-device → launch + interact + logcat → factual report → **uninstall** (left your phone clean).\n\n## Notes\n- Reports are deliberately factual (test data, not approve/reject calls).\n- adb needed a port refresh mid-way (`expose_adb` was declined; you supplied `:40495`) — worth knowing the wireless port rotates.\n\nHappy to keep going — say how many more and whether to bias toward **clean small apps** (positive functional confirmations) or **scrutiny passes** (self-updaters, trackers, NonFreeNet accuracy, build-failure diagnosis). The backlog won't miss the company."
+    },
+    {
+      "kind": "assistant",
+      "text": "On it — a few more clean small apps. Let me scan a batch of candidates for small, offline-ish, buildable apps with an installable APK:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "for iid in 31970 33910 38019 38676 36002 38922 31970; do :; done\nfor iid in 31970 33910 38019 38676 36002 30678; do\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\ndata=json.load(sys.stdi ... [text omitted] ... tter','rustup','pnpm','cmake','cordova','node-v','ndk'])\n        sub=get('subdir')\n        print(f\\\"!{'$iid':6} {p.split('/')[-1][:34]:34} lic={lic[:18]:18} bin={'Y' if binz else '-'} heavy={'Y' if heavy else '-'} src={src[:45]}\\\")\n\"\ndone 2>/dev/null",
+        "description": "Batch-scan candidate recipes for clean small apps"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Good candidates. Let me run **SimplerTask** (`io.github.jwtiyar.simplertask`, !31970 — GPL-3, a to-do app, has `Binaries`) — get its version + APK URL, then static-scan:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\nglab api \"projects/fdroid%2Ffdroiddata/merge_requests/31970/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path'].endswith('.yml'):\n        for l in f['diff'].splitlines():\n            if l.startswith('+') and any(k in l for k in ['versionName','versionCode','Binaries','commit','UpdateCheck','AutoName','Categories']): print(l[1:].rstrip())\n\" 2>/dev/null | head -20",
+        "description": "Get SimplerTask version + Binaries URL"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The `Binaries` URL is malformed — `http...` is missing the owner/repo. That's a recipe bug worth noting. Let me find the real repo + release to test the app:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\necho \"=== recipe SourceCode/Repo ===\" && glab api \"projects/fdroid%2Ffdroiddata/merge_requests/31970/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path'].endswith('.yml'):\n        for l in f['d ... [text omitted] ... k on the likely repo ===\" && for r in jwtiyar/SimplerTask jwtiyar/Todo-Task-Reminder jwtiyar/todo; do gh release view -R \"$r\" --json tagName,assets --jq '\"\\(.tagName): \"+([.assets[].name]|join(\", \"))' 2>/dev/null && echo \"  ^ repo: $r\" && break; done",
+        "description": "Find SimplerTask real repo and release APK"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "That recipe is actually broken — `SourceCode: httpgithub.com`, `Repo: httpgithub.com.git`, and the placeholder Binaries URL. Not a clean app; it's an incomplete submission. Skipping it. Let me pick from the ones with real source — IndoorBike (Codeberg) and Debug Mode Widget (GitHub):"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\nfor iid in 38019 36002; do\n  echo \"===== !$iid =====\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path'].endswith('.yml'):\n        for l in f['diff'].splitlines():\n            if l.startswith('+') and any(k in l for k in ['SourceCode','Repo:','Binaries','versionName','versionCode','AutoName','UpdateCheckMode']): print('  '+l[1:].strip())\n\" 2>/dev/null | head -12\ndone",
+        "description": "Check IndoorBike and Debug Mode Widget recipes"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Both have real sources. Let me review **IndoorBike** (`app.indoorbike`, !38019 — Codeberg, GPL, a real app). Get the release APK from Codeberg and static-scan:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\necho \"=== codeberg v1.0 release assets ===\" \ncurl -s \"httpv1.0\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);[print(a['name'],'->',a['browser_download_url']) for a in d.get('assets',[])]\" 2>/dev/null\nURL=$(curl -s \"httpv1. ... [text omitted] ... && mkdir ibx && cd ibx && unzip -q indoorbike.apk 'classes*.dex' 2>/dev/null && (strings -a classes*.dex | grep -qiE \"firebase|crashlytics|gms/ads|gms/measurement|appsflyer|facebook/ads\" && echo \"⚠ tracker strings\" || echo \"no tracker signatures ✓\")",
+        "description": "Download + static-scan IndoorBike"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "IndoorBike: real FOSS cycling app, no trackers, version matches. Permissions are mostly justified (Bluetooth ×4 + location for the trainer, foreground service), but a couple stand out — **CAMERA** and **INTERNET** (non-obvious for an indoor bike app), plus legacy storage perms. Let me launch it and see:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging indoorbike.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"activity: $ACT\"\n$ ... [text omitted] ... z0-9.-]+\\.[a-z]{2,}\" | grep -viE \"schemas.android|w3.org|example.com|android.com|google.com/.well|fonts.g|localhost\" | sort -u | head -8)\n$adb exec-out screencap -p > ib-1.png 2>/dev/null && magick ib-1.png -resize 760x ib-1s.png && echo \"shot saved\"",
+        "description": "Install, launch IndoorBike, check hosts"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The INTERNET use is real: the app references **intervals.icu** (a third-party cycling-analytics SaaS) plus its own `indoorbike.app`. So it can sync workouts to intervals.icu — a `NonFreeNet` the recipe doesn't declare. Let me see the UI:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "ib-1s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Polished, fully-functional power-zone workout app — works without a trainer, no trackers. Posting the report (with the intervals.icu/NonFreeNet + CAMERA notes) and cleaning up:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cat > ib-review.md <<'MD'\n**On-device test** — Pixel 8 Pro, Android 15, release APK `android-release.apk` (1.0 / 1, matches the recipe).\n\nWorks well: installs, launches, no crash. Polished UI — a power-zone workout library (Endurance / Recovery / Tem ... [text omitted] ... port sys,json\ntry: d=json.load(sys.stdin); print('✅ posted: note',d.get('id'),'on MR !38019')\nexcept Exception: print('resp:',open(0).read()[:200])\"\n\"$HOME/Android/Sdk/platform-tools/adb\" -s [REDACTED_IP]:40495 uninstall app.indoorbike 2>&1 | tail -1",
+        "description": "Post IndoorBike review, uninstall"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "3 reviews posted. Let me line up a couple more genuinely-clean small apps — pulling the newest \"New App\" submissions and scanning for small utilities with real sources + an APK:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "echo \"=== newest New App MRs ===\" && glab api \"projects/fdroid%2Ffdroiddata/merge_requests?state=opened&labels=New%20App&order_by=created_at&sort=desc&per_page=18\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor m in json.load(sys.stdin):\n    print(f\\\"!{m['iid']:6} {m['title'][:62]}\\\")\n\"",
+        "description": "List newest New App MRs"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Good batch. Let me do two clean ones: **Score Counter** (`org.pichove.scorecounter`, !40631 — a simple offline utility) and **Solitaire** (`com.vayunmathur.games.solitaire`, !40544 — offline game). Checking their recipes/sources first:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\nfor iid in 40631 40544; do\n  echo \"===== !$iid =====\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path'].endswith('.yml'): ... [text omitted] ... iff'].splitlines():\n            if l.startswith('+') and any(k in l for k in ['SourceCode','Repo:','Binaries','versionName','versionCode','License','AutoName','Categories','subdir','commit:']): print('  '+l[1:].rstrip())\n\" 2>/dev/null | head -14\ndone",
+        "description": "Check Score Counter and Solitaire recipes"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Solitaire has `Binaries` (easy APK); Score Counter builds from source (Codeberg). Let me grab both APKs — Solitaire from its monorepo release, Score Counter from Codeberg if it has one:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\necho \"=== Solitaire: Binaries URL from recipe ===\" && glab api \"projects/fdroid%2Ffdroiddata/merge_requests/40544/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path'].endswith('.yml'): ... [text omitted] ... curl -s \"httpreleases?limit=1\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);print('tag:',d[0]['tag_name'] if d else 'none');[print(' ',a['name']) for a in (d[0]['assets'] if d else [])]\" 2>/dev/null || echo \"no codeberg releases\"",
+        "description": "Find Solitaire and Score Counter APKs"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Both have APKs. Let me download and static-scan both:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\ngh release download v2.5.4 -R vayun-mathur/Modern-Apps -p 'solitaire-release.apk' -O solitaire.apk 2>&1 | tail -1\ncurl -sL \"httpscorecounter-1.2.1.apk\" -o scorecounter.apk\nAAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nfor app in solitaire ... [text omitted] ... pp && unzip -q $app.apk 'classes*.dex' 2>/dev/null && (strings -a classes*.dex | grep -qiE \"firebase|crashlytics|gms/ads|gms/measurement|appsflyer|facebook/ads|applovin|unity3d/ads\" && echo \"  ⚠ tracker/ad strings\" || echo \"  trackers: none ✓\"))\ndone",
+        "description": "Download + static-scan Solitaire and Score Counter"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Static results:\n- **Solitaire** — genuinely clean: **zero real permissions** (offline), **no trackers**, targetSdk 37. Ideal small app. (versionName is `v2.5.4` with a leading \"v\" — minor.)\n- **Score Counter** — no trackers, but it holds `INTERNET` and is **42 MB** — both surprising for a score counter (likely a Flutter bundle). Worth noting.\n\nLet me run Solitaire:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging solitaire.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\n$adb install solitaire.a ... [text omitted] ... ull 2>&1; do sleep 1; done; sleep 4\necho \"crash? \" && ($adb logcat -d 2>/dev/null | grep -iE \"FATAL EXCEPTION\" | head -2 || echo none)\n$adb exec-out screencap -p > sol-1.png 2>/dev/null && magick sol-1.png -resize 760x sol-1s.png && echo \"shot saved\"",
+        "description": "Install + launch Solitaire"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sol-1s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Clean launch — Solitaire menu with Klondike/Spider/FreeCell + stats. Let me start a game to confirm gameplay:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"\n$adb shell input tap 672 463\nsleep 2; $adb exec-out screencap -p > sol-2.png 2>/dev/null && magick sol-2.png -resize 760x sol-2s.png && echo \"saved\"",
+        "description": "Start a solitaire game, screenshot"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sol-2s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Mode selection works (Klondike Draw 1/3, Spider, FreeCell). Let me confirm the actual card table renders:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"\n$adb shell input tap 672 1250\nsleep 2; $adb exec-out screencap -p > sol-3.png 2>/dev/null && magick sol-3.png -resize 760x sol-3s.png && echo saved",
+        "description": "Open Klondike table, screenshot"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sol-3s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Full gameplay confirmed — Klondike table renders correctly (foundations, stock, 7 tableau columns, timer/moves/Undo). A clean, complete, offline game. Posting + cleanup:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cat > sol-review.md <<'MD'\n**On-device test** — Pixel 8 Pro, Android 15, release APK `solitaire-release.apk` (versionCode <N>, versionName `v2.5.4`).\n\nClean and fully functional: installs, launches, no crash. Menu → *Select Mode* (Klondike Draw 1/3, ... [text omitted] ... : d=json.load(sys.stdin); print('✅ posted: note',d.get('id'),'on MR !40544')\nexcept Exception: print('resp:',open(0).read()[:200])\"\n\"$HOME/Android/Sdk/platform-tools/adb\" -s [REDACTED_IP]:40495 uninstall com.vayunmathur.games.solitaire 2>&1 | tail -1",
+        "description": "Post Solitaire review, uninstall"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Now **Score Counter** (`org.pichove.scorecounter`) — the 42 MB / `INTERNET` one. Let me see what it is and why it needs network:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\necho \"=== framework + hosts ===\" && (cd x_scorecounter && unzip -l scorecounter.apk 2>/dev/null | grep -oiE \"lib/[a-z0-9_-]+/lib(flutt ... [text omitted] ... er >/dev/null 2>&1; do sleep 1; done; sleep 5\necho \"crash? \" && ($adb logcat -d 2>/dev/null | grep -iE \"FATAL EXCEPTION\" | head -2 || echo none)\n$adb exec-out screencap -p > sc-1.png 2>/dev/null && magick sc-1.png -resize 760x sc-1s.png && echo saved",
+        "description": "Inspect + launch Score Counter"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sc-1s.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "It's a trivial two-team score counter (Red/Blue +1 buttons) — yet **42 MB and holds `INTERNET`**. Let me confirm it increments and pin down why it's so big / what the network is for:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"\n$adb shell input tap 380 1230   # TEAM RED (+1)\nsleep 1; $adb exec-out screencap -p > sc-2.png 2>/dev/null; magick sc-2.png -crop 760x120+0+380 -resize 760x sc-2c.png 2>/dev/null\necho ... [text omitted] ... int int($1/<N>)\"MB\", $4}'\necho \"=== INTERNET usage — hosts/url strings in dex ===\" && (cd x_scorecounter && strings -a classes*.dex 2>/dev/null | grep -oiE \"https?://[a-z0-9.-]+\" | grep -viE \"schemas.android|w3.org|/ns/|android.com\" | sort -u | head)",
+        "description": "Confirm increment, analyze size + network"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sc-2c.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "My tap mis-fired (I used screenshot-scaled coords, not device coords — it stayed 0). Let me tap the button at the correct device coordinates and confirm it increments:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40495\"\n$adb shell input tap 672 2148   # TEAM RED (+1) — device coords\n$adb shell input tap 672 2148\nsleep 1; $adb exec-out screencap -p > sc-3.png 2>/dev/null; magick sc-3.png -crop 1344x180+0+360 -resize 760x sc-3c.png 2>/dev/null && echo cropped",
+        "description": "Re-tap with correct coords, crop score line"
+      }
+    },
+    {
+      "kind": "tool",
+      "tool": "Read",
+      "arguments": {
+        "file_path": "sc-3c.png"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Confirmed — taps increment (Team Red: 2). So: functional, no trackers, but **42 MB because it bundles a full CPython 3.14 runtime** (Python/Chaquopy app), as a universal 2-ABI APK, **with `INTERNET` declared but no apparent network use**. Posting + cleanup:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cat > sc-review.md <<'MD'\n**On-device test** — Pixel 8 Pro, Android 15, release APK `scorecounter-1.2.1.apk` (1.2.1 / <N>).\n\nFunctionally it's a simple two-team tally (\"Team Red / Team Blue\" with +1 buttons) — installs, launches, increments correctly ... [text omitted] ... son\ntry: d=json.load(sys.stdin); print('✅ posted: note',d.get('id'),'on MR !40631')\nexcept Exception: print('resp:',open(0).read()[:200])\"\n\"$HOME/Android/Sdk/platform-tools/adb\" -s [REDACTED_IP]:40495 uninstall org.pichove.scorecounter 2>&1 | tail -1",
+        "description": "Post Score Counter review, uninstall"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Done — five on-device reviews posted this session, your phone left clean (every app uninstalled). Summary of the contribution to the F-Droid backlog:\n\n| App | MR | Verdict on-device |\n|---|---|---|\n| **Where It Went** | [!30678](http30678) | ✅ Clean — zero perms (offline), no trackers; minor label mismatch |\n| **Solitaire** | [!40544](http40544) | ✅ Clean — zero perms, no trackers, full gameplay works |\n| **IndoorBike** | [!38019](http38019) | ✅ Works, no trackers — flagged intervals.icu `NonFreeNet` + `CAMERA` |\n| **ScenePeek** | [!34924](http34924) | ⚠ Works, no trackers — **built-in self-up ... [text omitted] ... r GitLab account.\n\nA couple of useful patterns surfaced that on-device catches but a build-pipeline doesn't: **self-updaters** (ScenePeek), **undeclared third-party network services** (ScenePeek, IndoorBike), and **unjustified `INTERNET` + runtime bloat** (Score Counter). I also skipped a clearly-broken submission (SimplerTask !31970 — placeholder `SourceCode: httpgithub.com`).\n\nWant me to keep going? I can continue clean-small-app passes, or switch to a **scrutiny sweep** (self-updater / unused-INTERNET / tracker hunting across a batch), which seems to be where the on-device value is highest."
+    },
+    {
+      "kind": "assistant",
+      "text": "Scrutiny sweep it is — this is where on-device + static analysis earns its keep. I'll batch-scan APKs for the high-value smells (trackers, unused/undeclared network, self-updaters, runtime bloat, over-broad permissions), prioritizing sensitive apps (a password manager, a camera app, a \"vault\"). Let me pull the batch's recipes and APK sources:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\nfor iid in 40543 40542 40545 40623 40688 40612; do\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\niid='$iid'\nfor f in json.load(sys.stdin):\n    p=f['new_path']\n    if p.startswit ... [text omitted] ... p() if i+1<len(lines) else '')\n        af='AntiFeatures' in d or 'NonFreeNet' in d\n        print(f\\\"!{iid} {p.split('/')[-1].replace('.yml',''):32} src={g('SourceCode')[:42]:42} bin={'Y' if binu else '-'} AF={'Y' if af else '-'}\\\")\n\"\ndone 2>/dev/null",
+        "description": "Batch recipe info for scrutiny targets"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Good batch (a password manager, a camera app, a \"vault\", a book tracker). The vayunmathur apps share one release; let me grab those APKs and check the others for releases:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\necho \"=== Modern-Apps v2.5.4 assets ===\" && gh release view v2.5.4 -R vayun-mathur/Modern-Apps --json assets --jq '.assets[].name' 2>/dev/null\nfor a in passwords camera pipes; do gh release download v2.5.4 -R vayun-mathur/Modern-Apps -p \"${a} ... [text omitted] ... --jq '.tagName, (.assets[].name)' 2>/dev/null | head -4 || echo \"no release\"\necho \"=== BookStash release? ===\" && gh release view -R eirthae/bookstash --json tagName,assets --jq '.tagName, (.assets[].name)' 2>/dev/null | head -4 || echo \"no release\"",
+        "description": "Download vayunmathur APKs, check MetroVault/BookStash releases"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The vayun-mathur \"Modern-Apps\" is a **26-app monorepo** — one dev shipping a whole app suite (each is a separate F-Droid MR). Let me grab MetroVault + BookStash too, then run a uniform scrutiny scan across all five:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\ngh release download v3.8.6 -R gorunjinian/MetroVault -p '*.apk' -O metrovault.apk 2>&1|tail -0; gh release download v0.8.28 -R eirthae/bookstash -p '*.apk' -O bookstash.apk 2>&1|tail -0\ncat > scrutiny.sh <<'SH'\nAAPT=\"$HOME/Android/Sdk/build-t ... [text omitted] ... thon[0-9.]+.so|libhermes.so|libreactnative\" | sort -u | tr '\\n' ' '; echo\nSH\nfor x in passwords camera pipes; do bash scrutiny.sh vm-$x.apk \"vayunmathur.$x\"; done\nbash scrutiny.sh metrovault.apk \"MetroVault\"\nbash scrutiny.sh bookstash.apk \"BookStash\"",
+        "description": "Run uniform scrutiny scan across 5 apps"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Clear signal in the batch. The standout: **vayunmathur.camera bundles Firebase** + `INTERNET` + location — a tracker in a camera app. That's a serious claim, so let me verify *which* Firebase components before reporting (transitive `firebase-common` vs actual analytics/messaging/crashlytics):"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp && rm -rf camx && mkdir camx && cd camx && unzip -q vm-camera.apk 'classes*.dex' 2>/dev/null\necho \"=== Firebase / GMS components present in camera dex ===\" \nstrings -a classes*.dex 2>/dev/null | grep -oiE \"com/google/firebase/(analytics|messa ... [text omitted] ... : solitaire (known clean) firebase strings ===\" && (cd x_solitaire 2>/dev/null && strings -a classes*.dex 2>/dev/null | grep -c \"firebase\" || echo \"n/a\")\necho \"camera firebase string count:\" && strings -a classes*.dex 2>/dev/null | grep -c \"firebase\"",
+        "description": "Verify camera Firebase components precisely"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Important catch — that \"Firebase\" was a **false positive**: precise inspection shows only `firebase-encoders` (a transitive serialization lib, likely from a Google vision/ML dependency), **no** Firebase Analytics/Crashlytics/Measurement classes and no `google-services` config. So the camera app has **no active tracker**. (Glad I verified before posting — that's the discipline this needs.)\n\nCorrected findings across the batch:\n\n| App | Finding |\n|---|---|\n| **passwords** | ✅ Clean — no `INTERNET`, no trackers (good for a PW manager) |\n| **pipes** | ✅ Clean |\n| **camera** | `INTERNET` to justify; **no** real tracker (firebase-encoders is transitive) |\n| **MetroVault** | Offline (no `INTERNET`), but universal 4-ABI APK (size) |\n| **BookStash** | `INTERNET` + `RECEIVE_BOOT_COMPLETED` worth clarifying |\n\nPosting the four substantive ones:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\ncat > p_40543.md <<'MD'\n**Static scrutiny** — release APK `passwords-release.apk` (`com.vayunmathur.passwords`, `v2.5.4` / <N>).\n\nFor a password manager this checks out well:\n- **No `INTERNET` permission** (and no other sensitive permissions) ... [text omitted] ... pi -X POST \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/notes\" -f \"body=$(cat $f.md)\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);print('✅ posted note',d.get('id'),'on !$iid')\" 2>/dev/null || echo \"post failed on !$iid\"\ndone",
+        "description": "Post 4 scrutiny findings"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Nine reviews posted so far. Let me run one more batch focused on **high-trust app types** — an input method (keyboards can capture everything typed), a \"privacy\" QR scanner, a chat app — where scrutiny matters most. Getting their sources/APKs:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\nfor iid in 40626 40623 38922 40613 40690; do\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\niid='$iid'\nfor f in json.load(sys.stdin):\n    p=f['new_path']\n    if p.startswith('met ... [text omitted] ... )\n        binu=any(l.strip().startswith('Binaries') for l in lines)\n        print(f\\\"!{iid} {p.split('/')[-1].replace('.yml',''):28} {g('AutoName')[:20]:20} src={(g('SourceCode') or g('Repo'))[:40]:40} bin={'Y' if binu else '-'}\\\")\n\" 2>/dev/null\ndone",
+        "description": "Recipes for high-trust scrutiny batch"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "All build-from-source; I'll pull their upstream release APKs. Let me get them — Xime (the keyboard) first:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\nfor kv in xime:ximeiorg/Xime gloomchat:afterdamage/gloomchat rpclient:KafuuNeko/RPClient; do\n  n=${kv%%:*}; r=${kv##*:}\n  tag=$(gh release view -R \"$r\" --json tagName --jq .tagName 2>/dev/null)\n  asset=$(gh release view -R \"$r\" --json assets ... [text omitted] ... h(\".apk\"))][0]' 2>/dev/null)\n  echo \"$n: $r  tag=$tag  apk=$asset\"\n  [ -n \"$asset\" ] && gh release download \"$tag\" -R \"$r\" -p \"$asset\" -O $n.apk 2>&1 | tail -0 && ls -la $n.apk 2>/dev/null | awk -v x=$n '{print \"  downloaded\",x,int($5/<N>)\"MB\"}'\ndone",
+        "description": "Download Xime, GloomChat, RPClient APKs"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "GloomChat has no release APK (skip — can't get it without building). Let me scrutiny-scan the keyboard (Xime — though its release APK is oddly named `kaomoji-2.0.0`, so I'll verify the package) and RPClient:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "bash scrutiny.sh xime.apk \"Xime/kaomoji (IME)\"\necho\nbash scrutiny.sh rpclient.apk \"RPClient\"\necho \"=== Xime: is it actually an input method? (IME service) ===\"\n\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\" dump xmltree xime.apk AndroidManifest.xml 2>/dev/null | grep -iE \"InputMethodService|android.view.InputMethod|service\" | head -3 || echo \"(no IME service found — may be the wrong app)\"",
+        "description": "Scan Xime and RPClient"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Two notable results:\n- **Xime**: the downloaded APK is actually `com.kingzcheung.xime.plugin.**kaomoji**` — a **plugin**, not the keyboard itself. So I can't scrutinize the actual IME from it. Let me check if the real IME APK is in the release.\n- **RPClient**: it's an **AI/LLM client** — the dex references `api.openai.com`, `api.anthropic.com`, `api.deepseek.com`, and Google Gemini. That's a clear `NonFreeNet` (proprietary LLM services). Let me check whether the recipe declares it:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\necho \"=== RPClient (40613): does the recipe declare AntiFeatures/NonFreeNet? ===\" \nglab api \"projects/fdroid%2Ffdroiddata/merge_requests/40613/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path ... [text omitted] ... se '  → NO AntiFeatures/NonFreeNet declared')\n\" 2>/dev/null\necho \"=== Xime v2.4.0 release: all APK assets (is the IME apk there?) ===\" \ngh release view v2.4.0 -R ximeiorg/Xime --json assets --jq '.assets[].name | select(endswith(\".apk\"))' 2>/dev/null",
+        "description": "Check RPClient NonFreeNet + Xime IME apk"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "The real keyboard is there: `Xime-2.4.0-arm64-v8a-signed.apk` (and it ships per-ABI splits — good). RPClient declares **no `NonFreeNet`** despite hitting OpenAI/Anthropic/DeepSeek/Gemini — a solid finding. Let me grab the actual IME and run the critical keyboard scrutiny (a keyboard with `INTERNET` is the worst case):"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\ngh release download v2.4.0 -R ximeiorg/Xime -p 'Xime-2.4.0-arm64-v8a-signed.apk' -O xime-ime.apk 2>&1|tail -0\nbash scrutiny.sh xime-ime.apk \"Xime IME (keyboard)\"\necho \"=== confirms it's an InputMethodService + ALL permissions ===\" \nAAPT=\"$HOM ... [text omitted] ... anifest.xml 2>/dev/null | grep -iE \"InputMethodService|BIND_INPUT_METHOD\" | head -2\necho \"all perms:\" && $AAPT dump badging xime-ime.apk 2>/dev/null | grep \"uses-permission:\" | sed \"s/.*name='//;s/'.*//\" | grep -v DYNAMIC_RECEIVER | tr '\\n' ' '; echo",
+        "description": "Scrutinize the real Xime IME keyboard"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "**Strong finding on the keyboard.** Xime IME (`com.kingzcheung.xime`, confirmed `InputMethodService`) — a high-trust app type — has **`INTERNET` and contacts the dev's own server `ime.ximei.me`**, a **built-in self-updater** (GitHub releases + \"Update available\"), plus **`QUERY_ALL_PACKAGES`** and **`RECORD_AUDIO`**. No trackers, and it does ship per-ABI splits. And **RPClient** is an LLM client (OpenAI/Anthropic/DeepSeek/Gemini) with **no `NonFreeNet`** declared. Posting both:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\ncat > x_40626.md <<'MD'\n**Static scrutiny** — upstream release `Xime-2.4.0-arm64-v8a-signed.apk` (`com.kingzcheung.xime`, 2.4.0 / 41), confirmed as an input method (`XimeInputMethodService` / `BIND_INPUT_METHOD`).\n\nFor an **input method** — a ... [text omitted] ... b api -X POST \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/notes\" -f \"body=$(cat $f.md)\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);print('✅ posted note',d.get('id'),'on !$iid')\" 2>/dev/null || echo \"post failed !$iid\"\ndone",
+        "description": "Post Xime IME + RPClient scrutiny findings"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Scrutiny sweep is paying off — that's **11 MRs reviewed this session**, phone left clean (scrutiny passes were static, nothing installed). The high-value finds:\n\n| MR | App | Finding |\n|---|---|---|\n| [!40626](http40626) | **Xime IME** | ⚠⚠ Keyboard with `INTERNET` + dev server `ime.ximei.me`, self-updater, `QUERY_ALL_PACKAGES`, `RECORD_AUDIO` |\n| [!40613](http40613) | **RPClient** | ⚠ LLM client (OpenAI/Anthropic/DeepSeek/Gemini), no `NonFreeNet` declared |\n| [!34924](http34924) | ScenePeek | ⚠ Self-updater + `NonFreeNet` undercount |\n| [!38019](http38019) | IndoorBike | intervals.icu `NonFre ... [text omitted] ... t Went · Solitaire · passwords | ✅ Clean confirmations (offline, no trackers) |\n\nThe repeatable smells the sweep keeps surfacing: **self-updaters**, **undeclared `NonFreeNet`** (third-party/LLM services), **unjustified `INTERNET`**, and **universal-APK bloat** — exactly the things a build pipeline passes but a reviewer should catch. The discipline of verifying before posting caught a Firebase false-positive too.\n\nThat's a solid block of contributions under your account. Want me to run **another batch** (more high-trust types — launchers, file managers, anything with ads/social), or pause here?"
+    },
+    {
+      "kind": "assistant",
+      "text": "Let me check each MR I commented on for any replies posted after my review:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "cd /tmp\npython3 - <<'PY'\nimport subprocess, json\n# iid -> my note id (anything newer than this on that MR is post-review activity)\nmine = {30678:<N>,34924:<N>,38019:<N>,40544:<N>,\n        40631:<N>,40543:<N>,40542:<N>,40688:<N>,\n        40612:<N>,406 ... [text omitted] ... lse \"\"\n            body=\" \".join(n[\"body\"].split())[:160]\n            print(f\"  {sysflag}@{who} {n['created_at'][:16]}: {body}\")\n    else:\n        print(f\"!{iid}: no replies yet\")\nif not any_new: print(\"\\n→ No comments/replies on any review yet.\")\nPY",
+        "description": "Check all reviewed MRs for replies after my comments"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "None yet — all 11 reviews are clean of replies (they were posted within the last ~half hour, so no time for authors/maintainers to respond). Let me also check our own submission (the openDSP-4x4 MR) while I'm at it:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "echo \"=== our MR !40696 (openDSP-4x4) ===\" \nglab api \"projects/fdroid%2Ffdroiddata/merge_requests/40696\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);hp=d.get('head_pipeline') or {};print('state:',d['state'],'| merge:',d.get('merg ... [text omitted] ... n in notes]\nif not real: print('  (no notes)')\nfor n in reversed(real):\n    sysflag='[system] ' if n.get('system') else ''\n    print(f\\\"  {sysflag}@{n['author']['username']} {n['created_at'][:16]}: {' '.join(n['body'].split())[:140]}\\\")\n\" 2>/dev/null",
+        "description": "Check our own MR 40696 for activity"
+      }
+    },
+    {
+      "kind": "assistant",
+      "text": "Our own MR has **no comments but a failed pipeline** — worth knowing why. Let me pull the failure:"
+    },
+    {
+      "kind": "tool",
+      "tool": "Bash",
+      "arguments": {
+        "command": "PID=$(glab api \"projects/fdroid%2Ffdroiddata/merge_requests/40696\" 2>/dev/null | python3 -c \"import sys,json;print((json.load(sys.stdin).get('head_pipeline') or {}).get('id',''))\")\necho \"pipeline $PID\"\n# the MR pipeline runs on the fork; find the fai ... [text omitted] ... jobs\" 2>/dev/null | python3 -c \"import sys,json;print(next((j['id'] for j in json.load(sys.stdin) if j['status']=='failed'),''))\" 2>/dev/null)\necho \"=== failed job $JOB log tail ===\" && glab api \"projects/$PROJ/jobs/$JOB/trace\" 2>/dev/null | tail -30",
+        "description": "Diagnose our MR's failed pipeline"
+      }
+    }
+  ]
+}

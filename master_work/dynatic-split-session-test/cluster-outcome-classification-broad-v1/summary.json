@@ -1,0 +1,33 @@
+{
+  "algorithm_version": "cluster-outcome-classification-v1",
+  "domains": [
+    {
+      "domain_id": "domain-kernel-boot",
+      "input_slice_count": 43,
+      "outcome_counts": {
+        "success": 23,
+        "unresolved": 5,
+        "failure": 15
+      }
+    },
+    {
+      "domain_id": "domain-parser-lexer",
+      "input_slice_count": 27,
+      "outcome_counts": {
+        "success": 14,
+        "unresolved": 4,
+        "failure": 9
+      }
+    },
+    {
+      "domain_id": "domain-web-ui",
+      "input_slice_count": 69,
+      "outcome_counts": {
+        "success": 43,
+        "unresolved": 9,
+        "failure": 17
+      }
+    }
+  ],
+  "note": "unresolved is retained when the slice has no decisive terminal evidence; it is not silently forced into success or failure"
+}

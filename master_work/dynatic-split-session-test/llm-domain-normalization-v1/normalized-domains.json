@@ -1,0 +1,30 @@
+{
+  "domains": [
+    {
+      "domain_id": "domain-os-kernel-boot",
+      "name": "操作系统内核、启动与图形输出",
+      "source_clusters": ["D002"],
+      "core_terms": ["kernel", "boot", "shell", "bash", "GOP", "framebuffer"],
+      "merge_with": [],
+      "split_hint": "若后续样本能区分引导镜像构建、内核实现和 framebuffer/UI 输出，可再拆分。"
+    },
+    {
+      "domain_id": "domain-parser-compiler-tooling",
+      "name": "解析器、词法分析与编译器工具链",
+      "source_clusters": ["D007"],
+      "core_terms": ["cpp", "parser", "lexer"],
+      "merge_with": [],
+      "split_hint": "当前证据同时涉及解析入口、语言服务配置和 C FFI；若任务边界明确，可拆为解析器实现与绑定/工具链。"
+    },
+    {
+      "domain_id": "domain-web-ui-frontend",
+      "name": "Web 应用与前端界面",
+      "source_clusters": ["D003", "D004", "D005", "D006", "D008"],
+      "core_terms": ["web", "HTML", "CSS", "page", "screen", "panel", "button", "icon", "styles", "Android", "device"],
+      "merge_with": [],
+      "split_hint": "D004/D006 偏样式与页面实现，D003/D005 偏界面交互和页面结构，D008 含 Android/Web 跨端线索；可按平台或按视觉层与业务页面进一步拆分。"
+    }
+  ],
+  "discard_or_mixed": ["D001"],
+  "notes": "归一化仅依据卡片中的 core_terms、llm_hint 和 representative_first_user_inputs。D001 的样本同时出现前端、模型目录、Android 发布等主题，缺少可支持的单一父领域，因此保留为混合簇。Web/UI 簇的合并是粗粒度归并；D008 的 Android/device 词项不足以单独证明其为纯 Android 领域。"
+}

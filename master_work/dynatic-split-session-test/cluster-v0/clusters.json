@@ -1,0 +1,68 @@
+[
+  {
+    "cluster_id": "C001",
+    "candidate_id": "P006",
+    "evidence_score": 0.7613,
+    "suggested_name_terms": [
+      "vercel"
+    ],
+    "member_count": 2,
+    "session_count": 2,
+    "members": [
+      "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01",
+      "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04"
+    ],
+    "minimum_pair_similarity": 0.2163,
+    "mean_pair_similarity": 0.2163,
+    "shared_features": {
+      "task": [
+        "vercel"
+      ],
+      "action_object": [],
+      "operation_file": [
+        "read+vercel.json",
+        "read+main.js",
+        "edit+vercel.json",
+        "read+index.html"
+      ],
+      "operation_type": [
+        "read+.json",
+        "edit+.json",
+        "read+.js",
+        "read+.html"
+      ]
+    },
+    "pair_edges": [
+      {
+        "left": "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01",
+        "right": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04",
+        "joint_similarity": 0.2163,
+        "view_similarities": {
+          "task": 0.1432,
+          "action_object": 0.0,
+          "operation_file": 0.4052,
+          "operation_type": 0.4336
+        },
+        "same_session": false,
+        "shared_features": {
+          "task": [
+            "vercel"
+          ],
+          "action_object": [],
+          "operation_file": [
+            "edit+vercel.json",
+            "read+vercel.json",
+            "read+main.js",
+            "read+index.html"
+          ],
+          "operation_type": [
+            "read+.json",
+            "edit+.json",
+            "read+.html",
+            "read+.js"
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,1153 @@
+{
+  "domain_id": "D004",
+  "domain_terms": [
+    "icon",
+    "html",
+    "styles",
+    "icons"
+  ],
+  "input_slice_count": 29,
+  "outcome_counts": {
+    "success": 16,
+    "unresolved": 6,
+    "failure": 7
+  },
+  "success_slices": [
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__07b57159-218e-4330-a64e-0ec4b4355056\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 7,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Done",
+          "assistant_text",
+          "Done. Final directory layout:\n\n```\nCFML/\n  main.py\n  README.md\n  LICENSE          ← ISC + K. Lange attribution for nyancat\n  .gitignore\n  PROJECT.md\n  cfml/            ← interpreter package\n  reference/       ← nyancat.c + animation.c (source material)\n  tests"
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Done. The disclaimer covers the full blast radius — electricity, hardware, cloud bills, ToS violations — and ends with \"You were told. It is in the name.\" which is both legally defensible and accurate."
+        ],
+        [
+          "works",
+          "assistant_text",
+          "No-op path works. Now with `--dangerous` — `@nuke` will actually run 1864 threads so give it a timeout:"
+        ],
+        [
+          "done",
+          "assistant_text",
+          "Milestone 7 done. Results:\n\n**`@nuke`** — 1864 threads, Fibonacci(999) iteratively. All completed in **0.35s** on your 22-core machine. Fibonacci(999) is 209 digits long.\n\n**`@cryptoscam`** — two separate files as planned:\n- [dangerous_github.py](cfml/directiv"
+        ],
+        [
+          "completed",
+          "assistant_text",
+          "Milestone 7 done. Results:\n\n**`@nuke`** — 1864 threads, Fibonacci(999) iteratively. All completed in **0.35s** on your 22-core machine. Fibonacci(999) is 209 digits long.\n\n**`@cryptoscam`** — two separate files as planned:\n- [dangerous_github.py](cfml/directiv"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 10,
+      "failure_score": 4,
+      "success_evidence": [
+        [
+          "pass",
+          "assistant_text",
+          "No `.desktop-icon` styles at all — the icon div has no defined layout. Also `#desktop` has `grid-row: 6; grid-column: 6` which are stale from when it was inside a grid parent, and no `pointer-events` issues from CSS… but the missing styles mean the icon may no"
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "The `desktopIcon()` call happens after boot completes which is after `DOMContentLoaded` + feather script loaded, so feather should be available. But feather is loaded via a plain `<script>` tag in `index.html` — it runs before the module. That's fine. The real"
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "Here's what was fixed:\n\n- **Click not working** — the icon div had no CSS layout, so it wasn't a proper hit target. Added full `.desktop-icon` styles with explicit `width`/`height`. Also added `pointer-events: none` to `.desktop-icon__img`, its `svg`, and `img"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "Here's what was fixed:\n\n- **Click not working** — the icon div had no CSS layout, so it wasn't a proper hit target. Added full `.desktop-icon` styles with explicit `width`/`height`. Also added `pointer-events: none` to `.desktop-icon__img`, its `svg`, and `img"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "Here's what was fixed:\n\n- **Click not working** — the icon div had no CSS layout, so it wasn't a proper hit target. Added full `.desktop-icon` styles with explicit `width`/`height`. Also added `pointer-events: none` to `.desktop-icon__img`, its `svg`, and `img"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "Lucide isn't installed. Let me install it, then check how it works as an ES module."
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "missing",
+          "assistant_text",
+          "No `.desktop-icon` styles at all — the icon div has no defined layout. Also `#desktop` has `grid-row: 6; grid-column: 6` which are stale from when it was inside a grid parent, and no `pointer-events` issues from CSS… but the missing styles mean the icon may no"
+        ],
+        [
+          "not working",
+          "assistant_text",
+          "Here's what was fixed:\n\n- **Click not working** — the icon div had no CSS layout, so it wasn't a proper hit target. Added full `.desktop-icon` styles with explicit `width`/`height`. Also added `pointer-events: none` to `.desktop-icon__img`, its `svg`, and `img"
+        ]
+      ],
+      "slice_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 6,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Done",
+          "assistant_text",
+          "Done. Here's what changed:\n\n- **`npm install lucide`** — local package, no CDN dependency\n- **`src/ts/icon.ts`** — small utility that takes a lucide icon node array (`[tag, attrs][]`) and renders it to an SVG string, since lucide's vanilla package only provide"
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "The taskbar store exists but nothing ever calls `taskbar.add()`. When a window opens, we should add the app's icon to the taskbar, and remove it when the window closes.\n\nThe cleanest place to do this is in the `windows` store — it already owns `open` and `clos"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "The taskbar store exists but nothing ever calls `taskbar.add()`. When a window opens, we should add the app's icon to the taskbar, and remove it when the window closes.\n\nThe cleanest place to do this is in the `windows` store — it already owns `open` and `clos"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "Now update `clock.ts` to pass the icon SVG to `open` and remove the manual `close` wrapping (the store handles it now):"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 1,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Done",
+          "assistant_text",
+          "Done. What changed:\n\n- **`icon.ts`** — relaxed `LucideNode` to allow `undefined` attr values (matching lucide's actual `SVGProps` type), and `attrsToString` filters them out before rendering\n- **`core.ts`** — added a `theme` store with `dark` state seeded from"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 5,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Done",
+          "assistant_text",
+          "Done. Here's what was built:\n\n**[index.html](index.html)** — 30KB self-contained portfolio, zero external dependencies except CDN fonts.\n\n---\n\n**What's implemented, exactly as specced:**\n\n| Feature | Status |\n|---|---|\n| Opening typewriter sequence (3 lines, Z"
+        ],
+        [
+          "implemented",
+          "assistant_text",
+          "Done. Here's what was built:\n\n**[index.html](index.html)** — 30KB self-contained portfolio, zero external dependencies except CDN fonts.\n\n---\n\n**What's implemented, exactly as specced:**\n\n| Feature | Status |\n|---|---|\n| Opening typewriter sequence (3 lines, Z"
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "Three changes made:\n\n1. **ABOUT now uses `showContent`** — renders inside the scrollable content panel instead of the fixed dialogue area, so it can scroll if needed\n2. **Sprite hides when any section opens** — the full battle box height is freed up for conten"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 2,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "**200 OK — real Reddit JSON coming through.** The cookie session works. Now fix the routes manifest (the formatter will have corrupted it again):"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The proxy is working. Open **http://localhost:7777/** and try `ObjectNo809` — it'll hit `/api/reddit/user/ObjectNo809/about` and `/api/reddit/user/ObjectNo809?limit=25` on your local server, which forwards the request to Reddit with your real browser cookies a"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 24,
+      "failure_score": 15,
+      "success_evidence": [
+        [
+          "Green",
+          "assistant_text",
+          "Based on the lore you've shared, here's what would round out a portfolio for a fictional angelic character:\n\n**Narrative pages (high value)**\n- **The Books** — a page for each of the four books (Book of Beginnings, Book of Exile, Serpent of the Emerald Eye, Bl"
+        ],
+        [
+          "done",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "works",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "green",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "green",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "Green",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "green",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "done",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "broken",
+          "user_text",
+          "the scrolling in the timelines page is broken fix it"
+        ],
+        [
+          "cannot",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "missing",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "cannot",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "missing",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "cannot",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "broken",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ],
+        [
+          "cannot",
+          "user_text",
+          "Connections, here is ctx for connections\n\nUnderstood. Correction accepted: **Metatron proposed the Grigori mission**. Uriel assembled the team.\n\nBelow is a structured, in-universe description of Uriel across both timelines, including her connections to other c"
+        ]
+      ],
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 5,
+      "failure_score": 1,
+      "success_evidence": [
+        [
+          "green",
+          "assistant_text",
+          "Clean build. Here's what `/connections` has:\n\n**Filter bar** — pill buttons: All, Timeline A, Timeline B, Both timelines, Family, Divine, Ally, Ward, Child. Narrows the grid instantly.\n\n**Card grid** — one card per character. Each shows a color-coded bond dot "
+        ],
+        [
+          "green",
+          "assistant_text",
+          "Clean build. Here's what `/connections` has:\n\n**Filter bar** — pill buttons: All, Timeline A, Timeline B, Both timelines, Family, Divine, Ally, Ward, Child. Narrows the grid instantly.\n\n**Card grid** — one card per character. Each shows a color-coded bond dot "
+        ],
+        [
+          "resolved",
+          "assistant_text",
+          "Clean. CSS is now:\n\n- [src/index.css](src/index.css) — tokens, reset, shared `page-header` / `page-footer` / `page-back` classes\n- [src/home.css](src/home.css) — viewport grid, columns, sigil, nav, buttons, hero\n- [src/timelines.css](src/timelines.css) — beat "
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "doesn't work",
+          "assistant_text",
+          "The problem is `.cn-body` is `grid-template-columns: 1fr 340px` — the `1fr` column is flush left within the full page width. The grid needs to be centered within that `1fr` column, but `margin-inline: auto` on the grid doesn't work when the parent is already s"
+        ]
+      ],
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 4,
+      "failure_score": 1,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "Now fix all the `snap.field =` assignments in `snapshot_fill` — since `snap` is now a `^SimSnapshot`, accessing fields through the pointer is fine in Odin (auto-deref). But the assignments like `snap.tick = world.tick` need to be `snap.tick = world.tick` which"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "The server is responding but routing isn't matching. The issue is the path parser — `parts[1]` for `GET / HTTP/1.1` will be `/`, but let me check the `_parse_request` path handling. The issue: `GET /api/status HTTP/1.1` — `parts[1]` = `/api/status` which shoul"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "The server is responding but routing isn't matching. The issue is the path parser — `parts[1]` for `GET / HTTP/1.1` will be `/`, but let me check the `_parse_request` path handling. The issue: `GET /api/status HTTP/1.1` — `parts[1]` = `/api/status` which shoul"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The server is working — it's correctly routing `GET /api/status` to the 404 branch. The `switch` in `api_dispatch` has `case req.path == \"/api/status\":` inside `case .GET:`. Let me check the actual switch structure:"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "assistant_text",
+          "The routing looks correct. The problem must be in `_parse_request` — `req.path` is being cloned to `context.temp_allocator`, but `api_dispatch` calls `free_all(context.temp_allocator)` at the top via `defer`. Wait — the `defer` runs at the *end* of the functio"
+        ]
+      ],
+      "slice_id": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 7,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Fixed",
+          "assistant_text",
+          "Fixed the unused import. Now let's smoke-test the updated backend before moving to the frontend:"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "Verify it still works:"
+        ],
+        [
+          "resolved",
+          "assistant_text",
+          "For the home/browse/read flow, I need:\n\n1. **DatabaseCard** — the selector tile shown on the home screen, one per discovered DB (name, stats: pages/images count, click to enter)\n\n2. **PageList** — scrollable index of all pages in a DB with a search bar at the "
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__d4c4d47d-642c-4c26-a866-51ab85587896\\segment-01.json",
+      "tail_event_count": 15,
+      "success_score": 5,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "done",
+          "tool_call:PowerShell",
+          "New-Item -ItemType Directory -Force \"d:\\BentoFolio\\public\" | Out-Null; Write-Output \"done\" Create public directory for resume PDF"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The site is built. Here's what was created:\n\n**Files:**\n- [index.html](index.html) — full single-page markup, Alpine.js-driven\n- [style.css](style.css) — all tokens, grid, box styles, full responsive breakpoints\n- [reset.css](reset.css) — modern CSS reset per "
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "Now I have a clear picture. The fix requires three changes:\n\n1. Grid takes `height: 100svh` (not `min-height`) so it never grows taller than the viewport\n2. Rows use `1fr` proportions instead of `minmax(..., auto)` — fixed tracks, content clips\n3. Every box ge"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__d4c4d47d-642c-4c26-a866-51ab85587896\\segment-02.json",
+      "tail_event_count": 17,
+      "success_score": 8,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "done",
+          "tool_call:PowerShell",
+          "New-Item -ItemType Directory -Force \"d:\\BentoFolio\\public\" | Out-Null; Write-Output \"done\" Create public directory for resume PDF"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The site is built. Here's what was created:\n\n**Files:**\n- [index.html](index.html) — full single-page markup, Alpine.js-driven\n- [style.css](style.css) — all tokens, grid, box styles, full responsive breakpoints\n- [reset.css](reset.css) — modern CSS reset per "
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "Now I have a clear picture. The fix requires three changes:\n\n1. Grid takes `height: 100svh` (not `min-height`) so it never grows taller than the viewport\n2. Rows use `1fr` proportions instead of `minmax(..., auto)` — fixed tracks, content clips\n3. Every box ge"
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "Also remove the `selector-content` min-height since rows are now fixed `fr` tracks — that constraint is no longer needed and could cause internal overflow:"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__d4c4d47d-642c-4c26-a866-51ab85587896\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 4,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Fixed",
+          "assistant_text",
+          "Fixed:\n\n- Filename is now in a `flex: 1` span with `text-overflow: ellipsis` — truncates cleanly as `[NAME]_R…` instead of overflowing the box\n- Arrow is `flex-shrink: 0` so it never gets squeezed out\n- Box uses `flex-column justify-center` so label and link s"
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Done. Added both `<link rel=\"icon\">` for browsers and `<link rel=\"apple-touch-icon\">` for iOS home screen bookmarks, both pointing to your GitHub avatar."
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-03"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__d4c4d47d-642c-4c26-a866-51ab85587896\\segment-04.json",
+      "tail_event_count": 20,
+      "success_score": 4,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Done",
+          "assistant_text",
+          "Those are fine — \"Auriel Solaris\" is the pen name, correct to keep. Done — only the two URLs were wrong:\n\n- `github.com/AurielSolaris` → `github.com/[USERNAME]`\n- `codeberg.org/AurielSolaris` → `codeberg.org/[NAME]`"
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Done — updated in both the mailto link and the description meta tag."
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Done. Changes across both files:\n\n- **VirtualPC** added to developer projects — \"NAND-to-CPU 8-bit virtual machine in C.\"\n- **PeppertinCSS** renamed to **Peppertino** with correct Codeberg URL\n- All existing projects wired with their URLs; projects without a p"
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Done — Apocrypha Series card now links to your Amazon author page."
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f\\segment-04.json",
+      "tail_event_count": 20,
+      "success_score": 21,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "done",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\" && $adb shell am force-stop net.opendsp.x4x4 && $adb shell am start -n net.opendsp.x4x4/.MainActivity >/dev/null 2>&1 && until $adb shell pidof net.opendsp.x4x4 >/dev/null 2>&1; do sleep 1; done"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\" && $adb shell input tap 672 2915 && until [ -f /dev/null ]; do break; done; $adb exec-out screencap -p > /tmp/sys-open.png 2>/dev/null && echo \"open shot saved\" Tap System bottom bar and screens"
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "The System panel now expands **upward from the bottom bar** — test tones, lock, defaults — with the top bar fully freed of it. All three changes are verified on-device. Let me run the suite once more and check the working tree."
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The System panel now expands **upward from the bottom bar** — test tones, lock, defaults — with the top bar fully freed of it. All three changes are verified on-device. Let me run the suite once more and check the working tree."
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "46/46 pass. I'll commit the UI work to the branch (commit-only, per your earlier choice — no push):"
+        ],
+        [
+          "fixed",
+          "tool_call:Bash",
+          "cd /home/USER/Code/tracks-dsp && git add ANDROID.md web/src/App.svelte web/src/components/PresetBar.svelte web/src/protocol/readback.ts web/test/readback.test.ts && git commit -q -F - <<'EOF'\nweb UI: narrow top bar + gate meter noise floor\n\n- PresetBar: stack "
+        ],
+        [
+          "Verified",
+          "tool_call:Bash",
+          "cd /home/USER/Code/tracks-dsp && git add ANDROID.md web/src/App.svelte web/src/components/PresetBar.svelte web/src/protocol/readback.ts web/test/readback.test.ts && git commit -q -F - <<'EOF'\nweb UI: narrow top bar + gate meter noise floor\n\n- PresetBar: stack "
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "All three changes are in and verified on the Pixel:\n\n- **Preset/Recall/Store** → stacked vertical column (top bar narrower).\n- **Meter** → the `0x40` byte is a dB-style reading (idle ~5 inputs / ~30 outputs of 72), so `raw/72` left the floor lit. Now gated and"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-04"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f\\segment-05.json",
+      "tail_event_count": 20,
+      "success_score": 10,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "passed",
+          "assistant_text",
+          "Clear pattern. iSpindlePlotter is the direct analog (single-module Android app); my gradle already matches its `KEYSTORE_PATH` convention. Both use a base64 keystore secret + passwords passed as env. Let me check the user's keystore-storage convention and exis"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "Keystore works — local `assembleRelease` produces an APK signed with **`CN=openDSP-4x4, O=[USER], C=GB`** (SHA-256 `12b4463c…`), not the debug key. Commit, push, and trigger CI to confirm the secrets work end-to-end:"
+        ],
+        [
+          "passed",
+          "tool_call:Bash",
+          "grep RUN_RESULT /tmp/claude-1000/-home-USER-Code-tracks-dsp/da5d32d6-547f-45ae-a5b5-4747ed06542f/tasks/b4n4b6dy6.output; gh run view 27686079556 2>&1 | grep -E \"✓|X|build in\"; echo \"=== download + verify signer ===\"; rm -rf /tmp/apk-ci2 && gh run download 2768"
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "CI build passed (2m7s) and the CI APK is signed with **`CN=openDSP-4x4`** (SHA-256 `12b4463c…`, identical to local) — the secrets work end-to-end. Cutting `v0.2.0`:"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-05"
+    }
+  ],
+  "failure_slices": [
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__4130c9a7-ee88-443a-91b5-224accd13629\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 0,
+      "failure_score": 2,
+      "success_evidence": [],
+      "failure_evidence": [
+        [
+          "missing",
+          "assistant_text",
+          "Now install the missing frontend packages and install backend packages:"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "Now fix the `useRef` type error (no default argument):"
+        ]
+      ],
+      "slice_id": "claude_code__4130c9a7-ee88-443a-91b5-224accd13629__segment-01"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 5,
+      "failure_score": 10,
+      "success_evidence": [
+        [
+          "fixed",
+          "assistant_text",
+          "Clean build and running. All errors fixed — the three issues were:\n\n1. `seed ^ u64(...)` — Odin XOR is `~`, not `^`\n2. `f64 * f32` mismatch in `weather_tick` — cast `dependent_next` result to `f32`  \n3. `rl.DrawCircle` radius arg is `f32`, not `i32` — added `f"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The structure looks correct. The problem is the `.Resolution` screen — `SW()` and `SH()` return 0 at startup because `g_screen` hasn't been set yet when `resolution_picker_update` first calls `rl.ClearBackground` and draws text. But that's pre-existing and was"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "`raylib.dll` doesn't exist anywhere in the project — it's missing. This was likely working before my changes only if raylib was being linked statically, or the DLL was present and got cleaned. Let me check the build script:"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "broken",
+          "assistant_text",
+          "The structure looks correct. The problem is the `.Resolution` screen — `SW()` and `SH()` return 0 at startup because `g_screen` hasn't been set yet when `resolution_picker_update` first calls `rl.ClearBackground` and draws text. But that's pre-existing and was"
+        ],
+        [
+          "missing",
+          "assistant_text",
+          "The DLL is already in `build\\` alongside the exe — so that's not it. The exit code `0xC0000135` means a dependency DLL is missing. Let me check which DLL it can't find:"
+        ],
+        [
+          "Exception",
+          "tool_call:PowerShell",
+          "cd D:\\DMLS\\build; & \"C:\\Windows\\System32\\dxdiag.exe\" /whql:off 2>$null; try { & \".\\dmls.exe\" } catch { $_.Exception.Message } Try running exe with error capture"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd D:\\DMLS\\build; & \"C:\\Windows\\System32\\dxdiag.exe\" /whql:off 2>$null; try { & \".\\dmls.exe\" } catch { $_.Exception.Message } Try running exe with error capture"
+        ],
+        [
+          "missing",
+          "assistant_text",
+          "`raylib.dll` is missing from the build directory:"
+        ],
+        [
+          "missing",
+          "assistant_text",
+          "`raylib.dll` doesn't exist anywhere in the project — it's missing. This was likely working before my changes only if raylib was being linked statically, or the DLL was present and got cleaned. Let me check the build script:"
+        ]
+      ],
+      "slice_id": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-01"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 2,
+      "failure_score": 14,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "Clean. The layout now works like this:\n\n**Desktop (`≥768px`)** — true Finder-style split:\n- Left column (240px): folder list with active row highlighted in solid `$color-primary` red, chevron on the right, item count badge\n- Red vertical divider line between p"
+        ],
+        [
+          "works",
+          "tool_call:PowerShell",
+          "(Invoke-RestMethod \"http://localhost:3000/db/orv/pages\") | Select-Object -First 2 | ConvertTo-Json Confirm backend pages endpoint works"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"error|✓ built|✗\" | Select-Object -Last 8 Build check"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "Backend is fine. The issue is in the frontend load — let me check the actual error:"
+        ],
+        [
+          "Error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; $env:BACKEND_URL=\"http://localhost:3000\"; bun run dev 2>&1 &\nStart-Sleep -Seconds 4\ntry {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing\n  Write-Host \"Status:\" $r.StatusCode\n  Write-Ho"
+        ],
+        [
+          "Exception",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; $env:BACKEND_URL=\"http://localhost:3000\"; bun run dev 2>&1 &\nStart-Sleep -Seconds 4\ntry {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing\n  Write-Host \"Status:\" $r.StatusCode\n  Write-Ho"
+        ],
+        [
+          "Exception",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; $env:BACKEND_URL=\"http://localhost:3000\"; bun run dev 2>&1 &\nStart-Sleep -Seconds 4\ntry {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing\n  Write-Host \"Status:\" $r.StatusCode\n  Write-Ho"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "The `.env` file isn't being picked up when running dev. Let me check it and also look at what error message the page actually returns:"
+        ],
+        [
+          "Exception",
+          "tool_call:PowerShell",
+          "try {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing -ErrorAction Stop\n} catch {\n  $body = $_.Exception.Response.GetResponseStream()\n  $reader = New-Object System.IO.StreamReader($body)\n  Write-Host $reader.ReadToEnd() | Select-Object"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "`NOT_FOUND` — that's the SvelteKit error thrown in the load function, meaning `pagesRes.ok` is false. The backend fetch from the server side is failing. The `.env` file isn't being read. Let me check:"
+        ]
+      ],
+      "slice_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-03"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a\\segment-04.json",
+      "tail_event_count": 20,
+      "success_score": 6,
+      "failure_score": 56,
+      "success_evidence": [
+        [
+          "works",
+          "tool_call:PowerShell",
+          "(Invoke-RestMethod \"http://localhost:3000/db/orv/pages\") | Select-Object -First 2 | ConvertTo-Json Confirm backend pages endpoint works"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "Still 404 — the env var still isn't loading. The docs confirm the issue: `$env/dynamic/private` values are only available inside the request lifecycle. But the real problem here is simpler — the `.env` file may just not be getting picked up. Let me diagnose an"
+        ],
+        [
+          "works",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"\n# Test if bun dev picks up .env at all\n$env:BACKEND_URL = \"\"  # clear any existing\nbun run dev &\nStart-Sleep -Seconds 4\n$r = Invoke-WebRequest \"http://localhost:5173/\" -UseBasicParsing -SkipHttpErrorCheck\nWrite-"
+        ],
+        [
+          "works",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "working",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "works",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "assistant_text",
+          "Backend is fine. The issue is in the frontend load — let me check the actual error:"
+        ],
+        [
+          "Error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; $env:BACKEND_URL=\"http://localhost:3000\"; bun run dev 2>&1 &\nStart-Sleep -Seconds 4\ntry {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing\n  Write-Host \"Status:\" $r.StatusCode\n  Write-Ho"
+        ],
+        [
+          "Exception",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; $env:BACKEND_URL=\"http://localhost:3000\"; bun run dev 2>&1 &\nStart-Sleep -Seconds 4\ntry {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing\n  Write-Host \"Status:\" $r.StatusCode\n  Write-Ho"
+        ],
+        [
+          "Exception",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; $env:BACKEND_URL=\"http://localhost:3000\"; bun run dev 2>&1 &\nStart-Sleep -Seconds 4\ntry {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing\n  Write-Host \"Status:\" $r.StatusCode\n  Write-Ho"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "The `.env` file isn't being picked up when running dev. Let me check it and also look at what error message the page actually returns:"
+        ],
+        [
+          "Exception",
+          "tool_call:PowerShell",
+          "try {\n  $r = Invoke-WebRequest \"http://localhost:5173/db/orv\" -UseBasicParsing -ErrorAction Stop\n} catch {\n  $body = $_.Exception.Response.GetResponseStream()\n  $reader = New-Object System.IO.StreamReader($body)\n  Write-Host $reader.ReadToEnd() | Select-Object"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "`NOT_FOUND` — that's the SvelteKit error thrown in the load function, meaning `pagesRes.ok` is false. The backend fetch from the server side is failing. The `.env` file isn't being read. Let me check:"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"error|✓ built|✗\" | Select-Object -Last 5 Build check"
+        ]
+      ],
+      "slice_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a\\segment-05.json",
+      "tail_event_count": 16,
+      "success_score": 5,
+      "failure_score": 43,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "Still 404 — the env var still isn't loading. The docs confirm the issue: `$env/dynamic/private` values are only available inside the request lifecycle. But the real problem here is simpler — the `.env` file may just not be getting picked up. Let me diagnose an"
+        ],
+        [
+          "works",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"\n# Test if bun dev picks up .env at all\n$env:BACKEND_URL = \"\"  # clear any existing\nbun run dev &\nStart-Sleep -Seconds 4\n$r = Invoke-WebRequest \"http://localhost:5173/\" -UseBasicParsing -SkipHttpErrorCheck\nWrite-"
+        ],
+        [
+          "works",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "working",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "works",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"error|✓ built|✗\" | Select-Object -Last 5 Build check"
+        ],
+        [
+          "Error",
+          "assistant_text",
+          "API Error: Unable to connect to API (FailedToOpenSocket)"
+        ],
+        [
+          "Unable",
+          "assistant_text",
+          "API Error: Unable to connect to API (FailedToOpenSocket)"
+        ],
+        [
+          "error",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "error",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "error",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "error",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ],
+        [
+          "error",
+          "user_text",
+          "Routing\n+page\n+error\n+layout\n+server\n$types\nOther files\nFurther reading\nAt the heart of SvelteKit is a filesystem-based router. The routes of your app — i.e. the URL paths that users can access — are defined by the directories in your codebase:\n\nsrc/routes is "
+        ]
+      ],
+      "slice_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-05"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f\\segment-07.json",
+      "tail_event_count": 20,
+      "success_score": 17,
+      "failure_score": 20,
+      "success_evidence": [
+        [
+          "verified",
+          "assistant_text",
+          "File is on the branch (verified, 1897 bytes). Now open the MR with the filled App-inclusion checklist:"
+        ],
+        [
+          "pass",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "verified",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "Verified",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "until [ \"$(glab api \"projects/fdroid%2Ffdroiddata/merge_requests/40696\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin).get('merge_status'))\" 2>/dev/null)\" != \"checking\" ]; do sleep 4; done\nglab api \"projects/fdroid%2Ffdroiddata/merge_requ"
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "The MR is fully open and clean. The `/label` quick action was processed (no stray text left); the label itself couldn't be applied by me (non-members can't set labels on fdroiddata — F-Droid's bot/maintainers add it). Everything else is in place.\n\n## ✅ fdroidd"
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "The MR is fully open and clean. The `/label` quick action was processed (no stray text left); the label itself couldn't be applied by me (non-members can't set labels on fdroiddata — F-Droid's bot/maintainers add it). Everything else is in place.\n\n## ✅ fdroidd"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "Exception",
+          "tool_call:Bash",
+          "FULL=$(glab api \"projects/fdroid%2Ffdroiddata/repository/branches/master\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin)['commit']['id'])\")\necho \"upstream full sha: $FULL\"\necho \"=== create branch in fork at upstream sha ===\" \nglab api -X "
+        ],
+        [
+          "error",
+          "tool_call:Bash",
+          "FULL=$(glab api \"projects/fdroid%2Ffdroiddata/repository/branches/master\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin)['commit']['id'])\")\necho \"upstream full sha: $FULL\"\necho \"=== create branch in fork at upstream sha ===\" \nglab api -X "
+        ],
+        [
+          "failed",
+          "tool_call:Bash",
+          "FULL=$(glab api \"projects/fdroid%2Ffdroiddata/repository/branches/master\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin)['commit']['id'])\")\necho \"upstream full sha: $FULL\"\necho \"=== create branch in fork at upstream sha ===\" \nglab api -X "
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "Branching from the upstream SHA failed (fork's object pool doesn't have today's upstream commit yet). I'll base on the fork's master instead — my change is a single new file, so F-Droid rebases it cleanly. Let me create the branch and capture the real response"
+        ],
+        [
+          "failed",
+          "tool_call:Bash",
+          "B64=$(base64 -w0 /tmp/mrmeta/metadata/net.opendsp.x4x4.yml)\nglab api -X POST \"projects/[USER]%2Ffdroiddata/repository/files/metadata%2Fnet.opendsp.x4x4.yml\" \\\n  -f branch=add-opendsp-4x4 \\\n  -f encoding=base64 \\\n  -f content=\"$B64\" \\\n  -f \"commit_message=New a"
+        ],
+        [
+          "Exception",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "Exception",
+          "tool_call:Bash",
+          "# check if the /label quick-action text is still literally in the description\nglab api \"projects/fdroid%2Ffdroiddata/merge_requests/40696\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);desc=d.get('description','');print('literal /label still"
+        ],
+        [
+          "couldn't",
+          "assistant_text",
+          "The MR is fully open and clean. The `/label` quick action was processed (no stray text left); the label itself couldn't be applied by me (non-members can't set labels on fdroiddata — F-Droid's bot/maintainers add it). Everything else is in place.\n\n## ✅ fdroidd"
+        ]
+      ],
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-07"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f\\segment-08.json",
+      "tail_event_count": 20,
+      "success_score": 6,
+      "failure_score": 15,
+      "success_evidence": [
+        [
+          "done",
+          "tool_call:Bash",
+          "for iid in 38399 37886 36002 38909; do\n  echo \"===== MR !$iid =====\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);print('title:',d['title']);print('pipeline:',(d.get('head_pipeli"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "for iid in 30678 35514 34924; do\n  echo \"===================== MR !$iid =====================\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path'].st"
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "Three candidates here actually have **passing pipelines** (they build). Best first target: **Where It Went** (`com.pixelpen.whereitwent`) — MIT, a benign expense tracker, `Binaries:` (so F-Droid's build is RB-verified against the upstream release), normal laun"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging /tmp/wiw.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"launchable: $ACT\"\n$adb instal"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "failed",
+          "assistant_text",
+          "Surveyed: **302 \"New App\" MRs**, and every one I sampled has a **failed pipeline** — so the backlog's real bottleneck is broken builds plus un-tested apps. Haven's reconnected and its `read_logcat`/`install_apk_from_url` are purpose-built for exactly this (\"fo"
+        ],
+        [
+          "broken",
+          "assistant_text",
+          "Surveyed: **302 \"New App\" MRs**, and every one I sampled has a **failed pipeline** — so the backlog's real bottleneck is broken builds plus un-tested apps. Haven's reconnected and its `read_logcat`/`install_apk_from_url` are purpose-built for exactly this (\"fo"
+        ],
+        [
+          "failure",
+          "assistant_text",
+          "Both are the same device (the Pixel = your Haven host), and I'm cleared to post factual reports directly. Good — I'll keep reports strictly objective (tested-on-device facts + build observations, no approve/reject calls) and run anything sketchy through static"
+        ],
+        [
+          "FATAL",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging /tmp/wiw.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"launchable: $ACT\"\n$adb instal"
+        ],
+        [
+          "exception",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging /tmp/wiw.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"launchable: $ACT\"\n$adb instal"
+        ]
+      ],
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-08"
+    }
+  ],
+  "unresolved_slices": [
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-04.json",
+      "tail_event_count": 20,
+      "success_score": 0,
+      "failure_score": 0,
+      "success_evidence": [],
+      "failure_evidence": [],
+      "slice_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-05.json",
+      "tail_event_count": 20,
+      "success_score": 3,
+      "failure_score": 3,
+      "success_evidence": [
+        [
+          "fixed",
+          "assistant_text",
+          "Here's what was actually broken and what's fixed:\n\n**Process lifecycle bugs:**\n- Apps were calling `createProcess()` unconditionally on every `open()` click, even when the window was already open — leaking processes every click. Now each app guards with `windo"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "broken",
+          "assistant_text",
+          "Here's what was actually broken and what's fixed:\n\n**Process lifecycle bugs:**\n- Apps were calling `createProcess()` unconditionally on every `open()` click, even when the window was already open — leaking processes every click. Now each app guards with `windo"
+        ]
+      ],
+      "slice_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2\\segment-01.json",
+      "tail_event_count": 10,
+      "success_score": 0,
+      "failure_score": 0,
+      "success_evidence": [],
+      "failure_evidence": [],
+      "slice_id": "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 1,
+      "failure_score": 1,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "Everything is built. Here's what was created:\n\n---\n\n**Files created/modified:**\n\n| File | What it does |\n|---|---|\n| [app/routes/index.tsx](app/routes/index.tsx) | Landing page — u/ user input + r/ subreddit input, shared MD3/Carbon style toggle |\n| [app/route"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "couldn't",
+          "user_text",
+          "404\nWe couldn't find the page you are looking for.\n\nYou might have mistyped the URL, or the route may not be configured yet. Make sure the file exists under app/routes/ and follows the file-based routing convention."
+        ]
+      ],
+      "slice_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 2,
+      "failure_score": 2,
+      "success_evidence": [
+        [
+          "pass",
+          "assistant_text",
+          "Full picture. Now rewrite all three sections — MD3Profile, CarbonProfile, and UserPage — in one pass:"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "All four component functions receive `sentinelRef` and `loadingMore`, both page components pass them through. The infinite scroll is fully wired:\n\n- `useRedditFeed(url)` manages `items`, `after` cursor, and `loadingMore` state\n- It attaches an `IntersectionObs"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "user_text",
+          "app/routes/user/[username].tsx\nerror: Could not resolve: \"@/components/useRedditFeed\". Maybe you need to \"bun install\"?\nimport { useRedditFeed } from '@/components/useRedditFeed';\napp/routes/subreddit/[subreddit].tsx\nerror: Could not resolve: \"@/components/use"
+        ],
+        [
+          "error",
+          "user_text",
+          "app/routes/user/[username].tsx\nerror: Could not resolve: \"@/components/useRedditFeed\". Maybe you need to \"bun install\"?\nimport { useRedditFeed } from '@/components/useRedditFeed';\napp/routes/subreddit/[subreddit].tsx\nerror: Could not resolve: \"@/components/use"
+        ]
+      ],
+      "slice_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 3,
+      "failure_score": 3,
+      "success_evidence": [
+        [
+          "Fixed",
+          "assistant_text",
+          "The ORV card, page count (466), and \"Browse collection\" CTA are all rendering. Fixed.\n\nThe root cause was that SvelteKit's `+page.server.ts` runs on Node — relative URLs like `/db/all` resolve against the SvelteKit process itself, not the Vite dev proxy. The f"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"error|✓ built\" | Select-Object -Last 5 Build check after fix"
+        ],
+        [
+          "Cannot",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"RolldownError|plugin|Cannot|undefined\" | Select-Object -First 15 Get specific build errors"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"error|✓ built\" | Select-Object -Last 5 Build after dynamic env fix"
+        ]
+      ],
+      "slice_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-02"
+    }
+  ],
+  "rule": "terminal 20 text-bearing events; compare generic success/failure evidence scores; intermediate errors can be outweighed by later repair evidence"
+}

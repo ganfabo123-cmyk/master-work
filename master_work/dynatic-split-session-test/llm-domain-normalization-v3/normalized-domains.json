@@ -1,0 +1,45 @@
+{
+  "domains": [
+    {
+      "domain_id": "domain-kernel-boot",
+      "name": "kernel boot GOP framebuffer",
+      "relation": "keep",
+      "source_clusters": ["D002"],
+      "core_terms": ["kernel", "boot", "GOP", "bash", "shell", "framebuffer"],
+      "evidence": ["build rule for kernel/gop.o", "UEFI flags", "kernel's VGA"],
+      "split_hints": ["可按 kernel 实现、boot/ISO 构建、GOP/framebuffer 输出拆分"]
+    },
+    {
+      "domain_id": "domain-parser-lexer",
+      "name": "cpp parser lexer",
+      "relation": "keep",
+      "source_clusters": ["D007"],
+      "core_terms": ["cpp", "parser", "lexer"],
+      "evidence": ["IDE false positives", "parse() entry point", "ErrorCollector"],
+      "split_hints": ["可按 parser/lexer 实现与语言服务配置拆分"]
+    },
+    {
+      "domain_id": "domain-web-ui",
+      "name": "web UI",
+      "relation": "merge",
+      "source_clusters": ["D003", "D004", "D005", "D006", "D008"],
+      "core_terms": ["grid", "screen", "buttons", "panel", "icon", "html", "icons", "styles", "page", "pages", "CSS", "css", "web", "Android", "device"],
+      "evidence": ["build a site", "stylized way", "two-column master-detail split", "landing page", "job board website"],
+      "split_hints": ["可按界面结构/交互（grid, screen, buttons, panel, page）与视觉样式（icon, html, styles, CSS）拆分", "可按 Web 与 Android/device 平台拆分"]
+    }
+  ],
+  "mixed_clusters": [
+    {
+      "cluster_id": "D001",
+      "evidence": ["kernel", "cpp", "web", "boot", "session", "git", "trace", "donate"],
+      "split_hints": ["需要按 kernel/boot、cpp、web 等技术领域与 git/trace/session 工程过程词拆分"]
+    }
+  ],
+  "unresolved_clusters": [],
+  "merge_relations": [
+    {
+      "source_clusters": ["D003", "D004", "D005", "D006", "D008"],
+      "parent_domain": "web UI"
+    }
+  ]
+}

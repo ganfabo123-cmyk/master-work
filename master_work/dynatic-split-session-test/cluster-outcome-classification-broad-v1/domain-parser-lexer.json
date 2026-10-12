@@ -1,0 +1,1234 @@
+{
+  "domain_id": "domain-parser-lexer",
+  "domain_terms": [],
+  "input_slice_count": 27,
+  "outcome_counts": {
+    "success": 14,
+    "unresolved": 4,
+    "failure": 9
+  },
+  "success_slices": [
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__07b57159-218e-4330-a64e-0ec4b4355056\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 7,
+      "failure_score": 5,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "All passing. Now to your question — yes, `sys.version_info` is exactly that:\n\n```python\nimport sys\nif sys.version_info >= (3, 10):\n    # use new syntax / APIs\nelse:\n    # use compat fallback\n```\n\nWe're already using this implicitly (the `from __future__ import"
+        ],
+        [
+          "green",
+          "assistant_text",
+          "All green. Here's what was done and what `sys.version_info` gives you:\n\n---\n\n**Two actual 3.7 blockers fixed:**\n\n- `kw_only=True` in `field()` — removed by making `Node` a plain class (not a dataclass) and putting `line: int = 0` as the last field on each conc"
+        ],
+        [
+          "done",
+          "assistant_text",
+          "All green. Here's what was done and what `sys.version_info` gives you:\n\n---\n\n**Two actual 3.7 blockers fixed:**\n\n- `kw_only=True` in `field()` — removed by making `Node` a plain class (not a dataclass) and putting `line: int = 0` as the last field on each conc"
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "All green. Here's what was done and what `sys.version_info` gives you:\n\n---\n\n**Two actual 3.7 blockers fixed:**\n\n- `kw_only=True` in `field()` — removed by making `Node` a plain class (not a dataclass) and putting `line: int = 0` as the last field on each conc"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "All three testable versions (3.7, 3.12, 3.14) pass identically. The freethreaded 3.14t launcher tag doesn't work with `py -V:3.14t` on your setup but that's a launcher quirk, not a code issue — it's the same interpreter as 3.14."
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "regression",
+          "tool_call:PowerShell",
+          "cd d:\\CFML && python main.py run tests/test_features.cfml 2>&1 && echo \"---\" && python main.py run tests/test_reverse_assign.cfml 2>&1 && echo \"---\" && python main.py run tests/test_gordonramsay.cfml 2>&1 && echo \"---\" && python -c \"from cfml.compat import PY3"
+        ],
+        [
+          "traceback",
+          "assistant_text",
+          "On Windows with the Python Launcher:\n\n```\npy --list\n```\n\nThat shows every installed version. Then to run a specific one:\n\n```\npy -3.7 main.py run tests/test_nyancat.cfml\npy -3.13 main.py run tests/test_nyancat.cfml\n```\n\nIf you don't have the launcher (`py` not"
+        ],
+        [
+          "doesn't work",
+          "assistant_text",
+          "All three testable versions (3.7, 3.12, 3.14) pass identically. The freethreaded 3.14t launcher tag doesn't work with `py -V:3.14t` on your setup but that's a launcher quirk, not a code issue — it's the same interpreter as 3.14."
+        ]
+      ],
+      "slice_id": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__4222016d-1932-4abb-94b3-463203bd8876\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 7,
+      "failure_score": 6,
+      "success_evidence": [
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "$content = @'\n#include <stdio.h>\n#include \"include/epilog_ffi.h\"\n\nstatic EpilogSignal on_solution(const EpilogSolution *soln, void *ud) {\n    int *count = (int *)ud;\n    uint32_t n = epilog_soln_var_count(soln);\n    for (uint32_t i = 0; i < n; i++) {\n        c"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "$content = @'\n#include <stdio.h>\n#include \"include/epilog_ffi.h\"\n\nstatic EpilogSignal on_solution(const EpilogSolution *soln, void *ud) {\n    int *count = (int *)ud;\n    uint32_t n = epilog_soln_var_count(soln);\n    for (uint32_t i = 0; i < n; i++) {\n        c"
+        ],
+        [
+          "PASS",
+          "tool_call:PowerShell",
+          "$content = @'\n#include <stdio.h>\n#include \"include/epilog_ffi.h\"\n\nstatic EpilogSignal on_solution(const EpilogSolution *soln, void *ud) {\n    int *count = (int *)ud;\n    uint32_t n = epilog_soln_var_count(soln);\n    for (uint32_t i = 0; i < n; i++) {\n        c"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "$content = @'\n#include <stdio.h>\n#include \"include/epilog_ffi.h\"\n\nstatic EpilogSignal on_solution(const EpilogSolution *soln, void *ud) {\n    int *count = (int *)ud;\n    uint32_t n = epilog_soln_var_count(soln);\n    for (uint32_t i = 0; i < n; i++) {\n        c"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "Multi-clause loading works fine when there are spaces between clauses. The original issue was that the three C++ string literals were concatenated without spaces — `\"crushing(uriel, character_a).\"\"crushing(anna_croft, character_a).\"\"rivals(...)\"` — so the lexe"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "Multi-clause loading works fine when there are spaces between clauses. The original issue was that the three C++ string literals were concatenated without spaces — `\"crushing(uriel, character_a).\"\"crushing(anna_croft, character_a).\"\"rivals(...)\"` — so the lexe"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "Multi-clause loading works fine when there are spaces between clauses. The original issue was that the three C++ string literals were concatenated without spaces — `\"crushing(uriel, character_a).\"\"crushing(anna_croft, character_a).\"\"rivals(...)\"` — so the lexe"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "assistant_text",
+          "I see the problem. The parser's `parse_term_list` calls `parse_term` repeatedly, separated by commas. Each `parse_term` handles a single term with optional infix `=` or `\\=`. The body goals are parsed as `X \\= Y` being a single compound term `\\=(X,Y)`.\n\nBut lo"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "$content = @'\n#include <stdio.h>\n#include <string.h>\n#include \"include/epilog_ffi.h\"\n#include \"include/atoms.hpp\"\n#include \"include/terms.hpp\"\n#include \"include/variables.hpp\"\n#include \"include/lexer.hpp\"\n#include \"include/parser.hpp\"\n#include \"include/databas"
+        ],
+        [
+          "FAILED",
+          "tool_call:PowerShell",
+          "$content = @'\n#include <stdio.h>\n#include <string.h>\n#include \"include/epilog_ffi.h\"\n#include \"include/atoms.hpp\"\n#include \"include/terms.hpp\"\n#include \"include/variables.hpp\"\n#include \"include/lexer.hpp\"\n#include \"include/parser.hpp\"\n#include \"include/databas"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "The `parser_next_clause` already calls `var_reset(p->vars)` at the start (I saw that in the parser code at line 175). So the var registry IS reset per clause in the parser. The issue must be that the `clause_arena` is filling up — all clauses share one `TermAr"
+        ]
+      ],
+      "slice_id": "claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__4222016d-1932-4abb-94b3-463203bd8876\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 5,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "Done",
+          "assistant_text",
+          "Fresh build at 4:11 PM with no errors. Done.\n\nHere's what `starter_chars.odin` delivers:\n\n**Four pre-programmed characters** asserted in exact CHARACTERS.MD initialisation order:\n\n1. **[NAME]** (id=1) — `ambitious_achiever`, `any` dating pref, spawns in Town. "
+        ],
+        [
+          "working",
+          "assistant_text",
+          "Fresh build at 4:11 PM with no errors. Done.\n\nHere's what `starter_chars.odin` delivers:\n\n**Four pre-programmed characters** asserted in exact CHARACTERS.MD initialisation order:\n\n1. **[NAME]** (id=1) — `ambitious_achiever`, `any` dating pref, spawns in Town. "
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "Now I understand the full picture. The plan:\n\n1. **`screen_cfg.odin`** — `ScreenConfig` struct with runtime `W`, `H`; a `ScreenSize` enum; resolution picker added to the title screen (before island name).\n2. **`creation.odin`** — change `SCREEN_W/H` from compi"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 16,
+      "failure_score": 13,
+      "success_evidence": [
+        [
+          "pass",
+          "assistant_text",
+          "All 17 atom tests pass. Now let's do the final complete run of all 10 suites:"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n$lib_objs = @(\n    \"build/internals/atoms.o\",\"build/internals/terms.o\",\"build/internals/variables.o\",\n    \"build/parser/lexer.o\",\"bui"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n$lib_objs = @(\n    \"build/internals/atoms.o\",\"build/internals/terms.o\",\"build/internals/variables.o\",\n    \"build/parser/lexer.o\",\"bui"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n$lib_objs = @(\n    \"build/internals/atoms.o\",\"build/internals/terms.o\",\"build/internals/variables.o\",\n    \"build/parser/lexer.o\",\"bui"
+        ],
+        [
+          "passed",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n$lib_objs = @(\n    \"build/internals/atoms.o\",\"build/internals/terms.o\",\"build/internals/variables.o\",\n    \"build/parser/lexer.o\",\"bui"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "**10/10 suites, 144/144 tests pass.** Let me mark the final task complete and clean up the debug files:"
+        ],
+        [
+          "done",
+          "assistant_text",
+          "Now update the memory to record that v0.2 is done:"
+        ],
+        [
+          "done",
+          "assistant_text",
+          "All done. Here's a summary of everything implemented:\n\n---\n\n## v0.2.0 — complete\n\n### New source files\n\n| File | Purpose |\n|------|---------|\n| [include/stats.hpp](include/stats.hpp) | Query statistics API |\n| [engine/stats.cpp](engine/stats.cpp) | Stats imple"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "regression",
+          "assistant_text",
+          "`test_atoms` was already crashing BEFORE my changes — this is a pre-existing issue, not a regression I introduced. The old `Database` with `PredEntry` at 32 bytes × 512 + `StoredClause` at 136 bytes × 4096 = `557KB + 16KB` + the two `TermArena`s (from the solv"
+        ],
+        [
+          "broken",
+          "assistant_text",
+          "In `test_solver.cpp:18` and `test_indexing.cpp:28`, the `static Database s_db` is a CLASS static member defined at namespace scope with `Database SolverCtx::s_db = {};`. In C++, class statics with trivial default constructors in BSS are zero-initialized before"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n# test_atoms only needs atoms.o\n& $cxx ($flags + @(\"-Itests\", \"tests/test_atoms.cpp\", \"build/internals/atoms.o\") + @(\"-o\", \"build/tes"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n& $cxx ($flags + @(\"-Itests\", \"tests/test_atoms.cpp\", \"build/internals/atoms.o\") + @(\"-o\", \"build/tests/test_atoms_slim.exe\")) 2>&1 |"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n$lib_objs = @(\n    \"build/internals/atoms.o\",\"build/internals/terms.o\",\"build/internals/variables.o\",\n    \"build/parser/lexer.o\",\"bui"
+        ],
+        [
+          "FAILED",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n$lib_objs = @(\n    \"build/internals/atoms.o\",\"build/internals/terms.o\",\"build/internals/variables.o\",\n    \"build/parser/lexer.o\",\"bui"
+        ],
+        [
+          "failed",
+          "tool_call:PowerShell",
+          "Set-Location \"d:\\Epilog\"\n$cxx = \"clang++\"\n$flags = @(\"-std=c++23\", \"-Wall\", \"-Wextra\", \"-Wpedantic\", \"-Iinclude\", \"-g\", \"-O0\")\n$lib_objs = @(\n    \"build/internals/atoms.o\",\"build/internals/terms.o\",\"build/internals/variables.o\",\n    \"build/parser/lexer.o\",\"bui"
+        ]
+      ],
+      "slice_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 7,
+      "failure_score": 5,
+      "success_evidence": [
+        [
+          "done",
+          "tool_call:Bash",
+          "sed -i 's/—/--/g' /d/FrostCore/frost/tests/smoke_test.c /d/FrostCore/frost/tests/subsystem_test.c /d/FrostCore/README.md && echo \"done\" Replace em dashes with -- in test files and README"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "sed -i 's/—/--/g' \\\n    /d/FrostCore/frost/include/frostcore.h \\\n    /d/FrostCore/frost/include/frostcore_subsystems.h \\\n    /d/FrostCore/frost/src/frostcore.c \\\n    /d/FrostCore/frost/src/frostcore_subsystems.c \\\n    /d/FrostCore/frost/Makefile \\\n    /d/Frost"
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Done. All em dashes replaced with `--` across every FrostCore file — source, headers, Makefile, scripts, and README. The binaries rebuilt clean, still **135 passed, 0 failed**."
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "Done. All em dashes replaced with `--` across every FrostCore file — source, headers, Makefile, scripts, and README. The binaries rebuilt clean, still **135 passed, 0 failed**."
+        ],
+        [
+          "works",
+          "assistant_text",
+          "The audit result changes Stage 3 fundamentally. Here's what it reveals:\n\n**`JS_WriteObject` / `JS_ReadObject` already exist and already do atom remapping.** They produce a self-contained binary blob with no runtime pointers. The parser cannot be physically sep"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "failed",
+          "assistant_text",
+          "Done. All em dashes replaced with `--` across every FrostCore file — source, headers, Makefile, scripts, and README. The binaries rebuilt clean, still **135 passed, 0 failed**."
+        ],
+        [
+          "error",
+          "user_text",
+          "Time for Stage 3,\nFrostCore Stage 3 — \"Parser/Bytecode Boundary\"\nAfter memory and stdlib are modular, the next cut is separating the frontend from the backend. quickjs-ng's parser emits bytecode directly into runtime-specific structures. Stage 3 makes the pars"
+        ],
+        [
+          "cannot",
+          "assistant_text",
+          "The audit result changes Stage 3 fundamentally. Here's what it reveals:\n\n**`JS_WriteObject` / `JS_ReadObject` already exist and already do atom remapping.** They produce a self-contained binary blob with no runtime pointers. The parser cannot be physically sep"
+        ]
+      ],
+      "slice_id": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 15,
+      "failure_score": 9,
+      "success_evidence": [
+        [
+          "pass",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "green",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "success",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "README updated. Changes from the old version:\n\n- **Capability table** -- added all Stage 2 and Stage 3 rows, removed the \"Stage 3+\" placeholder entries\n- **Repository layout** -- expanded to show all four src files, all three test files, and the two new includ"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "missing",
+          "assistant_text",
+          "Those are IDE diagnostics from missing include paths — not real errors since the Makefile adds `-I$(ROOT) -Iinclude`. Now I need to add the internal accessors to `frostcore.c`. Let me read it first."
+        ],
+        [
+          "missing",
+          "assistant_text",
+          "IDE diagnostics from missing include paths again -- not real. Now initialize `loaded_fn` in `alloc_runtime` and free it in `frost_runtime_destroy`:"
+        ],
+        [
+          "missing",
+          "assistant_text",
+          "IDE false positives from missing include paths. Now let's build and see what happens:"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "The library built successfully. The link error is just because the existing test binary is already running/locked. Let me kill any running instances and rebuild:"
+        ],
+        [
+          "failure",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "error",
+          "assistant_text",
+          "All three suites pass green:\n\n- **Stage 1 smoke**: all passed, allocs=1246 / frees=1246 (zero leak)\n- **Stage 2 subsystems**: 135/135 passed\n- **Stage 3 bytecode**: 101/101 passed\n\nThe library built cleanly -- no warnings on the new files. Here's what Stage 3 "
+        ],
+        [
+          "error",
+          "assistant_text",
+          "README updated. Changes from the old version:\n\n- **Capability table** -- added all Stage 2 and Stage 3 rows, removed the \"Stage 3+\" placeholder entries\n- **Repository layout** -- expanded to show all four src files, all three test files, and the two new includ"
+        ]
+      ],
+      "slice_id": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-03"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 4,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "pass",
+          "assistant_text",
+          "47 pass, 1 fail: `44_recover_mode.jsx` passes `--recover` which we removed from the CLI when moving to the C API. Let me check what that fixture expects:"
+        ],
+        [
+          "implemented",
+          "assistant_text",
+          "`--recover` needs to stay as a parsed-but-ignored flag (or be re-implemented). The cleanest Stage 4 approach is to keep `--recover` accepted by the CLI but note it's a no-op until the C API exposes it. That preserves backward compatibility without breaking the"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "48/48 pass, zero warnings."
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "Stage 4 is complete. Here's what was built:\n\n---\n\n**Deliverables**\n\n| File | Role |\n|---|---|\n| [include/yggdrasil.h](include/yggdrasil.h) | Public C API — the only header GlacioJS needs |\n| [include/ygg_alloc.h](include/ygg_alloc.h) | Allocator indirection (i"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 5,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "implemented",
+          "assistant_text",
+          "`--recover` needs to stay as a parsed-but-ignored flag (or be re-implemented). The cleanest Stage 4 approach is to keep `--recover` accepted by the CLI but note it's a no-op until the C API exposes it. That preserves backward compatibility without breaking the"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "48/48 pass, zero warnings."
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "Stage 4 is complete. Here's what was built:\n\n---\n\n**Deliverables**\n\n| File | Role |\n|---|---|\n| [include/yggdrasil.h](include/yggdrasil.h) | Public C API — the only header GlacioJS needs |\n| [include/ygg_alloc.h](include/ygg_alloc.h) | Allocator indirection (i"
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Zero build artefacts would be staged. Done.\n\n---\n\n**What was done:**\n\n**`.gitignore`** — covers `build/`, `bin/`, `lib/`, all object/archive/binary extensions (`.o`, `.a`, `.lib`, `.so`, `.dll`, `.exe`, `.pdb`), editor noise (`.vscode/`, `.idea/`, `.DS_Store`)"
+        ],
+        [
+          "done",
+          "assistant_text",
+          "Zero build artefacts would be staged. Done.\n\n---\n\n**What was done:**\n\n**`.gitignore`** — covers `build/`, `bin/`, `lib/`, all object/archive/binary extensions (`.o`, `.a`, `.lib`, `.so`, `.dll`, `.exe`, `.pdb`), editor noise (`.vscode/`, `.idea/`, `.DS_Store`)"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 4,
+      "failure_score": 1,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "Now fix all the `snap.field =` assignments in `snapshot_fill` — since `snap` is now a `^SimSnapshot`, accessing fields through the pointer is fine in Odin (auto-deref). But the assignments like `snap.tick = world.tick` need to be `snap.tick = world.tick` which"
+        ],
+        [
+          "pass",
+          "assistant_text",
+          "The server is responding but routing isn't matching. The issue is the path parser — `parts[1]` for `GET / HTTP/1.1` will be `/`, but let me check the `_parse_request` path handling. The issue: `GET /api/status HTTP/1.1` — `parts[1]` = `/api/status` which shoul"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "The server is responding but routing isn't matching. The issue is the path parser — `parts[1]` for `GET / HTTP/1.1` will be `/`, but let me check the `_parse_request` path handling. The issue: `GET /api/status HTTP/1.1` — `parts[1]` = `/api/status` which shoul"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The server is working — it's correctly routing `GET /api/status` to the 404 branch. The `switch` in `api_dispatch` has `case req.path == \"/api/status\":` inside `case .GET:`. Let me check the actual switch structure:"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "assistant_text",
+          "The routing looks correct. The problem must be in `_parse_request` — `req.path` is being cloned to `context.temp_allocator`, but `api_dispatch` calls `free_all(context.temp_allocator)` at the top via `defer`. Wait — the `defer` runs at the *end* of the functio"
+        ]
+      ],
+      "slice_id": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 6,
+      "failure_score": 1,
+      "success_evidence": [
+        [
+          "pass",
+          "assistant_text",
+          "The server is responding but routing isn't matching. The issue is the path parser — `parts[1]` for `GET / HTTP/1.1` will be `/`, but let me check the `_parse_request` path handling. The issue: `GET /api/status HTTP/1.1` — `parts[1]` = `/api/status` which shoul"
+        ],
+        [
+          "works",
+          "assistant_text",
+          "The server is responding but routing isn't matching. The issue is the path parser — `parts[1]` for `GET / HTTP/1.1` will be `/`, but let me check the `_parse_request` path handling. The issue: `GET /api/status HTTP/1.1` — `parts[1]` = `/api/status` which shoul"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "The server is working — it's correctly routing `GET /api/status` to the 404 branch. The `switch` in `api_dispatch` has `case req.path == \"/api/status\":` inside `case .GET:`. Let me check the actual switch structure:"
+        ],
+        [
+          "success",
+          "tool_call:Bash",
+          "cmd.exe /c \"build.bat 2>&1 && echo BUILD_SUCCESS\" Build bat with success echo"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "assistant_text",
+          "The routing looks correct. The problem must be in `_parse_request` — `req.path` is being cloned to `context.temp_allocator`, but `api_dispatch` calls `free_all(context.temp_allocator)` at the top via `defer`. Wait — the `defer` runs at the *end* of the functio"
+        ]
+      ],
+      "slice_id": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-03"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 3,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "passed",
+          "assistant_text",
+          "The `term_write` is passed a `ref` that's already been through `deref` at the top of the loop. But when `deref` returns a VAR ref bound to an ATOM (because `wr.tag == TERM_ATOM` returns `ref` unchanged), the printed result should be the atom name. Let me fix `"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-02"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 7,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "Everything works. Minor formatting issues: `write` doesn't add a newline (correct Prolog behavior), and `X = foo` shows `foo` via write but also prints the binding `X = foo` in the solution display (correct). `1 = 1` succeeds, `1 = 2` fails correctly.\n\nLet me "
+        ],
+        [
+          "done",
+          "assistant_text",
+          "[README.md](README.md) is written. It covers:\n\n- **Status** — v0.1 done, working REPL\n- **Quick start** — build and run on Windows, Linux, macOS, and Make\n- **Language** — facts, rules, queries, consult, halt with real example output\n- **Built-ins table** — al"
+        ],
+        [
+          "working",
+          "assistant_text",
+          "[README.md](README.md) is written. It covers:\n\n- **Status** — v0.1 done, working REPL\n- **Quick start** — build and run on Windows, Linux, macOS, and Make\n- **Language** — facts, rules, queries, consult, halt with real example output\n- **Built-ins table** — al"
+        ],
+        [
+          "implemented",
+          "assistant_text",
+          "[README.md](README.md) is written. It covers:\n\n- **Status** — v0.1 done, working REPL\n- **Quick start** — build and run on Windows, Linux, macOS, and Make\n- **Language** — facts, rules, queries, consult, halt with real example output\n- **Built-ins table** — al"
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "Good survey. The issues are: duplicate `TermRef` typedef, the `goto` in `builtins.c` (which in C++ is actually illegal across a label when variables are initialized between the jump and target — needs removal), local structs in functions, and C-style casts. Th"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-03"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd\\segment-05.json",
+      "tail_event_count": 20,
+      "success_score": 2,
+      "failure_score": 0,
+      "success_evidence": [
+        [
+          "working",
+          "assistant_text",
+          "All working correctly — `grandparent(alice, carol)` succeeds. The `parent(X,Y)` query showed `X = alice\\nY = bob` but it got swallowed by the piped input `; ` response. Everything is correct."
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Done. Here's what changed:\n\n**Files removed:** all 11 `.c` and 11 `.h` files.\n\n**Files created:**\n```\ninclude/   atoms.hpp  variables.hpp  terms.hpp  lexer.hpp  parser.hpp\n           database.hpp  unifier.hpp  solver.hpp  builtins.hpp  repl.hpp  log.hpp\nintern"
+        ]
+      ],
+      "failure_evidence": [],
+      "slice_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-05"
+    },
+    {
+      "label": "success",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd\\segment-06.json",
+      "tail_event_count": 20,
+      "success_score": 24,
+      "failure_score": 12,
+      "success_evidence": [
+        [
+          "works",
+          "assistant_text",
+          "The `assert` via query can only work when the asserted terms persist — but `env->arena` used by `bi_assert` is `query_arena` which gets reset. This is a known engine limitation for 0.1. Change the test to reflect what actually works — asserting via `load()`:"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\nNew-Ite"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\nNew-Ite"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\nNew-Ite"
+        ],
+        [
+          "PASSED",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\nNew-Ite"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog; Stop-Process -Name test_atoms,test_terms,test_unifier,test_variables,test_parser -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lex"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog; Stop-Process -Name test_atoms,test_terms,test_unifier,test_variables,test_parser -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lex"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog; Stop-Process -Name test_atoms,test_terms,test_unifier,test_variables,test_parser -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lex"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "ERROR",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\nNew-Ite"
+        ],
+        [
+          "FAILED",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\nNew-Ite"
+        ],
+        [
+          "ERROR",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog; Stop-Process -Name test_atoms,test_terms,test_unifier,test_variables,test_parser -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lex"
+        ],
+        [
+          "FAILED",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog; Stop-Process -Name test_atoms,test_terms,test_unifier,test_variables,test_parser -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 500\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lex"
+        ],
+        [
+          "ERROR",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\n$pass ="
+        ],
+        [
+          "FAILED",
+          "tool_call:PowerShell",
+          "cd d:\\Epilog\n$SOURCES = @(\n    \"internals/atoms.cpp\",\"internals/variables.cpp\",\"internals/terms.cpp\",\n    \"parser/lexer.cpp\",\"parser/parser.cpp\",\n    \"engine/database.cpp\",\"engine/unifier.cpp\",\"engine/builtins.cpp\",\"engine/solver.cpp\",\n    \"repl.cpp\"\n)\n$pass ="
+        ]
+      ],
+      "slice_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-06"
+    }
+  ],
+  "failure_slices": [
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 7,
+      "failure_score": 30,
+      "success_evidence": [
+        [
+          "fixed",
+          "assistant_text",
+          "**32/32 passing.** Here's a summary of everything fixed in this session:\n\n| Root cause | Fix |\n|---|---|\n| Lexer mode stack never pushed during tokenisation | Rewrote `tokenize()` to self-manage `JSXTag`/`JSXChildren` modes; push `JSXTag` after emitting `JSXLe"
+        ],
+        [
+          "Fixed",
+          "assistant_text",
+          "**32/32 passing.** Here's a summary of everything fixed in this session:\n\n| Root cause | Fix |\n|---|---|\n| Lexer mode stack never pushed during tokenisation | Rewrote `tokenize()` to self-manage `JSXTag`/`JSXChildren` modes; push `JSXTag` after emitting `JSXLe"
+        ],
+        [
+          "works",
+          "user_text",
+          "time for stage 2/II\n\nMVP Stage 2 — \"Solid Tool\"\nAfter your basic transpiler works on single files, Stage 2 is about making it robust, usable, and fast without turning it into Babel.\n1. Error Recovery & Diagnostics\n\n    Don't crash on first error — resynchroniz"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "Error",
+          "assistant_text",
+          "29 passing. Two fixes left:\n\n1. **Fixture 27** — expected file says `export async function` (no `default`) but source has `export default async function`. Fix the expected:\n2. **Error test `err_01`** — mismatched tags correctly detected (exit 1 expected), but "
+        ],
+        [
+          "error",
+          "assistant_text",
+          "Now check the error test runner — the `err_01` test uses `expected_exit`. Looking at the runner output it shows `parse error at line 3 ... Mismatched JSX tags` as a `NativeCommandError` — that means it fell into the output-comparison branch. Let me check the r"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "Now check the error test runner — the `err_01` test uses `expected_exit`. Looking at the runner output it shows `parse error at line 3 ... Mismatched JSX tags` as a `NativeCommandError` — that means it fell into the output-comparison branch. Let me check the r"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "The `2>&1` on line 91 redirects stderr to stdout in PowerShell, but for a native exe it causes the error output to be wrapped in an `ErrorRecord` which triggers `NativeCommandError` and propagates as an exception with `$ErrorActionPreference = \"Stop\"`. Fix: su"
+        ],
+        [
+          "exception",
+          "assistant_text",
+          "The `2>&1` on line 91 redirects stderr to stdout in PowerShell, but for a native exe it causes the error output to be wrapped in an `ErrorRecord` which triggers `NativeCommandError` and propagates as an exception with `$ErrorActionPreference = \"Stop\"`. Fix: su"
+        ],
+        [
+          "exception",
+          "assistant_text",
+          "The `2>&1` on line 91 redirects stderr to stdout in PowerShell, but for a native exe it causes the error output to be wrapped in an `ErrorRecord` which triggers `NativeCommandError` and propagates as an exception with `$ErrorActionPreference = \"Stop\"`. Fix: su"
+        ],
+        [
+          "exception",
+          "assistant_text",
+          "The output variable is assigned in the catch to suppress the exception but never read — suppress it explicitly:"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "Also apply the same fix to the output-comparison block where `2>&1` can throw on error exit — wrap that in a try/catch too:"
+        ]
+      ],
+      "slice_id": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6\\segment-03.json",
+      "tail_event_count": 20,
+      "success_score": 0,
+      "failure_score": 2,
+      "success_evidence": [],
+      "failure_evidence": [
+        [
+          "Error",
+          "assistant_text",
+          "Now I have the full picture. Let me make targeted additions to support:\n1. JSX namespace tags (`<svg:circle />`) in the lexer (emit `:` in JSXTag mode) and parser\n2. JSX comments (`{/* */}`) - expression container with null expression\n3. Spread children `{...i"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "Now add error recovery to the parser. I'll add `synchronize()` and wrap the top-level statement loop:"
+        ]
+      ],
+      "slice_id": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-03"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6\\segment-04.json",
+      "tail_event_count": 20,
+      "success_score": 12,
+      "failure_score": 17,
+      "success_evidence": [
+        [
+          "passed",
+          "assistant_text",
+          "Also need to handle the case where the first positional arg that's passed to batch mode with `--out-dir` is not a directory — currently main.cpp only checks `firstIsDir`. When explicitly passing a non-existent path, we should check in main.cpp too. Actually th"
+        ],
+        [
+          "Fixed",
+          "assistant_text",
+          "**Stage 3 complete. All tests passing: 48/48 fixture + 17/17 batch.**\n\n---\n\nHere's what was added:\n\n### New source files\n\n| File | Role |\n|------|------|\n| [include/threadpool.h](include/threadpool.h) | Fixed-size thread pool declaration |\n| [src/threadpool.cp"
+        ],
+        [
+          "fixed",
+          "assistant_text",
+          "**Stage 3 complete. All tests passing: 48/48 fixture + 17/17 batch.**\n\n---\n\nHere's what was added:\n\n### New source files\n\n| File | Role |\n|------|------|\n| [include/threadpool.h](include/threadpool.h) | Fixed-size thread pool declaration |\n| [src/threadpool.cp"
+        ],
+        [
+          "Fixed",
+          "assistant_text",
+          "**Stage 3 complete. All tests passing: 48/48 fixture + 17/17 batch.**\n\n---\n\nHere's what was added:\n\n### New source files\n\n| File | Role |\n|------|------|\n| [include/threadpool.h](include/threadpool.h) | Fixed-size thread pool declaration |\n| [src/threadpool.cp"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "assistant_text",
+          "Two issues: T3 fails and the error isolation test (T8) causes PowerShell to throw. Let me debug T3 first:"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "Now fix T8 — the stderr from the binary causes PowerShell's `NativeCommandError`. Use `cmd /c` like we do in the fixture runner for error-exit tests:"
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "The binary exits 0 for a non-existent directory because `BatchResult.failed == 0` — there are no files to process (the dir doesn't exist but `BatchEngine::run()` checks `fs::exists` and only adds an error entry to `result.errors` but doesn't set `failed++` pro"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "The binary exits 0 for a non-existent directory because `BatchResult.failed == 0` — there are no files to process (the dir doesn't exist but `BatchEngine::run()` checks `fs::exists` and only adds an error entry to `result.errors` but doesn't set `failed++` pro"
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "The binary exits 0 for a non-existent directory because `BatchResult.failed == 0` — there are no files to process (the dir doesn't exist but `BatchEngine::run()` checks `fs::exists` and only adds an error entry to `result.errors` but doesn't set `failed++` pro"
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "The binary exits 0 for a non-existent directory because `BatchResult.failed == 0` — there are no files to process (the dir doesn't exist but `BatchEngine::run()` checks `fs::exists` and only adds an error entry to `result.errors` but doesn't set `failed++` pro"
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "The binary exits 0 for a non-existent directory because `BatchResult.failed == 0` — there are no files to process (the dir doesn't exist but `BatchEngine::run()` checks `fs::exists` and only adds an error entry to `result.errors` but doesn't set `failed++` pro"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "**Stage 3 complete. All tests passing: 48/48 fixture + 17/17 batch.**\n\n---\n\nHere's what was added:\n\n### New source files\n\n| File | Role |\n|------|------|\n| [include/threadpool.h](include/threadpool.h) | Fixed-size thread pool declaration |\n| [src/threadpool.cp"
+        ]
+      ],
+      "slice_id": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 6,
+      "failure_score": 10,
+      "success_evidence": [
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "$bins = Get-ChildItem \"d:\\Epilog\\build\\tests\" -Filter \"*.exe\" | Where-Object { $_.Name -like \"test_*\" }\n$pass = 0; $fail = 0\nforeach ($bin in $bins) {\n    Write-Host \"--- $($bin.Name) ---\"\n    & $bin.FullName\n    if ($LASTEXITCODE -eq 0) { $pass++ } else { $fa"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "$bins = Get-ChildItem \"d:\\Epilog\\build\\tests\" -Filter \"*.exe\" | Where-Object { $_.Name -like \"test_*\" }\n$pass = 0; $fail = 0\nforeach ($bin in $bins) {\n    Write-Host \"--- $($bin.Name) ---\"\n    & $bin.FullName\n    if ($LASTEXITCODE -eq 0) { $pass++ } else { $fa"
+        ],
+        [
+          "pass",
+          "tool_call:PowerShell",
+          "$bins = Get-ChildItem \"d:\\Epilog\\build\\tests\" -Filter \"*.exe\" | Where-Object { $_.Name -like \"test_*\" }\n$pass = 0; $fail = 0\nforeach ($bin in $bins) {\n    Write-Host \"--- $($bin.Name) ---\"\n    & $bin.FullName\n    if ($LASTEXITCODE -eq 0) { $pass++ } else { $fa"
+        ],
+        [
+          "passed",
+          "tool_call:PowerShell",
+          "$bins = Get-ChildItem \"d:\\Epilog\\build\\tests\" -Filter \"*.exe\" | Where-Object { $_.Name -like \"test_*\" }\n$pass = 0; $fail = 0\nforeach ($bin in $bins) {\n    Write-Host \"--- $($bin.Name) ---\"\n    & $bin.FullName\n    if ($LASTEXITCODE -eq 0) { $pass++ } else { $fa"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "failed",
+          "assistant_text",
+          "Good progress. 3 suites failed. Let me check each:\n\n1. `test_indexing` — 3 failures in indexing tests\n2. `test_solver` — 1 regression in backtracking test\n3. `test_memo` — (need to see)"
+        ],
+        [
+          "regression",
+          "assistant_text",
+          "Good progress. 3 suites failed. Let me check each:\n\n1. `test_indexing` — 3 failures in indexing tests\n2. `test_solver` — 1 regression in backtracking test\n3. `test_memo` — (need to see)"
+        ],
+        [
+          "failure",
+          "assistant_text",
+          "`test_solver` now passes fully when run directly — the failure was from a stale binary. Let me run all tests via PowerShell:"
+        ],
+        [
+          "failed",
+          "tool_call:PowerShell",
+          "$bins = Get-ChildItem \"d:\\Epilog\\build\\tests\" -Filter \"*.exe\" | Where-Object { $_.Name -like \"test_*\" }\n$pass = 0; $fail = 0\nforeach ($bin in $bins) {\n    Write-Host \"--- $($bin.Name) ---\"\n    & $bin.FullName\n    if ($LASTEXITCODE -eq 0) { $pass++ } else { $fa"
+        ]
+      ],
+      "slice_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-02"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-06.json",
+      "tail_event_count": 20,
+      "success_score": 0,
+      "failure_score": 6,
+      "success_evidence": [],
+      "failure_evidence": [
+        [
+          "exception",
+          "assistant_text",
+          "The key entry across all logs is the same crash pattern:\n\n```\nIDT=0000000000000000 00000000    ← IDT is null\nv=0d (General Protection Fault) at RIP=0x124a1dd\ncheck_exception old: 0xd new 0xd → double fault\ncheck_exception old: 0x8 new 0xd → Triple fault\n```\n\nT"
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "The key entry across all logs is the same crash pattern:\n\n```\nIDT=0000000000000000 00000000    ← IDT is null\nv=0d (General Protection Fault) at RIP=0x124a1dd\ncheck_exception old: 0xd new 0xd → double fault\ncheck_exception old: 0x8 new 0xd → Triple fault\n```\n\nT"
+        ]
+      ],
+      "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 10,
+      "failure_score": 14,
+      "success_evidence": [
+        [
+          "done",
+          "assistant_text",
+          "T1 now fully passes. Two remaining issues:\n\n1. **T2 dep checks** (4 fails) — `got: (null)` despite the dep check error path being proven to work in isolation. The T2 runtime is created by `frost_runtime_create_bare()` which now calls `JS_AddIntrinsicEval` — bu"
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "**135 passed, 0 failed.** Now run the size audit and update memory:"
+        ],
+        [
+          "passed",
+          "assistant_text",
+          "Stage 2 is complete. **135 passed, 0 failed.**\n\n---\n\n## Stage 2 — Done\n\n**New files:**\n\n| File | Purpose |\n|---|---|\n| [frost/include/frostcore_subsystems.h](frost/include/frostcore_subsystems.h) | Registration API + `FROST_STD_*` bitmasks |\n| [frost/src/frost"
+        ],
+        [
+          "Done",
+          "assistant_text",
+          "Stage 2 is complete. **135 passed, 0 failed.**\n\n---\n\n## Stage 2 — Done\n\n**New files:**\n\n| File | Purpose |\n|---|---|\n| [frost/include/frostcore_subsystems.h](frost/include/frostcore_subsystems.h) | Registration API + `FROST_STD_*` bitmasks |\n| [frost/src/frost"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "sed -i 's/—/--/g' /d/FrostCore/frost/tests/smoke_test.c /d/FrostCore/frost/tests/subsystem_test.c /d/FrostCore/README.md && echo \"done\" Replace em dashes with -- in test files and README"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "sed -i 's/—/--/g' \\\n    /d/FrostCore/frost/include/frostcore.h \\\n    /d/FrostCore/frost/include/frostcore_subsystems.h \\\n    /d/FrostCore/frost/src/frostcore.c \\\n    /d/FrostCore/frost/src/frostcore_subsystems.c \\\n    /d/FrostCore/frost/Makefile \\\n    /d/Frost"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "assistant_text",
+          "T1 now fully passes. Two remaining issues:\n\n1. **T2 dep checks** (4 fails) — `got: (null)` despite the dep check error path being proven to work in isolation. The T2 runtime is created by `frost_runtime_create_bare()` which now calls `JS_AddIntrinsicEval` — bu"
+        ],
+        [
+          "FAILED",
+          "assistant_text",
+          "T1 now fully passes. Two remaining issues:\n\n1. **T2 dep checks** (4 fails) — `got: (null)` despite the dep check error path being proven to work in isolation. The T2 runtime is created by `frost_runtime_create_bare()` which now calls `JS_AddIntrinsicEval` — bu"
+        ],
+        [
+          "error",
+          "assistant_text",
+          "T1 now fully passes. Two remaining issues:\n\n1. **T2 dep checks** (4 fails) — `got: (null)` despite the dep check error path being proven to work in isolation. The T2 runtime is created by `frost_runtime_create_bare()` which now calls `JS_AddIntrinsicEval` — bu"
+        ],
+        [
+          "FAILED",
+          "assistant_text",
+          "T1 now fully passes. Two remaining issues:\n\n1. **T2 dep checks** (4 fails) — `got: (null)` despite the dep check error path being proven to work in isolation. The T2 runtime is created by `frost_runtime_create_bare()` which now calls `JS_AddIntrinsicEval` — bu"
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "**135 passed, 0 failed.** Now run the size audit and update memory:"
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "Stage 2 is complete. **135 passed, 0 failed.**\n\n---\n\n## Stage 2 — Done\n\n**New files:**\n\n| File | Purpose |\n|---|---|\n| [frost/include/frostcore_subsystems.h](frost/include/frostcore_subsystems.h) | Registration API + `FROST_STD_*` bitmasks |\n| [frost/src/frost"
+        ]
+      ],
+      "slice_id": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-01"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd\\segment-01.json",
+      "tail_event_count": 19,
+      "success_score": 3,
+      "failure_score": 7,
+      "success_evidence": [
+        [
+          "fixed",
+          "assistant_text",
+          "Good — I have enough. Let me now write the files following the JPL rules: no dynamic allocation after init, fixed loop bounds, no recursion, functions ≤ 60 lines, one level of pointer dereference, all warnings enabled, assertions, and defensive parameter check"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "failed",
+          "user_text",
+          "CREATE A CLAUDE.MD and a PLAN.MD from this\n\n# EPILOG_PLAN.md\n\n# Epilog\n\n*A modern logic programming runtime inspired by Prolog, designed for multicore systems, incremental reasoning, and predictive execution.*\n\n---\n\n## Vision\n\nProlog was created in an era of:\n"
+        ],
+        [
+          "failure",
+          "user_text",
+          "first setup a Makefile, build.bat, build.sh, run.bat, run.sh, we are using clang++ not g++, clang-cl is also available in case of failure"
+        ],
+        [
+          "missing",
+          "assistant_text",
+          "All five files are created. Here's what each does:\n\n**[Makefile](Makefile)** — standard `make` / `make debug` / `make release` / `make clean`. Picks up all `*.cpp` files under `src/` recursively, mirrors the directory structure into `build/`.\n\n**[build.bat](bu"
+        ]
+      ],
+      "slice_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-01"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f\\segment-07.json",
+      "tail_event_count": 20,
+      "success_score": 17,
+      "failure_score": 20,
+      "success_evidence": [
+        [
+          "verified",
+          "assistant_text",
+          "File is on the branch (verified, 1897 bytes). Now open the MR with the filled App-inclusion checklist:"
+        ],
+        [
+          "pass",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "verified",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "Verified",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "until [ \"$(glab api \"projects/fdroid%2Ffdroiddata/merge_requests/40696\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin).get('merge_status'))\" 2>/dev/null)\" != \"checking\" ]; do sleep 4; done\nglab api \"projects/fdroid%2Ffdroiddata/merge_requ"
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "The MR is fully open and clean. The `/label` quick action was processed (no stray text left); the label itself couldn't be applied by me (non-members can't set labels on fdroiddata — F-Droid's bot/maintainers add it). Everything else is in place.\n\n## ✅ fdroidd"
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "The MR is fully open and clean. The `/label` quick action was processed (no stray text left); the label itself couldn't be applied by me (non-members can't set labels on fdroiddata — F-Droid's bot/maintainers add it). Everything else is in place.\n\n## ✅ fdroidd"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "Exception",
+          "tool_call:Bash",
+          "FULL=$(glab api \"projects/fdroid%2Ffdroiddata/repository/branches/master\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin)['commit']['id'])\")\necho \"upstream full sha: $FULL\"\necho \"=== create branch in fork at upstream sha ===\" \nglab api -X "
+        ],
+        [
+          "error",
+          "tool_call:Bash",
+          "FULL=$(glab api \"projects/fdroid%2Ffdroiddata/repository/branches/master\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin)['commit']['id'])\")\necho \"upstream full sha: $FULL\"\necho \"=== create branch in fork at upstream sha ===\" \nglab api -X "
+        ],
+        [
+          "failed",
+          "tool_call:Bash",
+          "FULL=$(glab api \"projects/fdroid%2Ffdroiddata/repository/branches/master\" 2>/dev/null | python3 -c \"import sys,json;print(json.load(sys.stdin)['commit']['id'])\")\necho \"upstream full sha: $FULL\"\necho \"=== create branch in fork at upstream sha ===\" \nglab api -X "
+        ],
+        [
+          "failed",
+          "assistant_text",
+          "Branching from the upstream SHA failed (fork's object pool doesn't have today's upstream commit yet). I'll base on the fork's master instead — my change is a single new file, so F-Droid rebases it cleanly. Let me create the branch and capture the real response"
+        ],
+        [
+          "failed",
+          "tool_call:Bash",
+          "B64=$(base64 -w0 /tmp/mrmeta/metadata/net.opendsp.x4x4.yml)\nglab api -X POST \"projects/[USER]%2Ffdroiddata/repository/files/metadata%2Fnet.opendsp.x4x4.yml\" \\\n  -f branch=add-opendsp-4x4 \\\n  -f encoding=base64 \\\n  -f content=\"$B64\" \\\n  -f \"commit_message=New a"
+        ],
+        [
+          "Exception",
+          "tool_call:Bash",
+          "cat > /tmp/mrdesc.md <<'MD'\n## Required\n\n* [x] The app complies with the [inclusion criteria](https://f-droid.org/docs/Inclusion_Policy) — AGPL-3.0-or-later, fully FOSS, no anti-features, no trackers (Exodus: 0).\n* [x] The original app author has been notified"
+        ],
+        [
+          "Exception",
+          "tool_call:Bash",
+          "# check if the /label quick-action text is still literally in the description\nglab api \"projects/fdroid%2Ffdroiddata/merge_requests/40696\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);desc=d.get('description','');print('literal /label still"
+        ],
+        [
+          "couldn't",
+          "assistant_text",
+          "The MR is fully open and clean. The `/label` quick action was processed (no stray text left); the label itself couldn't be applied by me (non-members can't set labels on fdroiddata — F-Droid's bot/maintainers add it). Everything else is in place.\n\n## ✅ fdroidd"
+        ]
+      ],
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-07"
+    },
+    {
+      "label": "failure",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f\\segment-08.json",
+      "tail_event_count": 20,
+      "success_score": 6,
+      "failure_score": 15,
+      "success_evidence": [
+        [
+          "done",
+          "tool_call:Bash",
+          "for iid in 38399 37886 36002 38909; do\n  echo \"===== MR !$iid =====\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid\" 2>/dev/null | python3 -c \"import sys,json;d=json.load(sys.stdin);print('title:',d['title']);print('pipeline:',(d.get('head_pipeli"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "for iid in 30678 35514 34924; do\n  echo \"===================== MR !$iid =====================\"\n  glab api \"projects/fdroid%2Ffdroiddata/merge_requests/$iid/diffs\" 2>/dev/null | python3 -c \"\nimport sys,json\nfor f in json.load(sys.stdin):\n    if f['new_path'].st"
+        ],
+        [
+          "verified",
+          "assistant_text",
+          "Three candidates here actually have **passing pipelines** (they build). Best first target: **Where It Went** (`com.pixelpen.whereitwent`) — MIT, a benign expense tracker, `Binaries:` (so F-Droid's build is RB-verified against the upstream release), normal laun"
+        ],
+        [
+          "done",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging /tmp/wiw.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"launchable: $ACT\"\n$adb instal"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "failed",
+          "assistant_text",
+          "Surveyed: **302 \"New App\" MRs**, and every one I sampled has a **failed pipeline** — so the backlog's real bottleneck is broken builds plus un-tested apps. Haven's reconnected and its `read_logcat`/`install_apk_from_url` are purpose-built for exactly this (\"fo"
+        ],
+        [
+          "broken",
+          "assistant_text",
+          "Surveyed: **302 \"New App\" MRs**, and every one I sampled has a **failed pipeline** — so the backlog's real bottleneck is broken builds plus un-tested apps. Haven's reconnected and its `read_logcat`/`install_apk_from_url` are purpose-built for exactly this (\"fo"
+        ],
+        [
+          "failure",
+          "assistant_text",
+          "Both are the same device (the Pixel = your Haven host), and I'm cleared to post factual reports directly. Good — I'll keep reports strictly objective (tested-on-device facts + build observations, no approve/reject calls) and run anything sketchy through static"
+        ],
+        [
+          "FATAL",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging /tmp/wiw.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"launchable: $ACT\"\n$adb instal"
+        ],
+        [
+          "exception",
+          "tool_call:Bash",
+          "adb=\"$HOME/Android/Sdk/platform-tools/adb -s [REDACTED_IP]:40859\"; AAPT=\"$HOME/Android/Sdk/build-tools/35.0.0/aapt\"\nACT=$($AAPT dump badging /tmp/wiw.apk 2>/dev/null | sed -n \"s/launchable-activity: name='\\([^']*\\)'.*/\\1/p\")\necho \"launchable: $ACT\"\n$adb instal"
+        ]
+      ],
+      "slice_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-08"
+    }
+  ],
+  "unresolved_slices": [
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6\\segment-01.json",
+      "tail_event_count": 20,
+      "success_score": 1,
+      "failure_score": 1,
+      "success_evidence": [
+        [
+          "done",
+          "assistant_text",
+          "Headers done. Now all the `.cpp` implementation files:"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "missing",
+          "assistant_text",
+          "All IDE false positives from missing `-Iinclude` in the language server config. Now the Makefile and PowerShell build script:"
+        ]
+      ],
+      "slice_id": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-01"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e\\segment-01.json",
+      "tail_event_count": 14,
+      "success_score": 0,
+      "failure_score": 0,
+      "success_evidence": [],
+      "failure_evidence": [],
+      "slice_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-01"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a\\segment-02.json",
+      "tail_event_count": 20,
+      "success_score": 3,
+      "failure_score": 3,
+      "success_evidence": [
+        [
+          "Fixed",
+          "assistant_text",
+          "The ORV card, page count (466), and \"Browse collection\" CTA are all rendering. Fixed.\n\nThe root cause was that SvelteKit's `+page.server.ts` runs on Node — relative URLs like `/db/all` resolve against the SvelteKit process itself, not the Vite dev proxy. The f"
+        ]
+      ],
+      "failure_evidence": [
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"error|✓ built\" | Select-Object -Last 5 Build check after fix"
+        ],
+        [
+          "Cannot",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"RolldownError|plugin|Cannot|undefined\" | Select-Object -First 15 Get specific build errors"
+        ],
+        [
+          "error",
+          "tool_call:PowerShell",
+          "cd \"c:\\Users\\USER\\Documents\\MyDatabase\\frontend\"; bun run build 2>&1 | Select-String \"error|✓ built\" | Select-Object -Last 5 Build after dynamic env fix"
+        ]
+      ],
+      "slice_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-02"
+    },
+    {
+      "label": "unresolved",
+      "source_file": "..\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd\\segment-04.json",
+      "tail_event_count": 5,
+      "success_score": 0,
+      "failure_score": 0,
+      "success_evidence": [],
+      "failure_evidence": [],
+      "slice_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-04"
+    }
+  ],
+  "rule": "terminal 20 text-bearing events; compare generic success/failure evidence scores; intermediate errors can be outweighed by later repair evidence"
+}
