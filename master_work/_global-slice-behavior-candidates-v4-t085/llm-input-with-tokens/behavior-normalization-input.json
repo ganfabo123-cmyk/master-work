@@ -1,0 +1,1036 @@
+{
+  "input_type": "compact_behavior_candidate_cards",
+  "source_algorithm_version": "domain-free-behavior-candidates-v4-size-penalty",
+  "candidate_cluster_count": 19,
+  "evidence_policy": "Only compact observed sequence, weighted corpus-filtered top tokens, transition, target, and file-type context; no derived behavior taxonomy",
+  "cards": [
+    {
+      "candidate_cluster_id": "C001",
+      "support": 34,
+      "session_count": 14,
+      "observed_tool_counts": {
+        "Bash": 193,
+        "Edit": 150,
+        "Read": 142,
+        "PowerShell": 115,
+        "Write": 105,
+        "Grep": 17,
+        "TodoWrite": 16,
+        "Glob": 2
+      },
+      "representative_sequences": [
+        "record > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Edit > tool_result > tool_call:Edit > tool_result > tool_call:Edit > record > tool_result > assistant > tool_call:Write > record > tool_result > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell",
+        "record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > record > tool_result > record > assistant > tool_call:Read > tool_result > record > assistant",
+        "record > assistant_thinking > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > tool_call:Read > tool_result > assistant_thinking > assistant > record > assistant_thinking > tool_call:Bash > tool_result > tool_call:Bash > tool_result > record > tool_call:Read > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:Bash -> tool_result",
+        "tool_result -> assistant",
+        "record -> assistant",
+        "assistant_thinking -> assistant",
+        "tool_call:Read -> tool_result"
+      ],
+      "target_examples": [
+        "main.odin",
+        "sqlitedatabase.java",
+        "[username].tsx",
+        "[subreddit].tsx",
+        "build.sh",
+        "readme.md",
+        "makefile",
+        "solver.c"
+      ],
+      "file_types": [
+        ".odin",
+        ".java",
+        ".c",
+        ".sh",
+        ".tsx",
+        ".cpp",
+        ".ts",
+        ".md"
+      ],
+      "top_tokens": [
+        "android",
+        "return",
+        "app",
+        "user",
+        "gradle",
+        "odin",
+        "src",
+        "const",
+        "dmls",
+        "api"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C002",
+      "support": 9,
+      "session_count": 4,
+      "observed_tool_counts": {
+        "Edit": 85,
+        "Read": 51,
+        "Grep": 23,
+        "Write": 12,
+        "PowerShell": 9,
+        "Bash": 9,
+        "Glob": 5,
+        "TodoWrite": 2,
+        "AskUserQuestion": 1
+      },
+      "representative_sequences": [
+        "tool_result > record > assistant > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Grep > tool_result > tool_call:Edit",
+        "tool_call:Grep > tool_result > record > assistant > tool_call:Grep > tool_result > tool_call:PowerShell > tool_result > tool_call:Grep > tool_result > assistant > tool_call:Read > tool_result > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant",
+        "record > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Grep > tool_result > assistant > tool_call:Grep > tool_result > record > assistant"
+      ],
+      "common_transitions": [
+        "tool_call:Edit -> tool_result",
+        "tool_result -> assistant",
+        "record -> assistant",
+        "tool_result -> record",
+        "tool_call:Read -> tool_result",
+        "assistant -> tool_call:Edit"
+      ],
+      "target_examples": [
+        "style.css",
+        "index.html",
+        "index.css",
+        "docs.md",
+        "makefile",
+        "kernel.c",
+        "main.c",
+        "home.css"
+      ],
+      "file_types": [
+        ".css",
+        ".c",
+        ".html",
+        ".md",
+        ".ts",
+        ".js",
+        "makefile",
+        ".h"
+      ],
+      "top_tokens": [
+        "grid",
+        "css",
+        "font",
+        "class",
+        "rem",
+        "desktop",
+        "span",
+        "box",
+        "style",
+        "div"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C003",
+      "support": 8,
+      "session_count": 6,
+      "observed_tool_counts": {
+        "Write": 46,
+        "Edit": 39,
+        "PowerShell": 29,
+        "Read": 23,
+        "Bash": 12,
+        "TodoWrite": 2,
+        "Grep": 1
+      },
+      "representative_sequences": [
+        "assistant > tool_call:PowerShell > tool_result > assistant > record > user > record > assistant > record > user > record > assistant > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > tool_call:PowerShell",
+        "tool_result > record > assistant > record > user > record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > record > assistant > record",
+        "record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "tool_result -> assistant",
+        "user -> record",
+        "tool_call:Edit -> tool_result",
+        "record -> user"
+      ],
+      "target_examples": [
+        "parser.cpp",
+        "lexer.cpp",
+        "main.c",
+        "run_tests.ps1",
+        "app.tsx",
+        "syscall.c",
+        "vite.js",
+        "vga.c"
+      ],
+      "file_types": [
+        ".cpp",
+        ".js",
+        ".jsx",
+        ".c",
+        ".py",
+        ".tsx",
+        ".ps1",
+        ".md"
+      ],
+      "top_tokens": [
+        "she",
+        "timeline",
+        "her",
+        "lucifer",
+        "cfml",
+        "uriel",
+        "heaven",
+        "book",
+        "books",
+        "class"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C004",
+      "support": 8,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Read": 49,
+        "Glob": 38,
+        "Edit": 25,
+        "Grep": 24,
+        "Write": 19,
+        "PowerShell": 11,
+        "Bash": 6,
+        "TodoWrite": 2
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Read > record > tool_result > assistant > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Read > tool_result",
+        "tool_call:Read > tool_result > record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Write > tool_result > assistant > tool_call:Read > tool_result > record > assistant > tool_call:Edit > tool_result > assistant > record > user",
+        "tool_call:Read > tool_result > record > tool_call:Read > tool_result > assistant > tool_call:Glob > tool_result > record > tool_call:Grep > tool_result > tool_call:Grep > tool_result > tool_call:Grep > tool_result > tool_call:Grep > tool_result > assistant > tool_call:Edit > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "tool_call:Read -> tool_result",
+        "tool_result -> assistant",
+        "tool_call:Glob -> tool_result",
+        "tool_call:Edit -> tool_result"
+      ],
+      "target_examples": [
+        "core.ts",
+        "index.scss",
+        "~routes.generated.ts",
+        "clock.ts",
+        "reddit.ts",
+        "js_runtime.c",
+        "linux-3.0.1",
+        "[username].tsx"
+      ],
+      "file_types": [
+        ".ts",
+        ".scss",
+        ".c",
+        ".tsx",
+        ".json",
+        ".1",
+        ".h",
+        ".mjs"
+      ],
+      "top_tokens": [
+        "taskbar",
+        "kernel",
+        "feather",
+        "alpine",
+        "reddit",
+        "icon",
+        "clock",
+        "lucide",
+        "pid",
+        "window"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C005",
+      "support": 7,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Read": 49,
+        "Write": 45,
+        "TodoWrite": 31,
+        "PowerShell": 17,
+        "Bash": 10,
+        "Edit": 9,
+        "ToolSearch": 7,
+        "Glob": 6,
+        "Grep": 4
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Glob > tool_result > tool_call:Read > tool_result > record > tool_call:Read > tool_result > tool_call:Read > tool_result > tool_call:Read > tool_result > assistant > tool_call:Read > tool_result",
+        "tool_call:Read > tool_result > tool_call:Read > tool_result > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > record > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > tool_call:Read > tool_result > assistant > tool_call:ToolSearch > tool_result",
+        "record > user > record > assistant > tool_call:ToolSearch > tool_result > tool_call:Glob > tool_result > assistant > tool_call:Read > tool_result > tool_call:Glob > record > tool_result > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > record"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:Read -> tool_result",
+        "record -> assistant",
+        "tool_result -> assistant",
+        "tool_call:Write -> tool_result",
+        "tool_call:TodoWrite -> tool_result"
+      ],
+      "target_examples": [
+        "test_solver.cpp",
+        "makefile",
+        "main.cpp",
+        "quickjs.h",
+        "test_unifier.cpp",
+        "test_atoms.cpp",
+        "database.cpp",
+        "solver.cpp"
+      ],
+      "file_types": [
+        ".cpp",
+        ".c",
+        ".h",
+        ".exe",
+        "makefile",
+        ".md",
+        ".hpp",
+        ".ps1"
+      ],
+      "top_tokens": [
+        "cpp",
+        "kernel",
+        "include",
+        "uint32_t",
+        "gop",
+        "eax",
+        "return",
+        "mov",
+        "const",
+        "nullptr"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C006",
+      "support": 6,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Bash": 34,
+        "Edit": 30,
+        "Read": 30,
+        "Write": 13,
+        "TodoWrite": 11,
+        "Grep": 10,
+        "Agent": 6,
+        "ToolSearch": 2,
+        "PowerShell": 2,
+        "Glob": 2,
+        "AskUserQuestion": 1
+      },
+      "representative_sequences": [
+        "tool_call:Edit > tool_result > assistant > tool_call:Read > tool_result > tool_call:Edit > tool_result > assistant > tool_call:Bash > record > tool_result > record > assistant > tool_call:Bash > tool_result > assistant > tool_call:Read > tool_result > assistant > tool_call:Edit",
+        "tool_result > record > assistant > tool_call:Edit > tool_result > record > tool_call:Bash > tool_result > assistant > tool_call:Bash > record > tool_result > tool_call:Bash > tool_result > record > tool_call:TodoWrite > tool_result > assistant > tool_call:Write > record",
+        "record > assistant > tool_call:Bash > tool_result > record > assistant > tool_call:Bash > tool_result > record > assistant > tool_call:Bash > tool_result > tool_call:Bash > tool_result > assistant > record > user > record > assistant > tool_call:Agent"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "tool_result -> assistant",
+        "tool_call:Bash -> tool_result",
+        "tool_call:Read -> tool_result",
+        "tool_call:Edit -> tool_result"
+      ],
+      "target_examples": [
+        "main.odin",
+        "social_events.odin",
+        "makefile",
+        "saveload.odin",
+        "parser.cpp",
+        "anim.odin",
+        "world_fx.odin",
+        "parser.h"
+      ],
+      "file_types": [
+        ".odin",
+        ".h",
+        ".c",
+        ".cpp",
+        "makefile",
+        ".md",
+        ".tsx",
+        ".json"
+      ],
+      "top_tokens": [
+        "frostcore",
+        "frost_bytecode",
+        "stage",
+        "frost",
+        "bytecode",
+        "datasets",
+        "frost_parse",
+        "comparia",
+        "parser",
+        "src"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C007",
+      "support": 5,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Write": 34,
+        "PowerShell": 29,
+        "TodoWrite": 21,
+        "Edit": 14,
+        "Bash": 11,
+        "Read": 9,
+        "ToolSearch": 3,
+        "AskUserQuestion": 1
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:ToolSearch > tool_result > tool_call:Write > record > tool_result > assistant > record > user > record > assistant > tool_call:Write > record > tool_result > tool_call:Read > tool_result > record",
+        "record > user > record > assistant > tool_call:ToolSearch > tool_result > record > assistant > tool_call:TodoWrite > tool_result > tool_call:PowerShell > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Write > record > tool_result > record > user",
+        "record > tool_result > tool_call:PowerShell > tool_result > tool_call:Bash > tool_result > tool_call:Read > tool_result > assistant > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > record > assistant > tool_call:Read > tool_result > assistant > tool_call:PowerShell"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_result -> assistant",
+        "tool_call:PowerShell -> tool_result",
+        "record -> assistant",
+        "record -> tool_result",
+        "tool_call:Write -> record"
+      ],
+      "target_examples": [
+        "main.odin",
+        "main.py",
+        "meme.py",
+        "interpreter.py",
+        "creation.odin",
+        "+page.server.ts",
+        "saveload.odin",
+        "example.cfml"
+      ],
+      "file_types": [
+        ".odin",
+        ".py",
+        ".cfml",
+        ".md",
+        ".svelte",
+        ".ts",
+        ".tsx",
+        ".h"
+      ],
+      "top_tokens": [
+        "she",
+        "tokenkind",
+        "cfml",
+        "return",
+        "her",
+        "std",
+        "node",
+        "odin",
+        "app",
+        "uriel"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C008",
+      "support": 3,
+      "session_count": 3,
+      "observed_tool_counts": {
+        "Bash": 20,
+        "PowerShell": 20,
+        "Read": 12,
+        "Edit": 9,
+        "Write": 8,
+        "ToolSearch": 3,
+        "WebFetch": 1,
+        "Grep": 1,
+        "TodoWrite": 1
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Bash > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > tool_call:Bash > tool_result > assistant > tool_call:ToolSearch",
+        "record > user > record > assistant > tool_call:Read > tool_result > record > assistant > tool_call:Bash > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > record",
+        "tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > record > tool_call:Edit > tool_result > assistant > tool_call:Bash > tool_result > assistant_thinking > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:PowerShell -> tool_result",
+        "tool_call:Bash -> tool_result",
+        "tool_result -> assistant",
+        "record -> assistant",
+        "tool_result -> tool_call:Bash"
+      ],
+      "target_examples": [
+        "make-grub-disk.sh",
+        "index.html",
+        "m0_verify.cpp",
+        "check_escape2.cpp",
+        "parser.cpp",
+        "makefile",
+        "memory.md",
+        "plan.md"
+      ],
+      "file_types": [
+        ".cpp",
+        ".sh",
+        ".html",
+        ".md",
+        ".log",
+        ".exe",
+        "makefile",
+        ".h"
+      ],
+      "top_tokens": [
+        "linux",
+        "cpp",
+        "3.0",
+        "crushing",
+        "epilog",
+        "qemu",
+        "ovmf",
+        "engine",
+        "dialogue",
+        "bochs"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C009",
+      "support": 3,
+      "session_count": 3,
+      "observed_tool_counts": {
+        "Write": 20,
+        "Bash": 12,
+        "Read": 10,
+        "TodoWrite": 7,
+        "Glob": 4,
+        "Skill": 3,
+        "ToolSearch": 2,
+        "Edit": 1
+      },
+      "representative_sequences": [
+        "record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant > record > assistant_thinking > assistant > record > assistant_thinking > tool_call:Read > tool_call:Glob > tool_result > record > assistant_thinking > tool_call:Read > tool_result > assistant_thinking > tool_call:Read",
+        "record > user > record > tool_call:Skill > tool_result > user > record > assistant > tool_call:ToolSearch > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Bash > tool_result > tool_call:Bash > tool_result > tool_call:Bash > tool_result > assistant",
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Skill > tool_result > user > record > assistant > tool_call:Glob > tool_result > assistant > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Read > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:Bash -> tool_result",
+        "record -> assistant",
+        "record -> tool_result",
+        "tool_call:Write -> record",
+        "record -> tool_call:Write"
+      ],
+      "target_examples": [
+        "index.tsx",
+        "package.json",
+        "$id.tsx",
+        "post-job.tsx",
+        "__root.tsx",
+        "vercel.json",
+        "auth.js",
+        "dashboard.tsx"
+      ],
+      "file_types": [
+        ".tsx",
+        ".js",
+        ".json",
+        ".md",
+        ".css",
+        ".ts",
+        ".env",
+        ".html"
+      ],
+      "top_tokens": [
+        "vercel",
+        "md3",
+        "sys",
+        "color",
+        "bundling",
+        "plugin",
+        "mcp",
+        "bentofolio",
+        "material",
+        "main"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C010",
+      "support": 3,
+      "session_count": 2,
+      "observed_tool_counts": {
+        "Write": 20,
+        "PowerShell": 10,
+        "Bash": 6,
+        "WebSearch": 5,
+        "Read": 4,
+        "Edit": 4,
+        "ToolSearch": 3
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Write > record > tool_result > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > tool_call:Write > record > tool_result > assistant",
+        "tool_result > record > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > record > assistant > tool_call:Write > record > tool_result > tool_call:Write > record > tool_result > tool_call:Write > record > tool_result > record > tool_call:Write > tool_result",
+        "record > assistant_thinking > assistant > tool_call:ToolSearch > tool_result > assistant_thinking > tool_call:WebSearch > tool_result > record > assistant_thinking > tool_call:Bash > tool_result > record > assistant_thinking > tool_call:Bash > tool_result > assistant_thinking > tool_call:Bash > tool_result > assistant_thinking"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "record -> tool_result",
+        "tool_call:Write -> record",
+        "tool_result -> tool_call:Write",
+        "tool_call:Write -> tool_result"
+      ],
+      "target_examples": [
+        "repl.c",
+        "solver.c",
+        "unifier.c",
+        "atoms.c",
+        "variables.c",
+        "builtins.c",
+        "parser.c",
+        "main.c"
+      ],
+      "file_types": [
+        ".c",
+        ".h",
+        ".md",
+        "makefile",
+        ".exe",
+        ".bat",
+        ".sh"
+      ],
+      "top_tokens": [
+        "humanizer",
+        "claude",
+        "marketplace",
+        "skill",
+        "epilog",
+        "skills",
+        "env",
+        "install",
+        "taivo",
+        "github"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C011",
+      "support": 2,
+      "session_count": 2,
+      "observed_tool_counts": {
+        "Bash": 26,
+        "Edit": 5,
+        "Read": 5,
+        "AskUserQuestion": 3,
+        "Write": 1
+      },
+      "representative_sequences": [
+        "assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Write > tool_result > record > tool_call:Edit > tool_result > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Edit",
+        "tool_call:Bash > tool_result > tool_call:Read > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_call:Bash -> tool_result",
+        "assistant -> tool_call:Bash",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "modeltypes.java",
+        "app.svelte",
+        "cdp-eval.mjs",
+        "android.md",
+        "presetbar.svelte",
+        "readback.ts",
+        "characterviewmodel.java",
+        "dsp-test.log"
+      ],
+      "file_types": [
+        ".java",
+        ".svelte",
+        ".ts",
+        ".png",
+        ".log",
+        ".md",
+        ".mjs",
+        ".models"
+      ],
+      "top_tokens": [
+        "java",
+        "adb",
+        "usb",
+        "models",
+        "app",
+        "dsp",
+        "device",
+        "user",
+        "test",
+        "android"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C012",
+      "support": 2,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Bash": 23,
+        "Read": 5,
+        "ToolSearch": 3,
+        "AskUserQuestion": 3,
+        "mcp__haven__expose_adb": 2,
+        "mcp__haven__list_sessions": 1
+      },
+      "representative_sequences": [
+        "tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result",
+        "tool_call:AskUserQuestion > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_call:Bash -> tool_result",
+        "assistant -> tool_call:Bash",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "wiw.apk",
+        "scrutiny.sh",
+        "v2.5.4",
+        "v2.4.0",
+        "scenepeek.apk",
+        "aitech.apk",
+        "indoorbike.apk",
+        "$n.apk"
+      ],
+      "file_types": [
+        ".png",
+        ".apk",
+        ".md",
+        ".0",
+        ".sh",
+        ".2",
+        ".4",
+        ".url"
+      ],
+      "top_tokens": [
+        "adb",
+        "apk",
+        "fdroid",
+        "droid",
+        "app",
+        "merge_requests",
+        "haven",
+        "device",
+        "internet",
+        "fdroiddata"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C013",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Read": 7,
+        "Bash": 7,
+        "WebFetch": 3,
+        "WebSearch": 2,
+        "ToolSearch": 1,
+        "Edit": 1
+      },
+      "representative_sequences": [
+        "record > user > record > assistant_thinking > assistant > tool_call:Read > tool_result > tool_call:ToolSearch > tool_result > record > assistant > tool_call:WebFetch > tool_result > assistant_thinking > assistant > tool_call:WebSearch > tool_result > record > assistant_thinking > assistant"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "tool_call:Read -> tool_result",
+        "tool_call:Bash -> tool_result",
+        "assistant -> tool_call:Read"
+      ],
+      "target_examples": [
+        "models.json",
+        "licenses.json",
+        "generated-models.json",
+        "models.ts",
+        "build_models.py",
+        "fr.json",
+        "llms.py",
+        "license"
+      ],
+      "file_types": [
+        ".json",
+        ".py",
+        ".ts",
+        ".md",
+        "license",
+        ".patch",
+        ".80",
+        ".7"
+      ],
+      "top_tokens": [
+        "minimax",
+        "models",
+        "license",
+        "develop",
+        "user",
+        "session",
+        "model",
+        "commit",
+        "donate",
+        "fyi"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C014",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {},
+      "representative_sequences": [
+        "record > user > record > assistant > record"
+      ],
+      "common_transitions": [
+        "record -> user",
+        "user -> record",
+        "record -> assistant",
+        "assistant -> record"
+      ],
+      "target_examples": [],
+      "file_types": [],
+      "top_tokens": [
+        "fuckingfast",
+        "_fitgirl",
+        "mortal_kombat_1_",
+        "rar",
+        "repacks",
+        "site_",
+        "https",
+        "foregroundcolor",
+        "downloaddir",
+        "aria2c"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C015",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Agent": 2,
+        "Read": 1
+      },
+      "representative_sequences": [
+        "record > assistant_thinking > assistant > tool_call:Agent > tool_result > record > assistant_thinking > assistant > tool_call:Agent > tool_result > assistant_thinking > assistant > tool_call:Read > tool_result > record > assistant_thinking > assistant > record"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "record -> assistant_thinking",
+        "assistant -> tool_call:Agent",
+        "tool_call:Agent -> tool_result",
+        "tool_result -> record",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "migrate_votes.py"
+      ],
+      "file_types": [
+        ".py"
+      ],
+      "top_tokens": [
+        "answer",
+        "superficial",
+        "model",
+        "useful",
+        "correlation",
+        "conv_superficial",
+        "negative",
+        "response",
+        "reasons",
+        "positive"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C016",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Edit": 5,
+        "Read": 5,
+        "Grep": 3,
+        "Write": 3,
+        "WebFetch": 2,
+        "PowerShell": 1,
+        "ToolSearch": 1
+      },
+      "representative_sequences": [
+        "tool_result > tool_call:Edit > tool_result > assistant > record > user_image > user > record > assistant > tool_call:Grep > tool_result > tool_call:Read > tool_result > tool_call:Edit > tool_result > assistant > tool_call:Grep > tool_result > tool_call:Edit > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> assistant",
+        "assistant -> record",
+        "user -> record",
+        "tool_result -> record",
+        "tool_call:Edit -> tool_result",
+        "record -> assistant"
+      ],
+      "target_examples": [
+        "index.html",
+        "vercel.json",
+        "main.js",
+        "style.css",
+        "toolu_013wzvwvdemjdtpqsdqexrj4.txt"
+      ],
+      "file_types": [
+        ".html",
+        ".json",
+        ".js",
+        ".txt",
+        ".css"
+      ],
+      "top_tokens": [
+        "configuration",
+        "vercel",
+        "docs",
+        "view",
+        "settings",
+        "virtualpc",
+        "url",
+        "bentofolio",
+        "codeberg",
+        "headers"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C017",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Bash": 6,
+        "Edit": 4,
+        "mcp__claude-in-chrome__computer": 4,
+        "Write": 2,
+        "mcp__claude-in-chrome__navigate": 2,
+        "ToolSearch": 1,
+        "mcp__claude-in-chrome__tabs_context_mcp": 1
+      },
+      "representative_sequences": [
+        "record > assistant_thinking > assistant > tool_call:Write > tool_result > record > assistant_thinking > assistant > tool_call:Edit > tool_result > record > tool_call:Edit > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant > tool_call:Bash > tool_result"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "assistant -> tool_call:Bash",
+        "tool_call:Bash -> tool_result",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "net.opendsp.x4x4.yml",
+        "android-release.yml",
+        "fdfull.log",
+        "readme.md",
+        "app.svelte",
+        "build.gradle.kts",
+        "app-release.apk",
+        "vitedev.log"
+      ],
+      "file_types": [
+        ".yml",
+        ".log",
+        ".md",
+        ".txt",
+        ".sh",
+        ".svelte",
+        ".png",
+        ".kts"
+      ],
+      "top_tokens": [
+        "droid",
+        "fdroid",
+        "esbuild",
+        "rollup",
+        "recipe",
+        "opendsp",
+        "apk",
+        "rust",
+        "prebuilt",
+        "android"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C018",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Grep": 12,
+        "Read": 12,
+        "Glob": 3,
+        "SemanticSearch": 1
+      },
+      "representative_sequences": [
+        "unknown_text > tool_call:SemanticSearch > tool_call:Grep > tool_call:Glob > unknown_text > tool_call:Read > tool_call:Grep > tool_call:Read > unknown_text > tool_call:Glob > tool_call:Read > tool_call:Grep > unknown_text > tool_call:Read > tool_call:Grep > tool_call:Read > unknown_text > tool_call:Grep > tool_call:Read > tool_call:Grep"
+      ],
+      "common_transitions": [
+        "tool_call:Read -> tool_call:Grep",
+        "tool_call:Grep -> tool_call:Read",
+        "unknown_text -> tool_call:Read",
+        "tool_call:Grep -> unknown_text",
+        "tool_call:Read -> unknown_text",
+        "unknown_text -> tool_call:Grep"
+      ],
+      "target_examples": [
+        "main.py",
+        "readme.md",
+        "aggregator_middleware.py",
+        "__init__.py",
+        "health_check.py",
+        "extraction_schemas.py",
+        "logging_setup.py",
+        "loki_settings.py"
+      ],
+      "file_types": [
+        ".py",
+        ".md"
+      ],
+      "top_tokens": [
+        "document",
+        "document_ia_api",
+        "documents",
+        "api",
+        "users",
+        "user",
+        "routes",
+        "loki",
+        "src",
+        "aggregator"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C019",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "websearch": 1
+      },
+      "representative_sequences": [
+        "user > assistant_part:step-start > assistant_reasoning > tool_call:websearch > assistant_part:step-finish > assistant_part:step-start > assistant_reasoning > assistant > assistant_part:step-finish"
+      ],
+      "common_transitions": [
+        "assistant_part:step-start -> assistant_reasoning",
+        "user -> assistant_part:step-start",
+        "assistant_reasoning -> tool_call:websearch",
+        "tool_call:websearch -> assistant_part:step-finish",
+        "assistant_part:step-finish -> assistant_part:step-start",
+        "assistant_reasoning -> assistant"
+      ],
+      "target_examples": [],
+      "file_types": [],
+      "top_tokens": [
+        "cheats",
+        "cheat",
+        "kernel",
+        "anti",
+        "lazy",
+        "legitimate",
+        "threat",
+        "ambiguity",
+        "dma",
+        "industry"
+      ]
+    }
+  ]
+}

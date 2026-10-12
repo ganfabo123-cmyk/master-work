@@ -1,0 +1,1883 @@
+{
+  "algorithm_version": "weighted-corpus-token-evidence-v1",
+  "source_candidate_algorithm_version": "domain-free-behavior-candidates-v4-size-penalty",
+  "event_weights": {
+    "user_text": 4.0,
+    "assistant_text": 3.0,
+    "assistant_reasoning": 2.0,
+    "tool_result": 1.5,
+    "tool_call:*": 0.8
+  },
+  "corpus_size": 97,
+  "corpus_filter": {
+    "max_corpus_rate": 0.85,
+    "stopword_filter": "English/Chinese structural stopwords and generic metadata terms",
+    "tokenizer": "token_frequency.tokenize(include_symbols=False)"
+  },
+  "candidate_cluster_count": 19,
+  "top_k": 10,
+  "clusters": [
+    {
+      "candidate_cluster_id": "C001",
+      "support": 34,
+      "session_count": 14,
+      "top_tokens": [
+        {
+          "token": "android",
+          "score": 0.286814,
+          "weighted_normalized_frequency": 0.161411,
+          "slice_df": 8,
+          "slice_coverage": 0.235294,
+          "corpus_df": 14,
+          "idf": 2.876917
+        },
+        {
+          "token": "return",
+          "score": 0.254897,
+          "weighted_normalized_frequency": 0.218205,
+          "slice_df": 30,
+          "slice_coverage": 0.882353,
+          "corpus_df": 76,
+          "idf": 1.241162
+        },
+        {
+          "token": "app",
+          "score": 0.227005,
+          "weighted_normalized_frequency": 0.166758,
+          "slice_df": 24,
+          "slice_coverage": 0.705882,
+          "corpus_df": 53,
+          "idf": 1.595983
+        },
+        {
+          "token": "user",
+          "score": 0.207607,
+          "weighted_normalized_frequency": 0.181539,
+          "slice_df": 32,
+          "slice_coverage": 0.941176,
+          "corpus_df": 81,
+          "idf": 1.178248
+        },
+        {
+          "token": "gradle",
+          "score": 0.206457,
+          "weighted_normalized_frequency": 0.110828,
+          "slice_df": 9,
+          "slice_coverage": 0.264706,
+          "corpus_df": 13,
+          "idf": 2.94591
+        },
+        {
+          "token": "odin",
+          "score": 0.183059,
+          "weighted_normalized_frequency": 0.098139,
+          "slice_df": 8,
+          "slice_coverage": 0.235294,
+          "corpus_df": 12,
+          "idf": 3.020018
+        },
+        {
+          "token": "src",
+          "score": 0.165546,
+          "weighted_normalized_frequency": 0.151164,
+          "slice_df": 26,
+          "slice_coverage": 0.764706,
+          "corpus_df": 76,
+          "idf": 1.241162
+        },
+        {
+          "token": "const",
+          "score": 0.163546,
+          "weighted_normalized_frequency": 0.146002,
+          "slice_df": 20,
+          "slice_coverage": 0.588235,
+          "corpus_df": 64,
+          "idf": 1.41058
+        },
+        {
+          "token": "dmls",
+          "score": 0.14806,
+          "weighted_normalized_frequency": 0.078976,
+          "slice_df": 6,
+          "slice_coverage": 0.176471,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "api",
+          "score": 0.145085,
+          "weighted_normalized_frequency": 0.114113,
+          "slice_df": 24,
+          "slice_coverage": 0.705882,
+          "corpus_df": 59,
+          "idf": 1.490623
+        }
+      ],
+      "eligible_token_count": 9097
+    },
+    {
+      "candidate_cluster_id": "C002",
+      "support": 9,
+      "session_count": 4,
+      "top_tokens": [
+        {
+          "token": "grid",
+          "score": 0.214985,
+          "weighted_normalized_frequency": 0.124196,
+          "slice_df": 7,
+          "slice_coverage": 0.777778,
+          "corpus_df": 37,
+          "idf": 1.947381
+        },
+        {
+          "token": "css",
+          "score": 0.176661,
+          "weighted_normalized_frequency": 0.092397,
+          "slice_df": 7,
+          "slice_coverage": 0.777778,
+          "corpus_df": 30,
+          "idf": 2.15098
+        },
+        {
+          "token": "font",
+          "score": 0.161846,
+          "weighted_normalized_frequency": 0.094343,
+          "slice_df": 6,
+          "slice_coverage": 0.666667,
+          "corpus_df": 33,
+          "idf": 2.058607
+        },
+        {
+          "token": "class",
+          "score": 0.158862,
+          "weighted_normalized_frequency": 0.105555,
+          "slice_df": 7,
+          "slice_coverage": 0.777778,
+          "corpus_df": 48,
+          "idf": 1.693147
+        },
+        {
+          "token": "rem",
+          "score": 0.124194,
+          "weighted_normalized_frequency": 0.05905,
+          "slice_df": 7,
+          "slice_coverage": 0.777778,
+          "corpus_df": 24,
+          "idf": 2.366092
+        },
+        {
+          "token": "desktop",
+          "score": 0.116134,
+          "weighted_normalized_frequency": 0.06074,
+          "slice_df": 7,
+          "slice_coverage": 0.777778,
+          "corpus_df": 30,
+          "idf": 2.15098
+        },
+        {
+          "token": "span",
+          "score": 0.112058,
+          "weighted_normalized_frequency": 0.062516,
+          "slice_df": 6,
+          "slice_coverage": 0.666667,
+          "corpus_df": 30,
+          "idf": 2.15098
+        },
+        {
+          "token": "box",
+          "score": 0.111914,
+          "weighted_normalized_frequency": 0.07312,
+          "slice_df": 4,
+          "slice_coverage": 0.444444,
+          "corpus_df": 31,
+          "idf": 2.119232
+        },
+        {
+          "token": "style",
+          "score": 0.108896,
+          "weighted_normalized_frequency": 0.075631,
+          "slice_df": 8,
+          "slice_coverage": 0.888889,
+          "corpus_df": 57,
+          "idf": 1.524524
+        },
+        {
+          "token": "div",
+          "score": 0.097989,
+          "weighted_normalized_frequency": 0.055079,
+          "slice_df": 7,
+          "slice_coverage": 0.777778,
+          "corpus_df": 35,
+          "idf": 2.001449
+        }
+      ],
+      "eligible_token_count": 3948
+    },
+    {
+      "candidate_cluster_id": "C003",
+      "support": 8,
+      "session_count": 6,
+      "top_tokens": [
+        {
+          "token": "she",
+          "score": 0.137637,
+          "weighted_normalized_frequency": 0.055909,
+          "slice_df": 4,
+          "slice_coverage": 0.5,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "timeline",
+          "score": 0.104273,
+          "weighted_normalized_frequency": 0.04477,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "her",
+          "score": 0.095364,
+          "weighted_normalized_frequency": 0.038738,
+          "slice_df": 4,
+          "slice_coverage": 0.5,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "lucifer",
+          "score": 0.062169,
+          "weighted_normalized_frequency": 0.023839,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "cfml",
+          "score": 0.061951,
+          "weighted_normalized_frequency": 0.026231,
+          "slice_df": 1,
+          "slice_coverage": 0.125,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "uriel",
+          "score": 0.060876,
+          "weighted_normalized_frequency": 0.032178,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 16,
+          "idf": 2.751754
+        },
+        {
+          "token": "heaven",
+          "score": 0.059584,
+          "weighted_normalized_frequency": 0.025582,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "book",
+          "score": 0.057804,
+          "weighted_normalized_frequency": 0.02679,
+          "slice_df": 4,
+          "slice_coverage": 0.5,
+          "corpus_df": 14,
+          "idf": 2.876917
+        },
+        {
+          "token": "books",
+          "score": 0.056318,
+          "weighted_normalized_frequency": 0.021421,
+          "slice_df": 4,
+          "slice_coverage": 0.5,
+          "corpus_df": 7,
+          "idf": 3.505526
+        },
+        {
+          "token": "class",
+          "score": 0.054537,
+          "weighted_normalized_frequency": 0.036812,
+          "slice_df": 6,
+          "slice_coverage": 0.75,
+          "corpus_df": 48,
+          "idf": 1.693147
+        }
+      ],
+      "eligible_token_count": 5022
+    },
+    {
+      "candidate_cluster_id": "C004",
+      "support": 8,
+      "session_count": 5,
+      "top_tokens": [
+        {
+          "token": "taskbar",
+          "score": 0.144456,
+          "weighted_normalized_frequency": 0.055393,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "kernel",
+          "score": 0.137353,
+          "weighted_normalized_frequency": 0.075662,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 18,
+          "idf": 2.640528
+        },
+        {
+          "token": "feather",
+          "score": 0.12191,
+          "weighted_normalized_frequency": 0.042233,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "alpine",
+          "score": 0.118543,
+          "weighted_normalized_frequency": 0.052531,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "reddit",
+          "score": 0.108345,
+          "weighted_normalized_frequency": 0.045875,
+          "slice_df": 1,
+          "slice_coverage": 0.125,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "icon",
+          "score": 0.105365,
+          "weighted_normalized_frequency": 0.059375,
+          "slice_df": 4,
+          "slice_coverage": 0.5,
+          "corpus_df": 24,
+          "idf": 2.366092
+        },
+        {
+          "token": "clock",
+          "score": 0.1013,
+          "weighted_normalized_frequency": 0.051217,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 14,
+          "idf": 2.876917
+        },
+        {
+          "token": "lucide",
+          "score": 0.100357,
+          "weighted_normalized_frequency": 0.043089,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "pid",
+          "score": 0.074778,
+          "weighted_normalized_frequency": 0.047515,
+          "slice_df": 3,
+          "slice_coverage": 0.375,
+          "corpus_df": 26,
+          "idf": 2.289131
+        },
+        {
+          "token": "window",
+          "score": 0.073116,
+          "weighted_normalized_frequency": 0.045586,
+          "slice_df": 5,
+          "slice_coverage": 0.625,
+          "corpus_df": 36,
+          "idf": 1.97405
+        }
+      ],
+      "eligible_token_count": 2778
+    },
+    {
+      "candidate_cluster_id": "C005",
+      "support": 7,
+      "session_count": 5,
+      "top_tokens": [
+        {
+          "token": "cpp",
+          "score": 0.148074,
+          "weighted_normalized_frequency": 0.069939,
+          "slice_df": 4,
+          "slice_coverage": 0.571429,
+          "corpus_df": 17,
+          "idf": 2.694596
+        },
+        {
+          "token": "kernel",
+          "score": 0.145167,
+          "weighted_normalized_frequency": 0.085519,
+          "slice_df": 2,
+          "slice_coverage": 0.285714,
+          "corpus_df": 18,
+          "idf": 2.640528
+        },
+        {
+          "token": "include",
+          "score": 0.131585,
+          "weighted_normalized_frequency": 0.088275,
+          "slice_df": 7,
+          "slice_coverage": 1.0,
+          "corpus_df": 59,
+          "idf": 1.490623
+        },
+        {
+          "token": "uint32_t",
+          "score": 0.127025,
+          "weighted_normalized_frequency": 0.056124,
+          "slice_df": 5,
+          "slice_coverage": 0.714286,
+          "corpus_df": 18,
+          "idf": 2.640528
+        },
+        {
+          "token": "gop",
+          "score": 0.107674,
+          "weighted_normalized_frequency": 0.054029,
+          "slice_df": 2,
+          "slice_coverage": 0.285714,
+          "corpus_df": 11,
+          "idf": 3.100061
+        },
+        {
+          "token": "eax",
+          "score": 0.101229,
+          "weighted_normalized_frequency": 0.041513,
+          "slice_df": 2,
+          "slice_coverage": 0.285714,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "return",
+          "score": 0.088829,
+          "weighted_normalized_frequency": 0.077075,
+          "slice_df": 6,
+          "slice_coverage": 0.857143,
+          "corpus_df": 76,
+          "idf": 1.241162
+        },
+        {
+          "token": "mov",
+          "score": 0.080929,
+          "weighted_normalized_frequency": 0.031666,
+          "slice_df": 2,
+          "slice_coverage": 0.285714,
+          "corpus_df": 4,
+          "idf": 3.97553
+        },
+        {
+          "token": "const",
+          "score": 0.079429,
+          "weighted_normalized_frequency": 0.060641,
+          "slice_df": 6,
+          "slice_coverage": 0.857143,
+          "corpus_df": 64,
+          "idf": 1.41058
+        },
+        {
+          "token": "nullptr",
+          "score": 0.079389,
+          "weighted_normalized_frequency": 0.034299,
+          "slice_df": 4,
+          "slice_coverage": 0.571429,
+          "corpus_df": 13,
+          "idf": 2.94591
+        }
+      ],
+      "eligible_token_count": 3445
+    },
+    {
+      "candidate_cluster_id": "C006",
+      "support": 6,
+      "session_count": 5,
+      "top_tokens": [
+        {
+          "token": "frostcore",
+          "score": 0.105029,
+          "weighted_normalized_frequency": 0.037522,
+          "slice_df": 2,
+          "slice_coverage": 0.333333,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "frost_bytecode",
+          "score": 0.103471,
+          "weighted_normalized_frequency": 0.034595,
+          "slice_df": 2,
+          "slice_coverage": 0.333333,
+          "corpus_df": 2,
+          "idf": 4.486355
+        },
+        {
+          "token": "stage",
+          "score": 0.100932,
+          "weighted_normalized_frequency": 0.050965,
+          "slice_df": 3,
+          "slice_coverage": 0.5,
+          "corpus_df": 18,
+          "idf": 2.640528
+        },
+        {
+          "token": "frost",
+          "score": 0.089022,
+          "weighted_normalized_frequency": 0.031804,
+          "slice_df": 2,
+          "slice_coverage": 0.333333,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "bytecode",
+          "score": 0.083142,
+          "weighted_normalized_frequency": 0.035576,
+          "slice_df": 2,
+          "slice_coverage": 0.333333,
+          "corpus_df": 7,
+          "idf": 3.505526
+        },
+        {
+          "token": "datasets",
+          "score": 0.067781,
+          "weighted_normalized_frequency": 0.036458,
+          "slice_df": 1,
+          "slice_coverage": 0.166667,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "frost_parse",
+          "score": 0.064896,
+          "weighted_normalized_frequency": 0.021698,
+          "slice_df": 2,
+          "slice_coverage": 0.333333,
+          "corpus_df": 2,
+          "idf": 4.486355
+        },
+        {
+          "token": "comparia",
+          "score": 0.060866,
+          "weighted_normalized_frequency": 0.026246,
+          "slice_df": 1,
+          "slice_coverage": 0.166667,
+          "corpus_df": 4,
+          "idf": 3.97553
+        },
+        {
+          "token": "parser",
+          "score": 0.058431,
+          "weighted_normalized_frequency": 0.037304,
+          "slice_df": 3,
+          "slice_coverage": 0.5,
+          "corpus_df": 32,
+          "idf": 2.08846
+        },
+        {
+          "token": "src",
+          "score": 0.057083,
+          "weighted_normalized_frequency": 0.045991,
+          "slice_df": 6,
+          "slice_coverage": 1.0,
+          "corpus_df": 76,
+          "idf": 1.241162
+        }
+      ],
+      "eligible_token_count": 3489
+    },
+    {
+      "candidate_cluster_id": "C007",
+      "support": 5,
+      "session_count": 5,
+      "top_tokens": [
+        {
+          "token": "she",
+          "score": 0.093194,
+          "weighted_normalized_frequency": 0.04056,
+          "slice_df": 2,
+          "slice_coverage": 0.4,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "tokenkind",
+          "score": 0.081427,
+          "weighted_normalized_frequency": 0.042582,
+          "slice_df": 1,
+          "slice_coverage": 0.2,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "cfml",
+          "score": 0.07707,
+          "weighted_normalized_frequency": 0.030593,
+          "slice_df": 1,
+          "slice_coverage": 0.2,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "return",
+          "score": 0.056438,
+          "weighted_normalized_frequency": 0.045472,
+          "slice_df": 5,
+          "slice_coverage": 1.0,
+          "corpus_df": 76,
+          "idf": 1.241162
+        },
+        {
+          "token": "her",
+          "score": 0.053856,
+          "weighted_normalized_frequency": 0.023439,
+          "slice_df": 2,
+          "slice_coverage": 0.4,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "std",
+          "score": 0.039518,
+          "weighted_normalized_frequency": 0.023455,
+          "slice_df": 2,
+          "slice_coverage": 0.4,
+          "corpus_df": 23,
+          "idf": 2.406914
+        },
+        {
+          "token": "node",
+          "score": 0.039449,
+          "weighted_normalized_frequency": 0.023954,
+          "slice_df": 3,
+          "slice_coverage": 0.6,
+          "corpus_df": 33,
+          "idf": 2.058607
+        },
+        {
+          "token": "odin",
+          "score": 0.039418,
+          "weighted_normalized_frequency": 0.021754,
+          "slice_df": 1,
+          "slice_coverage": 0.2,
+          "corpus_df": 12,
+          "idf": 3.020018
+        },
+        {
+          "token": "app",
+          "score": 0.038736,
+          "weighted_normalized_frequency": 0.026968,
+          "slice_df": 4,
+          "slice_coverage": 0.8,
+          "corpus_df": 53,
+          "idf": 1.595983
+        },
+        {
+          "token": "uriel",
+          "score": 0.038694,
+          "weighted_normalized_frequency": 0.020088,
+          "slice_df": 2,
+          "slice_coverage": 0.4,
+          "corpus_df": 16,
+          "idf": 2.751754
+        }
+      ],
+      "eligible_token_count": 5029
+    },
+    {
+      "candidate_cluster_id": "C008",
+      "support": 3,
+      "session_count": 3,
+      "top_tokens": [
+        {
+          "token": "linux",
+          "score": 0.061403,
+          "weighted_normalized_frequency": 0.029545,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 21,
+          "idf": 2.493925
+        },
+        {
+          "token": "cpp",
+          "score": 0.058339,
+          "weighted_normalized_frequency": 0.032475,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 17,
+          "idf": 2.694596
+        },
+        {
+          "token": "3.0",
+          "score": 0.047612,
+          "weighted_normalized_frequency": 0.027047,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 18,
+          "idf": 2.640528
+        },
+        {
+          "token": "crushing",
+          "score": 0.046201,
+          "weighted_normalized_frequency": 0.017432,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 4,
+          "idf": 3.97553
+        },
+        {
+          "token": "epilog",
+          "score": 0.045048,
+          "weighted_normalized_frequency": 0.024027,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 15,
+          "idf": 2.812379
+        },
+        {
+          "token": "qemu",
+          "score": 0.043961,
+          "weighted_normalized_frequency": 0.02009,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "ovmf",
+          "score": 0.041959,
+          "weighted_normalized_frequency": 0.018578,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "engine",
+          "score": 0.041556,
+          "weighted_normalized_frequency": 0.023183,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 30,
+          "idf": 2.15098
+        },
+        {
+          "token": "dialogue",
+          "score": 0.039518,
+          "weighted_normalized_frequency": 0.013213,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 2,
+          "idf": 4.486355
+        },
+        {
+          "token": "bochs",
+          "score": 0.037642,
+          "weighted_normalized_frequency": 0.012585,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 2,
+          "idf": 4.486355
+        }
+      ],
+      "eligible_token_count": 1886
+    },
+    {
+      "candidate_cluster_id": "C009",
+      "support": 3,
+      "session_count": 3,
+      "top_tokens": [
+        {
+          "token": "vercel",
+          "score": 0.205924,
+          "weighted_normalized_frequency": 0.091178,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "md3",
+          "score": 0.089685,
+          "weighted_normalized_frequency": 0.028372,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "sys",
+          "score": 0.062587,
+          "weighted_normalized_frequency": 0.030661,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 22,
+          "idf": 2.449473
+        },
+        {
+          "token": "color",
+          "score": 0.055659,
+          "weighted_normalized_frequency": 0.037559,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 44,
+          "idf": 1.778305
+        },
+        {
+          "token": "bundling",
+          "score": 0.05317,
+          "weighted_normalized_frequency": 0.018995,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "plugin",
+          "score": 0.051564,
+          "weighted_normalized_frequency": 0.028704,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 17,
+          "idf": 2.694596
+        },
+        {
+          "token": "mcp",
+          "score": 0.04927,
+          "weighted_normalized_frequency": 0.012989,
+          "slice_df": 3,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "bentofolio",
+          "score": 0.045901,
+          "weighted_normalized_frequency": 0.018151,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "material",
+          "score": 0.045081,
+          "weighted_normalized_frequency": 0.017913,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 12,
+          "idf": 3.020018
+        },
+        {
+          "token": "main",
+          "score": 0.041425,
+          "weighted_normalized_frequency": 0.035158,
+          "slice_df": 3,
+          "slice_coverage": 1.0,
+          "corpus_df": 81,
+          "idf": 1.178248
+        }
+      ],
+      "eligible_token_count": 3272
+    },
+    {
+      "candidate_cluster_id": "C010",
+      "support": 3,
+      "session_count": 2,
+      "top_tokens": [
+        {
+          "token": "humanizer",
+          "score": 0.182097,
+          "weighted_normalized_frequency": 0.060884,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 2,
+          "idf": 4.486355
+        },
+        {
+          "token": "claude",
+          "score": 0.107297,
+          "weighted_normalized_frequency": 0.072404,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 44,
+          "idf": 1.778305
+        },
+        {
+          "token": "marketplace",
+          "score": 0.107184,
+          "weighted_normalized_frequency": 0.032866,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "skill",
+          "score": 0.105761,
+          "weighted_normalized_frequency": 0.057651,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 16,
+          "idf": 2.751754
+        },
+        {
+          "token": "epilog",
+          "score": 0.075181,
+          "weighted_normalized_frequency": 0.032078,
+          "slice_df": 2,
+          "slice_coverage": 0.666667,
+          "corpus_df": 15,
+          "idf": 2.812379
+        },
+        {
+          "token": "skills",
+          "score": 0.07512,
+          "weighted_normalized_frequency": 0.040948,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 16,
+          "idf": 2.751754
+        },
+        {
+          "token": "env",
+          "score": 0.068081,
+          "weighted_normalized_frequency": 0.036855,
+          "slice_df": 3,
+          "slice_coverage": 1.0,
+          "corpus_df": 41,
+          "idf": 1.847298
+        },
+        {
+          "token": "install",
+          "score": 0.062456,
+          "weighted_normalized_frequency": 0.053341,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 45,
+          "idf": 1.756326
+        },
+        {
+          "token": "taivo",
+          "score": 0.052714,
+          "weighted_normalized_frequency": 0.016164,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "github",
+          "score": 0.05022,
+          "weighted_normalized_frequency": 0.035022,
+          "slice_df": 1,
+          "slice_coverage": 0.333333,
+          "corpus_df": 30,
+          "idf": 2.15098
+        }
+      ],
+      "eligible_token_count": 1757
+    },
+    {
+      "candidate_cluster_id": "C011",
+      "support": 2,
+      "session_count": 2,
+      "top_tokens": [
+        {
+          "token": "java",
+          "score": 0.049318,
+          "weighted_normalized_frequency": 0.016741,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 13,
+          "idf": 2.94591
+        },
+        {
+          "token": "adb",
+          "score": 0.04368,
+          "weighted_normalized_frequency": 0.017191,
+          "slice_df": 1,
+          "slice_coverage": 0.5,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "usb",
+          "score": 0.042087,
+          "weighted_normalized_frequency": 0.016565,
+          "slice_df": 1,
+          "slice_coverage": 0.5,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "models",
+          "score": 0.038185,
+          "weighted_normalized_frequency": 0.015511,
+          "slice_df": 1,
+          "slice_coverage": 0.5,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "app",
+          "score": 0.038132,
+          "weighted_normalized_frequency": 0.023892,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 53,
+          "idf": 1.595983
+        },
+        {
+          "token": "dsp",
+          "score": 0.034078,
+          "weighted_normalized_frequency": 0.015046,
+          "slice_df": 1,
+          "slice_coverage": 0.5,
+          "corpus_df": 12,
+          "idf": 3.020018
+        },
+        {
+          "token": "device",
+          "score": 0.033093,
+          "weighted_normalized_frequency": 0.020205,
+          "slice_df": 1,
+          "slice_coverage": 0.5,
+          "corpus_df": 29,
+          "idf": 2.18377
+        },
+        {
+          "token": "user",
+          "score": 0.028174,
+          "weighted_normalized_frequency": 0.023912,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 81,
+          "idf": 1.178248
+        },
+        {
+          "token": "test",
+          "score": 0.025483,
+          "weighted_normalized_frequency": 0.018263,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 65,
+          "idf": 1.395313
+        },
+        {
+          "token": "android",
+          "score": 0.024608,
+          "weighted_normalized_frequency": 0.011405,
+          "slice_df": 1,
+          "slice_coverage": 0.5,
+          "corpus_df": 14,
+          "idf": 2.876917
+        }
+      ],
+      "eligible_token_count": 1878
+    },
+    {
+      "candidate_cluster_id": "C012",
+      "support": 2,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "adb",
+          "score": 0.086463,
+          "weighted_normalized_frequency": 0.025522,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "apk",
+          "score": 0.086065,
+          "weighted_normalized_frequency": 0.027004,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "fdroid",
+          "score": 0.063965,
+          "weighted_normalized_frequency": 0.016863,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "droid",
+          "score": 0.060504,
+          "weighted_normalized_frequency": 0.015951,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "app",
+          "score": 0.052966,
+          "weighted_normalized_frequency": 0.033187,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 53,
+          "idf": 1.595983
+        },
+        {
+          "token": "merge_requests",
+          "score": 0.051408,
+          "weighted_normalized_frequency": 0.013553,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "haven",
+          "score": 0.051176,
+          "weighted_normalized_frequency": 0.015591,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "device",
+          "score": 0.050328,
+          "weighted_normalized_frequency": 0.023046,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 29,
+          "idf": 2.18377
+        },
+        {
+          "token": "internet",
+          "score": 0.04253,
+          "weighted_normalized_frequency": 0.010698,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 4,
+          "idf": 3.97553
+        },
+        {
+          "token": "fdroiddata",
+          "score": 0.042526,
+          "weighted_normalized_frequency": 0.011211,
+          "slice_df": 2,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        }
+      ],
+      "eligible_token_count": 1418
+    },
+    {
+      "candidate_cluster_id": "C013",
+      "support": 1,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "minimax",
+          "score": 0.080261,
+          "weighted_normalized_frequency": 0.016407,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "models",
+          "score": 0.053751,
+          "weighted_normalized_frequency": 0.016376,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "license",
+          "score": 0.032238,
+          "weighted_normalized_frequency": 0.010943,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 13,
+          "idf": 2.94591
+        },
+        {
+          "token": "develop",
+          "score": 0.030969,
+          "weighted_normalized_frequency": 0.008164,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "user",
+          "score": 0.019387,
+          "weighted_normalized_frequency": 0.016454,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 81,
+          "idf": 1.178248
+        },
+        {
+          "token": "session",
+          "score": 0.019186,
+          "weighted_normalized_frequency": 0.007693,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 21,
+          "idf": 2.493925
+        },
+        {
+          "token": "model",
+          "score": 0.019147,
+          "weighted_normalized_frequency": 0.007678,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 21,
+          "idf": 2.493925
+        },
+        {
+          "token": "commit",
+          "score": 0.017661,
+          "weighted_normalized_frequency": 0.006688,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 18,
+          "idf": 2.640528
+        },
+        {
+          "token": "donate",
+          "score": 0.017213,
+          "weighted_normalized_frequency": 0.005244,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "fyi",
+          "score": 0.017051,
+          "weighted_normalized_frequency": 0.003486,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        }
+      ],
+      "eligible_token_count": 1379
+    },
+    {
+      "candidate_cluster_id": "C014",
+      "support": 1,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "fuckingfast",
+          "score": 0.448494,
+          "weighted_normalized_frequency": 0.091682,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "_fitgirl",
+          "score": 0.44387,
+          "weighted_normalized_frequency": 0.090737,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "mortal_kombat_1_",
+          "score": 0.44387,
+          "weighted_normalized_frequency": 0.090737,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "rar",
+          "score": 0.44387,
+          "weighted_normalized_frequency": 0.090737,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "repacks",
+          "score": 0.44387,
+          "weighted_normalized_frequency": 0.090737,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "site_",
+          "score": 0.44387,
+          "weighted_normalized_frequency": 0.090737,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "https",
+          "score": 0.145946,
+          "weighted_normalized_frequency": 0.092509,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 54,
+          "idf": 1.577634
+        },
+        {
+          "token": "foregroundcolor",
+          "score": 0.039985,
+          "weighted_normalized_frequency": 0.010988,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 6,
+          "idf": 3.639057
+        },
+        {
+          "token": "downloaddir",
+          "score": 0.030632,
+          "weighted_normalized_frequency": 0.006262,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "aria2c",
+          "score": 0.027742,
+          "weighted_normalized_frequency": 0.005671,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        }
+      ],
+      "eligible_token_count": 540
+    },
+    {
+      "candidate_cluster_id": "C015",
+      "support": 1,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "answer",
+          "score": 0.093464,
+          "weighted_normalized_frequency": 0.032488,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 14,
+          "idf": 2.876917
+        },
+        {
+          "token": "superficial",
+          "score": 0.086757,
+          "weighted_normalized_frequency": 0.019338,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 2,
+          "idf": 4.486355
+        },
+        {
+          "token": "model",
+          "score": 0.065589,
+          "weighted_normalized_frequency": 0.0263,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 21,
+          "idf": 2.493925
+        },
+        {
+          "token": "useful",
+          "score": 0.063804,
+          "weighted_normalized_frequency": 0.021658,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 13,
+          "idf": 2.94591
+        },
+        {
+          "token": "correlation",
+          "score": 0.056758,
+          "weighted_normalized_frequency": 0.011603,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "conv_superficial",
+          "score": 0.049191,
+          "weighted_normalized_frequency": 0.010056,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "negative",
+          "score": 0.04824,
+          "weighted_normalized_frequency": 0.014697,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 9,
+          "idf": 3.282382
+        },
+        {
+          "token": "response",
+          "score": 0.047841,
+          "weighted_normalized_frequency": 0.019183,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 21,
+          "idf": 2.493925
+        },
+        {
+          "token": "reasons",
+          "score": 0.046767,
+          "weighted_normalized_frequency": 0.011139,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "positive",
+          "score": 0.036459,
+          "weighted_normalized_frequency": 0.012376,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 13,
+          "idf": 2.94591
+        }
+      ],
+      "eligible_token_count": 305
+    },
+    {
+      "candidate_cluster_id": "C016",
+      "support": 1,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "configuration",
+          "score": 0.203162,
+          "weighted_normalized_frequency": 0.063746,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "vercel",
+          "score": 0.195724,
+          "weighted_normalized_frequency": 0.057774,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "docs",
+          "score": 0.110393,
+          "weighted_normalized_frequency": 0.049004,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 27,
+          "idf": 2.252763
+        },
+        {
+          "token": "view",
+          "score": 0.07118,
+          "weighted_normalized_frequency": 0.032097,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 28,
+          "idf": 2.217672
+        },
+        {
+          "token": "settings",
+          "score": 0.029785,
+          "weighted_normalized_frequency": 0.011943,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 21,
+          "idf": 2.493925
+        },
+        {
+          "token": "virtualpc",
+          "score": 0.026108,
+          "weighted_normalized_frequency": 0.005337,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "url",
+          "score": 0.024681,
+          "weighted_normalized_frequency": 0.012503,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 36,
+          "idf": 1.97405
+        },
+        {
+          "token": "bentofolio",
+          "score": 0.018687,
+          "weighted_normalized_frequency": 0.004926,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "codeberg",
+          "score": 0.017828,
+          "weighted_normalized_frequency": 0.005262,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "headers",
+          "score": 0.017589,
+          "weighted_normalized_frequency": 0.009032,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 37,
+          "idf": 1.947381
+        }
+      ],
+      "eligible_token_count": 632
+    },
+    {
+      "candidate_cluster_id": "C017",
+      "support": 1,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "droid",
+          "score": 0.048891,
+          "weighted_normalized_frequency": 0.012889,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "fdroid",
+          "score": 0.046215,
+          "weighted_normalized_frequency": 0.012184,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "esbuild",
+          "score": 0.041785,
+          "weighted_normalized_frequency": 0.013111,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "rollup",
+          "score": 0.039266,
+          "weighted_normalized_frequency": 0.009352,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 3,
+          "idf": 4.198673
+        },
+        {
+          "token": "recipe",
+          "score": 0.033262,
+          "weighted_normalized_frequency": 0.00914,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 6,
+          "idf": 3.639057
+        },
+        {
+          "token": "opendsp",
+          "score": 0.030865,
+          "weighted_normalized_frequency": 0.009684,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "apk",
+          "score": 0.02836,
+          "weighted_normalized_frequency": 0.008898,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 10,
+          "idf": 3.187072
+        },
+        {
+          "token": "rust",
+          "score": 0.023891,
+          "weighted_normalized_frequency": 0.006298,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "prebuilt",
+          "score": 0.02328,
+          "weighted_normalized_frequency": 0.006137,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 5,
+          "idf": 3.793208
+        },
+        {
+          "token": "android",
+          "score": 0.022962,
+          "weighted_normalized_frequency": 0.007981,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 14,
+          "idf": 2.876917
+        }
+      ],
+      "eligible_token_count": 1947
+    },
+    {
+      "candidate_cluster_id": "C018",
+      "support": 1,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "document",
+          "score": 0.524849,
+          "weighted_normalized_frequency": 0.236667,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 28,
+          "idf": 2.217672
+        },
+        {
+          "token": "document_ia_api",
+          "score": 0.244591,
+          "weighted_normalized_frequency": 0.05,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "documents",
+          "score": 0.225853,
+          "weighted_normalized_frequency": 0.076667,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 13,
+          "idf": 2.94591
+        },
+        {
+          "token": "api",
+          "score": 0.183843,
+          "weighted_normalized_frequency": 0.123333,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 59,
+          "idf": 1.490623
+        },
+        {
+          "token": "users",
+          "score": 0.143474,
+          "weighted_normalized_frequency": 0.076667,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 40,
+          "idf": 1.871395
+        },
+        {
+          "token": "user",
+          "score": 0.090332,
+          "weighted_normalized_frequency": 0.076667,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 81,
+          "idf": 1.178248
+        },
+        {
+          "token": "routes",
+          "score": 0.090111,
+          "weighted_normalized_frequency": 0.04,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 27,
+          "idf": 2.252763
+        },
+        {
+          "token": "loki",
+          "score": 0.065224,
+          "weighted_normalized_frequency": 0.013333,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "src",
+          "score": 0.062058,
+          "weighted_normalized_frequency": 0.05,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 76,
+          "idf": 1.241162
+        },
+        {
+          "token": "aggregator",
+          "score": 0.048918,
+          "weighted_normalized_frequency": 0.01,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        }
+      ],
+      "eligible_token_count": 60
+    },
+    {
+      "candidate_cluster_id": "C019",
+      "support": 1,
+      "session_count": 1,
+      "top_tokens": [
+        {
+          "token": "cheats",
+          "score": 0.127734,
+          "weighted_normalized_frequency": 0.026112,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "cheat",
+          "score": 0.119992,
+          "weighted_normalized_frequency": 0.024529,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "kernel",
+          "score": 0.109482,
+          "weighted_normalized_frequency": 0.041462,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 18,
+          "idf": 2.640528
+        },
+        {
+          "token": "anti",
+          "score": 0.094309,
+          "weighted_normalized_frequency": 0.026903,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 7,
+          "idf": 3.505526
+        },
+        {
+          "token": "lazy",
+          "score": 0.077201,
+          "weighted_normalized_frequency": 0.022788,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 8,
+          "idf": 3.387743
+        },
+        {
+          "token": "legitimate",
+          "score": 0.040894,
+          "weighted_normalized_frequency": 0.010286,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 4,
+          "idf": 3.97553
+        },
+        {
+          "token": "threat",
+          "score": 0.038707,
+          "weighted_normalized_frequency": 0.007913,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 1,
+          "idf": 4.89182
+        },
+        {
+          "token": "ambiguity",
+          "score": 0.035499,
+          "weighted_normalized_frequency": 0.007913,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 2,
+          "idf": 4.486355
+        },
+        {
+          "token": "dma",
+          "score": 0.035499,
+          "weighted_normalized_frequency": 0.007913,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 2,
+          "idf": 4.486355
+        },
+        {
+          "token": "industry",
+          "score": 0.035499,
+          "weighted_normalized_frequency": 0.007913,
+          "slice_df": 1,
+          "slice_coverage": 1.0,
+          "corpus_df": 2,
+          "idf": 4.486355
+        }
+      ],
+      "eligible_token_count": 259
+    }
+  ]
+}

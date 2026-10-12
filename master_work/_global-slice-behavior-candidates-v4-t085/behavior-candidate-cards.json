@@ -1,0 +1,954 @@
+{
+  "algorithm_version": "domain-free-behavior-candidates-v4-size-penalty",
+  "input_profile_file": "dynatic-split-session-test\\trajectory-behavior-graphs-v1\\slice-profiles.jsonl",
+  "input_slice_count": 97,
+  "candidate_cluster_count": 19,
+  "similarity": "IDF-weighted cosine over exact observed event labels and structural counts, multiplied by a merge-size penalty; enriched card evidence is descriptive only",
+  "similarity_threshold": 0.85,
+  "size_penalty_alpha": 0.02,
+  "size_penalty_formula": "1 / (1 + alpha * log2(merged_member_count))",
+  "semantic_priors": [],
+  "clustering_inputs": [
+    "exact observed event labels",
+    "generic event-count bins",
+    "generic user-event-count bins",
+    "generic assistant-event-count bins"
+  ],
+  "cards": [
+    {
+      "candidate_cluster_id": "C001",
+      "support": 34,
+      "session_count": 14,
+      "observed_tool_counts": {
+        "Bash": 193,
+        "Edit": 150,
+        "Read": 142,
+        "PowerShell": 115,
+        "Write": 105,
+        "Grep": 17,
+        "TodoWrite": 16,
+        "Glob": 2
+      },
+      "representative_sequences": [
+        "record > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Edit > tool_result > tool_call:Edit > tool_result > tool_call:Edit > record > tool_result > assistant > tool_call:Write > record > tool_result > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell",
+        "record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > record > tool_result > record > assistant > tool_call:Read > tool_result > record > assistant",
+        "record > assistant_thinking > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > tool_call:Read > tool_result > assistant_thinking > assistant > record > assistant_thinking > tool_call:Bash > tool_result > tool_call:Bash > tool_result > record > tool_call:Read > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:Bash -> tool_result",
+        "tool_result -> assistant",
+        "record -> assistant",
+        "assistant_thinking -> assistant",
+        "tool_call:Read -> tool_result"
+      ],
+      "target_examples": [
+        "main.odin",
+        "sqlitedatabase.java",
+        "[username].tsx",
+        "[subreddit].tsx",
+        "build.sh",
+        "readme.md",
+        "makefile",
+        "solver.c"
+      ],
+      "file_types": [
+        ".odin",
+        ".java",
+        ".c",
+        ".sh",
+        ".tsx",
+        ".cpp",
+        ".ts",
+        ".md"
+      ],
+      "member_slice_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03",
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04",
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-01",
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-02",
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-03",
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-05",
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-03",
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-04",
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-05",
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-02",
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-03",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-04",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05",
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03",
+        "claude_code__89cf9e13-a4bd-4cf9-9486-7c89737bec1b__segment-02",
+        "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-02",
+        "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-02",
+        "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-03",
+        "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-04",
+        "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-01",
+        "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-03",
+        "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04",
+        "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-05",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-03",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-04",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-01",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-02",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-03",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-05",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-06",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-10",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-11",
+        "claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d__segment-02"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C002",
+      "support": 9,
+      "session_count": 4,
+      "observed_tool_counts": {
+        "Edit": 85,
+        "Read": 51,
+        "Grep": 23,
+        "Write": 12,
+        "PowerShell": 9,
+        "Bash": 9,
+        "Glob": 5,
+        "TodoWrite": 2,
+        "AskUserQuestion": 1
+      },
+      "representative_sequences": [
+        "tool_result > record > assistant > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Grep > tool_result > tool_call:Edit",
+        "tool_call:Grep > tool_result > record > assistant > tool_call:Grep > tool_result > tool_call:PowerShell > tool_result > tool_call:Grep > tool_result > assistant > tool_call:Read > tool_result > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant",
+        "record > tool_call:Edit > tool_result > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Grep > tool_result > assistant > tool_call:Grep > tool_result > record > assistant"
+      ],
+      "common_transitions": [
+        "tool_call:Edit -> tool_result",
+        "tool_result -> assistant",
+        "record -> assistant",
+        "tool_result -> record",
+        "tool_call:Read -> tool_result",
+        "assistant -> tool_call:Edit"
+      ],
+      "target_examples": [
+        "style.css",
+        "index.html",
+        "index.css",
+        "docs.md",
+        "makefile",
+        "kernel.c",
+        "main.c",
+        "home.css"
+      ],
+      "file_types": [
+        ".css",
+        ".c",
+        ".html",
+        ".md",
+        ".ts",
+        ".js",
+        "makefile",
+        ".h"
+      ],
+      "member_slice_ids": [
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04",
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05",
+        "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-03",
+        "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-05",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-03",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-07",
+        "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-01",
+        "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-02",
+        "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-03"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C003",
+      "support": 8,
+      "session_count": 6,
+      "observed_tool_counts": {
+        "Write": 46,
+        "Edit": 39,
+        "PowerShell": 29,
+        "Read": 23,
+        "Bash": 12,
+        "TodoWrite": 2,
+        "Grep": 1
+      },
+      "representative_sequences": [
+        "assistant > tool_call:PowerShell > tool_result > assistant > record > user > record > assistant > record > user > record > assistant > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > tool_call:PowerShell",
+        "tool_result > record > assistant > record > user > record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > record > assistant > record",
+        "record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > record > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "tool_result -> assistant",
+        "user -> record",
+        "tool_call:Edit -> tool_result",
+        "record -> user"
+      ],
+      "target_examples": [
+        "parser.cpp",
+        "lexer.cpp",
+        "main.c",
+        "run_tests.ps1",
+        "app.tsx",
+        "syscall.c",
+        "vite.js",
+        "vga.c"
+      ],
+      "file_types": [
+        ".cpp",
+        ".js",
+        ".jsx",
+        ".c",
+        ".py",
+        ".tsx",
+        ".ps1",
+        ".md"
+      ],
+      "member_slice_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+        "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04",
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02",
+        "claude_code__674e0f5c-c481-4830-b2ef-3e1e069a2b7f__segment-01",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-04",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-05",
+        "claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C004",
+      "support": 8,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Read": 49,
+        "Glob": 38,
+        "Edit": 25,
+        "Grep": 24,
+        "Write": 19,
+        "PowerShell": 11,
+        "Bash": 6,
+        "TodoWrite": 2
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Read > record > tool_result > assistant > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Read > tool_result",
+        "tool_call:Read > tool_result > record > assistant > tool_call:Edit > tool_result > record > assistant > tool_call:Write > tool_result > assistant > tool_call:Read > tool_result > record > assistant > tool_call:Edit > tool_result > assistant > record > user",
+        "tool_call:Read > tool_result > record > tool_call:Read > tool_result > assistant > tool_call:Glob > tool_result > record > tool_call:Grep > tool_result > tool_call:Grep > tool_result > tool_call:Grep > tool_result > tool_call:Grep > tool_result > assistant > tool_call:Edit > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "tool_call:Read -> tool_result",
+        "tool_result -> assistant",
+        "tool_call:Glob -> tool_result",
+        "tool_call:Edit -> tool_result"
+      ],
+      "target_examples": [
+        "core.ts",
+        "index.scss",
+        "~routes.generated.ts",
+        "clock.ts",
+        "reddit.ts",
+        "js_runtime.c",
+        "linux-3.0.1",
+        "[username].tsx"
+      ],
+      "file_types": [
+        ".ts",
+        ".scss",
+        ".c",
+        ".tsx",
+        ".json",
+        ".1",
+        ".h",
+        ".mjs"
+      ],
+      "member_slice_ids": [
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01",
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02",
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-01",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-02",
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02",
+        "claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-01",
+        "claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C005",
+      "support": 7,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Read": 49,
+        "Write": 45,
+        "TodoWrite": 31,
+        "PowerShell": 17,
+        "Bash": 10,
+        "Edit": 9,
+        "ToolSearch": 7,
+        "Glob": 6,
+        "Grep": 4
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Glob > tool_result > tool_call:Read > tool_result > record > tool_call:Read > tool_result > tool_call:Read > tool_result > tool_call:Read > tool_result > assistant > tool_call:Read > tool_result",
+        "tool_call:Read > tool_result > tool_call:Read > tool_result > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > record > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > tool_call:Read > tool_result > assistant > tool_call:ToolSearch > tool_result",
+        "record > user > record > assistant > tool_call:ToolSearch > tool_result > tool_call:Glob > tool_result > assistant > tool_call:Read > tool_result > tool_call:Glob > record > tool_result > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > record"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:Read -> tool_result",
+        "record -> assistant",
+        "tool_result -> assistant",
+        "tool_call:Write -> tool_result",
+        "tool_call:TodoWrite -> tool_result"
+      ],
+      "target_examples": [
+        "test_solver.cpp",
+        "makefile",
+        "main.cpp",
+        "quickjs.h",
+        "test_unifier.cpp",
+        "test_atoms.cpp",
+        "database.cpp",
+        "solver.cpp"
+      ],
+      "file_types": [
+        ".cpp",
+        ".c",
+        ".h",
+        ".exe",
+        "makefile",
+        ".md",
+        ".hpp",
+        ".ps1"
+      ],
+      "member_slice_ids": [
+        "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-01",
+        "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02",
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-01",
+        "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-01",
+        "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-05",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-06"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C006",
+      "support": 6,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Bash": 34,
+        "Edit": 30,
+        "Read": 30,
+        "Write": 13,
+        "TodoWrite": 11,
+        "Grep": 10,
+        "Agent": 6,
+        "ToolSearch": 2,
+        "PowerShell": 2,
+        "Glob": 2,
+        "AskUserQuestion": 1
+      },
+      "representative_sequences": [
+        "tool_call:Edit > tool_result > assistant > tool_call:Read > tool_result > tool_call:Edit > tool_result > assistant > tool_call:Bash > record > tool_result > record > assistant > tool_call:Bash > tool_result > assistant > tool_call:Read > tool_result > assistant > tool_call:Edit",
+        "tool_result > record > assistant > tool_call:Edit > tool_result > record > tool_call:Bash > tool_result > assistant > tool_call:Bash > record > tool_result > tool_call:Bash > tool_result > record > tool_call:TodoWrite > tool_result > assistant > tool_call:Write > record",
+        "record > assistant > tool_call:Bash > tool_result > record > assistant > tool_call:Bash > tool_result > record > assistant > tool_call:Bash > tool_result > tool_call:Bash > tool_result > assistant > record > user > record > assistant > tool_call:Agent"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "tool_result -> assistant",
+        "tool_call:Bash -> tool_result",
+        "tool_call:Read -> tool_result",
+        "tool_call:Edit -> tool_result"
+      ],
+      "target_examples": [
+        "main.odin",
+        "social_events.odin",
+        "makefile",
+        "saveload.odin",
+        "parser.cpp",
+        "anim.odin",
+        "world_fx.odin",
+        "parser.h"
+      ],
+      "file_types": [
+        ".odin",
+        ".h",
+        ".c",
+        ".cpp",
+        "makefile",
+        ".md",
+        ".tsx",
+        ".json"
+      ],
+      "member_slice_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-03",
+        "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-02",
+        "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-03",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-06",
+        "claude_code__89cf9e13-a4bd-4cf9-9486-7c89737bec1b__segment-01",
+        "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C007",
+      "support": 5,
+      "session_count": 5,
+      "observed_tool_counts": {
+        "Write": 34,
+        "PowerShell": 29,
+        "TodoWrite": 21,
+        "Edit": 14,
+        "Bash": 11,
+        "Read": 9,
+        "ToolSearch": 3,
+        "AskUserQuestion": 1
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:ToolSearch > tool_result > tool_call:Write > record > tool_result > assistant > record > user > record > assistant > tool_call:Write > record > tool_result > tool_call:Read > tool_result > record",
+        "record > user > record > assistant > tool_call:ToolSearch > tool_result > record > assistant > tool_call:TodoWrite > tool_result > tool_call:PowerShell > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Write > record > tool_result > record > user",
+        "record > tool_result > tool_call:PowerShell > tool_result > tool_call:Bash > tool_result > tool_call:Read > tool_result > assistant > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > record > assistant > tool_call:Read > tool_result > assistant > tool_call:PowerShell"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_result -> assistant",
+        "tool_call:PowerShell -> tool_result",
+        "record -> assistant",
+        "record -> tool_result",
+        "tool_call:Write -> record"
+      ],
+      "target_examples": [
+        "main.odin",
+        "main.py",
+        "meme.py",
+        "interpreter.py",
+        "creation.odin",
+        "+page.server.ts",
+        "saveload.odin",
+        "example.cfml"
+      ],
+      "file_types": [
+        ".odin",
+        ".py",
+        ".cfml",
+        ".md",
+        ".svelte",
+        ".ts",
+        ".tsx",
+        ".h"
+      ],
+      "member_slice_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01",
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-01",
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+        "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-02"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C008",
+      "support": 3,
+      "session_count": 3,
+      "observed_tool_counts": {
+        "Bash": 20,
+        "PowerShell": 20,
+        "Read": 12,
+        "Edit": 9,
+        "Write": 8,
+        "ToolSearch": 3,
+        "WebFetch": 1,
+        "Grep": 1,
+        "TodoWrite": 1
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Bash > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > tool_call:Bash > tool_result > assistant > tool_call:ToolSearch",
+        "record > user > record > assistant > tool_call:Read > tool_result > record > assistant > tool_call:Bash > tool_result > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > assistant > tool_call:Read > tool_result > tool_call:Read > tool_result > record",
+        "tool_call:Edit > tool_result > record > assistant > tool_call:Edit > tool_result > record > tool_call:Edit > tool_result > assistant > tool_call:Bash > tool_result > assistant_thinking > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell > tool_result > assistant > tool_call:PowerShell"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:PowerShell -> tool_result",
+        "tool_call:Bash -> tool_result",
+        "tool_result -> assistant",
+        "record -> assistant",
+        "tool_result -> tool_call:Bash"
+      ],
+      "target_examples": [
+        "make-grub-disk.sh",
+        "index.html",
+        "m0_verify.cpp",
+        "check_escape2.cpp",
+        "parser.cpp",
+        "makefile",
+        "memory.md",
+        "plan.md"
+      ],
+      "file_types": [
+        ".cpp",
+        ".sh",
+        ".html",
+        ".md",
+        ".log",
+        ".exe",
+        "makefile",
+        ".h"
+      ],
+      "member_slice_ids": [
+        "claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f__segment-01",
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-01",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C009",
+      "support": 3,
+      "session_count": 3,
+      "observed_tool_counts": {
+        "Write": 20,
+        "Bash": 12,
+        "Read": 10,
+        "TodoWrite": 7,
+        "Glob": 4,
+        "Skill": 3,
+        "ToolSearch": 2,
+        "Edit": 1
+      },
+      "representative_sequences": [
+        "record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant > record > assistant_thinking > assistant > record > assistant_thinking > tool_call:Read > tool_call:Glob > tool_result > record > assistant_thinking > tool_call:Read > tool_result > assistant_thinking > tool_call:Read",
+        "record > user > record > tool_call:Skill > tool_result > user > record > assistant > tool_call:ToolSearch > tool_result > tool_call:TodoWrite > tool_result > assistant > tool_call:Bash > tool_result > tool_call:Bash > tool_result > tool_call:Bash > tool_result > assistant",
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Skill > tool_result > user > record > assistant > tool_call:Glob > tool_result > assistant > tool_call:Glob > tool_result > tool_call:Glob > tool_result > tool_call:Read > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "tool_call:Bash -> tool_result",
+        "record -> assistant",
+        "record -> tool_result",
+        "tool_call:Write -> record",
+        "record -> tool_call:Write"
+      ],
+      "target_examples": [
+        "index.tsx",
+        "package.json",
+        "$id.tsx",
+        "post-job.tsx",
+        "__root.tsx",
+        "vercel.json",
+        "auth.js",
+        "dashboard.tsx"
+      ],
+      "file_types": [
+        ".tsx",
+        ".js",
+        ".json",
+        ".md",
+        ".css",
+        ".ts",
+        ".env",
+        ".html"
+      ],
+      "member_slice_ids": [
+        "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01",
+        "claude_code__4130c9a7-ee88-443a-91b5-224accd13629__segment-01",
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C010",
+      "support": 3,
+      "session_count": 2,
+      "observed_tool_counts": {
+        "Write": 20,
+        "PowerShell": 10,
+        "Bash": 6,
+        "WebSearch": 5,
+        "Read": 4,
+        "Edit": 4,
+        "ToolSearch": 3
+      },
+      "representative_sequences": [
+        "record > user > record > assistant > tool_call:Read > tool_result > tool_call:Write > record > tool_result > tool_call:Write > record > tool_result > record > assistant > tool_call:Write > tool_result > tool_call:Write > record > tool_result > assistant",
+        "tool_result > record > tool_call:PowerShell > tool_result > tool_call:PowerShell > tool_result > record > assistant > tool_call:Write > record > tool_result > tool_call:Write > record > tool_result > tool_call:Write > record > tool_result > record > tool_call:Write > tool_result",
+        "record > assistant_thinking > assistant > tool_call:ToolSearch > tool_result > assistant_thinking > tool_call:WebSearch > tool_result > record > assistant_thinking > tool_call:Bash > tool_result > record > assistant_thinking > tool_call:Bash > tool_result > assistant_thinking > tool_call:Bash > tool_result > assistant_thinking"
+      ],
+      "common_transitions": [
+        "tool_result -> record",
+        "record -> assistant",
+        "record -> tool_result",
+        "tool_call:Write -> record",
+        "tool_result -> tool_call:Write",
+        "tool_call:Write -> tool_result"
+      ],
+      "target_examples": [
+        "repl.c",
+        "solver.c",
+        "unifier.c",
+        "atoms.c",
+        "variables.c",
+        "builtins.c",
+        "parser.c",
+        "main.c"
+      ],
+      "file_types": [
+        ".c",
+        ".h",
+        ".md",
+        "makefile",
+        ".exe",
+        ".bat",
+        ".sh"
+      ],
+      "member_slice_ids": [
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-01",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-02",
+        "claude_code__da6566ff-0116-4424-bb59-660623f9eb31__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C011",
+      "support": 2,
+      "session_count": 2,
+      "observed_tool_counts": {
+        "Bash": 26,
+        "Edit": 5,
+        "Read": 5,
+        "AskUserQuestion": 3,
+        "Write": 1
+      },
+      "representative_sequences": [
+        "assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Write > tool_result > record > tool_call:Edit > tool_result > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Edit",
+        "tool_call:Bash > tool_result > tool_call:Read > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_call:Bash -> tool_result",
+        "assistant -> tool_call:Bash",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "modeltypes.java",
+        "app.svelte",
+        "cdp-eval.mjs",
+        "android.md",
+        "presetbar.svelte",
+        "readback.ts",
+        "characterviewmodel.java",
+        "dsp-test.log"
+      ],
+      "file_types": [
+        ".java",
+        ".svelte",
+        ".ts",
+        ".png",
+        ".log",
+        ".md",
+        ".mjs",
+        ".models"
+      ],
+      "member_slice_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-04",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-04"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C012",
+      "support": 2,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Bash": 23,
+        "Read": 5,
+        "ToolSearch": 3,
+        "AskUserQuestion": 3,
+        "mcp__haven__expose_adb": 2,
+        "mcp__haven__list_sessions": 1
+      },
+      "representative_sequences": [
+        "tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result",
+        "tool_call:AskUserQuestion > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash > tool_result > record > assistant_thinking > assistant > tool_call:Bash"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_call:Bash -> tool_result",
+        "assistant -> tool_call:Bash",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "wiw.apk",
+        "scrutiny.sh",
+        "v2.5.4",
+        "v2.4.0",
+        "scenepeek.apk",
+        "aitech.apk",
+        "indoorbike.apk",
+        "$n.apk"
+      ],
+      "file_types": [
+        ".png",
+        ".apk",
+        ".md",
+        ".0",
+        ".sh",
+        ".2",
+        ".4",
+        ".url"
+      ],
+      "member_slice_ids": [
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-08",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-09"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C013",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Read": 7,
+        "Bash": 7,
+        "WebFetch": 3,
+        "WebSearch": 2,
+        "ToolSearch": 1,
+        "Edit": 1
+      },
+      "representative_sequences": [
+        "record > user > record > assistant_thinking > assistant > tool_call:Read > tool_result > tool_call:ToolSearch > tool_result > record > assistant > tool_call:WebFetch > tool_result > assistant_thinking > assistant > tool_call:WebSearch > tool_result > record > assistant_thinking > assistant"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "tool_call:Read -> tool_result",
+        "tool_call:Bash -> tool_result",
+        "assistant -> tool_call:Read"
+      ],
+      "target_examples": [
+        "models.json",
+        "licenses.json",
+        "generated-models.json",
+        "models.ts",
+        "build_models.py",
+        "fr.json",
+        "llms.py",
+        "license"
+      ],
+      "file_types": [
+        ".json",
+        ".py",
+        ".ts",
+        ".md",
+        "license",
+        ".patch",
+        ".80",
+        ".7"
+      ],
+      "member_slice_ids": [
+        "claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C014",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {},
+      "representative_sequences": [
+        "record > user > record > assistant > record"
+      ],
+      "common_transitions": [
+        "record -> user",
+        "user -> record",
+        "record -> assistant",
+        "assistant -> record"
+      ],
+      "target_examples": [],
+      "file_types": [],
+      "member_slice_ids": [
+        "claude_code__4c09dfa9-ff25-4b4c-a2d0-d2fd702c64ee__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C015",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Agent": 2,
+        "Read": 1
+      },
+      "representative_sequences": [
+        "record > assistant_thinking > assistant > tool_call:Agent > tool_result > record > assistant_thinking > assistant > tool_call:Agent > tool_result > assistant_thinking > assistant > tool_call:Read > tool_result > record > assistant_thinking > assistant > record"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "record -> assistant_thinking",
+        "assistant -> tool_call:Agent",
+        "tool_call:Agent -> tool_result",
+        "tool_result -> record",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "migrate_votes.py"
+      ],
+      "file_types": [
+        ".py"
+      ],
+      "member_slice_ids": [
+        "claude_code__comparia-voting-fields-anon__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C016",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Edit": 5,
+        "Read": 5,
+        "Grep": 3,
+        "Write": 3,
+        "WebFetch": 2,
+        "PowerShell": 1,
+        "ToolSearch": 1
+      },
+      "representative_sequences": [
+        "tool_result > tool_call:Edit > tool_result > assistant > record > user_image > user > record > assistant > tool_call:Grep > tool_result > tool_call:Read > tool_result > tool_call:Edit > tool_result > assistant > tool_call:Grep > tool_result > tool_call:Edit > tool_result"
+      ],
+      "common_transitions": [
+        "tool_result -> assistant",
+        "assistant -> record",
+        "user -> record",
+        "tool_result -> record",
+        "tool_call:Edit -> tool_result",
+        "record -> assistant"
+      ],
+      "target_examples": [
+        "index.html",
+        "vercel.json",
+        "main.js",
+        "style.css",
+        "toolu_013wzvwvdemjdtpqsdqexrj4.txt"
+      ],
+      "file_types": [
+        ".html",
+        ".json",
+        ".js",
+        ".txt",
+        ".css"
+      ],
+      "member_slice_ids": [
+        "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C017",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Bash": 6,
+        "Edit": 4,
+        "mcp__claude-in-chrome__computer": 4,
+        "Write": 2,
+        "mcp__claude-in-chrome__navigate": 2,
+        "ToolSearch": 1,
+        "mcp__claude-in-chrome__tabs_context_mcp": 1
+      },
+      "representative_sequences": [
+        "record > assistant_thinking > assistant > tool_call:Write > tool_result > record > assistant_thinking > assistant > tool_call:Edit > tool_result > record > tool_call:Edit > tool_result > assistant_thinking > assistant > tool_call:Bash > tool_result > assistant > tool_call:Bash > tool_result"
+      ],
+      "common_transitions": [
+        "assistant_thinking -> assistant",
+        "tool_result -> record",
+        "record -> assistant_thinking",
+        "assistant -> tool_call:Bash",
+        "tool_call:Bash -> tool_result",
+        "tool_result -> assistant_thinking"
+      ],
+      "target_examples": [
+        "net.opendsp.x4x4.yml",
+        "android-release.yml",
+        "fdfull.log",
+        "readme.md",
+        "app.svelte",
+        "build.gradle.kts",
+        "app-release.apk",
+        "vitedev.log"
+      ],
+      "file_types": [
+        ".yml",
+        ".log",
+        ".md",
+        ".txt",
+        ".sh",
+        ".svelte",
+        ".png",
+        ".kts"
+      ],
+      "member_slice_ids": [
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-07"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C018",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "Grep": 12,
+        "Read": 12,
+        "Glob": 3,
+        "SemanticSearch": 1
+      },
+      "representative_sequences": [
+        "unknown_text > tool_call:SemanticSearch > tool_call:Grep > tool_call:Glob > unknown_text > tool_call:Read > tool_call:Grep > tool_call:Read > unknown_text > tool_call:Glob > tool_call:Read > tool_call:Grep > unknown_text > tool_call:Read > tool_call:Grep > tool_call:Read > unknown_text > tool_call:Grep > tool_call:Read > tool_call:Grep"
+      ],
+      "common_transitions": [
+        "tool_call:Read -> tool_call:Grep",
+        "tool_call:Grep -> tool_call:Read",
+        "unknown_text -> tool_call:Read",
+        "tool_call:Grep -> unknown_text",
+        "tool_call:Read -> unknown_text",
+        "unknown_text -> tool_call:Grep"
+      ],
+      "target_examples": [
+        "main.py",
+        "readme.md",
+        "aggregator_middleware.py",
+        "__init__.py",
+        "health_check.py",
+        "extraction_schemas.py",
+        "logging_setup.py",
+        "loki_settings.py"
+      ],
+      "file_types": [
+        ".py",
+        ".md"
+      ],
+      "member_slice_ids": [
+        "cursor__debaa898-grafana-loki-monitoring__segment-01"
+      ]
+    },
+    {
+      "candidate_cluster_id": "C019",
+      "support": 1,
+      "session_count": 1,
+      "observed_tool_counts": {
+        "websearch": 1
+      },
+      "representative_sequences": [
+        "user > assistant_part:step-start > assistant_reasoning > tool_call:websearch > assistant_part:step-finish > assistant_part:step-start > assistant_reasoning > assistant > assistant_part:step-finish"
+      ],
+      "common_transitions": [
+        "assistant_part:step-start -> assistant_reasoning",
+        "user -> assistant_part:step-start",
+        "assistant_reasoning -> tool_call:websearch",
+        "tool_call:websearch -> assistant_part:step-finish",
+        "assistant_part:step-finish -> assistant_part:step-start",
+        "assistant_reasoning -> assistant"
+      ],
+      "target_examples": [],
+      "file_types": [],
+      "member_slice_ids": [
+        "opencode__ses_129b55f7effeSKRtimLg9wxpXa__segment-01"
+      ]
+    }
+  ]
+}

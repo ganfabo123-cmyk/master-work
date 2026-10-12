@@ -1,0 +1,222 @@
+{
+  "behavior_patterns": [
+    {
+      "behavior_id": "B001",
+      "name": "界面布局与样式实现",
+      "description": "围绕页面结构、布局和视觉样式进行连续的代码修改。",
+      "relation": "keep",
+      "source_clusters": ["C002"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C002 以 Edit=85、Read=51、Grep=23 为主，代表序列多次出现 assistant -> tool_call:Edit -> tool_result。",
+        "C002 的目标包含 style.css、index.html、index.css、home.css，Top10 包含 grid、css、font、class、rem、span、box、style、div。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B002",
+      "name": "代码库检索后进行文件实现",
+      "description": "先通过路径枚举、读取和搜索建立代码上下文，再对相关文件进行实现性修改。",
+      "relation": "keep",
+      "source_clusters": ["C004"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C004 的 Read=49、Glob=38、Grep=24 明显高于其他观察工具，序列反复出现 Glob -> tool_result、Read -> tool_result，随后接 Edit 或 Write。",
+        "C004 的 common transitions 同时包含 tool_call:Glob -> tool_result、tool_call:Read -> tool_result 和 tool_call:Edit -> tool_result，目标覆盖 core.ts、routes.generated.ts、reddit.ts、js_runtime.c 等代码文件。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B003",
+      "name": "低层 C/C++ 代码与测试实现",
+      "description": "围绕低层 C/C++ 源码、头文件和测试程序进行阅读、编写及任务推进。",
+      "relation": "keep",
+      "source_clusters": ["C005"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C005 的目标集中在 test_solver.cpp、test_unifier.cpp、test_atoms.cpp、database.cpp、solver.cpp 及对应头文件。",
+        "C005 的 Read=49、Write=45、TodoWrite=31，Top10 包含 cpp、include、uint32_t、eax、mov、return、const、nullptr，显示出低层实现与测试上下文。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B004",
+      "name": "编译器或语言运行时项目的功能开发",
+      "description": "在解析器、字节码或语言运行时相关代码中交替进行实现、读取和命令验证。",
+      "relation": "keep",
+      "source_clusters": ["C006"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C006 的目标包含 frostcore、frost_bytecode、frost_parse、parser.cpp、parser.h 和 saveload.odin。",
+        "C006 的 Top10 包含 stage、bytecode、frost_parse、parser、src，代表序列反复出现 Edit/Read 与 Bash 的交替。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B005",
+      "name": "操作系统或低层程序的构建与仿真验证",
+      "description": "围绕低层系统镜像、启动链或仿真环境执行构建、检查和反复命令验证。",
+      "relation": "keep",
+      "source_clusters": ["C008"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C008 的目标包含 make-grub-disk.sh、m0_verify.cpp、check_escape2.cpp、makefile，并出现 linux-3.0.1、qemu、ovmf、bochs 等 Top10 词。",
+        "C008 的 Bash=20、PowerShell=20，代表序列连续出现 Bash/PowerShell 调用及结果，且 common transitions 包含 tool_result -> tool_call:Bash。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B006",
+      "name": "Web 应用项目组装与工程配置",
+      "description": "围绕 Web 应用页面、包配置、路由和工程集成进行文件生成、读取与命令操作。",
+      "relation": "keep",
+      "source_clusters": ["C009"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C009 的目标包含 index.tsx、package.json、$id.tsx、post-job.tsx、__root.tsx、vercel.json、auth.js、dashboard.tsx。",
+        "C009 的 Top10 包含 vercel、md3、bundling、plugin、mcp、material，序列出现 ToolSearch 后接 Write、Bash、Read，并伴随 package.json、vercel.json 等工程文件。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B007",
+      "name": "Android 应用或设备相关的命令驱动验证",
+      "description": "针对 Android 应用或连接设备反复执行命令并检查结果，形成设备或应用验证流程。",
+      "relation": "merge",
+      "source_clusters": ["C011", "C012"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C011 的 Top10 同时包含 java、adb、usb、device、test、android，目标包括 characterviewmodel.java、cdp-eval.mjs、dsp-test.log。",
+        "C012 的 Top10 包含 adb、apk、fdroid、device、internet，目标集中在多个 APK、scrutiny.sh 和 F-Droid 相关文件。",
+        "C011 与 C012 都以连续 Bash 调用及 tool_result -> record/assistant_thinking -> assistant 的循环为主要序列结构。"
+      ],
+      "uncertainty": "两个簇的具体验证对象不同，但现有卡片都支持同一类设备/Android 应用验证行为；更细的子类型仍需查看命令参数和结果正文。"
+    },
+    {
+      "behavior_id": "B008",
+      "name": "外部资料检索并更新模型或许可证元数据",
+      "description": "读取项目元数据文件，检索外部资料，再围绕模型或许可证信息进行维护。",
+      "relation": "keep",
+      "source_clusters": ["C013"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C013 的目标包含 models.json、licenses.json、generated-models.json、models.ts、build_models.py、fr.json 和 license。",
+        "C013 的序列包含 Read、ToolSearch、WebFetch、WebSearch，Top10 包含 minimax、models、license、develop、commit、donate。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B009",
+      "name": "委托式分析结果检查",
+      "description": "针对分析脚本或结果文件多次委托其他执行单元处理，再读取本地结果或上下文。",
+      "relation": "keep",
+      "source_clusters": ["C015"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C015 的观察工具仅有 Agent=2 和 Read=1，代表序列两次出现 assistant -> tool_call:Agent -> tool_result。",
+        "C015 的目标为 migrate_votes.py，Top10 包含 answer、superficial、correlation、response、reasons、positive、negative，指向结果分析而非普通文件编辑。"
+      ],
+      "uncertainty": ""
+    },
+    {
+      "behavior_id": "B010",
+      "name": "代码库中的语义搜索与关联阅读",
+      "description": "在缺少明显文件修改的情况下，通过语义搜索、文本搜索、路径枚举和反复读取建立代码关联。",
+      "relation": "keep",
+      "source_clusters": ["C018"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C018 的观察工具为 Grep=12、Read=12、Glob=3、SemanticSearch=1，没有 Edit、Write 或命令执行工具。",
+        "C018 的序列反复出现 tool_call:Read -> tool_call:Grep、tool_call:Grep -> tool_call:Read 与 unknown_text -> tool_call:Read/Grep，目标包括 document_ia_api、aggregator_middleware.py、health_check.py。"
+      ],
+      "uncertainty": ""
+    }
+  ],
+  "mixed_clusters": [
+    {
+      "cluster_id": "C001",
+      "evidence": [
+        "C001 支持 34 条轨迹、14 个会话，工具计数同时覆盖 Bash=193、Edit=150、Read=142、PowerShell=115、Write=105 以及 Grep、TodoWrite、Glob。",
+        "C001 的目标跨越 .odin、.java、.c、.sh、.tsx、.cpp、.ts、.md，代表序列中又交替出现 Edit/Write/Read 与 Bash/PowerShell。"
+      ],
+      "split_hints": [
+        "按主要动作拆分为代码文件实现性修改与代码库阅读/定位。",
+        "单独检查命令执行是否构成构建、运行或验证子行为，再与文件修改序列分开。"
+      ]
+    },
+    {
+      "cluster_id": "C016",
+      "evidence": [
+        "C016 的序列既包含 user_image 后的继续交互，也包含 Grep、Read、Edit 的反复组合；目标同时有 index.html、main.js、style.css 与 vercel.json。",
+        "C016 的 Top10 同时包含 configuration、docs、view、settings、headers、url，既指向页面/视觉调整，也指向配置或文档检查。"
+      ],
+      "split_hints": [
+        "分别观察用户图片或视觉反馈驱动的页面调整，以及 Vercel/headers/settings 等工程配置维护。",
+        "补充每次 Edit 的目标文件和用户反馈内容，判断两类动作是否属于同一任务链。"
+      ]
+    },
+    {
+      "cluster_id": "C017",
+      "evidence": [
+        "C017 同时使用 Write、Edit、Bash，以及 mcp__claude-in-chrome__computer 和 navigate；目标跨越 CI 配置、日志、Svelte、Gradle Kotlin 和 APK。",
+        "C017 的 Top10 同时包含 esbuild、rollup、recipe、prebuilt、apk、android、fdroid，无法由单一文件编辑行为解释。"
+      ],
+      "split_hints": [
+        "将源码或 CI/构建配置修改与构建产物、日志和 APK 的验证分开。",
+        "单独核对浏览器操作是在验证页面、触发构建，还是在处理另一条交互任务。"
+      ]
+    }
+  ],
+  "unresolved_clusters": [
+    {
+      "cluster_id": "C003",
+      "reason": "序列显示反复用户交互及 Write/Edit/PowerShell，但目标文件和 Top10 跨越多种语言，且 she、lucifer、uriel、heaven、books 等词与代码文件上下文不一致，无法可靠确定主行为。",
+      "missing_evidence": [
+        "原始用户任务或每段序列的任务边界。",
+        "Write/Edit/PowerShell 的实际目标、参数和结果正文。"
+      ]
+    },
+    {
+      "cluster_id": "C007",
+      "reason": "ToolSearch、Write、TodoWrite、PowerShell、Read 的组合能说明存在任务驱动操作，但 Odin、Python、CFML、Svelte、TSX 目标与 she、uriel、cfml 等 Top10 词不能唯一指向一种行为。",
+      "missing_evidence": [
+        "各会话的原始任务描述和阶段边界。",
+        "生成文件内容、命令结果以及 ToolSearch 返回内容。"
+      ]
+    },
+    {
+      "cluster_id": "C010",
+      "reason": "序列主要是 Write 与 PowerShell/Bash，但目标是 C 项目文件，而 Top10 又集中在 humanizer、claude、marketplace、skill、epilog、install 等工具生态词，代码维护与工具/技能配置两种解释都成立。",
+      "missing_evidence": [
+        "用户意图及每次 Write 的文件内容或变更目标。",
+        "PowerShell/Bash 输出和 WebSearch/ToolSearch 的查询与结果。"
+      ]
+    },
+    {
+      "cluster_id": "C014",
+      "reason": "只有 record -> user -> record -> assistant -> record，没有任何工具调用或目标文件；下载、压缩包和网址词只能说明话题，不能证明实际行为。",
+      "missing_evidence": [
+        "用户与助手的原始文本。",
+        "是否发生下载、命令执行或文件变更的事件证据。"
+      ]
+    },
+    {
+      "cluster_id": "C019",
+      "reason": "只有一次 websearch，且没有目标文件；cheat、kernel、anti、threat 等词不足以区分资料检索、风险分析或其他讨论行为。",
+      "missing_evidence": [
+        "实际搜索查询和返回结果。",
+        "搜索后的后续处理、产物或用户目标。"
+      ]
+    }
+  ],
+  "merge_relations": [
+    {
+      "source_clusters": ["C011", "C012"],
+      "reason": "两簇都以连续命令调用和结果反馈为主，并共同出现 adb、device、android/app 语义；C011 偏 Java/设备测试文件，C012 偏 APK/F-Droid 对象，属于同一设备/Android 应用验证行为的不同实例。",
+      "evidence": [
+        "C011 的 Top10 包含 adb、usb、device、test、android，C012 的 Top10 包含 adb、apk、fdroid、droid、device。",
+        "C011 与 C012 的 common transitions 都包含 assistant_thinking -> assistant、tool_call:Bash -> tool_result、tool_result -> record/assistant_thinking。"
+      ]
+    }
+  ]
+}

@@ -23,7 +23,7 @@ def main():
             'source_terms':sorted(set(source_terms)),
             'member_slice_ids':sorted(set(members)),
             'support':len(set(members)),
-            'split_hint':domain.get('split_hint',''),
+            'split_hint':domain.get('split_hint','') or '; '.join(domain.get('split_hints',[])),
         })
     mixed=[]
     mixed_ids = list(normalized.get('discard_or_mixed', [])) + [item.get('cluster_id') for item in normalized.get('mixed_clusters', [])]

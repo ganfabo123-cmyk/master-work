@@ -1,0 +1,220 @@
+{
+  "behavior_patterns": [
+    {
+      "behavior_id": "B001",
+      "name": "编辑驱动的连续文件修改",
+      "description": "以连续 Edit 为主要动作，穿插搜索、读取和少量命令调用，形成反复修改文件的工作模式。",
+      "relation": "keep",
+      "source_clusters": ["C002"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C002 的 Edit=85、Read=51、Grep=23，代表序列反复出现 assistant -> tool_call:Edit -> tool_result。",
+        "C002 的 common transitions 同时包含 assistant -> tool_call:Edit、tool_call:Read -> tool_result 和 tool_call:Edit -> tool_result，说明搜索/读取主要围绕连续修改展开。"
+      ],
+      "uncertainty": "卡片没有提供修改目标的语义或结果正文，因此这里只归一化动作组织，不把目标文件类型解释为具体业务行为。"
+    },
+    {
+      "behavior_id": "B002",
+      "name": "先建立代码上下文再实施修改",
+      "description": "先通过路径枚举、读取和搜索建立上下文，再对相关文件执行 Edit 或 Write。",
+      "relation": "keep",
+      "source_clusters": ["C004"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C004 的 Read=49、Glob=38、Grep=24，代表序列多次出现 Glob/Read 及其 tool_result。",
+        "C004 的代表序列出现 Glob -> tool_result -> Read -> tool_result，随后在其他序列中出现 Edit 或 Write；common transitions 同时包含 Glob、Read 和 Edit。"
+      ],
+      "uncertainty": "卡片不能确认每次读取是否都服务于后续修改，也不能确认修改结果是否通过命令验证。"
+    },
+    {
+      "behavior_id": "B003",
+      "name": "高密度代码阅读与任务推进",
+      "description": "围绕代码和测试相关文件进行高频读取，配合路径枚举、任务记录及文件生成推进工作。",
+      "relation": "keep",
+      "source_clusters": ["C005"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C005 的 Read=49、Write=45、TodoWrite=31，且代表序列连续出现多次 Read -> tool_result。",
+        "C005 的序列还出现 Glob、ToolSearch 和 TodoWrite，目标示例集中为多个源文件、头文件、测试文件和构建文件，支持‘读取上下文并推进任务’这一动作模式。"
+      ],
+      "uncertainty": "没有足够的参数和结果正文判断 Write 是实现、测试数据生成还是其他文件产物。"
+    },
+    {
+      "behavior_id": "B004",
+      "name": "修改后读取并执行命令验证",
+      "description": "在文件修改与读取之间反复插入 Bash 或其他命令执行，形成修改—检查—命令反馈的循环。",
+      "relation": "keep",
+      "source_clusters": ["C006"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C006 的代表序列重复出现 Edit -> tool_result -> assistant -> Read -> tool_result -> Edit，以及 Edit/Read 后接 Bash。",
+        "C006 的工具计数同时包含 Bash=34、Edit=30、Read=30，common transitions 包含 Bash、Read、Edit 到 tool_result，显示修改与命令反馈交替组织。"
+      ],
+      "uncertainty": "卡片没有给出命令参数和结果，无法进一步确定是构建、测试、运行还是其他检查。"
+    },
+    {
+      "behavior_id": "B005",
+      "name": "读取后连续执行命令进行环境检查",
+      "description": "先读取上下文，再连续执行 Bash/PowerShell 等命令并根据结果继续检查。",
+      "relation": "keep",
+      "source_clusters": ["C008"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C008 的代表序列从 Read -> tool_result 开始，随后连续出现 Bash 和多次 PowerShell 调用及结果反馈。",
+        "C008 的 Bash=20、PowerShell=20，common transitions 包含 Bash/PowerShell -> tool_result 和 tool_result -> tool_call:Bash，动作组织明显偏向命令驱动的反复检查。"
+      ],
+      "uncertainty": "没有完整命令和结果，不能把该模式进一步命名为构建、仿真、启动或测试中的某一种。"
+    },
+    {
+      "behavior_id": "B006",
+      "name": "命令驱动的应用或设备验证",
+      "description": "围绕应用或设备对象连续执行命令，根据工具结果继续检查或修正，C011 与 C012 表现为同一动作模式的不同对象实例。",
+      "relation": "merge",
+      "source_clusters": ["C011", "C012"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C011 与 C012 的代表序列都由 assistant/assistant_thinking 与连续 tool_call:Bash -> tool_result 组成，并反复回到下一次命令调用。",
+        "两簇的 common transitions 都包含 assistant -> tool_call:Bash、tool_call:Bash -> tool_result、tool_result -> assistant_thinking 和 tool_result -> record；C011 的工具计数 Bash=26，C012 为 Bash=23。",
+        "C011 的目标示例包含设备或应用检查相关文件，C012 的目标示例包含多个 APK 和相关脚本；这支持验证对象不同但动作组织相同。"
+      ],
+      "uncertainty": "二者的具体验证目标、命令参数和结果判定不同之处无法从卡片确认；若后续需要对象级子类，需补充这些字段。"
+    },
+    {
+      "behavior_id": "B007",
+      "name": "读取资料后进行外部检索与元数据维护",
+      "description": "先读取本地项目资料，再调用外部检索工具并回到后续处理，形成资料检索和项目元数据维护流程。",
+      "relation": "keep",
+      "source_clusters": ["C013"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C013 的代表序列明确出现 Read -> tool_result -> ToolSearch -> tool_result -> WebFetch -> tool_result -> WebSearch -> tool_result。",
+        "C013 的工具计数包含 Read=7、Bash=7、WebFetch=3、WebSearch=2，目标示例覆盖多个元数据、构建脚本和许可证文件，说明本地读取与外部检索在同一动作链中交替。"
+      ],
+      "uncertainty": "卡片没有提供检索查询和写入结果，不能确认最终是更新、校验还是仅收集信息。"
+    },
+    {
+      "behavior_id": "B008",
+      "name": "委托分析后读取结果",
+      "description": "连续委托其他执行单元处理分析任务，再读取本地文件或结果上下文。",
+      "relation": "keep",
+      "source_clusters": ["C015"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C015 的观察工具只有 Agent=2 和 Read=1，代表序列两次出现 assistant -> tool_call:Agent -> tool_result，随后才出现 Read。",
+        "C015 的 common transitions 包含 Agent -> tool_result、tool_result -> assistant_thinking 和 assistant -> tool_call:Agent，支持‘委托—反馈—再检查’的顺序关系。"
+      ],
+      "uncertainty": "缺少 Agent 调用参数和返回正文，无法判断两次委托是并行子任务、迭代修正还是重复询问。"
+    },
+    {
+      "behavior_id": "B009",
+      "name": "搜索与读取交替的代码调查",
+      "description": "不出现文件修改动作，主要通过语义搜索、文本搜索、路径枚举和读取交替建立代码关联。",
+      "relation": "keep",
+      "source_clusters": ["C018"],
+      "parent_behavior_id": null,
+      "evidence": [
+        "C018 的工具计数为 Grep=12、Read=12、Glob=3、SemanticSearch=1，没有 Edit、Write 或命令执行工具。",
+        "C018 的代表序列反复出现 Read -> Grep、Grep -> Read，并在两者之间回到 unknown_text；common transitions 与该交替关系一致。"
+      ],
+      "uncertainty": "没有搜索词、命中内容或后续产物，无法判断调查目的和是否形成最终结论。"
+    }
+  ],
+  "mixed_clusters": [
+    {
+      "cluster_id": "C001",
+      "evidence": [
+        "C001 支持 34 条轨迹、14 个会话，工具计数同时覆盖 Bash=193、Edit=150、Read=142、PowerShell=115、Write=105，以及 Grep、TodoWrite、Glob。",
+        "C001 的代表序列既有 TodoWrite 后连续 Edit/Write，也有 Read 后继续命令调用；目标示例和文件类型跨越多种项目形态。"
+      ],
+      "split_hints": [
+        "按‘上下文检索/定位’、‘文件修改’和‘命令执行/验证’三个动作段重新观察序列边界。",
+        "补充每段命令与文件操作的前后关系，判断是否存在稳定的修改—验证子模式。"
+      ]
+    },
+    {
+      "cluster_id": "C007",
+      "evidence": [
+        "C007 的代表序列在 ToolSearch、Write、TodoWrite、PowerShell 和用户交互之间反复切换，并出现 record -> user -> record 的边界。",
+        "C007 的目标示例跨越多种语言和文件类型，工具计数同时包含 Write=34、PowerShell=29、TodoWrite=21、Edit=14、Bash=11。"
+      ],
+      "split_hints": [
+        "按用户交互边界拆分会话片段，再分别判断任务规划、文件生成和命令执行是否属于同一行为。",
+        "补充 Write/Edit 的目标及命令结果，区分实现性修改与任务辅助文件生成。"
+      ]
+    },
+    {
+      "cluster_id": "C016",
+      "evidence": [
+        "C016 的序列包含 user_image 后的交互，也包含 Grep、Read、Edit 的重复组合；同时还出现 WebFetch、ToolSearch 和 PowerShell。",
+        "C016 的目标示例同时覆盖页面代码、配置文件和文本产物，无法仅凭动作卡片证明它们属于一个不可拆分的行为。"
+      ],
+      "split_hints": [
+        "将图像反馈驱动的页面修改，与配置/文档读取和外部检索分别切片。",
+        "补充 user_image 的语义、每次 Edit 的目标及 WebFetch 结果，判断是否存在反馈驱动的迭代闭环。"
+      ]
+    },
+    {
+      "cluster_id": "C017",
+      "evidence": [
+        "C017 同时使用 Write、Edit、Bash、浏览器 computer 和 navigate，代表序列在文件修改、浏览器操作和命令执行之间切换。",
+        "C017 的目标示例同时包含 CI 配置、日志、应用源码、构建脚本和 APK，卡片没有给出这些动作的因果连接。"
+      ],
+      "split_hints": [
+        "按浏览器操作、文件修改和构建/命令验证拆分动作段。",
+        "补充浏览器目标、命令参数和产物关系，确认是否是一个端到端验证任务还是多个任务的混合。"
+      ]
+    }
+  ],
+  "unresolved_clusters": [
+    {
+      "cluster_id": "C003",
+      "reason": "序列显示用户交互与 Write/Edit/PowerShell 交替，但没有稳定的动作起止边界；目标文件跨越多种语言，现有卡片不足以确定主行为。",
+      "missing_evidence": [
+        "原始用户任务或每段序列的任务边界。",
+        "Write/Edit/PowerShell 的实际目标、参数和结果正文。"
+      ]
+    },
+    {
+      "cluster_id": "C009",
+      "reason": "卡片显示 Skill、ToolSearch、TodoWrite、Bash、Read、Write 等阶段性动作，但无法仅凭序列判断它们是项目构建流程、文件生成流程还是多个任务的拼接。",
+      "missing_evidence": [
+        "Skill/ToolSearch 的实际内容和用户任务边界。",
+        "Bash/Read/Write 的参数、结果及其先后因果关系。"
+      ]
+    },
+    {
+      "cluster_id": "C010",
+      "reason": "序列能确认 Read、Write、PowerShell/Bash 反复出现，也能确认存在 WebSearch 观察，但不能从卡片确定外部检索与 C 源文件修改是否属于同一行为链。",
+      "missing_evidence": [
+        "每次 WebSearch 的查询和返回结果。",
+        "Write/Edit 的文件内容或变更目标，以及命令输出。"
+      ]
+    },
+    {
+      "cluster_id": "C014",
+      "reason": "只有 record -> user -> record -> assistant -> record，没有工具调用、目标文件或可观察动作；话题词不足以证明发生了下载、命令执行或文件变更。",
+      "missing_evidence": [
+        "用户与助手的原始文本。",
+        "是否发生下载、命令执行或文件变更的事件证据。"
+      ]
+    },
+    {
+      "cluster_id": "C019",
+      "reason": "只有一次 websearch 及其前后 assistant_part/assistant_reasoning 事件，没有目标文件、结果处理或稳定后续动作，无法确定行为类型。",
+      "missing_evidence": [
+        "实际搜索查询和返回结果。",
+        "搜索后的后续处理、产物或用户目标。"
+      ]
+    }
+  ],
+  "merge_relations": [
+    {
+      "source_clusters": ["C011", "C012"],
+      "reason": "两簇都以 assistant/assistant_thinking 与连续 Bash 调用及结果反馈为核心，动作顺序和 common transitions 高度一致；现有差异主要体现在验证对象示例，不能据此拆成不同动作模式。",
+      "evidence": [
+        "C011 与 C012 的代表序列都重复出现 assistant -> tool_call:Bash -> tool_result -> assistant_thinking。",
+        "C011 与 C012 的 common transitions 都包含 tool_call:Bash -> tool_result、tool_result -> assistant_thinking 和 tool_result -> record。"
+      ]
+    }
+  ]
+}
