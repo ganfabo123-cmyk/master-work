@@ -869,6 +869,11 @@ class DynamicRetrievalProgram:
 # ============================================================================
 
 
+# 当前简单策略只使用脚本同级的 skills_tests 语料；MEMORY 三类语料的常量与解析器
+# （_parse_memory_keywords / _parse_rollout_heading）保留在文件中，便于后续把完整
+# 记忆语料重新接回时复用。
+SKILLS_TESTS_ROOT = Path(__file__).resolve().parent / "skills_tests"
+
 MEMORY_ROOT = Path(r"C:\Users\Lenovo\.codex\memories")
 ROLLOUT_SUMMARIES_ROOT = MEMORY_ROOT / "rollout_summaries"
 MEMORY_SKILLS_ROOT = MEMORY_ROOT / "skills"
@@ -876,11 +881,9 @@ MEMORY_INDEX_PATH = MEMORY_ROOT / "MEMORY.md"
 
 
 def developer_material_sources() -> Sequence[str | Path]:
-    """递归收集 rollout summaries、标准 SKILL.md 和 MEMORY.md。"""
+    """只收集 skills_tests 下的标准 SKILL.md（retrieval_content = description）。"""
 
-    rollout_files = sorted(ROLLOUT_SUMMARIES_ROOT.glob("*.md"))
-    skill_files = sorted(MEMORY_SKILLS_ROOT.rglob("SKILL.md"))
-    return (*rollout_files, *skill_files, MEMORY_INDEX_PATH)
+    return sorted(SKILLS_TESTS_ROOT.rglob("SKILL.md"))
 
 
 def register_developer_parsers(registry: MaterialParserRegistry) -> None:
@@ -1035,36 +1038,114 @@ def developer_build_query(trajectory: Trajectory) -> RetrievalQuery:
         return RetrievalQuery(query_text="")
     return RetrievalQuery(
         query_text=_content_to_text(latest.content),
-        top_k=int(os.getenv("DYNAMIC_RETRIEVAL_TOP_K", "8")),
+        top_k=int(os.getenv("DYNAMIC_RETRIEVAL_TOP_K", "3")),
     )
 
 
-_DEVELOPER_RETRIEVAL_STRATEGY: MemoryHybridRetrievalStrategy | None = None
+def _skill_body(full_content: str) -> str:
+    """去掉 SKILL.md 的 YAML frontmatter，返回正文部分（完整 skill 内容）。"""
+
+    lines = full_content.splitlines()
+    if lines and lines[0].strip() == "---":
+        for index in range(1, len(lines)):
+            if lines[index].strip() == "---":
+                return "\n".join(lines[index + 1 :]).strip()
+    return full_content.strip()
+
+
+class SkillDescriptionSimilarityStrategy:
+    """
+    最简检索策略：user input 原文 × SKILL description 的 embedding 余弦相似度。
+
+    - 语料只包含 skills_tests 下的 SKILL.md（retrieval_content = description）；
+    - description 向量按 (document_id, description) 缓存，跨事件、跨查询复用；
+    - 命中的 matched_content 携带完整 skill 正文（full_content 去掉 frontmatter）；
+    - 低于 min_similarity 的命中丢弃，其余按相似度降序、截取 top_k 返回；
+    - embedding API 未配置时返回空命中（不抛异常），由调用方按无结果处理。
+    """
+
+    def __init__(self, embedding_config: EmbeddingApiConfig | None) -> None:
+        self.embedding_client = (
+            EmbeddingApiClient(embedding_config)
+            if embedding_config is not None
+            else None
+        )
+        self.min_similarity = (
+            embedding_config.min_similarity
+            if embedding_config is not None
+            else 1.0
+        )
+        self._description_vectors: dict[tuple[str, str], list[float]] = {}
+
+    def __call__(
+        self,
+        query: RetrievalQuery,
+        documents: Sequence[RetrievalDocument],
+    ) -> list[RetrievalHit]:
+        if self.embedding_client is None or not documents:
+            return []
+
+        missing_documents: list[RetrievalDocument] = []
+        missing_keys: list[tuple[str, str]] = []
+        for document in documents:
+            key = _document_vector_key(document)
+            if key not in self._description_vectors:
+                missing_documents.append(document)
+                missing_keys.append(key)
+        if missing_documents:
+            vectors = self.embedding_client.embed(
+                [document.retrieval_content for document in missing_documents]
+            )
+            self._description_vectors.update(
+                zip(missing_keys, vectors, strict=True)
+            )
+
+        query_vector = self.embedding_client.embed([query.query_text])[0]
+        hits: list[RetrievalHit] = []
+        for document in documents:
+            similarity = _cosine_similarity(
+                query_vector,
+                self._description_vectors[_document_vector_key(document)],
+            )
+            if similarity < self.min_similarity:
+                continue
+            hits.append(
+                RetrievalHit(
+                    document=document,
+                    score=similarity,
+                    matched_content=_skill_body(document.full_content),
+                    metadata={
+                        "corpus": "skill",
+                        "retrieval_method": "description_cosine",
+                        "matched_part": "full_body",
+                    },
+                )
+            )
+        hits.sort(key=lambda hit: hit.score or 0.0, reverse=True)
+        return hits[: query.top_k]
+
+
+_DEVELOPER_RETRIEVAL_STRATEGY: SkillDescriptionSimilarityStrategy | None = None
 
 
 def developer_retrieve(
     query: RetrievalQuery,
     documents: Sequence[RetrievalDocument],
 ) -> Iterable[RetrievalHit]:
-    """执行 MEMORY keyword 与可配置 embedding API 的混合检索。"""
+    """用 user input 原文与 skills_tests 各 description 做余弦相似度检索。"""
 
     global _DEVELOPER_RETRIEVAL_STRATEGY
     if _DEVELOPER_RETRIEVAL_STRATEGY is None:
-        _DEVELOPER_RETRIEVAL_STRATEGY = MemoryHybridRetrievalStrategy(
+        _DEVELOPER_RETRIEVAL_STRATEGY = SkillDescriptionSimilarityStrategy(
             developer_embedding_api_config()
         )
     return _DEVELOPER_RETRIEVAL_STRATEGY(query, documents)
 
 
 def _parse_developer_markdown(source: Path) -> list[RetrievalDocument]:
-    resolved = source.resolve()
-    if resolved == MEMORY_INDEX_PATH.resolve():
-        return _parse_memory_keywords(source)
-    if _is_under(resolved, MEMORY_SKILLS_ROOT.resolve()) and source.name.casefold() == "skill.md":
+    if source.name.casefold() == "skill.md":
         return _parse_skill_description(source)
-    if _is_under(resolved, ROLLOUT_SUMMARIES_ROOT.resolve()):
-        return _parse_rollout_heading(source)
-    raise ValueError(f"不属于三类开发者记忆语料：{source}")
+    raise ValueError(f"当前策略只支持 skills_tests 下的 SKILL.md：{source}")
 
 
 def _parse_rollout_heading(source: Path) -> list[RetrievalDocument]:
