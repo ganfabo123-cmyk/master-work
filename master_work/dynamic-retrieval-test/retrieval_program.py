@@ -1,6 +1,10 @@
 """
 动态检索第一版设计、框架与开发者实现区
 
+2026-10-15 接入说明：create_developer_program() 默认创建管理系统的35项skill检索会话，
+保留本文件的Trace转换、触发策略和查询构造钩子。create_legacy_program()仍创建原策略。
+旧版完整备份及当前部署说明见MANAGED_SKILL_INTEGRATION.md。以下为原通用框架说明。
+
 目标
 ====
 
@@ -137,6 +141,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import os
@@ -144,6 +149,7 @@ import re
 import urllib.request
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field, replace
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, TypeAlias
@@ -1053,12 +1059,104 @@ def _skill_body(full_content: str) -> str:
     return full_content.strip()
 
 
+EMBEDDING_CACHE_PATH = Path(__file__).with_name("embedding_cache.json")
+
+
+def _sha256_text(text: str) -> str:
+    """retrieval_content 的内容指纹，用于判断持久缓存条目是否过期。"""
+
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _load_embedding_cache(model: str) -> dict[str, dict[str, Any]]:
+    """
+    读取持久化语料向量缓存 embedding_cache.json。
+
+    - 键为 document_id，值含 sha256（retrieval_content 指纹）、vector、embedded_at；
+    - 文件缺失、损坏或 model 不一致时整体视为过期，返回空缓存：
+      向量语义随模型变化，不做跨模型复用；endpoint 只作记录，不参与失效判断；
+    - 单条畸形（vector 非数值数组、维度互相不一致）时丢弃该条，
+      下次调用按未命中重嵌，缓存自愈。
+    """
+
+    try:
+        payload = json.loads(EMBEDDING_CACHE_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(payload, Mapping) or payload.get("model") != model:
+        return {}
+    raw_entries = payload.get("entries")
+    if not isinstance(raw_entries, Mapping):
+        return {}
+
+    entries: dict[str, dict[str, Any]] = {}
+    dimension: int | None = None
+    for document_id, entry in raw_entries.items():
+        if not isinstance(entry, Mapping):
+            continue
+        vector = entry.get("vector")
+        if (
+            not isinstance(entry.get("sha256"), str)
+            or not isinstance(vector, list)
+            or not vector
+            or any(
+                not isinstance(value, (int, float)) or isinstance(value, bool)
+                for value in vector
+            )
+        ):
+            continue
+        if dimension is None:
+            dimension = len(vector)
+        elif len(vector) != dimension:
+            continue
+        entries[str(document_id)] = {
+            "sha256": entry["sha256"],
+            "vector": [float(value) for value in vector],
+            "embedded_at": entry.get("embedded_at", ""),
+        }
+    return entries
+
+
+def _save_embedding_cache(
+    model: str,
+    endpoint: str,
+    entries: Mapping[str, Mapping[str, Any]],
+) -> None:
+    """原子写入向量缓存（先写临时文件再 os.replace）；失败只警告，不影响检索。"""
+
+    payload = {
+        "version": 1,
+        "model": model,
+        "endpoint": endpoint,
+        "updated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "entries": {
+            document_id: {
+                "sha256": entry["sha256"],
+                "vector": entry["vector"],
+                "embedded_at": entry.get("embedded_at", ""),
+            }
+            for document_id, entry in entries.items()
+        },
+    }
+    tmp_path = EMBEDDING_CACHE_PATH.with_suffix(".json.tmp")
+    try:
+        tmp_path.write_text(
+            json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
+            encoding="utf-8",
+        )
+        os.replace(tmp_path, EMBEDDING_CACHE_PATH)
+    except OSError as exc:
+        print(f"[embedding-cache] 写入缓存失败（不影响本次检索）：{exc}")
+
+
 class SkillDescriptionSimilarityStrategy:
     """
     最简检索策略：user input 原文 × SKILL description 的 embedding 余弦相似度。
 
     - 语料只包含 skills_tests 下的 SKILL.md（retrieval_content = description）；
-    - description 向量按 (document_id, description) 缓存，跨事件、跨查询复用；
+    - description 向量两级缓存：进程内 (document_id, description) 字典跨事件复用；
+      进程间复用走落盘的 embedding_cache.json（document_id × 内容 sha256 命中，
+      description 变更自动失效重嵌，模型更换整体过期）；
     - 命中的 matched_content 携带完整 skill 正文（full_content 去掉 frontmatter）；
     - 低于 min_similarity 的命中丢弃，其余按相似度降序、截取 top_k 返回；
     - embedding API 未配置时返回空命中（不抛异常），由调用方按无结果处理。
@@ -1076,6 +1174,34 @@ class SkillDescriptionSimilarityStrategy:
             else 1.0
         )
         self._description_vectors: dict[tuple[str, str], list[float]] = {}
+        self._cache_entries: dict[str, dict[str, Any]] = (
+            _load_embedding_cache(embedding_config.model)
+            if self.embedding_client is not None
+            else {}
+        )
+
+    def _update_embedding_cache(
+        self,
+        documents: Sequence[RetrievalDocument],
+        vectors: Sequence[list[float]],
+    ) -> None:
+        """把本次通过 API 嵌入的向量并入持久缓存并落盘（同 id 内容变更时覆盖）。"""
+
+        if self.embedding_client is None:
+            return
+        embedded_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        for document, vector in zip(documents, vectors, strict=True):
+            cache_id = document.document_id or document.source_path or ""
+            self._cache_entries[cache_id] = {
+                "sha256": _sha256_text(document.retrieval_content),
+                "vector": list(vector),
+                "embedded_at": embedded_at,
+            }
+        _save_embedding_cache(
+            self.embedding_client.config.model,
+            self.embedding_client.endpoint,
+            self._cache_entries,
+        )
 
     def __call__(
         self,
@@ -1089,9 +1215,18 @@ class SkillDescriptionSimilarityStrategy:
         missing_keys: list[tuple[str, str]] = []
         for document in documents:
             key = _document_vector_key(document)
-            if key not in self._description_vectors:
-                missing_documents.append(document)
-                missing_keys.append(key)
+            if key in self._description_vectors:
+                continue
+            cache_id = document.document_id or document.source_path or ""
+            cached = self._cache_entries.get(cache_id)
+            if cached is not None and cached.get(
+                "sha256"
+            ) == _sha256_text(document.retrieval_content):
+                # 持久缓存命中：内容指纹一致，直接复用向量，不发 API 请求
+                self._description_vectors[key] = cached["vector"]
+                continue
+            missing_documents.append(document)
+            missing_keys.append(key)
         if missing_documents:
             vectors = self.embedding_client.embed(
                 [document.retrieval_content for document in missing_documents]
@@ -1099,6 +1234,7 @@ class SkillDescriptionSimilarityStrategy:
             self._description_vectors.update(
                 zip(missing_keys, vectors, strict=True)
             )
+            self._update_embedding_cache(missing_documents, vectors)
 
         query_vector = self.embedding_client.embed([query.query_text])[0]
         hits: list[RetrievalHit] = []
@@ -1312,8 +1448,8 @@ def _environment_flag(name: str, default: bool) -> bool:
 # ============================================================================
 
 
-def create_developer_program() -> DynamicRetrievalProgram:
-    """读取开发者配置并创建可接收 raw trace 的动态检索程序。"""
+def create_legacy_program() -> DynamicRetrievalProgram:
+    """保留原通用框架和skills_tests策略的独立创建入口。"""
 
     registry = MaterialParserRegistry()
     register_developer_parsers(registry)
@@ -1328,3 +1464,58 @@ def create_developer_program() -> DynamicRetrievalProgram:
         query_builder=developer_build_query,
         retrieval_strategy=developer_retrieve,
     )
+
+
+def create_developer_program():
+    """默认接入35项skill系统，保留Trace触发链；旧框架见create_legacy_program。"""
+    import sys
+    system_root = Path(__file__).resolve().parent.parent / "skill-management-system"
+    if str(system_root) not in sys.path:
+        sys.path.insert(0, str(system_root))
+    from retrieval import SkillSystem
+    from embedding_client import EmbeddingApiClient as ManagedEmbeddingClient
+    from agent_protocol import TraceEvent as ManagedTraceEvent, RetrievalQuery as ManagedQuery
+    from agent import AgentSession
+
+    config = developer_embedding_api_config()
+    provider = ManagedEmbeddingClient(config) if config is not None else None
+    system = SkillSystem(embedding=provider)
+
+    # Keep the public developer hooks in this file effective for existing callers.
+    # Bridge dataclass identities rather than rewriting or silently ignoring hooks.
+    def convert(raw):
+        event = developer_trace_converter(raw)
+        if not isinstance(event, TraceEvent):
+            raise TypeError("converter必须返回TraceEvent")
+        return ManagedTraceEvent(event.event_type, event.content, event.metadata)
+
+    def legacy_trajectory(trajectory):
+        return Trajectory(raw_events=trajectory.raw_events,
+            events=[TraceEvent(e.event_type, e.content, e.metadata) for e in trajectory.events],
+            metadata=trajectory.metadata)
+
+    def trigger(trajectory):
+        return developer_should_retrieve(legacy_trajectory(trajectory))
+
+    def build(trajectory):
+        query = developer_build_query(legacy_trajectory(trajectory))
+        if not isinstance(query, RetrievalQuery):
+            raise TypeError("query_builder必须返回RetrievalQuery")
+        return ManagedQuery(query.query_text, query.top_k, query.filters, query.metadata)
+
+    class ManagedProgram(AgentSession):
+        def handle_raw_trace(self, raw_trace):
+            result = super().handle_raw_trace(raw_trace)
+            query = result.query
+            items = [RetrievalHit(document=RetrievalDocument(
+                retrieval_content=h.document.retrieval_content, full_content=h.document.full_content,
+                document_id=h.document.document_id, source_path=h.document.source_path,
+                source_type=h.document.source_type, title=h.document.title, metadata=h.document.metadata),
+                score=h.score, rank=h.rank, matched_content=h.matched_content, metadata=h.metadata)
+                for h in result.items]
+            return RetrievalResult(status=RetrievalStatus(result.status.value),
+                query=RetrievalQuery(query.query_text, query.top_k, query.filters, query.metadata) if query else None,
+                items=items, strategy_name=result.strategy_name, reason=result.reason, metadata=result.metadata)
+
+    return ManagedProgram(system, trace_converter=convert, trigger_strategy=trigger,
+        query_builder=build, retrieval_options={"min_similarity": config.min_similarity if config else .25})

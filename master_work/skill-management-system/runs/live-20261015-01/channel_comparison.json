@@ -1,0 +1,302 @@
+{
+  "totals": {
+    "queries": 40,
+    "signature_miss": 13,
+    "ambiguous": 24,
+    "unique": 3,
+    "top1_agree": 2,
+    "semantic_top1_in_signature_candidates": 20
+  },
+  "by_skill": {
+    "skill:fix-react19-useref-ts2554-no-default": {
+      "comparisons": 2,
+      "agreements": 2,
+      "real_comparisons": 0,
+      "real_agreements": 0,
+      "agreement_rate": 1.0,
+      "eligible_for_signature_first": false
+    },
+    "skill:clear-locked-react-router-typegen-dirs": {
+      "comparisons": 1,
+      "agreements": 0,
+      "real_comparisons": 0,
+      "real_agreements": 0,
+      "agreement_rate": 0.0,
+      "eligible_for_signature_first": false
+    }
+  },
+  "disagreements": [
+    {
+      "event_id": "channels:locked-0-0",
+      "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. This happens after running the test suite.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-0-1",
+      "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. The debugger still has the previous executable open.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-lnk2019-header-inline-global"
+    },
+    {
+      "event_id": "channels:locked-0-2",
+      "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. I am rebuilding from PowerShell on Windows.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:resolve-lnk1105-locked-output-on-windows"
+    },
+    {
+      "event_id": "channels:locked-0-3",
+      "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. A background test runner was launched in this session.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-1-0",
+      "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. This happens after running the test suite.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-lnk2019-header-inline-global"
+    },
+    {
+      "event_id": "channels:locked-1-1",
+      "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. The debugger still has the previous executable open.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-lnk2019-header-inline-global"
+    },
+    {
+      "event_id": "channels:locked-1-2",
+      "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. I am rebuilding from PowerShell on Windows.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:resolve-lnk1105-locked-output-on-windows"
+    },
+    {
+      "event_id": "channels:locked-1-3",
+      "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. A background test runner was launched in this session.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-lnk2019-header-inline-global"
+    },
+    {
+      "event_id": "channels:locked-2-0",
+      "query": "Rebuild cannot overwrite the executable because the old test process is still running. This happens after running the test suite.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-stack-overflow-large-test-fixtures"
+    },
+    {
+      "event_id": "channels:locked-2-1",
+      "query": "Rebuild cannot overwrite the executable because the old test process is still running. The debugger still has the previous executable open.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-stack-overflow-large-test-fixtures"
+    },
+    {
+      "event_id": "channels:locked-2-2",
+      "query": "Rebuild cannot overwrite the executable because the old test process is still running. I am rebuilding from PowerShell on Windows.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-2-3",
+      "query": "Rebuild cannot overwrite the executable because the old test process is still running. A background test runner was launched in this session.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-stack-overflow-large-test-fixtures"
+    },
+    {
+      "event_id": "channels:locked-3-0",
+      "query": "The linker cannot close file app.exe. How can I find the process locking the output? This happens after running the test suite.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-3-1",
+      "query": "The linker cannot close file app.exe. How can I find the process locking the output? The debugger still has the previous executable open.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-3-2",
+      "query": "The linker cannot close file app.exe. How can I find the process locking the output? I am rebuilding from PowerShell on Windows.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:resolve-lnk1105-locked-output-on-windows"
+    },
+    {
+      "event_id": "channels:locked-3-3",
+      "query": "The linker cannot close file app.exe. How can I find the process locking the output? A background test runner was launched in this session.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-4-0",
+      "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 This happens after running the test suite.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-4-1",
+      "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 The debugger still has the previous executable open.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-4-2",
+      "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 I am rebuilding from PowerShell on Windows.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-4-3",
+      "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 A background test runner was launched in this session.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-5-0",
+      "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. This happens after running the test suite.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-5-1",
+      "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. The debugger still has the previous executable open.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-5-2",
+      "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. I am rebuilding from PowerShell on Windows.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-5-3",
+      "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. A background test runner was launched in this session.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-6-0",
+      "query": "LNK1105 cannot close file after a background run: release the holder and relink. This happens after running the test suite.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-6-1",
+      "query": "LNK1105 cannot close file after a background run: release the holder and relink. The debugger still has the previous executable open.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-6-2",
+      "query": "LNK1105 cannot close file after a background run: release the holder and relink. I am rebuilding from PowerShell on Windows.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-windows-lnk1105-locked-output-exe"
+    },
+    {
+      "event_id": "channels:locked-6-3",
+      "query": "LNK1105 cannot close file after a background run: release the holder and relink. A background test runner was launched in this session.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-7-0",
+      "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. This happens after running the test suite.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-7-1",
+      "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. The debugger still has the previous executable open.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:locked-7-2",
+      "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. I am rebuilding from PowerShell on Windows.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:resolve-lnk1105-locked-output-on-windows"
+    },
+    {
+      "event_id": "channels:locked-7-3",
+      "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. A background test runner was launched in this session.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:handle-locked-or-stale-test-binaries"
+    },
+    {
+      "event_id": "channels:stack",
+      "query": "Windows test exits -1073741571 0xC00000FD before printing tests; large local fixtures on the 1 MB stack.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-test-stack-overflow-large-fixtures"
+    },
+    {
+      "event_id": "channels:macro",
+      "query": "C++ TEST macro: redefinition of '_reg___LINE__', undeclared '_test_body_2', __COUNTER__ token pasting.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:capture-counter-once-for-test-macros"
+    },
+    {
+      "event_id": "channels:parser",
+      "query": "Prolog parser expected '.', got operator '.' after concatenating adjacent C++ string literals without a separator space.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-lexer-dot-followed-by-nonspace"
+    },
+    {
+      "event_id": "channels:router",
+      "query": "react-router dev EPERM scandir ENOTEMPTY rmdir .react-router/types/+types directories on Windows.",
+      "signature_status": "unique",
+      "signature_top1": "skill:clear-locked-react-router-typegen-dirs",
+      "embedding_top1": "skill:unblock-react-router-typegen-enotempty"
+    },
+    {
+      "event_id": "channels:scaffold",
+      "query": "npm create solid stalls in a non-TTY shell; manually scaffold a minimal Vite SolidJS app.",
+      "signature_status": "ambiguous",
+      "signature_top1": null,
+      "embedding_top1": "skill:scaffold-solidjs-vite-noninteractive"
+    },
+    {
+      "event_id": "channels:negative-sort",
+      "query": "Explain quicksort and its average time complexity.",
+      "signature_status": "miss",
+      "signature_top1": null,
+      "embedding_top1": "skill:fix-interleaved-key-index-two-pass-build"
+    }
+  ],
+  "policy": {
+    "min_real_unique_queries": 20,
+    "agreement_threshold": 0.95,
+    "signature_miss_or_ambiguity": "embedding_fallback",
+    "applied": false
+  }
+}

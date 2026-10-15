@@ -1,0 +1,90 @@
+{
+  "plan_id": "46f9aa8e9773a61db97d6e6c9097727d766fb36d10e166bf9a4d641de10155ab",
+  "input_fingerprint": "eea0cd6318f51ffee302dfb93d10fab717bf8e33f37f307d57435958cc1709c4",
+  "created_at": "2026-10-15T09:44:57.940020+00:00",
+  "sequence": 1,
+  "simulation": true,
+  "actions": [
+    {
+      "action": "move",
+      "skill_id": "skill:handle-locked-or-stale-test-binaries",
+      "before": [
+        "n0.0.1"
+      ],
+      "after": [
+        "n0.0.0.0.0.1"
+      ],
+      "gain": 0.2039453741334637,
+      "evidence": {
+        "cohort_id": "55134234830ffd9d2003bfdce74471192c128dcda2cdc07f507a8406e88a51f1",
+        "R": 29,
+        "G": 29,
+        "B": 0,
+        "rated": 29,
+        "query_count": 29,
+        "rating_ids": [
+          "consume:locked-0-0:1",
+          "consume:locked-0-1:2",
+          "consume:locked-0-2:3",
+          "consume:locked-0-3:1",
+          "consume:locked-1-3:3",
+          "consume:locked-2-0:2",
+          "consume:locked-2-1:2",
+          "consume:locked-2-2:1",
+          "consume:locked-2-3:2",
+          "consume:locked-3-0:1",
+          "consume:locked-3-1:1",
+          "consume:locked-3-2:3",
+          "consume:locked-3-3:1",
+          "consume:locked-4-0:1",
+          "consume:locked-4-1:1",
+          "consume:locked-4-2:1",
+          "consume:locked-4-3:1",
+          "consume:locked-5-0:1",
+          "consume:locked-5-1:1",
+          "consume:locked-5-2:1",
+          "consume:locked-5-3:1",
+          "consume:locked-6-0:1",
+          "consume:locked-6-1:1",
+          "consume:locked-6-2:2",
+          "consume:locked-6-3:1",
+          "consume:locked-7-0:1",
+          "consume:locked-7-1:1",
+          "consume:locked-7-2:3",
+          "consume:locked-7-3:1"
+        ],
+        "wilson_lower": 0.8830264055344442,
+        "rank_baselines": [
+          {
+            "layout_id": "06f0c3d80a22ad08bdeae55a0b9c37002273a347a1f808a11873e3af9c20775d",
+            "node_id": "n0.0.1",
+            "rank": 1,
+            "rated": 20,
+            "peer_rated": 1,
+            "relative_to_peers": 0.0
+          },
+          {
+            "layout_id": "06f0c3d80a22ad08bdeae55a0b9c37002273a347a1f808a11873e3af9c20775d",
+            "node_id": "n0.0.1",
+            "rank": 2,
+            "rated": 5,
+            "peer_rated": 2,
+            "relative_to_peers": 0.5
+          },
+          {
+            "layout_id": "06f0c3d80a22ad08bdeae55a0b9c37002273a347a1f808a11873e3af9c20775d",
+            "node_id": "n0.0.1",
+            "rank": 3,
+            "rated": 4,
+            "peer_rated": 2,
+            "relative_to_peers": 0.5
+          }
+        ],
+        "simulation": true
+      }
+    }
+  ],
+  "deferred": [],
+  "status": "pending",
+  "result": null
+}

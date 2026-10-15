@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "evidence_origin": "forced_results_not_real_embedding",
+  "sample_kind": "synthetic",
+  "target": "skill:fix-react19-useref-ts2554-no-default",
+  "trigger": "useRef",
+  "at_19": "shadow",
+  "at_20": "signature_first",
+  "after_restart": {
+    "channel": "signature",
+    "skill_id": "skill:fix-react19-useref-ts2554-no-default"
+  },
+  "embedding_calls_for_promoted_hit": 0,
+  "simulation_guard": "PASS",
+  "miss_fallback": "PASS",
+  "ambiguity_fallback": "PASS",
+  "duplicates": {
+    "added": 0,
+    "duplicates": 20
+  },
+  "at_22_with_2_disagreements": "shadow",
+  "agreement_at_rollback": 0.9090909090909091,
+  "policy_history": [
+    {
+      "skill_id": "skill:fix-react19-useref-ts2554-no-default",
+      "before": "shadow",
+      "after": "signature_first",
+      "comparisons": 20,
+      "agreements": 20
+    },
+    {
+      "skill_id": "skill:fix-react19-useref-ts2554-no-default",
+      "before": "signature_first",
+      "after": "shadow",
+      "comparisons": 22,
+      "agreements": 20
+    }
+  ],
+  "promoted_generation": "generation-tlkv2ova",
+  "rollback_generation": "generation-67lnp0bu",
+  "real_api_calls": 0
+}

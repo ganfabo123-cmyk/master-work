@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "signature_version": "c21c7961cabc48c72debf5b54df8cb97de8959df0a20f1223add0269b2840eea",
+  "patterns": {
+    "may cause a stack overflow due to its type": [
+      "skill:avoid-odin-large-struct-stack-frames"
+    ],
+    "ctx.deref(x) == ctx.atom(": [
+      "skill:capture-arena-refs-before-allocating"
+    ],
+    "expect_eq(ctx.deref": [
+      "skill:capture-arena-refs-before-allocating"
+    ],
+    "redefinition of '_reg___counter__'": [
+      "skill:capture-counter-once-for-test-macros",
+      "skill:fix-test-macro-token-paste-counter",
+      "skill:fix-test-macro-unique-name-pasting"
+    ],
+    "redefinition of '_reg___line__'": [
+      "skill:capture-counter-once-for-test-macros",
+      "skill:fix-test-macro-token-paste-counter",
+      "skill:fix-test-macro-token-pasting-ids",
+      "skill:fix-test-macro-unique-name-pasting"
+    ],
+    "use of undeclared identifier '_test_body_": [
+      "skill:capture-counter-once-for-test-macros",
+      "skill:fix-test-macro-token-paste-counter",
+      "skill:fix-test-macro-token-pasting-ids",
+      "skill:fix-test-macro-unique-name-pasting"
+    ],
+    ".react-router/types": [
+      "skill:clear-locked-react-router-typegen-dirs",
+      "skill:unblock-react-router-typegen-enotempty"
+    ],
+    "enotempty": [
+      "skill:clear-locked-react-router-typegen-dirs"
+    ],
+    "eperm: operation not permitted, scandir": [
+      "skill:clear-locked-react-router-typegen-dirs"
+    ],
+    "typesdirectory(ctx)": [
+      "skill:clear-locked-react-router-typegen-dirs",
+      "skill:unblock-react-router-typegen-enotempty"
+    ],
+    "-1073741515": [
+      "skill:diagnose-windows-0xc0000135-missing-dll"
+    ],
+    "0xc0000135": [
+      "skill:diagnose-windows-0xc0000135-missing-dll"
+    ],
+    "expected '.', got operator '.'": [
+      "skill:fix-concatenated-clause-strings-missing-separator",
+      "skill:fix-lexer-dot-after-concatenated-literals",
+      "skill:fix-lexer-dot-followed-by-nonspace",
+      "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings"
+    ],
+    "parse error after": [
+      "skill:fix-concatenated-clause-strings-missing-separator"
+    ],
+    "idx_clause_slots": [
+      "skill:fix-interleaved-key-index-two-pass-build"
+    ],
+    "idx_count": [
+      "skill:fix-interleaved-key-index-two-pass-build"
+    ],
+    "idx_start": [
+      "skill:fix-interleaved-key-index-two-pass-build"
+    ],
+    "tok_dot": [
+      "skill:fix-lexer-dot-after-concatenated-literals",
+      "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings"
+    ],
+    "invalid or corrupt file": [
+      "skill:fix-lnk1107-odin-dll-import-lib"
+    ],
+    "llvm-dlltool": [
+      "skill:fix-lnk1107-odin-dll-import-lib"
+    ],
+    "lnk1107": [
+      "skill:fix-lnk1107-odin-dll-import-lib"
+    ],
+    "lnk1120": [
+      "skill:fix-lnk1120-unresolved-global-in-test-links",
+      "skill:fix-lnk2019-header-inline-global"
+    ],
+    "lnk2019": [
+      "skill:fix-lnk1120-unresolved-global-in-test-links",
+      "skill:fix-lnk2019-header-global-with-inline-variable",
+      "skill:fix-lnk2019-header-inline-global"
+    ],
+    "unresolved external symbol": [
+      "skill:fix-lnk1120-unresolved-global-in-test-links",
+      "skill:fix-lnk2019-header-global-with-inline-variable",
+      "skill:fix-lnk2019-header-inline-global"
+    ],
+    "unresolved externals": [
+      "skill:fix-lnk1120-unresolved-global-in-test-links"
+    ],
+    "'context' has not been defined within this scope": [
+      "skill:fix-odin-c-abi-callback-context"
+    ],
+    "runtime.default_context()": [
+      "skill:fix-odin-c-abi-callback-context"
+    ],
+    "expected 1 arguments, but got 0": [
+      "skill:fix-react19-useref-ts2554-no-default",
+      "skill:fix-ts2554-useref-tsc-batch"
+    ],
+    "ts2554": [
+      "skill:fix-react19-useref-ts2554-no-default",
+      "skill:fix-ts2554-useref-tsc-batch",
+      "skill:fix-ts6133-unused-and-related-tsc-errors"
+    ],
+    "useref": [
+      "skill:fix-react19-useref-ts2554-no-default"
+    ],
+    "-1073741571": [
+      "skill:fix-stack-overflow-large-test-fixtures",
+      "skill:fix-test-stack-overflow-large-fixtures",
+      "skill:fix-windows-0xc00000fd-stack-overflow",
+      "skill:fix-windows-stack-overflow-in-large-local-fixtures",
+      "skill:keep-large-test-fixtures-off-windows-stack"
+    ],
+    "status_stack_overflow": [
+      "skill:fix-stack-overflow-large-test-fixtures",
+      "skill:fix-test-stack-overflow-large-fixtures",
+      "skill:fix-windows-stack-overflow-in-large-local-fixtures"
+    ],
+    "0xc00000fd": [
+      "skill:fix-test-stack-overflow-large-fixtures",
+      "skill:fix-windows-0xc00000fd-stack-overflow",
+      "skill:fix-windows-stack-overflow-in-large-local-fixtures",
+      "skill:keep-large-test-fixtures-off-windows-stack"
+    ],
+    "must be imported using a type-only import": [
+      "skill:fix-ts1484-type-only-imports"
+    ],
+    "ts1484": [
+      "skill:fix-ts1484-type-only-imports",
+      "skill:fix-ts2554-useref-tsc-batch",
+      "skill:fix-ts6133-unused-and-related-tsc-errors"
+    ],
+    "verbatimmodulesyntax": [
+      "skill:fix-ts1484-type-only-imports"
+    ],
+    "ts6133": [
+      "skill:fix-ts2554-useref-tsc-batch",
+      "skill:fix-ts6133-unused-and-related-tsc-errors"
+    ],
+    "nounusedlocals": [
+      "skill:fix-ts6133-unused-and-related-tsc-errors"
+    ],
+    "cannot close file": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:handle-locked-or-stale-test-binaries",
+      "skill:resolve-lnk1105-locked-output-on-windows"
+    ],
+    "error code 1224": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows"
+    ],
+    "exit code 1105": [
+      "skill:fix-windows-lnk1105-locked-output-exe"
+    ],
+    "lnk1105": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:handle-locked-or-stale-test-binaries",
+      "skill:resolve-lnk1105-locked-output-on-windows"
+    ],
+    "lastwritetime": [
+      "skill:handle-locked-or-stale-test-binaries"
+    ],
+    "create-solid": [
+      "skill:scaffold-solidjs-vite-non-interactive",
+      "skill:scaffold-solidjs-vite-noninteractive"
+    ],
+    "npm create solid": [
+      "skill:scaffold-solidjs-vite-non-interactive",
+      "skill:scaffold-solidjs-vite-noninteractive"
+    ],
+    "what type of project would you like to create?": [
+      "skill:scaffold-solidjs-vite-non-interactive"
+    ],
+    "enotempty: directory not empty, rmdir": [
+      "skill:unblock-react-router-typegen-enotempty"
+    ],
+    "eperm": [
+      "skill:unblock-react-router-typegen-enotempty"
+    ],
+    "(powershell completed with no output)": [
+      "skill:verify-windows-hybrid-shell-commands"
+    ],
+    "nativecommanderror": [
+      "skill:verify-windows-hybrid-shell-commands"
+    ],
+    "select-object -first": [
+      "skill:verify-windows-hybrid-shell-commands"
+    ],
+    "adb forward tcp:9222": [
+      "skill:wait-webview-devtools-ready-after-relaunch"
+    ],
+    "econnreset": [
+      "skill:wait-webview-devtools-ready-after-relaunch"
+    ],
+    "socket hang up": [
+      "skill:wait-webview-devtools-ready-after-relaunch"
+    ],
+    "webview_devtools_remote": [
+      "skill:wait-webview-devtools-ready-after-relaunch"
+    ]
+  }
+}

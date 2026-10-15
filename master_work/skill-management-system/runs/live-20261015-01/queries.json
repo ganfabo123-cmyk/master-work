@@ -1,0 +1,357 @@
+[
+  {
+    "id": "locked-0-0",
+    "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-0-1",
+    "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-0-2",
+    "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-0-3",
+    "query": "LINK fatal error LNK1105: cannot close file app.exe; error code 1224. A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-1-0",
+    "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-1-1",
+    "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-1-2",
+    "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-1-3",
+    "query": "Windows linker LNK1105 error code 1224 occurs when rebuilding an existing executable. A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-2-0",
+    "query": "Rebuild cannot overwrite the executable because the old test process is still running. This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-2-1",
+    "query": "Rebuild cannot overwrite the executable because the old test process is still running. The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-2-2",
+    "query": "Rebuild cannot overwrite the executable because the old test process is still running. I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-2-3",
+    "query": "Rebuild cannot overwrite the executable because the old test process is still running. A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-3-0",
+    "query": "The linker cannot close file app.exe. How can I find the process locking the output? This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-3-1",
+    "query": "The linker cannot close file app.exe. How can I find the process locking the output? The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-3-2",
+    "query": "The linker cannot close file app.exe. How can I find the process locking the output? I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-3-3",
+    "query": "The linker cannot close file app.exe. How can I find the process locking the output? A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-4-0",
+    "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-4-1",
+    "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-4-2",
+    "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-4-3",
+    "query": "刚跑完测试，Windows 的 exe 还被进程占用，重新链接无法覆盖输出。 A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-5-0",
+    "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-5-1",
+    "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-5-2",
+    "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-5-3",
+    "query": "Source edits are not reflected in tests: the running test exe is stale and holds the output file open. A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-6-0",
+    "query": "LNK1105 cannot close file after a background run: release the holder and relink. This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-6-1",
+    "query": "LNK1105 cannot close file after a background run: release the holder and relink. The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-6-2",
+    "query": "LNK1105 cannot close file after a background run: release the holder and relink. I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-6-3",
+    "query": "LNK1105 cannot close file after a background run: release the holder and relink. A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-7-0",
+    "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. This happens after running the test suite.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-7-1",
+    "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. The debugger still has the previous executable open.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-7-2",
+    "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. I am rebuilding from PowerShell on Windows.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "locked-7-3",
+    "query": "error code 1224 while linking the output exe; stop its process or use a fresh output filename. A background test runner was launched in this session.",
+    "expected": [
+      "skill:fix-windows-lnk1105-locked-output-exe",
+      "skill:resolve-lnk1105-locked-output-on-windows",
+      "skill:handle-locked-or-stale-test-binaries"
+    ]
+  },
+  {
+    "id": "stack",
+    "query": "Windows test exits -1073741571 0xC00000FD before printing tests; large local fixtures on the 1 MB stack.",
+    "expected": [
+      "skill:fix-windows-0xc00000fd-stack-overflow",
+      "skill:fix-stack-overflow-large-test-fixtures",
+      "skill:fix-test-stack-overflow-large-fixtures",
+      "skill:fix-windows-stack-overflow-in-large-local-fixtures",
+      "skill:keep-large-test-fixtures-off-windows-stack"
+    ]
+  },
+  {
+    "id": "macro",
+    "query": "C++ TEST macro: redefinition of '_reg___LINE__', undeclared '_test_body_2', __COUNTER__ token pasting.",
+    "expected": [
+      "skill:capture-counter-once-for-test-macros",
+      "skill:fix-test-macro-token-paste-counter",
+      "skill:fix-test-macro-token-pasting-ids",
+      "skill:fix-test-macro-unique-name-pasting"
+    ]
+  },
+  {
+    "id": "parser",
+    "query": "Prolog parser expected '.', got operator '.' after concatenating adjacent C++ string literals without a separator space.",
+    "expected": [
+      "skill:fix-concatenated-clause-strings-missing-separator",
+      "skill:fix-lexer-dot-after-concatenated-literals",
+      "skill:fix-lexer-dot-followed-by-nonspace",
+      "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings"
+    ]
+  },
+  {
+    "id": "type",
+    "query": "React 19 useRef<T>() TS2554 Expected 1 arguments, but got 0. How to initialize an optional timer ref?",
+    "expected": [
+      "skill:fix-react19-useref-ts2554-no-default",
+      "skill:fix-ts2554-useref-tsc-batch",
+      "skill:fix-ts6133-unused-and-related-tsc-errors"
+    ]
+  },
+  {
+    "id": "router",
+    "query": "react-router dev EPERM scandir ENOTEMPTY rmdir .react-router/types/+types directories on Windows.",
+    "expected": [
+      "skill:clear-locked-react-router-typegen-dirs",
+      "skill:unblock-react-router-typegen-enotempty"
+    ]
+  },
+  {
+    "id": "scaffold",
+    "query": "npm create solid stalls in a non-TTY shell; manually scaffold a minimal Vite SolidJS app.",
+    "expected": [
+      "skill:scaffold-solidjs-vite-noninteractive",
+      "skill:scaffold-solidjs-vite-non-interactive",
+      "skill:verify-windows-hybrid-shell-commands"
+    ]
+  },
+  {
+    "id": "negative-sort",
+    "query": "Explain quicksort and its average time complexity.",
+    "expected": []
+  },
+  {
+    "id": "negative-ref",
+    "query": "Explain the React useRef API conceptually. There is no compiler error in my project.",
+    "expected": []
+  }
+]

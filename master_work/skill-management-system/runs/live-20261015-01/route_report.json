@@ -1,0 +1,1823 @@
+{
+  "status": "EVALUATED",
+  "groups": [
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "d6fe53df5a9e51ad513742cd38ca5dea06238c977510b6ee36f0b051dce86a2d",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 8,
+      "tau": 0.5,
+      "m": 1,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 3.65,
+      "avg_candidates": 17.175,
+      "fallback_rate": 0.025,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "d6fe53df5a9e51ad513742cd38ca5dea06238c977510b6ee36f0b051dce86a2d",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 8,
+      "tau": 0.5,
+      "m": 2,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 3.7,
+      "avg_candidates": 17.375,
+      "fallback_rate": 0.025,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "d6fe53df5a9e51ad513742cd38ca5dea06238c977510b6ee36f0b051dce86a2d",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 8,
+      "tau": 0.5,
+      "m": 8,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 8.0,
+      "avg_candidates": 35.0,
+      "fallback_rate": 1.0,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "d6fe53df5a9e51ad513742cd38ca5dea06238c977510b6ee36f0b051dce86a2d",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 8,
+      "tau": 0.8,
+      "m": 1,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 7.3,
+      "avg_candidates": 31.95,
+      "fallback_rate": 0.9,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "d6fe53df5a9e51ad513742cd38ca5dea06238c977510b6ee36f0b051dce86a2d",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 8,
+      "tau": 0.8,
+      "m": 2,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 7.4,
+      "avg_candidates": 32.425,
+      "fallback_rate": 0.9,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "e20005608f5c4a756be1c9e1556fc107ced70de5fd405c32fbbabb55e8651f14",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 4,
+      "tau": 0.5,
+      "m": 1,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 1.525,
+      "avg_candidates": 22.3,
+      "fallback_rate": 0.05,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "e20005608f5c4a756be1c9e1556fc107ced70de5fd405c32fbbabb55e8651f14",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 4,
+      "tau": 0.5,
+      "m": 2,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 2.125,
+      "avg_candidates": 29.05,
+      "fallback_rate": 0.05,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "e20005608f5c4a756be1c9e1556fc107ced70de5fd405c32fbbabb55e8651f14",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 4,
+      "tau": 0.8,
+      "m": 1,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 3.925,
+      "avg_candidates": 34.225,
+      "fallback_rate": 0.975,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    },
+    {
+      "corpus_id": "e5f2902b5d7c46b9d83d04c54d4ce01ac2150f2dfd39d115a10469c1ce8263a9",
+      "layout_id": "e20005608f5c4a756be1c9e1556fc107ced70de5fd405c32fbbabb55e8651f14",
+      "sample_kind": "synthetic",
+      "mode": "regular",
+      "purpose": "evaluation",
+      "k": 4,
+      "tau": 0.8,
+      "m": 2,
+      "observations": 40,
+      "queries": 40,
+      "route_hit_rate": 1.0,
+      "avg_search_nodes": 3.95,
+      "avg_candidates": 34.7,
+      "fallback_rate": 0.975,
+      "misses": [],
+      "query_ids": [
+        "00fc0db69f06c3ced7b20111f66ce518d69e8ad6d445f2f59bdd61c881bd94f4",
+        "21cc29bfe50fff23a529e8ae2b160120b21ac5ec73ce68a71ee7dd0cf33606cb",
+        "2258b71de4ce5fa78d21265a43434d76641ddba14535a101f659b195a8c94a60",
+        "3aaa6dc321de514bcd0d122b9c9befcee4a12baff54e400d4c4ef0cb96e1167c",
+        "3df38830af95345ffd93a5503d3911486693d439c986e724ecc874b72005c665",
+        "4adc076a0536af9e80eb5773b8dd33762cbd4b936274f8321362602da2d9b5ad",
+        "4d07d2eb4ce159f5bb38205c33cd061116babd27b69121614f54e7c6aa006134",
+        "4e2bc927eaf5ec1b8df75987eaf1433c7783bdcfda450d6e5e3895c68030c1df",
+        "549aa6ac152c889a2f488d4289a176499f721e261d016eb6048df61c25b08db5",
+        "55bb2221e6065ade833e1aa6c2b2835a918699d09cf6d71551f30ec0154c9ed5",
+        "57dfb760d2474acc4f790970d707df72596f0890db5239bc3a4b44e6e5f79867",
+        "580f53d906a2121a5757574438df37a6ae8ba7e61b29e1592269155dccb3b218",
+        "58fa170855579136891ea4ef4b019b122ba9e34a3727af8889ddd3e4d91b6834",
+        "642ae1a95d2b8b34405a1d589a9c94c774cf808c8b5e2012d0ce332d4a279763",
+        "6c6477494b9b2af1e57dd2ec34306252a6dbf0f04da29523a1273dbf8c0af5de",
+        "6d42251e174375263674c1fc4544354ce40e3505475236e208be4c7bb4a824b9",
+        "6eac1d1c83b7da2ffaa583ed1adadf35132a18513dc56fe48444021169816820",
+        "719019d1aed666e46d94d38ac3f85b6865beca067fc67f124fabc41bcd10cd8a",
+        "777c8982305ff3831e00e16bada6d325bd0b5c19388e8d3c69ff875745eb490f",
+        "781970118d8dcd98f5de9eb99454193b7f57ac87fe321e7a7019fe62bafe99ee",
+        "7b5820575d0b80d0d8b389d6dd7b8e0503f3f2d25822964e3d5d0b266d32d1cf",
+        "7c1508cbb66adc4bcd3549a6e21790052c492d6e0b5f525f80c768d2717e6d6e",
+        "8032a64fe3116fc05f0a5ec87112e0b2edb813e40d0743086d03f6ce1b2f8dd9",
+        "8ec598f6b05f4e48585962c18cb4c3443a60c81c70ebba10cf61eecf1af2d191",
+        "95575ab925869442a4ed36674c2c7c51926e155ecf03080a3aad6842ab11ec55",
+        "9d84c1d0312490f9691dd4b858e71706586e0f2a8a9c6bd3c7b6820ee4b96a75",
+        "9f37475dad516aca8c2f067ff2940b530ac5c33e4ebd9d55e01d6a10e7897ea5",
+        "a144732b35a5e78ca866ae941afebb37e88a2a753c14f089afe9d3c4fc8cfa34",
+        "a2fdec57108b395fb4d126a1eb87192c9a8a5160b0d1d343f0952148bbbcbf74",
+        "aea53089cce17fa596a343aa52270f59e46821c2a3c50f08cf68334091a94665",
+        "b27b582bd166ce55ee9df35d62ca930df11ab757d8456e51d6cc01829d39e220",
+        "bc9c8ffdd6f0e0e895fb5b110f53b7ec8e20c113804d69bc40b7a044afc66a36",
+        "bcc000ab227669ed2098112dba1b156953c3aaec3ccd4e332eb198eff5b87ee9",
+        "d6ec76a590eb05944c34f8fb7b59a19b6939518450b4788edf2b56a958616442",
+        "d7f7760e32b118766e0baaa474605365e3dfd60a4863c51ea681704b00243be8",
+        "e4d06665d15ad61d8396d96db764581dc7076e61c1f5fa13bf66f79e5deb4bce",
+        "e7224d2fa00fb0b5a0970ba487cd0e81ae43f6308142a5ed1bde28a3073419e7",
+        "ea14d4bd9c4e198d8610b5350fbaf999ea5ee940bfc53c5cea76066a4e586dc4",
+        "eb0c592853da25e9da89a6017d8b66740435dd8377a1f43eb309c510f7d8a75e",
+        "fc3cfbbf2d68d0e015a2a5f3b9dc5efd3ececba1bdccdda21c6b805a9c5084a6"
+      ],
+      "per_skill": {
+        "skill:avoid-odin-large-struct-stack-frames": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-arena-refs-before-allocating": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:capture-counter-once-for-test-macros": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:clear-locked-react-router-typegen-dirs": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:diagnose-windows-0xc0000135-missing-dll": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-concatenated-clause-strings-missing-separator": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-interleaved-key-index-two-pass-build": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lexer-dot-after-concatenated-literals": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lexer-dot-followed-by-nonspace": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-lnk1107-odin-dll-import-lib": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk1120-unresolved-global-in-test-links": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-global-with-inline-variable": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-lnk2019-header-inline-global": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:fix-odin-c-abi-callback-context": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-react19-useref-ts2554-no-default": {
+          "baseline_queries": 2,
+          "route_recall": 1.0
+        },
+        "skill:fix-stack-overflow-large-test-fixtures": {
+          "baseline_queries": 3,
+          "route_recall": 1.0
+        },
+        "skill:fix-test-macro-token-paste-counter": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-token-pasting-ids": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-macro-unique-name-pasting": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-test-stack-overflow-large-fixtures": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-ts1484-type-only-imports": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts2554-useref-tsc-batch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-ts6133-unused-and-related-tsc-errors": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-0xc00000fd-stack-overflow": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:fix-windows-lnk1105-locked-output-exe": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:fix-windows-stack-overflow-in-large-local-fixtures": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:handle-locked-or-stale-test-binaries": {
+          "baseline_queries": 20,
+          "route_recall": 1.0
+        },
+        "skill:keep-large-test-fixtures-off-windows-stack": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:preserve-separator-space-in-concatenated-prolog-fixture-strings": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:resolve-lnk1105-locked-output-on-windows": {
+          "baseline_queries": 4,
+          "route_recall": 1.0
+        },
+        "skill:scaffold-solidjs-vite-non-interactive": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:scaffold-solidjs-vite-noninteractive": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:unblock-react-router-typegen-enotempty": {
+          "baseline_queries": 1,
+          "route_recall": 1.0
+        },
+        "skill:verify-windows-hybrid-shell-commands": {
+          "baseline_queries": 0,
+          "route_recall": null
+        },
+        "skill:wait-webview-devtools-ready-after-relaunch": {
+          "baseline_queries": 0,
+          "route_recall": null
+        }
+      },
+      "baseline_id": "41ae68b7ed3270e23258e45c952fed07546ac8f89b4117dbee37d37f3596ed8d"
+    }
+  ]
+}
