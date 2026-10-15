@@ -1,0 +1,130 @@
+{
+  "sessions-30": {
+    "diagnostics": {
+      "events": 18072,
+      "source_or_search_outputs_excluded": 1095,
+      "tool_result_events": 4265,
+      "tool_result_without_payload": 59
+    },
+    "strategies": {
+      "native-code": {
+        "input_count": 30,
+        "group_count": 14,
+        "covered_count": 9,
+        "residual_count": 21,
+        "multi_member_group_count": 3,
+        "cross_session_group_count": 3,
+        "max_group_size": 5,
+        "occurrence_count": 87,
+        "observed_output_count": 80,
+        "observed_output_group_count": 12,
+        "observed_output_covered_count": 9
+      },
+      "exception-type": {
+        "input_count": 30,
+        "group_count": 28,
+        "covered_count": 14,
+        "residual_count": 16,
+        "multi_member_group_count": 9,
+        "cross_session_group_count": 9,
+        "max_group_size": 4,
+        "occurrence_count": 128,
+        "observed_output_count": 122,
+        "observed_output_group_count": 26,
+        "observed_output_covered_count": 14
+      },
+      "message-template": {
+        "input_count": 30,
+        "group_count": 159,
+        "covered_count": 19,
+        "residual_count": 11,
+        "multi_member_group_count": 8,
+        "cross_session_group_count": 8,
+        "max_group_size": 5,
+        "occurrence_count": 233,
+        "observed_output_count": 194,
+        "observed_output_group_count": 121,
+        "observed_output_covered_count": 17
+      }
+    }
+  },
+  "slices-97": {
+    "diagnostics": {
+      "events": 18100,
+      "source_or_search_outputs_excluded": 1092,
+      "tool_result_events": 4262,
+      "tool_result_without_payload": 59
+    },
+    "strategies": {
+      "native-code": {
+        "input_count": 97,
+        "group_count": 14,
+        "covered_count": 13,
+        "residual_count": 84,
+        "multi_member_group_count": 3,
+        "cross_session_group_count": 3,
+        "max_group_size": 9,
+        "occurrence_count": 84,
+        "observed_output_count": 80,
+        "observed_output_group_count": 12,
+        "observed_output_covered_count": 13
+      },
+      "exception-type": {
+        "input_count": 97,
+        "group_count": 28,
+        "covered_count": 22,
+        "residual_count": 75,
+        "multi_member_group_count": 10,
+        "cross_session_group_count": 9,
+        "max_group_size": 5,
+        "occurrence_count": 128,
+        "observed_output_count": 122,
+        "observed_output_group_count": 26,
+        "observed_output_covered_count": 22
+      },
+      "message-template": {
+        "input_count": 97,
+        "group_count": 147,
+        "covered_count": 39,
+        "residual_count": 58,
+        "multi_member_group_count": 9,
+        "cross_session_group_count": 8,
+        "max_group_size": 8,
+        "occurrence_count": 221,
+        "observed_output_count": 194,
+        "observed_output_group_count": 121,
+        "observed_output_covered_count": 36
+      }
+    }
+  },
+  "error_key_comparison": {
+    "native-code": {
+      "shared_error_keys": 14,
+      "session_only_error_keys": [],
+      "slice_only_error_keys": []
+    },
+    "exception-type": {
+      "shared_error_keys": 28,
+      "session_only_error_keys": [],
+      "slice_only_error_keys": []
+    },
+    "message-template": {
+      "shared_error_keys": 147,
+      "session_only_error_keys": [
+        "template:- **<arg> struct causes stack overflow (800kb)**: <arg> with 256×256×cell is huge. fix: <arg>.",
+        "template:- **large stack frames** — simsnapshot (~425kb) and world (~787kb) must be heap-allocated (<arg>) to avoid stack overflow; warnings are emitted but don't block build",
+        "template:- **simsnapshot 425kb stack overflow**: changed <arg> to return <arg> via temp_allocator; renamed <arg> → <arg> to fill caller-provided struct; all callers use <arg> then <arg>",
+        "template:- **world 787kb stack overflow**: <arg>",
+        "template:- <arg> (renamed from <arg>) takes <arg> as first arg to avoid stack overflow:",
+        "template:> \"now fix <arg> — <arg> variable clash, <arg> type, and <arg> stack overflow\" followed by the edit changing <arg> to <arg>.",
+        "template:[fail ] gcc 4.5.0 build failed — check output above",
+        "template:[fail ] gcc 4.5.0 build failed — check output above...",
+        "template:[fail ] kernel build failed.",
+        "template:[fail ] kernel build failed. see output above.",
+        "template:error: cannot create symlinks <path> and <path>",
+        "template:make[2]: leaving directory <arg> -fno-strict-aliasing -din_gcc -w -wall -wwrite-strings -wcast-qual -wstrict-prototypes -wmissing-prototypes -wmissing-format-attribute -pedantic -wno-long-long -wno-variadic-macros -wno-overlength-strings -wold-style-definition -wc++-compat -dhave_config_h -dgenerator_file -o build<path> \\ build<path> build<path> build<path> build<path> build<path> build<path> build<path> build<path> build<path> ..<path> gcc -o1 -wno-error -wno-implicit-function-declaration -wno-int-conversion -wno-incompatible-pointer-types -fno-strict-aliasing -din_gcc -w -wall -wwrite-strings -wcast-qual -wstrict-prototypes -wmissing-prototypes -wmissing-format-attribute -pedantic -wno-long-long -wno-variadic-macros -wno-overlength-strings -wold-style-definition -wc++-compat -dhave_config_h -dgenerator_file -o build<path> \\ build<path> build<path> build<path> build<path> build<path> build<path> build<path> build<path> build<path> ..<path> gcc -o1 -wno-error -wno-implicit-function-declaration -wno-int-conversion -wno-incompatible-pointer-types -fno-strict-aliasing -din_gcc -w -wall -wwrite-strings -wcast-qual -wstrict-prototypes -wmissing-prototypes -wmissing-format-attribute -pedantic -wno-long-long -wno-variadic-macros -wno-overlength-strings -wold-style-definition -wc++-compat -dhave_config_h -dgenerator_file -o build<path> \\ build<path> build<path> build<path> build<path> build<path> build<path> build<path> build<path> build<path>"
+      ],
+      "slice_only_error_keys": []
+    }
+  }
+}

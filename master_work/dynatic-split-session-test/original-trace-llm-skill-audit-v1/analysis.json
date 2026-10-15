@@ -1,0 +1,373 @@
+{
+  "audit_version": "original-trace-llm-skill-audit-v1",
+  "method": {
+    "mode": "unconstrained original-trace skill extraction",
+    "description": "逐条检查 30 个 Session 的正文文本和关键工具事件；允许单条轨迹独立形成 Skill，也允许一条轨迹产生多个 Skill。没有要求至少两个相似 Session、跨 Session 或聚类一致性，不使用现有聚类候选作为提取门槛。Skill 只有在轨迹中出现了具体、可复用的决策链、诊断方法或安全边界时才保留。",
+    "embedding_used": false,
+    "algorithm_code_modified": false,
+    "evidence_policy": "只引用轨迹中的用户文本、助手可见文本和事件索引；不把未出现的成功结果、工具能力或业务规则补写成证据。"
+  },
+  "source_inventory": {
+    "manifest_path": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/toolcall-report.json",
+    "trajectory_root": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions",
+    "declared_session_count": 30,
+    "read_trajectory_count": 30,
+    "read_segment_file_count": 118,
+    "actual_read_scope": "读取 toolcall-report.json 的 30 条清单项，并读取 context-expanded-sessions 下与这 30 个 session_id 对应的全部 118 个 JSON 分段；同时逐条检查其中的 text 事件和 tool_call 事件。仓库中未发现对应的原始 JSONL 文件，因此没有声称读取不存在的 JSONL。某个 Skill 的证据若跨越同一轨迹的多个分段，sources.source_file 使用该轨迹的 segment-*.json 文件 glob；source_event_index 用于在这些实际分段中定位具体证据。",
+    "session_ids": [
+      "07b57159-218e-4330-a64e-0ec4b4355056",
+      "09d9abe9-0a02-4bd1-8129-3b864695079d",
+      "0ca72c0c-ac42-400a-8ca6-cc31a787225f",
+      "11ef2190-67e2-4707-8212-ab12ebffdbc2",
+      "17c2cf98-e64a-43c6-932e-fa7efcade358",
+      "2965219c-42ad-45af-889c-4581ecbe0103",
+      "39082932-131c-40a9-872d-1d3ac8ed1fd6",
+      "3be5ba0c-62b2-4645-8589-9216be0c10d8",
+      "4130c9a7-ee88-443a-91b5-224accd13629",
+      "4222016d-1932-4abb-94b3-463203bd8876",
+      "479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "47d9fc04-420c-47bb-8ac0-85780af22632",
+      "4c09dfa9-ff25-4b4c-a2d0-d2fd702c64ee",
+      "674e0f5c-c481-4830-b2ef-3e1e069a2b7f",
+      "6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+      "7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+      "860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "89cf9e13-a4bd-4cf9-9486-7c89737bec1b",
+      "92833a43-c30d-4b44-8447-c32ee17d6e6e",
+      "a20a4070-6246-4e9e-adf6-f38b0c1dc3fa",
+      "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a",
+      "c84c0ad3-c368-40df-87b1-5ef9effe237a",
+      "c99032e9-377b-4ae9-a9a9-ec7752b059cd",
+      "comparia-voting-fields-anon",
+      "d4c4d47d-642c-4c26-a866-51ab85587896",
+      "da5d32d6-547f-45ae-a5b5-4747ed06542f",
+      "da6566ff-0116-4424-bb59-660623f9eb31",
+      "f93127ef-dec9-4d58-964b-ee660964ec4d",
+      "debaa898-grafana-loki-monitoring",
+      "ses_129b55f7effeSKRtimLg9wxpXa"
+    ]
+  },
+  "skills": [
+    {
+      "skill_id": "S01",
+      "title": "把多阶段需求转成明确的本轮范围与排除项",
+      "skill": "收到包含多个 milestone 的需求时，先把本轮要完成的 milestone、明确跳过的 milestone 和未来分支写成可检查的范围，再按该范围实现；后续用户改变阶段时重新读取当前状态并只扩展到新授权的阶段。",
+      "source_trace_count": 2,
+      "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056", "4222016d-1932-4abb-94b3-463203bd8876"],
+      "sources": [
+        {
+          "trace_id": "07b57159-218e-4330-a64e-0ec4b4355056",
+          "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-*.json",
+          "key_evidence": [{"location": "source_event_index=19", "quote": "Today, our target is to reach till milestone 3"}, {"location": "source_event_index=192", "quote": "do milestone 4, skip milestone5, do milestone 6"}]
+        },
+        {
+          "trace_id": "4222016d-1932-4abb-94b3-463203bd8876",
+          "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-*.json",
+          "key_evidence": [{"location": "source_event_index=270", "quote": "Continue from where you left off"}, {"location": "source_event_index=621", "quote": "do M4-M6"}, {"location": "source_event_index=688", "quote": "and now full everything, till M8"}]
+        }
+      ],
+      "applicability": "适用于有路线图、阶段表或明确排除项的工程任务；前提是阶段边界能从用户需求或项目文档确定。",
+      "quality_rationale": "它把需求中的阶段约束变成可执行的范围控制，避免为了所谓完整性提前实现未授权能力；证据中还显示阶段可以随着新指令扩展，而不是被旧范围永久锁死。"
+    },
+    {
+      "skill_id": "S02",
+      "title": "在训练数据切分前保留对话角色和来源元数据",
+      "skill": "准备对话模型训练/测试集时，不要直接把混合 corpus.txt 当成唯一数据源；先检查数据生成脚本实际组合了哪些来源，再以保留 user/gpt 等角色字段的 JSONL 为主，并把纯文本来源显式编码成约定角色，确保训练集和测试集与真实语料构成一致。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a"],
+      "sources": [{"trace_id": "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02.json", "key_evidence": [{"location": "source_event_index=37", "quote": "using raw_corpus for training isnt good ... metadata of 'user', 'gpt' etc isnt lost"}, {"location": "source_event_index=195", "quote": "encode_corpus.py ... only encodes the erotica JSON ... corpus.txt ... is never used by the trainer"}]}],
+      "applicability": "适用于由多种来源、不同格式组成的训练/评估管线；前提是角色或来源语义会影响模型学习或评估。",
+      "quality_rationale": "这是可复用的数据血缘和语义保真规则，直接指出了一个常见但隐蔽的失败模式：文件存在不等于训练管线使用了它。单轨迹也足以形成清晰、可验证的 Skill。"
+    },
+    {
+      "skill_id": "S03",
+      "title": "按硬件能力选择精度并用梯度累积保留上下文长度",
+      "skill": "当显存不足但上下文长度是硬约束时，先用实际 GPU 架构排除不支持的精度格式，再优先把 micro-batch 降到 1、用 gradient accumulation 保持有效 batch，保留目标 context size；不要用不受硬件支持的 FP8 作为默认逃生路径。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a"],
+      "sources": [{"trace_id": "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02.json", "key_evidence": [{"location": "source_event_index=185", "quote": "FP8 ... requires Ada/Hopper ... the A500 is Ampere"}, {"location": "source_event_index=190", "quote": "batch_size 1 ... grad_accum 32 ... 1024 ctx — untouched"}]}],
+      "applicability": "适用于显存受限的训练任务，尤其是 context length 有明确验收要求时；前提是能读取 GPU/运行时能力。",
+      "quality_rationale": "它给出约束优先级和可操作的调参顺序，兼顾硬件事实、上下文质量和有效 batch，远比泛泛的“减少 batch size”更可迁移。"
+    },
+    {
+      "skill_id": "S04",
+      "title": "用阶段专属测试套件证明阶段完成后再更新文档",
+      "skill": "实现一个阶段性能力时，先让该阶段的专属测试和既有回归套件都通过，再把 README/计划表标记为完成；若失败来自旧进程、锁文件或工具链噪声，先隔离环境问题再判断代码结果。",
+      "source_trace_count": 3,
+      "source_trace_ids": ["39082932-131c-40a9-872d-1d3ac8ed1fd6", "6a7964ed-6f92-4eee-ae5e-3f91a6445833", "4222016d-1932-4abb-94b3-463203bd8876"],
+      "sources": [
+        {"trace_id": "39082932-131c-40a9-872d-1d3ac8ed1fd6", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-05.json", "key_evidence": [{"location": "source_event_index=1433", "quote": "48/48 + 17/17. Now update the README and add the LICENSE"}]},
+        {"trace_id": "6a7964ed-6f92-4eee-ae5e-3f91a6445833", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-07.json", "key_evidence": [{"location": "source_event_index=581", "quote": "Stage 1 smoke ... Stage 2 ... Stage 3 ... all passed ... library built cleanly"}]},
+        {"trace_id": "4222016d-1932-4abb-94b3-463203bd8876", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-06.json", "key_evidence": [{"location": "source_event_index=621", "quote": "M2 and M3 are complete. build ... compiled cleanly"}]}
+      ],
+      "applicability": "适用于分阶段编译器、运行时、游戏或应用工程；前提是每个阶段能定义独立测试入口。",
+      "quality_rationale": "这是完整的交付门槛：把专属测试、全量回归、环境噪声辨别和文档更新顺序绑定起来，证据跨三个不同工程，迁移性强。"
+    },
+    {
+      "skill_id": "S05",
+      "title": "用语法审计和多版本矩阵实现兼容性",
+      "skill": "面对旧版本运行时兼容需求时，先审计语法/API 中明确的版本阻塞点，再用兼容写法替换；随后在可用的多个解释器版本上运行同一套测试，而不是仅凭当前版本通过就宣称兼容。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056"],
+      "sources": [{"trace_id": "07b57159-218e-4330-a64e-0ec4b4355056", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03.json", "key_evidence": [{"location": "source_event_index=425", "quote": "Support both 3.7 and 4.8+"}, {"location": "source_event_index=430", "quote": "kw_only=True ... 3.10+ only; int | float union"}, {"location": "source_event_index=482", "quote": "All three testable versions (3.7, 3.12, 3.14) pass identically"}]}],
+      "applicability": "适用于需要支持多个语言/运行时版本的项目；前提是能列出实际可用的版本并执行同一回归集。",
+      "quality_rationale": "轨迹展示了从需求、阻塞点定位、兼容实现到跨版本验证的完整闭环，而不是只提供一个版本号清单。"
+    },
+    {
+      "skill_id": "S06",
+      "title": "把可嵌入库与 CLI 分离并提供窄的纯 C ABI",
+      "skill": "当一个工具需要被另一语言或运行时嵌入时，把核心 lexer/parser/codegen 与批处理逻辑放进库，让 CLI 只处理参数、文件和输出；跨 C/C++ 边界只暴露纯 C 结构和错误结果，避免 STL、异常或 C++ 类穿过 ABI。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["92833a43-c30d-4b44-8447-c32ee17d6e6e"],
+      "sources": [{"trace_id": "92833a43-c30d-4b44-8447-c32ee17d6e6e", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01.json", "key_evidence": [{"location": "source_event_index=2", "quote": "The CLI becomes a user of the library, not the owner of the logic"}, {"location": "source_event_index=193", "quote": "Public C API — the only header GlacioJS needs"}]}],
+      "applicability": "适用于把编译器、解释器或数据处理工具嵌入其他语言/宿主运行时；前提是宿主边界需要稳定 ABI。",
+      "quality_rationale": "它明确了职责边界、内存/异常边界和公开接口的形状，可直接指导架构切分，超出某个具体编译器实现细节。"
+    },
+    {
+      "skill_id": "S07",
+      "title": "让头文件、实现文件和构建目标的边界可检查",
+      "skill": "在 C/C++ 工程中先固定 include 目录只放头文件、src 只放实现文件，并让 Make/脚本的目标与目录约定一致；遇到构建失败时检查实际编译命令、脚本语法和测试入口，而不是只修 IDE 报红。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["39082932-131c-40a9-872d-1d3ac8ed1fd6"],
+      "sources": [{"trace_id": "39082932-131c-40a9-872d-1d3ac8ed1fd6", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-01.json", "key_evidence": [{"location": "source_event_index=27", "quote": "this is the root directory do not create another directory such as jsx-transpiler"}, {"location": "source_event_index=39", "quote": "include should have all header files and src should only contains cpp files"}, {"location": "source_event_index=407", "quote": "make test ... 'pass' is not recognized ... make: *** [test] Error 1"}]}],
+      "applicability": "适用于有公开头文件和多平台构建脚本的 C/C++ 项目；前提是目录约定属于项目接口的一部分。",
+      "quality_rationale": "它把目录约定、构建命令和真实测试入口统一成可审计的工程边界，能够减少“文件看起来正确但构建目标没接上”的错误。"
+    },
+    {
+      "skill_id": "S08",
+      "title": "用对象大小和拷贝路径定位启动期栈溢出",
+      "skill": "遇到测试程序启动即崩溃、且测试主体还未执行时，先检查大型结构体是否被按值声明或返回；把隐式拷贝改为引用/指针后再重跑最小测试和全套测试，确认崩溃与修复的因果关系。",
+      "source_trace_count": 2,
+      "source_trace_ids": ["479c5e9f-a299-457f-8459-5948adf8aa8e", "c99032e9-377b-4ae9-a9a9-ec7752b059cd"],
+      "sources": [
+        {"trace_id": "479c5e9f-a299-457f-8459-5948adf8aa8e", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03.json", "key_evidence": [{"location": "source_event_index=324", "quote": "AtomTable t = make_table(); — this copies the 1MB AtomTable by value onto the LOCAL stack"}, {"location": "source_event_index=334", "quote": "All 17 atom tests pass"}]},
+        {"trace_id": "c99032e9-377b-4ae9-a9a9-ec7752b059cd", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-09.json", "key_evidence": [{"location": "source_event_index=1203", "quote": "AtomTable t = make_table() copies the ~1MB AtomTable onto the local stack"}, {"location": "source_event_index=1219", "quote": "Now rebuild and run everything"}]}
+      ],
+      "applicability": "适用于 C/C++ 启动即崩溃、栈空间有限或大型状态对象的测试/运行时；前提是能看到类型大小和初始化路径。",
+      "quality_rationale": "同一诊断规则在两个不同工程中出现并且能导出具体修复动作：从按值复制改为引用，之后以小测试和全量测试验证。"
+    },
+    {
+      "skill_id": "S09",
+      "title": "用路由事实和请求生命周期排查前端 404",
+      "skill": "排查 SvelteKit 等文件路由的 404 时，先核对实际目录参数名和请求生命周期中的环境变量可见性；如果后端地址只在服务端请求期可用，增加同源 proxy route，让页面 loader 使用相对路径，再用真实 HTTP 200 验证。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["c84c0ad3-c368-40df-87b1-5ef9effe237a"],
+      "sources": [{"trace_id": "c84c0ad3-c368-40df-87b1-5ef9effe237a", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04.json", "key_evidence": [{"location": "source_event_index=464", "quote": "env var still isn't loading"}, {"location": "source_event_index=493", "quote": "create a +server.ts proxy route ... forwards /db/* requests"}, {"location": "source_event_index=504", "quote": "directories are literally named [slug] ... params.name won't exist"}] }],
+      "applicability": "适用于文件系统路由、服务端 loader 和后端 API 代理组合；前提是能读取实际目录名、框架文档和网络响应。",
+      "quality_rationale": "它把 404 分解成两个可证伪的层次：路由参数事实和运行时配置作用域，并给出同源代理这个稳定的边界修复。"
+    },
+    {
+      "skill_id": "S10",
+      "title": "用户指出本地字体后先检查资产和编译路径",
+      "skill": "当用户说明字体已在仓库中时，先读取字体目录和现有 SCSS token，使用 @font-face 与正确的相对产物路径接入本地字体；只有本地资产不存在时才考虑远程字体，并检查编译后的 CSS 是否仍能加载。",
+      "source_trace_count": 2,
+      "source_trace_ids": ["09d9abe9-0a02-4bd1-8129-3b864695079d", "7563bddf-c1a0-4c3e-86ee-062bf288e6d3"],
+      "sources": [
+        {"trace_id": "09d9abe9-0a02-4bd1-8129-3b864695079d", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01.json", "key_evidence": [{"location": "source_event_index=51", "quote": "brother I have fonts in the fonts directory, use your eyes"}, {"location": "source_event_index=57", "quote": "Local font files ... replace the Google Fonts import with proper @font-face declarations"}]},
+        {"trace_id": "7563bddf-c1a0-4c3e-86ee-062bf288e6d3", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01.json", "key_evidence": [{"location": "source_event_index=13", "quote": "Material Design 3 ... dynamic color, tonal surfaces, rounded shapes"}, {"location": "source_event_index=824", "quote": "use the existing codebase ... fix ... components"}]}
+      ],
+      "applicability": "适用于前端字体迁移和设计系统接入；前提是仓库提供字体文件或明确的字体 token。",
+      "quality_rationale": "它将用户提供的资源事实、CSS 接入方式和构建产物验证连成了可迁移流程，并避免无谓外部依赖。"
+    },
+    {
+      "skill_id": "S11",
+      "title": "用新数组引用触发 Alpine 等响应式系统更新",
+      "skill": "当数据源内容已更新但 UI 不刷新时，检查响应式系统是否只比较引用；刷新时把 live array 复制成新的数组对象，再让 store 赋值，并用实际界面刷新确认，而不是继续重复写同一个数组引用。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["09d9abe9-0a02-4bd1-8129-3b864695079d"],
+      "sources": [{"trace_id": "09d9abe9-0a02-4bd1-8129-3b864695079d", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04.json", "key_evidence": [{"location": "source_event_index=557", "quote": "getAllProcesses() returns the live array but Alpine's reactivity doesn't know it changed"}, {"location": "source_event_index=565", "quote": "Spreading into a new array gives Alpine a new reference each tick"}] }],
+      "applicability": "适用于按引用检测变更的 Alpine、React store 或类似响应式 UI；前提是数据源可能复用同一个可变数组。",
+      "quality_rationale": "这是精确到机制和修复表达式的 UI 状态 Skill，能把“数据有变化但画面不动”从模糊现象定位为引用身份问题。"
+    },
+    {
+      "skill_id": "S12",
+      "title": "让窗口打开和进程清理具备幂等生命周期",
+      "skill": "把应用的 open、close、createProcess 和 terminateProcess 看成一个生命周期：重复打开已存在窗口时直接返回且不创建新进程，关闭窗口必须通过 onClose 调用应用清理，最后检查重复点击和关闭后的进程表。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["09d9abe9-0a02-4bd1-8129-3b864695079d"],
+      "sources": [{"trace_id": "09d9abe9-0a02-4bd1-8129-3b864695079d", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04.json", "key_evidence": [{"location": "source_event_index=577", "quote": "createProcess()d every time open() is called, leaking processes"}, {"location": "source_event_index=596", "quote": "guard ... with windows.isOpen() ... onClose ... terminateProcess()"}] }],
+      "applicability": "适用于桌面式 Web UI、窗口管理器、任务/进程面板和任何有 open/close 副作用的交互系统。",
+      "quality_rationale": "它明确了幂等入口、资源创建和资源释放三者必须同时设计，直接针对重复点击造成的泄漏和关闭不清理问题。"
+    },
+    {
+      "skill_id": "S13",
+      "title": "用同源代理消除前端运行时后端地址分歧",
+      "skill": "当前端不同 loader 对后端环境变量的读取时机不一致时，把 `/api` 或 `/db` 请求收敛到同源 server proxy，由 proxy 负责转发；页面只依赖相对 URL，并以开发服务器实际返回码和构建结果验证。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["c84c0ad3-c368-40df-87b1-5ef9effe237a"],
+      "sources": [{"trace_id": "c84c0ad3-c368-40df-87b1-5ef9effe237a", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04.json", "key_evidence": [{"location": "source_event_index=493", "quote": "create a +server.ts proxy route ... all server loaders use relative URLs"}, {"location": "source_event_index=504", "quote": "params.name won't exist — it'll be params.slug"}] }],
+      "applicability": "适用于前后端分离、环境变量只在请求生命周期可见的 SSR 框架；前提是同源 server route 能访问后端。",
+      "quality_rationale": "相比反复改环境变量，这个 Skill 通过明确边界减少部署环境差异，同时保留了参数名事实检查。"
+    },
+    {
+      "skill_id": "S14",
+      "title": "把多分辨率界面布局变成运行时几何而非编译期常量",
+      "skill": "需要支持多种屏幕尺寸时，先定义允许的分辨率选项和运行时 ScreenConfig，再用 active width/height 派生网格、侧栏和 cell size；让渲染纹理保留最大容量但按当前 viewport 合成，并用明确比例（如 80/20）和每个分辨率的构建结果验证。",
+      "source_trace_count": 2,
+      "source_trace_ids": ["4222016d-1932-4abb-94b3-463203bd8876", "d4c4d47d-642c-4c26-a866-51ab85587896"],
+      "sources": [
+        {"trace_id": "4222016d-1932-4abb-94b3-463203bd8876", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-08.json", "key_evidence": [{"location": "source_event_index=887", "quote": "screen size should either be 640x320, 1920 x 720, 1920 x 1080 ... option to choose"}, {"location": "source_event_index=1166", "quote": "Grid = 80% of screen width ... Sidebar = 20%"}]},
+        {"trace_id": "d4c4d47d-642c-4c26-a866-51ab85587896", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-02.json", "key_evidence": [{"location": "source_event_index=49", "quote": "its overflowing the screen ... fix that"}, {"location": "source_event_index=414", "quote": "show only 2 one below another and then pagination"}]}
+      ],
+      "applicability": "适用于游戏 HUD、仪表盘和响应式界面；前提是布局规则能表达为运行时几何或比例。",
+      "quality_rationale": "它把溢出、响应式、可选分辨率和网格缩放统一到运行时几何模型，避免为每种尺寸复制一套界面代码。"
+    },
+    {
+      "skill_id": "S15",
+      "title": "迁移低级启动/显示路径时以运行时事实校验协议兼容性",
+      "skill": "跨 MB1/MB2、UEFI/GOP 或类似低级协议迁移时，保留旧入口与新入口的显式分支，先打印并核对实际 boot tag/framebuffer mode，再依据真实地址映射和显示模式修复构建模块与应用显示抽象，最后重新生成镜像验证。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["17c2cf98-e64a-43c6-932e-fa7efcade358"],
+      "sources": [{"trace_id": "17c2cf98-e64a-43c6-932e-fa7efcade358", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04.json", "key_evidence": [{"location": "source_event_index=259", "quote": "MB1 ... MB2 ... no actual text is rendered just plain black screen"}, {"location": "source_event_index=279", "quote": "[BOOT] MB2 boot"}, {"location": "source_event_index=310", "quote": "fix the snake game to properly support both MB2 and MB1"}] }],
+      "applicability": "适用于操作系统、引导程序、驱动和硬件协议兼容迁移；前提是运行时能暴露启动参数或硬件模式。",
+      "quality_rationale": "这是具体的证据驱动迁移方法，避免把某个启动协议的假设偷偷带入另一个入口；低级系统中单条轨迹已经给出足够强的可迁移规则。"
+    },
+    {
+      "skill_id": "S16",
+      "title": "用已知工作实现对照并缩小退出崩溃的最小路径",
+      "skill": "排查低级交互程序退出时的固定地址崩溃时，先和同一系统中已知能正常退出的程序比较输入/清理模式，再逐步去掉非必要的清屏、光标恢复或忙轮询，使用阻塞输入或自然返回建立最小安全路径，并把尚未证实的根因保持为假设。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["f93127ef-dec9-4d58-964b-ee660964ec4d"],
+      "sources": [{"trace_id": "f93127ef-dec9-4d58-964b-ee660964ec4d", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d__segment-03.json", "key_evidence": [{"location": "source_event_index=168", "quote": "General Protection Fault ... on quit/exit of htop"}, {"location": "source_event_index=187", "quote": "look at what quill does on exit"}, {"location": "source_event_index=213", "quote": "Using getChar() ... matches exactly the pattern quill uses"}] }],
+      "applicability": "适用于内核态/嵌入式交互程序、终端 UI 和退出清理崩溃；前提是有同一代码库中的稳定对照实现。",
+      "quality_rationale": "它强调对照、最小化和证据分级，特别适合固定 RIP 但初始根因不确定的低级故障。"
+    },
+    {
+      "skill_id": "S17",
+      "title": "从参考源解析资源并用结构性计数验证结果",
+      "skill": "把外部/参考实现中的结构化资源（如 C 文件中的动画帧）转换为运行时资源时，先读取完整参考文件，编写解析器而不是手抄内容，再验证帧数、宽高和关键字符映射与来源一致后接入渲染器。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056"],
+      "sources": [{"trace_id": "07b57159-218e-4330-a64e-0ec4b4355056", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03.json", "key_evidence": [{"location": "source_event_index=338", "quote": "12 frames, 803 lines ... parse the entire animation.c"}, {"location": "source_event_index=371", "quote": "12 frames, 64×64, correct data"}] }],
+      "applicability": "适用于把参考代码、协议样例或资源表转换成另一语言的数据结构；前提是来源具有可解析的结构和可计数的不变量。",
+      "quality_rationale": "它把忠实迁移与独立验证绑定，避免“看起来像”却丢帧、错尺寸或错字符映射。"
+    },
+    {
+      "skill_id": "S18",
+      "title": "对高影响操作实施分层开关、精确确认和公开警告",
+      "skill": "对于会消耗硬件、启动外部进程或产生不可逆成本的功能，先用显式 dangerous/feature flag 阻断默认路径，再要求 CLI 中的精确确认字符串，确认前展示影响范围；非确认输入必须 no-op 并可测试 abort path。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056"],
+      "sources": [{"trace_id": "07b57159-218e-4330-a64e-0ec4b4355056", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-05.json", "key_evidence": [{"location": "source_event_index=537", "quote": "now time for milestone 7"}, {"location": "source_event_index=658", "quote": "first ask the user confirmation in the cli with a warning"}, {"location": "source_event_index=675", "quote": "anything other than YES ... Aborted"}] }],
+      "applicability": "适用于资源密集、破坏性、付费或外部副作用操作；前提是 CLI/入口可以提供独立开关和确认交互。",
+      "quality_rationale": "这是可迁移的安全交互协议，证据明确覆盖默认阻断、影响披露、精确确认和取消验证；不需要把具体高风险功能本身迁移出去。"
+    },
+    {
+      "skill_id": "S19",
+      "title": "把不同部署/政策要求隔离为独立实现并保留切换边界",
+      "skill": "当同一功能在不同部署目标上必须遵守不同政策或外部约束时，维护独立的实现文件/模块和明确选择点；共享入口只负责选择，不把两个目标的规则揉进一套模糊分支。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056"],
+      "sources": [{"trace_id": "07b57159-218e-4330-a64e-0ec4b4355056", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01.json", "key_evidence": [{"location": "source_event_index=19", "quote": "github version ... random hashing ... codeberg one ... proper crypto miner ... make two separate folders/files"}, {"location": "source_event_index=582", "quote": "two separate files as planned"}] }],
+      "applicability": "适用于同一产品有开源/企业、平台合规、测试/生产等不同实现要求；前提是差异是实质性的且能在构建或配置阶段选择。",
+      "quality_rationale": "它把政策差异变成可审计的模块边界，减少误把某目标实现发布到另一目标的风险。"
+    },
+    {
+      "skill_id": "S20",
+      "title": "敏感配置采用加密存储、分离盐和可验证的初始化流程",
+      "skill": "需要保存敏感地址或配置时，不把真实值直接写入代码仓库；使用运行时盐/随机 UUID 等输入加密后存储，并把盐/存储位置与代码分开，提供显式 setup/show/clear 入口和加密-解密 round-trip 测试，同时支持安全的非交互初始化参数。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056"],
+      "sources": [{"trace_id": "07b57159-218e-4330-a64e-0ec4b4355056", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-05.json", "key_evidence": [{"location": "source_event_index=585", "quote": "value is encrypted using current_time, current_date, random UUID as salt + value ... salt itself is stored in another ... directory"}, {"location": "source_event_index=632", "quote": "getpass reads directly from the TTY ... add a --address flag for non-interactive use"}, {"location": "source_event_index=642", "quote": "Encrypt → decrypt round-trip perfect"}] }],
+      "applicability": "适用于钱包地址、API token、部署密钥等敏感配置；前提是密钥管理策略允许本地加密存储，并能明确区分交互与自动化初始化。",
+      "quality_rationale": "轨迹包含存储分离、用户输入安全、自动化接口和 round-trip 验证四个必要部分；Skill 描述的是安全边界与验证方法，不复述具体加密实现细节。"
+    },
+    {
+      "skill_id": "S21",
+      "title": "清理工程时只删除可证明的派生物并同步构建入口",
+      "skill": "整理项目目录前先列出每个候选目录/文件的来源和是否仍被构建入口引用，只删除旧输出、重复源码和测试产物；删除后重新检查树、构建脚本和资源路径，并更新 README/.gitignore 使下一次构建不会重新污染仓库。",
+      "source_trace_count": 2,
+      "source_trace_ids": ["4222016d-1932-4abb-94b3-463203bd8876", "92833a43-c30d-4b44-8447-c32ee17d6e6e"],
+      "sources": [
+        {"trace_id": "4222016d-1932-4abb-94b3-463203bd8876", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-08.json", "key_evidence": [{"location": "source_event_index=1174", "quote": "build ... stale output ... duplicate ... stale test save"}, {"location": "source_event_index=1190", "quote": "What remains is exactly what's needed"}]},
+        {"trace_id": "92833a43-c30d-4b44-8447-c32ee17d6e6e", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-02.json", "key_evidence": [{"location": "source_event_index=195", "quote": "clean up my directories, make a .gitignore and update README.MD"}, {"location": "source_event_index=229", "quote": "Zero build artefacts would be staged"}]}
+      ],
+      "applicability": "适用于有编译输出、缓存、复制源码和部署产物的仓库；前提是删除目标可通过构建/引用检查确认。",
+      "quality_rationale": "它把清理的破坏性风险控制在“先查引用、后删、再构建验证”范围内，并将结果沉淀到忽略规则和文档。"
+    },
+    {
+      "skill_id": "S22",
+      "title": "构建后恢复派生文件并保持 PR 只含意图变更",
+      "skill": "在代码审查或 PR 准备中允许构建生成临时派生文件，但提交前逐项核对 diff，恢复未要求的生成物，只 stage 与需求直接相关的文件，并确认分支、提交和 PR 描述与实际最小改动一致。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["2965219c-42ad-45af-889c-4581ecbe0103"],
+      "sources": [{"trace_id": "2965219c-42ad-45af-889c-4581ecbe0103", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-02.json", "key_evidence": [{"location": "source_event_index=235", "quote": "build regenerated the derived files again, so I'll restore those and stage only models.json"}, {"location": "source_event_index=252", "quote": "a single 31-line addition ... No regenerated files"}] }],
+      "applicability": "适用于生成代码、模型索引、锁文件或构建产物可能改变工作区的 PR 流程；前提是项目能区分源文件与派生文件。",
+      "quality_rationale": "这是审查可读性和变更可归因性的具体守则，能阻止一次本地构建把无关差异带进外部提交。"
+    },
+    {
+      "skill_id": "S23",
+      "title": "外发轨迹前做公开性核验、脱敏复查和信任边界停机",
+      "skill": "准备把会话轨迹发送到外部服务前，先核对项目公开性和许可证，定位单个会话，做本地自动脱敏，再人工复查姓名、路径、内部 URL 和部署信息；只有用户明确确认且外部发送未被安全边界阻断时才发送，遇到 trust-boundary 拒绝就停止，不绕过。",
+      "source_trace_count": 3,
+      "source_trace_ids": ["2965219c-42ad-45af-889c-4581ecbe0103", "89cf9e13-a4bd-4cf9-9486-7c89737bec1b", "3be5ba0c-62b2-4645-8589-9216be0c10d8"],
+      "sources": [
+        {"trace_id": "2965219c-42ad-45af-889c-4581ecbe0103", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-02.json", "key_evidence": [{"location": "source_event_index=266", "quote": "public and open-source ... Before I touch any logs, I need your explicit go-ahead"}]},
+        {"trace_id": "89cf9e13-a4bd-4cf9-9486-7c89737bec1b", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__89cf9e13-a4bd-4cf9-9486-7c89737bec1b__segment-01.json", "key_evidence": [{"location": "source_event_index=225", "quote": "session ... includes injected context with personal and operational details ... I'll be scrubbing"}]},
+        {"trace_id": "3be5ba0c-62b2-4645-8589-9216be0c10d8", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-07.json", "key_evidence": [{"location": "source_event_index=1267", "quote": "safety classifier blocked the upload ... I won't try to work around that"}]}
+      ],
+      "applicability": "适用于上传日志、会话、代码或数据集到公共/第三方服务；前提是数据具有永久公开或组织边界风险。",
+      "quality_rationale": "它形成完整的安全顺序：公开性、最小范围、脱敏、人工复核、显式确认、不可绕过的发送阻断；这是明确的跨项目安全 Skill。"
+    },
+    {
+      "skill_id": "S24",
+      "title": "从配置和迁移代码追溯字段语义再解释数据",
+      "skill": "当用户询问数据集字段含义时，不按字段名猜测；先查配置中正负选项的定义，再查迁移/写入代码如何把字段绑定到回答两侧和用户偏好，最后用字段级证据给出解释。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["comparia-voting-fields-anon"],
+      "sources": [{"trace_id": "comparia-voting-fields-anon", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__comparia-voting-fields-anon__segment-01.json", "key_evidence": [{"location": "source_event_index=29", "quote": "useful is a positive reason; superficial is a negative reason ... POSITIVE_PREFS vs NEGATIVE_PREFS ... migrate_votes.py:48-60"}] }],
+      "applicability": "适用于历史数据、匿名标注、问卷字段和迁移后的 schema；前提是配置和写入/迁移代码可读。",
+      "quality_rationale": "它要求用定义点和写入点共同证明语义，能避免把列名、模型侧后缀或正负偏好方向解释反。"
+    },
+    {
+      "skill_id": "S25",
+      "title": "状态型解释器先建立状态再按要求的顺序执行",
+      "skill": "当语言或工作流要求“值按正向求值、语句按反向执行”时，将求值状态预计算与执行顺序分成两个阶段：先按正向顺序建立赋值结果，再按反向顺序执行副作用，并对读取先前赋值的语句写出回归测试。",
+      "source_trace_count": 1,
+      "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056"],
+      "sources": [{"trace_id": "07b57159-218e-4330-a64e-0ec4b4355056", "source_file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03.json", "key_evidence": [{"location": "source_event_index=101", "quote": "values are evaluated left-to-right ... only the execution order ... reversed"}, {"location": "source_event_index=175", "quote": "pre-compute pass ... needs to also execute the assignments in forward order ... then re-execute everything in reverse"}, {"location": "source_event_index=186", "quote": "All passing"}] }],
+      "applicability": "适用于解释器、规则引擎、构建计划或任何将纯求值与副作用顺序分离的系统；前提是语义明确区分值的求值顺序和动作执行顺序。",
+      "quality_rationale": "它不是泛泛的测试建议，而是从失败现象推导出两阶段执行模型，并用依赖赋值的具体回归闭环验证。"
+    }
+  ],
+  "rejected_or_weak": [
+    {"candidate_id": "W01", "candidate": "泛化为‘先 Read/Edit，再 Compile/Test’", "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056", "09d9abe9-0a02-4bd1-8129-3b864695079d", "39082932-131c-40a9-872d-1d3ac8ed1fd6"], "reason": "这是几乎所有开发轨迹都有的工具顺序，没有具体诊断不变量或可迁移决策。"},
+    {"candidate_id": "W02", "candidate": "把所有 UI ‘更像 Apple/更好看’请求合并成一个设计 Skill", "source_trace_ids": ["7563bddf-c1a0-4c3e-86ee-062bf288e6d3", "d4c4d47d-642c-4c26-a866-51ab85587896", "860618e1-0cf6-43c6-81cf-fe67123082ba"], "reason": "轨迹显示的是不同项目和个人审美偏好；除局部字体、响应式几何等已拆出的具体规则外，整体目标不足以形成可验证 Skill。"},
+    {"candidate_id": "W03", "candidate": "把 Vercel 部署、插件安装和一次性部署配置当作通用 Skill", "source_trace_ids": ["11ef2190-67e2-4707-8212-ab12ebffdbc2", "d4c4d47d-642c-4c26-a866-51ab85587896"], "reason": "证据是单次项目配置和外部平台行为，缺少稳定的跨平台不变量；不能只因出现了 buildCommand 就泛化。"},
+    {"candidate_id": "W04", "candidate": "把所有 donate-trace 对话抽成‘任何数据都可以上传’", "source_trace_ids": ["2965219c-42ad-45af-889c-4581ecbe0103", "89cf9e13-a4bd-4cf9-9486-7c89737bec1b", "3be5ba0c-62b2-4645-8589-9216be0c10d8"], "reason": "高质量部分是公开性、脱敏和信任边界停机；‘上传数据’本身不是 Skill，且轨迹明确显示外部上传可能被阻断。"},
+    {"candidate_id": "W05", "candidate": "把具体的加密货币挖矿实现步骤提取成 Skill", "source_trace_ids": ["07b57159-218e-4330-a64e-0ec4b4355056"], "reason": "轨迹支持的是危险操作的分层确认与敏感配置保护，不足以或不应把具体挖矿实现传播为通用 Skill；功能本身也是项目域特例。"},
+    {"candidate_id": "W06", "candidate": "把 30 条中的未含正文的工具调用轨迹当作行为 Skill", "source_trace_ids": ["debaa898-grafana-loki-monitoring"], "reason": "该轨迹有 tool call 计数但 context-expanded 分段没有可用 text 事件，无法从正文证明具体意图或质量。"},
+    {"candidate_id": "W07", "candidate": "把固定项目事实（某角色名、某书名、某个人 URL）当作 Skill", "source_trace_ids": ["860618e1-0cf6-43c6-81cf-fe67123082ba", "d4c4d47d-642c-4c26-a866-51ab85587896"], "reason": "这些是内容资产或个人偏好，不能脱离项目迁移；已保留的 Skill 只描述内容校验或 URL 清理方法。"},
+    {"candidate_id": "W08", "candidate": "把‘更新 README/CHANGELOG’单独提取成高质量 Skill", "source_trace_ids": ["479c5e9f-a299-457f-8459-5948adf8aa8e", "39082932-131c-40a9-872d-1d3ac8ed1fd6", "92833a43-c30d-4b44-8447-c32ee17d6e6e"], "reason": "仅有文档更新动作时过于泛化；只有与测试门槛、派生物清理或 ABI 交付边界结合时，才形成上面保留的具体 Skill。"}
+  ],
+  "totals": {
+    "read_trajectories": 30,
+    "read_segment_files": 118,
+    "extracted_skill_count": 25,
+    "source_count_distribution": {"1": 18, "2": 5, "3": 2},
+    "covered_trajectory_count_deduplicated": 18,
+    "coverage_fraction": "18/30",
+    "covered_trajectory_ids": [
+      "07b57159-218e-4330-a64e-0ec4b4355056",
+      "09d9abe9-0a02-4bd1-8129-3b864695079d",
+      "17c2cf98-e64a-43c6-932e-fa7efcade358",
+      "2965219c-42ad-45af-889c-4581ecbe0103",
+      "3be5ba0c-62b2-4645-8589-9216be0c10d8",
+      "39082932-131c-40a9-872d-1d3ac8ed1fd6",
+      "4222016d-1932-4abb-94b3-463203bd8876",
+      "479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+      "7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+      "89cf9e13-a4bd-4cf9-9486-7c89737bec1b",
+      "92833a43-c30d-4b44-8447-c32ee17d6e6e",
+      "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a",
+      "c84c0ad3-c368-40df-87b1-5ef9effe237a",
+      "c99032e9-377b-4ae9-a9a9-ec7752b059cd",
+      "comparia-voting-fields-anon",
+      "d4c4d47d-642c-4c26-a866-51ab85587896",
+      "f93127ef-dec9-4d58-964b-ee660964ec4d"
+    ],
+    "single_source_skills_retained": 18,
+    "note": "单来源 Skill 没有因缺少第二条相似轨迹而过滤；覆盖数按 source_trace_ids 去重，而不是按 Skill 数量计算。"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "audit_version": "domain-8-llm-skill-audit-v1",
+  "method": "D001-D008 使用同一模型、同一提取口径、同一输出字段和同一质量标准；每个领域是独立分析调用/上下文，只读取该领域 domains.json members 指定的切片。允许单来源 Skill，不以现有聚类候选作语义门槛，不做跨领域去重，不调用 embedding。",
+  "source_inventory": {
+    "slice_directory": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices",
+    "domains_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\unsupervised-domain-complete-v6\\domains.json",
+    "feature_cards_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\domain-feature-cards-v2\\domain-feature-cards.json"
+  },
+  "domains": [
+    {
+      "domain_id": "D001",
+      "declared_slice_count": 65,
+      "actual_read_slice_count": 65,
+      "actual_read_session_count": 25,
+      "missing_file_count": 0,
+      "skill_count": 42,
+      "rejected_or_weak_count": 35,
+      "covered_slice_count": 30,
+      "covered_session_count": 19
+    },
+    {
+      "domain_id": "D002",
+      "declared_slice_count": 43,
+      "actual_read_slice_count": 43,
+      "actual_read_session_count": 20,
+      "missing_file_count": 0,
+      "skill_count": 29,
+      "rejected_or_weak_count": 23,
+      "covered_slice_count": 20,
+      "covered_session_count": 15
+    },
+    {
+      "domain_id": "D003",
+      "declared_slice_count": 45,
+      "actual_read_slice_count": 45,
+      "actual_read_session_count": 15,
+      "missing_file_count": 0,
+      "skill_count": 19,
+      "rejected_or_weak_count": 31,
+      "covered_slice_count": 14,
+      "covered_session_count": 9
+    },
+    {
+      "domain_id": "D004",
+      "declared_slice_count": 29,
+      "actual_read_slice_count": 29,
+      "actual_read_session_count": 11,
+      "missing_file_count": 0,
+      "skill_count": 16,
+      "rejected_or_weak_count": 18,
+      "covered_slice_count": 11,
+      "covered_session_count": 6
+    },
+    {
+      "domain_id": "D005",
+      "declared_slice_count": 45,
+      "actual_read_slice_count": 45,
+      "actual_read_session_count": 16,
+      "missing_file_count": 0,
+      "skill_count": 27,
+      "rejected_or_weak_count": 26,
+      "covered_slice_count": 19,
+      "covered_session_count": 11
+    },
+    {
+      "domain_id": "D006",
+      "declared_slice_count": 36,
+      "actual_read_slice_count": 36,
+      "actual_read_session_count": 16,
+      "missing_file_count": 0,
+      "skill_count": 23,
+      "rejected_or_weak_count": 23,
+      "covered_slice_count": 13,
+      "covered_session_count": 10
+    },
+    {
+      "domain_id": "D007",
+      "declared_slice_count": 27,
+      "actual_read_slice_count": 27,
+      "actual_read_session_count": 11,
+      "missing_file_count": 0,
+      "skill_count": 13,
+      "rejected_or_weak_count": 16,
+      "covered_slice_count": 11,
+      "covered_session_count": 7
+    },
+    {
+      "domain_id": "D008",
+      "declared_slice_count": 24,
+      "actual_read_slice_count": 24,
+      "actual_read_session_count": 12,
+      "missing_file_count": 0,
+      "skill_count": 12,
+      "rejected_or_weak_count": 17,
+      "covered_slice_count": 7,
+      "covered_session_count": 6
+    }
+  ],
+  "totals": {
+    "domain_count": 8,
+    "skill_count": 181,
+    "covered_slice_count_union": 38,
+    "covered_session_count_union": 21,
+    "covered_slice_count_sum_across_domains": 125,
+    "covered_session_count_sum_across_domains": 83,
+    "missing_file_count": 0,
+    "source_slice_count_distribution": {
+      "1": 141,
+      "2": 37,
+      "3": 3
+    },
+    "source_session_count_distribution": {
+      "1": 161,
+      "2": 19,
+      "3": 1
+    }
+  }
+}

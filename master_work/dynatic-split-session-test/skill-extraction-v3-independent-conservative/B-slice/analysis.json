@@ -1,0 +1,94 @@
+{
+  "experiment": "B-slice",
+  "source_root": "vibecoding-trace-data-bundle/dynatic-split-session-test/calibrated-confidence-length-banded-v3-slices",
+  "read_slice_count": 97,
+  "retained_count": 7,
+  "discarded_count": 90,
+  "discarded_record_count": 17,
+  "discarded_count_definition": "90 of 97 input slices yielded no retained Skill; grouped discarded records below explain those slices",
+  "policy": "conservative: retain only a concrete trigger, action or decision, observable verification, scope limit, and direct trajectory evidence",
+  "skills": [
+    {
+      "skill_id": "B-001",
+      "skill": "Diagnose fixed-size solver stack overflows by finding large automatic state copies, then move non-reentrant state to static storage or references before rerunning the complete suite.",
+      "trigger": "A newly compiled C++ test exits with Windows status 0xC00000FD/stack overflow while the solver uses large fixed-capacity ChoiceStack/Database/AtomTable values.",
+      "actions": ["Compute the memory footprint of local solver/test structures.", "Identify accidental by-value copies and large automatic arrays.", "Use static storage for explicitly non-reentrant solver state and references for large test fixtures; preserve the no-post-init-malloc constraint."],
+      "verification": "Recompile the affected binaries, repair the indexing bug exposed during rerun, and run the full suite until 10/10 suites and 144/144 tests pass.",
+      "scope_limit": "Applies to this fixed-capacity, non-reentrant C/C++ solver/test architecture; static storage is not a general concurrency solution.",
+      "sources": [{"file": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-03.json", "evidence": "Exit code -1073741571 = 0xC00000FD = stack overflow. The ChoicePoint struct is now massive ... Multiple large statics in one test binary cause stack overflow."}, {"file": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-03.json", "evidence": "All 13 indexing tests pass. Now let me do a final complete run of all the suites:"}, {"file": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-03.json", "evidence": "10/10 suites, 144/144 tests pass."}]
+    },
+    {
+      "skill_id": "B-002",
+      "skill": "Preserve request-backed route data until routing completes; defer arena cleanup until after the dispatcher has consumed the parsed path.",
+      "trigger": "A route that should match returns 404 even though the route table and parser appear correct.",
+      "actions": ["Trace allocation ownership from request parsing into dispatch.", "Remove the early free that invalidates req.path; keep cleanup at dispatcher exit after comparisons."],
+      "verification": "Rebuild the server and exercise the route after the lifetime fix.",
+      "scope_limit": "Specific to request fields allocated in a temporary arena and consumed by a later dispatcher; do not infer broader allocator policy.",
+      "sources": [{"file": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa/segment-02.json", "evidence": "api_dispatch calls free_all(context.temp_allocator) on the very first line ... req.path slice now points to freed memory ... The fix: don't free the temp allocator at the top of api_dispatch. The defer at the end is sufficient."}, {"file": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa/segment-02.json", "evidence": "That was the bug. free_all(context.temp_allocator) was called at the top of api_dispatch, freeing req.path ... Now let's rebuild:"}]
+    },
+    {
+      "skill_id": "B-003",
+      "skill": "Expose a C++ engine through a narrow C ABI using opaque handles and result values, then validate the boundary with dedicated tests and platform builds.",
+      "trigger": "A C++ engine must be consumable by C and other languages without exposing C++ headers or exception behavior.",
+      "actions": ["Add an extern \"C\" wrapper with opaque handles.", "Translate C++ exceptions into the public result contract and keep implementation types private.", "Compile the wrapper with the engine and run the new boundary tests alongside regression suites."],
+      "verification": "The trace reports the C FFI implementation, direct Windows test execution, and a final 10/10 suites / 144/144 tests pass.",
+      "scope_limit": "C ABI boundary for this engine; the trace does not establish ABI versioning, ownership across arbitrary languages, or thread safety.",
+      "sources": [{"file": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-02.json", "evidence": "Now implement the C FFI layer. This is a clean extern \"C\" wrapper over the engine — opaque handles, no C++ headers exposed:"}, {"file": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-03.json", "evidence": "Now let's build and run the tests:"}, {"file": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-03.json", "evidence": "10/10 suites, 144/144 tests pass."}]
+    },
+    {
+      "skill_id": "B-004",
+      "skill": "When a parser is inseparable from a VM, use a scratch runtime to compile source into a portable serialized bytecode blob, then load it independently.",
+      "trigger": "A planned parser/VM split is contradicted by a monolithic parser whose code generation is interleaved with runtime structures.",
+      "actions": ["Audit the actual parser and existing serialization APIs before restructuring.", "Create a scratch runtime, compile with COMPILE_ONLY, serialize with JS_WriteObject using bytecode/source-strip flags, copy the blob to system malloc, and load it through the public boundary."],
+      "verification": "Stage 1 smoke, Stage 2 subsystem, and Stage 3 bytecode suites all pass: 1246/1246 alloc/free, 135/135, and 101/101.",
+      "scope_limit": "The trace supports this QuickJS-ng/FrostCore architecture; it does not prove a universal parser separation strategy.",
+      "sources": [{"file": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833/segment-02.json", "evidence": "JS_WriteObject / JS_ReadObject already exist and already do atom remapping ... The parser cannot be physically separated from the VM without a massive rewrite."}, {"file": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833/segment-03.json", "evidence": "Stage 1 smoke: all passed, allocs=1246 / frees=1246 (zero leak) - Stage 2 subsystems: 135/135 passed - Stage 3 bytecode: 101/101 passed"}]
+    },
+    {
+      "skill_id": "B-005",
+      "skill": "Port a WebHID-style device UI to Android by preserving a transport interface, swapping only the native send/report seam, and empirically checking the installed WebView.",
+      "trigger": "Android lacks the desktop WebHID path but the existing web UI and device protocol should remain shared.",
+      "actions": ["Implement NativeTransport with the Android bridge write call and report callback.", "Select it when AndroidUsb exists, update the platform banner to recognize the bridge, build/install, inspect logcat, and capture a device screenshot."],
+      "verification": "The app installed and launched without logcat crashes; the screenshot showed the offline UI rendered through WebViewAssetLoader, and the CI APK was confirmed release-signed with CN=openDSP-4x4.",
+      "scope_limit": "Android WebView/native bridge for this DSP app; live USB I/O and all device review flows were not established by the cited evidence.",
+      "sources": [{"file": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f/segment-01.json", "evidence": "web/src/transport/native.ts — NativeTransport; same request/retry chain as webhid.ts, swapping device.sendReport → window.AndroidUsb.write(b64) and the inputreport event → window.__dsp_onReport."}, {"file": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f/segment-03.json", "evidence": "App running (pid 31677), no crash in logcat. Let me screenshot the device to confirm the WebView actually rendered."}, {"file": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f/segment-05.json", "evidence": "CI build passed (2m7s) and the CI APK is signed with CN=openDSP-4x4 (SHA-256 12b4463c…), identical to local"}]
+    },
+    {
+      "skill_id": "B-006",
+      "skill": "Resolve dataset annotation semantics by tracing field names back to the separate positive/negative configuration and checking the published legacy schema before answering.",
+      "trigger": "A reviewer asks what similarly named annotation fields mean and whether they are attached to model side A or B.",
+      "actions": ["Inspect the code that defines positive and negative preference fields.", "Check the published/legacy dataset columns and map each reason to the preferred answer side."],
+      "verification": "The resulting answer states that useful is positive, superficial is negative, and annotations are per model side and tied to the user's preference.",
+      "scope_limit": "Only the cited ComparIA voting schema; no general meaning is inferred for similarly named fields in other datasets.",
+      "sources": [{"file": "claude_code__comparia-voting-fields-anon/segment-01.json", "evidence": "Let me investigate how these annotation fields are defined in the codebase so I can answer [NAME] accurately."}, {"file": "claude_code__comparia-voting-fields-anon/segment-01.json", "evidence": "what the published HuggingFace dataset is actually structured before I draft a reply."}, {"file": "claude_code__comparia-voting-fields-anon/segment-01.json", "evidence": "useful is a positive reason; superficial is a negative reason ... Annotations are per model side (_a / _b) and tied to the user's preference"}]
+    },
+    {
+      "skill_id": "B-007",
+      "skill": "Perform a conservative F-Droid submission review from static evidence when device access is unavailable: compare manifest permissions, recipe metadata, and CI status, and report the limitation.",
+      "trigger": "A submission needs factual scrutiny but the connected device channel cannot be re-established.",
+      "actions": ["Inspect the recipe, package/version, manifest permissions, and pipeline results.", "Separate static findings from unperformed installation/runtime checks and avoid claiming the latter."],
+      "verification": "The trace records 11 MRs reviewed and concrete permission/security findings, while explicitly reporting that no live device channel was available and nothing was installed.",
+      "scope_limit": "Static F-Droid review only; it cannot establish runtime behavior or replace a device test.",
+      "sources": [{"file": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f/segment-08.json", "evidence": "expose_adb was denied ... I currently have no live channel to drive the device for the launch/screenshot part. What I can already report ... from static analysis"}, {"file": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f/segment-09.json", "evidence": "11 MRs reviewed this session ... Xime IME ... INTERNET + dev server ... self-updater, QUERY_ALL_PACKAGES, RECORD_AUDIO"}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "CFML milestone/project planning and ordinary lexer/parser/interpreter implementation", "slice_ids": ["claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-01", "claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-02"], "reason": "Mostly project plan, routine implementation, or ordinary test workflow; no single reusable rule met every retention field without adding assumptions."},
+    {"candidate": "NephilimOS/QEMU/WSL fixes", "slice_ids": ["claude_code__47d9fc04-420c-47bb-8ac0-85780af22632/segment-01..06", "claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d/segment-01..02"], "reason": "Several investigations remain partial, contradictory, or environment-specific; the cited fixes do not establish a stable verified completion for one skill."},
+    {"candidate": "PowerShell download script", "slice_ids": ["claude_code__4c09dfa9-ff25-4b4c-a2d0-d2fd702c64ee/segment-01"], "reason": "Diagnosis begins but the slice does not show a completed fix and verification."},
+    {"candidate": "Gutenberg corpus sizing", "slice_ids": ["claude_code__674e0f5c-c481-4830-b2ef-3e1e069a2b7f/segment-01"], "reason": "Plan/logic explanation interrupted before an observable completed result."},
+    {"candidate": "Manic routes/Reddit UI fixes", "slice_ids": ["claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3/segment-01..03"], "reason": "Edits and hypotheses are present, but route/build verification is incomplete or interrupted."},
+    {"candidate": "Worldbuilding/contact/font/site cleanup", "slice_ids": ["claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba/segment-01..07"], "reason": "Content/design editing and directory cleanup are ordinary workflow, without a bounded reusable technical rule and verification pair."},
+    {"candidate": "ComparIA datasets page cleanup", "slice_ids": ["claude_code__89cf9e13-a4bd-4cf9-9486-7c89737bec1b/segment-01..02"], "reason": "Routine UI change and a donation-flow plan; no sufficiently specific verified skill in the slice."},
+    {"candidate": "Yggdrasil README/.gitignore cleanup", "slice_ids": ["claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e/segment-01..02"], "reason": "Documentation/cleanup workflow; the stage tests are summary evidence for the retained ABI/bytecode skills or otherwise not a distinct skill."},
+    {"candidate": "Odin UI layout, Vercel, favicon, Amazon links", "slice_ids": ["claude_code__d4c4d47d-642c-4c26-a866-51ab85587896/segment-01..04"], "reason": "Ordinary layout/configuration edits; no reusable technical rule with strong independent verification."},
+    {"candidate": "Token encoding/training script", "slice_ids": ["claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a/segment-01..02"], "reason": "Implementation description lacks an execution result proving the generated artifacts or training behavior."},
+    {"candidate": "SvelteKit database route/env debugging", "slice_ids": ["claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a/segment-01..05"], "reason": "The route remained 404 or the session was interrupted; no completed verified result."},
+    {"candidate": "C++23/NASA conversion and test repair", "slice_ids": ["claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd/segment-01..06"], "reason": "Overlaps the retained fixed-size test-state diagnosis and otherwise consists of routine migration/cleanup; do not duplicate near-identical entries."},
+    {"candidate": "Odin HTTP server allocator/thread fixes", "slice_ids": ["claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa/segment-01..04"], "reason": "The investigation has useful hypotheses but no complete stable end-to-end verification in the cited slices; allocator lifetime is retained only where the route failure and fix are explicit."},
+    {"candidate": "Android UI pads/release/docs", "slice_ids": ["claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f/segment-04..07"], "reason": "Routine UI/release/documentation actions; Android bridge verification is consolidated in B-005 to avoid splitting one experience."},
+    {"candidate": "Humanizer skill installation", "slice_ids": ["claude_code__da6566ff-0116-4424-bb59-660623f9eb31/segment-01"], "reason": "Installation report is not a reusable domain skill for this extraction and has no independent execution evidence beyond the assistant summary."},
+    {"candidate": "Kernel-level anti-cheat web research", "slice_ids": ["opencode__ses_129b55f7effeSKRtimLg9wxpXa/segment-01"], "reason": "Research answer lacks retained source citations in the slice and is not a concrete coding trajectory."},
+    {"candidate": "No-text or metadata-only slice", "slice_ids": ["cursor__debaa898-grafana-loki-monitoring/segment-01"], "reason": "No original text evidence from which to construct a Skill."}
+  ]
+}

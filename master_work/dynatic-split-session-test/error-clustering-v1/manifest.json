@@ -1,0 +1,34 @@
+{
+  "version": "error-clustering-v1",
+  "expanded_sessions_dir": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\context-expanded-sessions",
+  "slices_dir": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices",
+  "raw_sessions_root": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions",
+  "missing_original_jsonl": [],
+  "session_input_kind": {
+    "original_jsonl": 29,
+    "original_json": 1
+  },
+  "strategies": {
+    "native-code": "source/code-family + native code, plus nontrivial exit status; no lookup of a predefined error catalog",
+    "exception-type": "qualified capitalized names ending in Error or Exception in report syntax (coarse)",
+    "message-template": "explicit diagnostic/failure lines normalized for paths, quoted arguments and locations"
+  },
+  "slice_overlap": "only core event ranges counted",
+  "session_overlap": "deduplicate expanded segments by original event index/part/channel",
+  "excluded": [
+    "record metadata",
+    "tool call arguments as error evidence",
+    "source code fences",
+    "numbered source excerpts",
+    "passing negative tests",
+    "Read/Grep/Glob/WebSearch/WebFetch returned source/docs"
+  ],
+  "output_missing_policy": "report missing payload; never infer a tool error from its metadata",
+  "semantic_limits": [
+    "same error does not prove same root cause",
+    "text mention is not observed failure",
+    "no fix or Skill is inferred"
+  ],
+  "llm_calls": 0,
+  "embedding_calls": 0
+}

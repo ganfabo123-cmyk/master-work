@@ -1,0 +1,44 @@
+{
+  "version": "strategy-grouping-v2",
+  "expanded_sessions_dir": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\context-expanded-sessions",
+  "slices_dir": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices",
+  "raw_sessions_root": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions",
+  "missing_original_jsonl": [],
+  "session_input_kind": {
+    "original_jsonl": 29,
+    "original_json": 1
+  },
+  "strategies": {
+    "test-case": "Project + suite/file + failed or newly written/edited test identity.",
+    "stack-site": "Exception type + owned throw-site frame parsed from failed runtime output.",
+    "config-change": "Confirmed config filename + parsed complete key path + before/after change.",
+    "dependency-change": "Package ecosystem + package name from manifest writes/edits; old versions stay unknown when absent."
+  },
+  "selected_strategies": [
+    "test-case",
+    "stack-site",
+    "config-change",
+    "dependency-change"
+  ],
+  "group_key_field": "group_key",
+  "strategy_interface": "function(unit) -> matches with group_key, event_position, evidence_line",
+  "event_filtering": "strategy-owned; each function receives all projected events including tool arguments",
+  "slice_overlap": "only core event ranges counted",
+  "session_overlap": "deduplicate expanded segments by original event index/part/channel",
+  "error_strategy_excluded": [
+    "record metadata",
+    "tool call arguments as error evidence",
+    "source code fences",
+    "numbered source excerpts",
+    "passing negative tests",
+    "Read/Grep/Glob/WebSearch/WebFetch returned source/docs"
+  ],
+  "output_missing_policy": "report missing payload; never infer a tool error from its metadata",
+  "semantic_limits": [
+    "same group key does not prove same Skill",
+    "nearby events do not prove a causal chain",
+    "text mention is not an observed outcome"
+  ],
+  "llm_calls": 0,
+  "embedding_calls": 0
+}

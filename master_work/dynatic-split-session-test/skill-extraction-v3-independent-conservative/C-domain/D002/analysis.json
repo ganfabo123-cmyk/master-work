@@ -1,0 +1,19 @@
+{
+  "domain_id": "D002",
+  "read_slices": 43,
+  "skills": [
+    {
+      "skill_id": "C-D002-001",
+      "skill": "为 BIOS/UEFI 双启动保留分层显示回退，并让用户态绘制通过统一 syscall 走 VGA/GOP 双路径。",
+      "trigger": "GOP framebuffer 启用后，旧的直接写 0xB8000 的程序在图形路径不可用。",
+      "actions": ["保留 MB2+GOP、MB2+VGA、MB1+VGA 回退", "移除 snake 对 VGA_ADDR 的直接写入", "通过 SYS_PUTCELL 等 syscall 统一绘制"],
+      "verification": "切片明确报告所有引用一致，并说明绘制不再直接触碰 0xB8000、经 SYS_PUTCELL 进入两种显示路径。",
+      "scope_limit": "限定于该内核的 VGA/GOP 与 snake 用户态程序；不推断为通用图形抽象设计。",
+      "sources": [{"slice_id": "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04", "evidence": "The snake game bypasses the kernel's display abstraction entirely — it writes directly to 0xB8000.", "result_evidence": "Removed all VGA_ADDR direct writes from snake ... All cell drawing goes through SYS_PUTCELL"}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "把 gfxterm 从 GRUB 模块列表移除", "reason": "有明确诊断但切片中的最终运行结果不足以单独证明稳定完成。"},
+    {"candidate": "解释 clang LSP 的 include 假阳性", "reason": "只是环境诊断/普通说明，不构成可复用的领域 Skill。"}
+  ]
+}

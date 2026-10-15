@@ -1,0 +1,594 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "read_trace",
+      "description": "Read an exact character page of an allowed input file. Follow next_offset for long content. No hidden content or other arms can be read. Offsets are Unicode characters, not bytes.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_chars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 48000
+          }
+        },
+        "required": [
+          "file_id",
+          "offset",
+          "max_chars"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "search_trace",
+      "description": "Search visible string values in raw records or slice events. Returns source indices and short matching snippets, never hidden result/thinking payloads. start_match paginates results.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pattern": {
+            "type": "string",
+            "minLength": 1
+          },
+          "regex": {
+            "type": "boolean"
+          },
+          "start_match": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "file_id",
+          "pattern",
+          "regex",
+          "start_match",
+          "limit"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "read_event",
+      "description": "Read a visible event/part by original zero-based source_index and source_part_index. Use offset/next_offset to read long payloads. Does not restore collapsed content.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source_part_index": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_chars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 48000
+          }
+        },
+        "required": [
+          "file_id",
+          "source_index",
+          "source_part_index",
+          "offset",
+          "max_chars"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "response",
+      "description": "Submit the final complete Skill list using every section of the Agent Skill template. Zero Skills is valid. Evidence needs exact visible quotes for problem, action and verification. Successful submission ends this experiment; do not submit a draft.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+                },
+                "description": {
+                  "type": "object",
+                  "properties": {
+                    "use_when": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "helps": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "requires": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "do_not_use_when": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "use_when",
+                    "helps",
+                    "requires",
+                    "do_not_use_when"
+                  ],
+                  "additionalProperties": false
+                },
+                "goal": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "scope": {
+                  "type": "object",
+                  "properties": {
+                    "in_scope": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "minItems": 1
+                    },
+                    "out_of_scope": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  },
+                  "required": [
+                    "in_scope",
+                    "out_of_scope"
+                  ],
+                  "additionalProperties": false
+                },
+                "inputs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "type": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "source": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "required": {
+                        "type": "boolean"
+                      },
+                      "constraints": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "default_value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "type",
+                      "source",
+                      "required",
+                      "constraints",
+                      "default_value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0
+                },
+                "outputs": {
+                  "type": "object",
+                  "properties": {
+                    "artifacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "location": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "format": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "location",
+                          "format"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "minItems": 0
+                    },
+                    "success_criteria": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "minItems": 1
+                    },
+                    "failure_criteria": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "minItems": 1
+                    }
+                  },
+                  "required": [
+                    "artifacts",
+                    "success_criteria",
+                    "failure_criteria"
+                  ],
+                  "additionalProperties": false
+                },
+                "preconditions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "procedure": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "actions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      },
+                      "inputs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "outputs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "cautions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "preserve": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "next_condition": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "actions",
+                      "inputs",
+                      "outputs",
+                      "cautions",
+                      "preserve",
+                      "next_condition"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                },
+                "decision_rules": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "when": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "actions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "when",
+                      "actions"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                },
+                "invariants": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "common_failures": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "symptoms": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "causes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "recovery": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "symptoms",
+                      "causes",
+                      "recovery"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0
+                },
+                "verification": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "examples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "input": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "procedure": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "expected_result": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "parameterized_values": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "input",
+                      "procedure",
+                      "expected_result",
+                      "parameterized_values"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "problem",
+                          "action",
+                          "verification"
+                        ]
+                      },
+                      "file_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "source_index": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "source_part_index": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 0
+                      },
+                      "quote": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "supports": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "file_id",
+                      "source_index",
+                      "source_part_index",
+                      "quote",
+                      "supports"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 3
+                }
+              },
+              "required": [
+                "title",
+                "name",
+                "description",
+                "goal",
+                "scope",
+                "inputs",
+                "outputs",
+                "preconditions",
+                "procedure",
+                "decision_rules",
+                "invariants",
+                "common_failures",
+                "verification",
+                "examples",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "excluded_candidates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "file_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "topic",
+                "reason",
+                "file_ids"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "skills",
+          "excluded_candidates"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+]

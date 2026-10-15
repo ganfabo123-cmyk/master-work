@@ -1,0 +1,19 @@
+{
+  "domain_id": "D006",
+  "read_slices": 36,
+  "skills": [
+    {
+      "skill_id": "C-D006-001",
+      "skill": "对多页 CSS 改动执行统一的设计规范审计，并以全部文件通过作为交付门槛。",
+      "trigger": "页面样式拆分后需要确认 token、共享布局类和页面 CSS 仍符合 DESIGN.MD。",
+      "actions": ["逐文件检查 CSS 约定", "修正按钮标签和术语等发现项", "重新运行全量 CSS 审计"],
+      "verification": "切片明确报告 all six CSS files passed the DESIGN.MD conventions check，且 build clean。",
+      "scope_limit": "仅适用于该项目 DESIGN.MD 约束下的 CSS 审计，不泛化为所有样式检查。",
+      "sources": [{"slice_id": "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-04", "evidence": "The CSS audit is complete. All six CSS files passed the DESIGN.MD conventions check.", "result_evidence": "The CSS audit is complete ... the build is clean."}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "把 CSS index 与字体路径改到 dist", "reason": "证据主要是路径推理和改动说明，未形成独立的最终行为验证。"},
+    {"candidate": "调节单个页面的颜色/布局", "reason": "属于普通样式编辑，缺少明确可迁移的触发和完成条件。"}
+  ]
+}

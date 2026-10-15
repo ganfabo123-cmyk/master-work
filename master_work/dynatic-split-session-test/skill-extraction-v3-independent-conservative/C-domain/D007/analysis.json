@@ -1,0 +1,19 @@
+{
+  "domain_id": "D007",
+  "read_slices": 27,
+  "skills": [
+    {
+      "skill_id": "C-D007-001",
+      "skill": "解析多个 C++ 字符串字面量拼接的多子句输入时，保证子句之间保留空格，否则词法分析会把相邻子句粘成一个 token 流。",
+      "trigger": "多子句字符串被直接相邻拼接，解析结果异常。",
+      "actions": ["检查拼接后的实际输入字符流", "在相邻字面量之间加入空格", "运行解析与 DLL bridge smoke test"],
+      "verification": "切片报告 multi-clause loading works fine with spaces，随后 M1 bridge smoke test passes，且 clean build/link/smoke test 全部通过。",
+      "scope_limit": "限定于该 C++ parser 的多字面量输入边界；不扩展为一般字符串规范。",
+      "sources": [{"slice_id": "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02", "evidence": "The original issue was that the three C++ string literals were concatenated without spaces", "result_evidence": "Multi-clause loading works fine with spaces between clauses."}, {"slice_id": "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-04", "evidence": "M1 bridge smoke test PASSES.", "result_evidence": "Clean build, DLL compilation, import lib generation, Odin linking, and smoke test — all passing end-to-end."}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "解释 Windows clang 对 Linux 头文件的诊断", "reason": "只是平台环境说明，未形成目标解析行为的修复闭环。"},
+    {"candidate": "安装 GCC 4.5", "reason": "是环境安装/验证操作，不是由该领域轨迹充分证明的稳定 Skill。"}
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-14",
+  "group_id": "native-code-f3df951dc57a",
+  "model": "gpt-5.6-luna",
+  "shared_prompt_sha256": "79432c1a1610a85b5a44c880d629078662d8d8c060552113a0d2062ca346ff14",
+  "status": "completed",
+  "original_session_count": 5,
+  "selected_slice_count": 9,
+  "original_skill_count": 5,
+  "selected_skill_count": 3,
+  "original_input_bytes": 13295678,
+  "selected_input_bytes": 2901353,
+  "byte_reduction_fraction": 0.7817822453281434,
+  "byte_ratio_is_not_token_cost": true,
+  "explicit_shared_experience": "serialized compile/runtime bytecode boundary",
+  "selected_additional_experience": "token-driven incremental lexer/parser debugging",
+  "quality_review": {
+    "A-original": [
+      "较好：runtime 分配器和隔离边界",
+      "中等偏好：可选子系统依赖与幂等",
+      "较好：字节码所有权和重复执行",
+      "较好：大对象按值复制导致测试栈溢出",
+      "较好：批处理失败隔离与测试器误报"
+    ],
+    "B-selected": [
+      "一般：跨平台构建大杂烩，范围过宽",
+      "较好：Token 证据驱动的 lexer/parser 调试",
+      "较好：序列化编译边界，但缺少保留函数句柄的具体操作"
+    ]
+  },
+  "skill_loss_rate": null,
+  "reason_loss_rate_not_estimated": "Outputs differ in granularity and model selection; essential later evidence for all five original-arm experiences has references in selected input. Original output is not a gold standard.",
+  "known_evidence_losses": "Early FrostCore implementation and initial Stage 1/2 development events are excluded; later implementation reads and direct regression output are retained.",
+  "known_output_defects": [
+    "A stack-fixture skill cites impossible source positions 1204 and 1208 in a 378-line Session",
+    "Both outputs sometimes fix observed test counts as universal verification criteria",
+    "B omits the requested per-skill source evidence tables"
+  ],
+  "report_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-lnk1105-original-vs-selected-full-v2\\comparison.md"
+}

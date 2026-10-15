@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-14",
+  "strategy": "selected-full-rest-collapsed",
+  "group_id": "native-code-f3df951dc57a",
+  "status": "completed",
+  "output_skill_count": 4,
+  "intact_slice_count": 9,
+  "collapsed_slice_count": 11,
+  "exported_slice_count": 20,
+  "collapsed_event_count_with_overlap": 502,
+  "input_bytes": 4407814,
+  "shared_prompt_sha256": "79432c1a1610a85b5a44c880d629078662d8d8c060552113a0d2062ca346ff14",
+  "quality_review": [
+    {
+      "skill": "Windows 大对象测试栈溢出",
+      "judgment": "较好，关键问题、修复和验证均有直接证据"
+    },
+    {
+      "skill": "独立可重复加载字节码",
+      "judgment": "较好，所有权和重复执行细节完整；空源码必然失败等额外断言无验证，需删除"
+    },
+    {
+      "skill": "C ABI 封装",
+      "judgment": "不宜作为已验证跨语言 Skill 保留；144/144 原生套件不含 FFI 调用测试，不能证明 C/Python/Odin ABI 行为"
+    },
+    {
+      "skill": "批处理 CLI 错误隔离",
+      "judgment": "有价值但需修正；try/catch 路径仍失败，真正通过的是改用 cmd /c 捕获真实退出码；Unix 验收未直接验证"
+    }
+  ],
+  "cost_comparison": {
+    "vs_original": {
+      "total_token_reduction_pct": 40.82675695819346,
+      "noncached_input_reduction_pct": 18.0496947949764,
+      "duration_reduction_pct": 18.966712898751737
+    },
+    "vs_selected_only": {
+      "total_token_reduction_pct": 37.88155270122383,
+      "noncached_input_reduction_pct": 6.230933321100074,
+      "duration_reduction_pct": 41.31642549985875
+    }
+  },
+  "skill_loss_rate": null,
+  "quality_improvement_rate": null,
+  "limits": "One independent run, different model reading/turn choices; A/B previous runs. More generated skills is not proof of higher usable skill quality.",
+  "report_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-lnk1105-context-collapsed-v3\\review.md"
+}

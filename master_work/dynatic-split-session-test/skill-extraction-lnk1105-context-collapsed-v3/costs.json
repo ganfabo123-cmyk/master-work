@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-14",
+  "scope": "Extraction subagents only. A/B are previous runs, C is current independent run. No parent preparation/review costs.",
+  "amount_recorded": false,
+  "stats": [
+    {
+      "arm": "A-original",
+      "agent_path": "/root/lnk1105_full_v2_original",
+      "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\14\\rollout-2026-10-14T10-12-44-01a1382e-f81d-7220-aedc-a4b94d62b4ca.jsonl",
+      "model": "gpt-5.6-luna",
+      "input_tokens": 1641657,
+      "cached_input_tokens": 1541888,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 14017,
+      "reasoning_output_tokens": 1333,
+      "total_tokens": 1655674,
+      "noncached_input_tokens": 99769,
+      "model_request_count": 21,
+      "duration_ms": 138432,
+      "time_to_first_token_ms": 6525
+    },
+    {
+      "arm": "B-selected",
+      "agent_path": "/root/lnk1105_full_v2_selected",
+      "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\14\\rollout-2026-10-14T10-12-51-01a1382f-10d1-7983-81e9-604385277bea.jsonl",
+      "model": "gpt-5.6-luna",
+      "input_tokens": 1564314,
+      "cached_input_tokens": 1477120,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 12860,
+      "reasoning_output_tokens": 1475,
+      "total_tokens": 1577174,
+      "noncached_input_tokens": 87194,
+      "model_request_count": 22,
+      "duration_ms": 191154,
+      "time_to_first_token_ms": 7678
+    },
+    {
+      "arm": "C-selected-full-rest-collapsed",
+      "agent_path": "/root/lnk1105_collapsed_context_v3",
+      "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\14\\rollout-2026-10-14T10-36-17-01a13844-872f-74d0-b224-da983e6a52e4.jsonl",
+      "model": "gpt-5.6-luna",
+      "input_tokens": 967265,
+      "cached_input_tokens": 885504,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 12451,
+      "reasoning_output_tokens": 1091,
+      "total_tokens": 979716,
+      "noncached_input_tokens": 81761,
+      "model_request_count": 13,
+      "duration_ms": 112176,
+      "time_to_first_token_ms": 6770
+    }
+  ]
+}

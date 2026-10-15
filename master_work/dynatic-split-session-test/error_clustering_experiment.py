@@ -10,11 +10,14 @@ import argparse
 from collections import Counter, defaultdict
 import hashlib
 import json
+import posixpath
 from pathlib import Path
 import re
+import tomllib
+import xml.etree.ElementTree as ET
 from typing import Any, Callable, Iterable
 
-VERSION = "strategy-grouping-v1"
+VERSION = "strategy-grouping-v2"
 # Historical defaults remain fixed; newly registered strategies are opt-in.
 STRATEGIES = ("native-code", "exception-type", "message-template")
 STRATEGY_REGISTRY: dict[str, Callable[[dict], Iterable[dict]]] = {}
@@ -182,12 +185,341 @@ def strategy_message_template(unit: dict) -> Iterable[dict]:
     return _error_matches(unit, "message-template")
 
 
+def _path(value: str) -> str:
+    result = str(value).replace("\\", "/").rstrip("/")
+    result = re.sub(r"/+", "/", result)
+    return result.casefold() if re.match(r"^[A-Za-z]:/", result) else result
+
+
+def _scope(unit: dict, position: int) -> str:
+    for event in reversed(unit["events"][:position + 1]):
+        if event.get("cwd"):
+            return _path(event["cwd"])
+    return "session:" + unit["session_id"]
+
+
+def _file_identity(unit: dict, position: int, filename: str) -> str:
+    filename = _path(filename)
+    scope = _scope(unit, position)
+    if filename.startswith("/") or re.match(r"^[a-z]:/", filename):
+        return posixpath.normpath(filename)
+    if ("/" in filename or re.search(r"\.(?:py|cpp|c|java|js|ts|groovy|json|toml)(?:::|$)", filename)) and not scope.startswith("session:"):
+        return posixpath.normpath(scope + "/" + filename)
+    return scope + "::" + filename
+
+
+def _runtime_output(event: dict) -> bool:
+    return (event["channel"] == "tool_result" and event["text"] and
+            event["tool_name"].casefold() not in {"read", "grep", "glob", "webfetch", "websearch", "semanticsearch"})
+
+
+def _hit(position: int, key: str, evidence: str, **details: Any) -> dict:
+    return {"event_position": position, "group_key": key, "evidence_line": evidence[:2000],
+            "evidence_line_truncated": len(evidence) > 2000, **details}
+
+
+def _written_test_names(text: str, filename: str) -> list[str]:
+    name = _path(filename)
+    if not ("/tests/" in name or "/test/" in name or re.search(r"(?:^|/)(?:test[_-]|.*(?:_test|\.test|\.spec|_spec|spec)\.)", name, re.I)):
+        return []
+    names = []
+    for pattern in (r"^\s*(?:async\s+)?def\s+(test_\w+)\s*\(",
+                    r"^\s*TEST\s*\(\s*[\"']([^\"']+)[\"']",
+                    r"^\s*(?:test|it)\s*\(\s*[\"']([^\"']+)[\"']",
+                    r"^\s*def\s+[\"']([^\"']+)[\"']\s*\("):
+        names.extend(re.findall(pattern, text, re.M))
+    return sorted(set(names))
+
+
+def strategy_test_case(unit: dict) -> Iterable[dict]:
+    """Project + suite/file + failed or newly written/edited test identity."""
+    for position, event in enumerate(unit["events"]):
+        if event["channel"].startswith("tool_call"):
+            args = event.get("arguments", {})
+            if not isinstance(args, dict):
+                continue
+            filename = str(args.get("file_path", args.get("path", "")))
+            # Only names present in the actual changed text; untouched suite PASS
+            # and unnamed assertion failures never create test memberships.
+            changed = str(args.get("new_string", args.get("content", "")))
+            for name in _written_test_names(changed, filename):
+                identity = _file_identity(unit, position, filename)
+                definition = next((line for line in changed.splitlines() if name in _written_test_names(line, filename)), name)
+                yield _hit(position, f"test:{identity}::{name}", definition, test_name=name,
+                           test_owner=identity, trigger="test_definition_change", evidence_kind="tool_call")
+        if not _runtime_output(event):
+            continue
+        text = ANSI.sub("", event["text"])
+        # JUnit XML fragments are accepted only with explicit failed/error cases.
+        for fragment in re.findall(r"<testcase\b.*?</testcase>", text, re.S):
+            try:
+                case = ET.fromstring(fragment)
+            except ET.ParseError:
+                continue
+            if case.find("failure") is None and case.find("error") is None:
+                continue
+            name, owner = case.get("name"), case.get("classname")
+            if name and owner:
+                identity = _scope(unit, position) + "::" + owner
+                yield _hit(position, f"test:{identity}::{name}", fragment, test_name=name,
+                           test_owner=identity, trigger="failed_test", evidence_kind="tool_output")
+        for line in text.splitlines():
+            match = re.match(r"\s*FAILED\s+(\S+::\S+)(?:\s|$)", line)
+            if match:
+                owner, name = match[1].rsplit("::", 1)
+            else:
+                match = re.match(r"\s*FAIL:\s+(\w+)\s+\(([^)]+)\)", line)
+                if match:
+                    name, owner = match[1], match[2]
+                else:
+                    match = re.match(r"\s*([\w.$]+)\s*>\s*(.+?)\s+FAILED\s*$", line)
+                    if match:
+                        owner, name = match[1], match[2]
+                    else:
+                        match = re.match(r"\s*FAIL\s+([A-Za-z_][\w./-]+)(?:\s*:\s*|\s*$)", line)
+                        if not match:
+                            continue
+                        name = match[1]
+                        if re.search(r"\.(?:cpp|c|py|java|js|ts)$", name):
+                            continue  # A source location is not a test-case name.
+                        owner = name.rsplit("/", 1)[0] if "/" in name else "reported-suite"
+            identity = _file_identity(unit, position, owner)
+            yield _hit(position, f"test:{identity}::{name}", line, test_name=name,
+                       test_owner=identity, trigger="failed_test", evidence_kind="tool_output")
+
+
+def strategy_stack_site(unit: dict) -> Iterable[dict]:
+    """Exception type + owned throw-site frame parsed from failed runtime output."""
+    for position, event in enumerate(unit["events"]):
+        if not _runtime_output(event):
+            continue
+        text = ANSI.sub("", event["text"])
+        if re.search(r"(?:Results:\s*\d+ passed,\s*0 failed|failures=0\s+errors=0|All .*tests PASSED)", text, re.I):
+            continue  # Expected exceptions in a successful test report.
+        frames = []
+        exception = ""
+        style = ""
+        for line in text.splitlines():
+            if re.match(r"\s*(?:PASS\b|\d+\s*[\t|→])", line):
+                continue
+            python = re.match(r'\s*File "([^"]+)", line (\d+), in (.+)', line)
+            other = re.match(r"\s*at\s+([\w.$<>]+)\s*\((.+?):(\d+)(?::\d+)?\)", line)
+            error = re.search(r"\b((?:[\w]+\.)*(?:[A-Z]\w*(?:Error|Exception)|Error|Exception))\s*:", line)
+            if python:
+                style = "python"
+                frames.append({"file": python[1], "line": int(python[2]), "function": python[3].strip()})
+            elif other:
+                style = "java-or-js"
+                frames.append({"file": other[2], "line": int(other[3]), "function": other[1]})
+            elif error:
+                # Java/JS chained causes begin a fresh frame block; Python's
+                # exception type follows its frames.
+                if style == "java-or-js":
+                    frames = []
+                exception = error[1]
+        if not frames or not exception:
+            continue
+        site = frames[-1] if style == "python" else frames[0]
+        symbol = site["function"]
+        if style == "python" or "." not in symbol:
+            symbol = _file_identity(unit, position, site["file"]) + "::" + symbol
+        yield _hit(position, f"stack:{exception}::{symbol}", text, exception_type=exception,
+                   throw_site=site, frames=frames, stack_format=style, evidence_kind="tool_output")
+
+
+def _clean_file_text(text: str) -> str:
+    return "\n".join(re.sub(r"^\s*\d+[\t→]", "", line) for line in text.splitlines())
+
+
+def _file_changes(unit: dict) -> Iterable[dict]:
+    """Recover writes/edits using only snapshots observed inside this unit."""
+    snapshots = {}
+    calls = {}
+    last_read = None
+    for position, event in enumerate(unit["events"]):
+        args = event.get("arguments", {})
+        if event["channel"].startswith("tool_call") and isinstance(args, dict):
+            filename = str(args.get("file_path", args.get("path", "")))
+            if not filename:
+                continue
+            key = _path(filename)
+            if event["tool_name"].casefold() == "read":
+                last_read = (key, position)
+                if event.get("tool_use_id"):
+                    calls[event["tool_use_id"]] = last_read
+            elif "content" in args or "new_string" in args:
+                before = snapshots.get(key)
+                old = args.get("old_string")
+                new = args.get("new_string", args.get("content"))
+                if not isinstance(new, str):
+                    continue
+                if "content" in args:
+                    after = new
+                    mode = "write"
+                elif before is not None and isinstance(old, str) and old in before:
+                    count = -1 if args.get("replace_all") else 1
+                    after = before.replace(old, new, count)
+                    mode = "snapshot-edit"
+                else:
+                    before, after, mode = old, new, "fragment-edit"
+                if mode != "fragment-edit":
+                    snapshots[key] = after
+                else:
+                    snapshots.pop(key, None)
+                yield {"position": position, "filename": filename, "before": before,
+                       "after": after, "mode": mode, "evidence": json.dumps(args, ensure_ascii=False)}
+        elif event["channel"] == "tool_result" and event["tool_name"].casefold() == "read":
+            reference = calls.get(event.get("tool_use_id")) or last_read
+            if reference and event["text"]:
+                snapshots[reference[0]] = _clean_file_text(event["text"])
+            last_read = None
+
+
+def _structured(text: str | None, filename: str, fragment: bool = False) -> dict | None:
+    if text is None:
+        return None
+    try:
+        if filename.casefold().endswith(".toml"):
+            value = tomllib.loads(text)
+        else:
+            # JSONC comments are stripped only outside quoted strings.
+            cleaned = re.sub(r'("(?:\\.|[^"\\])*")|//[^\n]*|/\*.*?\*/',
+                             lambda m: m[1] or "", text, flags=re.S)
+            cleaned = re.sub(r'("(?:\\.|[^"\\])*")|,\s*([}\]])',
+                             lambda m: m[1] or m[2], cleaned)
+            if fragment:
+                cleaned = "{" + cleaned.strip().strip(",") + "}"
+            value = json.loads(cleaned)
+        return value if isinstance(value, dict) else None
+    except (ValueError, tomllib.TOMLDecodeError):
+        return None
+
+
+def _flatten(value: dict, prefix: tuple = ()) -> dict[tuple, Any]:
+    result = {}
+    for key, item in value.items():
+        path = prefix + (str(key),)
+        if isinstance(item, dict):
+            result.update(_flatten(item, path))
+        else:
+            result[path] = item  # Arrays stay intact; index changes are ambiguous.
+    return result
+
+
+def strategy_config_change(unit: dict) -> Iterable[dict]:
+    """Confirmed config filename + parsed complete key path + before/after change."""
+    for change in _file_changes(unit):
+        filename = change["filename"]
+        basename = _path(filename).rsplit("/", 1)[-1]
+        if not basename.endswith((".json", ".jsonc", ".toml")):
+            continue
+        # Generic filename conventions, not a catalog of domain configuration keys.
+        if not ("config" in basename or "settings" in basename or re.search(r"rc\.jsonc?$", basename)):
+            continue
+        if change["mode"] == "fragment-edit":
+            continue  # Cannot claim a complete key path from an isolated fragment.
+        before = _structured(change["before"], filename)
+        after = _structured(change["after"], filename)
+        if before is None or after is None:
+            continue
+        left, right = _flatten(before), _flatten(after)
+        for path in sorted(left.keys() | right.keys()):
+            if path in left and path in right and left[path] == right[path]:
+                continue
+            key_path = "/".join(path)
+            schema = after.get("$schema", before.get("$schema"))
+            identity = "schema:" + schema if isinstance(schema, str) else _file_identity(unit, change["position"], filename)
+            yield _hit(change["position"], f"config:{identity}::{key_path}", change["evidence"],
+                       config_file=filename, key_path=list(path), old_value=left.get(path), new_value=right.get(path),
+                       old_present=path in left, new_present=path in right, reconstruction=change["mode"],
+                       evidence_kind="tool_call")
+
+
+def _dependencies(text: str | None, filename: str) -> dict[tuple[str, str], str] | None:
+    if text is None:
+        return None
+    base = _path(filename).rsplit("/", 1)[-1]
+    result = {}
+    if base == "package.json":
+        value = _structured(text, filename)
+        if value is None:
+            return None
+        for section in ("dependencies", "devDependencies", "peerDependencies", "optionalDependencies"):
+            entries = value.get(section, {})
+            if not isinstance(entries, dict):
+                continue
+            for name, version in entries.items():
+                result[("npm", name)] = str(version)
+        return result
+    if base == "cargo.toml":
+        value = _structured(text, filename)
+        if value is None:
+            return None
+        for section in ("dependencies", "dev-dependencies", "build-dependencies"):
+            for name, version in value.get(section, {}).items():
+                result[("cargo", name)] = json.dumps(version, sort_keys=True) if isinstance(version, dict) else str(version)
+        return result
+    if base == "pyproject.toml":
+        value = _structured(text, filename)
+        if value is None:
+            return None
+        entries = value.get("project", {}).get("dependencies", [])
+        entries += [item for group in value.get("project", {}).get("optional-dependencies", {}).values() for item in group]
+        for item in entries:
+            match = re.match(r"([\w.-]+)(.*)", item)
+            if match:
+                result[("pypi", re.sub(r"[-_.]+", "-", match[1]).lower())] = match[2].strip()
+        return result
+    if re.match(r"requirements.*\.txt$", base):
+        for line in text.splitlines():
+            match = re.match(r"\s*([\w.-]+)\s*([<>=!~].*)?$", line)
+            if match:
+                result[("pypi", re.sub(r"[-_.]+", "-", match[1]).lower())] = (match[2] or "").strip()
+        return result
+    if base in {"build.gradle", "build.gradle.kts"}:
+        for match in re.finditer(r"\b(?:implementation|api|compileOnly|runtimeOnly|testImplementation|testRuntimeOnly|errorprone)\s*\(?\s*['\"]([^:'\"]+):([^:'\"]+):([^'\"]+)['\"]", text):
+            result[("maven", match[1] + ":" + match[2])] = match[3]
+        for match in re.finditer(r"\bid\s*\(?\s*['\"]([^'\"]+)['\"]\s*\)?\s*version\s*['\"]([^'\"]+)['\"]", text):
+            result[("gradle-plugin", match[1])] = match[2]
+        return result
+    return None
+
+
+def strategy_dependency_change(unit: dict) -> Iterable[dict]:
+    """Package ecosystem + package name from manifest writes/edits; old versions stay unknown when absent."""
+    for change in _file_changes(unit):
+        before = _dependencies(change["before"], change["filename"])
+        after = _dependencies(change["after"], change["filename"])
+        if after is None:
+            continue
+        if change["mode"] == "fragment-edit" and before is None:
+            continue
+        left = before or {}
+        for identity in sorted(left.keys() | after.keys()):
+            if before is not None and identity in left and identity in after and left[identity] == after[identity]:
+                continue
+            ecosystem, name = identity
+            operation = ("declaration_old_unknown" if before is None else "removed" if identity not in after
+                         else "added" if identity not in left else "version_changed")
+            if change["mode"] == "fragment-edit" and operation in {"added", "removed"}:
+                operation = "fragment_declaration_" + operation
+            yield _hit(change["position"], f"dependency:{ecosystem}::{name}", change["evidence"],
+                       ecosystem=ecosystem, package_name=name, old_version=left.get(identity),
+                       new_version=after.get(identity), old_version_known=before is not None,
+                       operation=operation, manifest_file=change["filename"], reconstruction=change["mode"],
+                       evidence_kind="tool_call")
+
+
 # Add future test/stack/config/dependency functions here, then select their names
 # with --strategies. No change to loading, scan(), group(), or run() is needed.
 STRATEGY_REGISTRY.update({
     "native-code": strategy_native_code,
     "exception-type": strategy_exception_type,
     "message-template": strategy_message_template,
+    "test-case": strategy_test_case,
+    "stack-site": strategy_stack_site,
+    "config-change": strategy_config_change,
+    "dependency-change": strategy_dependency_change,
 })
 
 
@@ -210,7 +542,7 @@ def project(event: dict, path: Path, offset: int, event_index: int) -> dict:
         "event_index": event_index, "source_index": event.get("source_index", event.get("source_event_index", event_index)),
         "source_part_index": event.get("source_part_index", 0), "channel": channel,
         "text": text, "tool_name": tool_name, "command": command,
-        "arguments": arguments,
+        "arguments": arguments, "cwd": event.get("cwd", ""),
         "tool_use_id": event.get("tool_use_id", event.get("id", "")),
         "source_path": str(path.resolve()), "json_pointer": f"/events/{offset}",
     }
@@ -277,7 +609,8 @@ def raw_events(path: Path) -> list[dict]:
                 row = project({"category": category, "text": part.get("text", part.get("thinking", "")),
                     "content": part.get("content", part.get("output", "")), "arguments": part.get("input", part.get("arguments", {})),
                     "tool_name": part.get("name", ""), "tool_use_id": part.get("tool_use_id", part.get("id", "")),
-                    "source_index": index, "source_part_index": part_index}, path, index, index)
+                    "source_index": index, "source_part_index": part_index,
+                    "cwd": source.get("cwd", source.get("info", {}).get("path", {}).get("cwd", ""))}, path, index, index)
                 row["json_pointer"] = f"jsonl:{index + 1}/content/{part_index}"
                 if path.suffix == '.json':
                     row['json_pointer'] = f'/messages/{index}/parts/{part_index}'
@@ -301,6 +634,8 @@ def load_slices(root: Path, raw_by_session: dict[str, dict[tuple, dict]]) -> lis
                 continue
             row = project(event, path, offset, index)
             raw = raw_by_session.get(sid, {}).get((row["source_index"], row["source_part_index"]))
+            if raw:
+                row["cwd"] = raw.get("cwd", "")
             if raw and row["channel"] == "tool_result" and not row["text"]:
                 row["text"] = raw["text"]
                 row['tool_name'] = raw['tool_name']
@@ -414,7 +749,7 @@ def run(expanded_dir: Path, slices_dir: Path, output: Path, raw_root: Path | Non
             unit["events"] = raw_events(path)
             unit["source_paths"] = [str(path.resolve())]
             unit["input_kind"] = "original_json" if path.suffix == '.json' else "original_jsonl"
-            raw_by_session[unit["session_id"]] = {(e["source_index"], e["source_part_index"]): e for e in unit["events"] if e['channel'] == 'tool_result'}
+            raw_by_session[unit["session_id"]] = {(e["source_index"], e["source_part_index"]): e for e in unit["events"]}
         else:
             missing_raw.append(sources[unit["session_id"]])
     slices = load_slices(slices_dir, raw_by_session)

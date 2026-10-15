@@ -1,0 +1,166 @@
+{
+  "experiment": "skill-extraction-v3-independent-conservative",
+  "generated_by": "three independent subagents; A/B/C were not shared during extraction",
+  "principle": "宁缺毋滥：没有同时具备问题/触发条件、具体动作、可验证结果、适用边界和直接来源证据的候选不保留；允许输出零条",
+  "groups": {
+    "A-session": {
+      "input": "30 full Sessions / 117 expanded segments",
+      "skill_count": 6,
+      "discarded_count": 24,
+      "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\A-session\\analysis.json",
+      "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\A-session\\analysis.md"
+    },
+    "B-slice": {
+      "input": "97 slices",
+      "skill_count": 7,
+      "discarded_count": 17,
+      "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\B-slice\\analysis.json",
+      "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\B-slice\\analysis.md"
+    },
+    "C-domain": {
+      "input": "8 domains / 314 domain-member reads",
+      "skill_count": 7,
+      "discarded_count": 16,
+      "domain_details": [
+        {
+          "domain": "D001",
+          "read_slice_count": 65,
+          "skill_count": 1,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D001\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D001\\analysis.md"
+        },
+        {
+          "domain": "D002",
+          "read_slice_count": 43,
+          "skill_count": 1,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D002\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D002\\analysis.md"
+        },
+        {
+          "domain": "D003",
+          "read_slice_count": 45,
+          "skill_count": 1,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D003\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D003\\analysis.md"
+        },
+        {
+          "domain": "D004",
+          "read_slice_count": 29,
+          "skill_count": 0,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D004\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D004\\analysis.md"
+        },
+        {
+          "domain": "D005",
+          "read_slice_count": 45,
+          "skill_count": 1,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D005\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D005\\analysis.md"
+        },
+        {
+          "domain": "D006",
+          "read_slice_count": 36,
+          "skill_count": 1,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D006\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D006\\analysis.md"
+        },
+        {
+          "domain": "D007",
+          "read_slice_count": 27,
+          "skill_count": 1,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D007\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D007\\analysis.md"
+        },
+        {
+          "domain": "D008",
+          "read_slice_count": 24,
+          "skill_count": 1,
+          "discarded_count": 2,
+          "analysis_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D008\\analysis.json",
+          "analysis_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\D008\\analysis.md"
+        }
+      ],
+      "summary_json": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\summary.json",
+      "summary_md": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v3-independent-conservative\\C-domain\\summary.md"
+    }
+  },
+  "totals": {
+    "raw_skill_records": 20,
+    "discarded_records": 57,
+    "source_records_with_empty_evidence": 0,
+    "missing_source_files": 0
+  },
+  "verification": {
+    "all_json_readable": true,
+    "all_retained_skills_have_nonempty_direct_evidence": true,
+    "all_source_files_exist": true,
+    "code_modified": false
+  },
+  "notes": [
+    "C 是按 D001-D008 独立处理；本次没有跨领域合并或去重。",
+    "三组的 raw skill 数量不可直接视为独立 Skill 家族数量。"
+  ],
+  "resource_usage": {
+    "source": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\13\\rollout-*.jsonl",
+    "measurement": "Each agent initial extraction task; thread_token_usage and task_complete.duration_ms immediately before initial task completion. Follow-up messages requesting stats are excluded.",
+    "agents": [
+      {
+        "group": "A-session",
+        "agent_path": "/root/independent_a_session_skill_extract",
+        "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\13\\rollout-2026-10-13T15-48-39-01a1343c-250e-7513-ac14-bfb07dfe3e36.jsonl",
+        "input_tokens": 1935623,
+        "cached_input_tokens": 1811712,
+        "output_tokens": 11383,
+        "reasoning_output_tokens": 2298,
+        "total_tokens": 1947006,
+        "duration_ms": 131352,
+        "duration": "2m 11.352s",
+        "time_to_first_token_ms": 6286
+      },
+      {
+        "group": "B-slice",
+        "agent_path": "/root/independent_b_slice_skill_extract",
+        "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\13\\rollout-2026-10-13T15-48-53-01a1343c-5de5-73f2-8238-abff6a7b00fd.jsonl",
+        "input_tokens": 2607141,
+        "cached_input_tokens": 2512128,
+        "output_tokens": 16506,
+        "reasoning_output_tokens": 3763,
+        "total_tokens": 2623647,
+        "duration_ms": 169288,
+        "duration": "2m 49.288s",
+        "time_to_first_token_ms": 6209
+      },
+      {
+        "group": "C-domain",
+        "agent_path": "/root/independent_c_domain_skill_extract",
+        "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\13\\rollout-2026-10-13T15-49-01-01a1343c-7c44-7ea3-b530-42b5f2f5949c.jsonl",
+        "input_tokens": 1614599,
+        "cached_input_tokens": 1517312,
+        "output_tokens": 13093,
+        "reasoning_output_tokens": 2838,
+        "total_tokens": 1627692,
+        "duration_ms": 130453,
+        "duration": "2m 10.453s",
+        "time_to_first_token_ms": 5252
+      }
+    ],
+    "totals": {
+      "input_tokens": 6157363,
+      "cached_input_tokens": 5841152,
+      "output_tokens": 40982,
+      "reasoning_output_tokens": 8899,
+      "total_tokens": 6198345,
+      "sum_agent_duration_ms": 431093,
+      "sum_agent_duration": "7m 11.093s",
+      "parallel_wall_clock_ms": 183690,
+      "parallel_wall_clock": "3m 03.690s"
+    }
+  }
+}

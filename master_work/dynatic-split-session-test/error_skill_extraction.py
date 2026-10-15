@@ -13,20 +13,23 @@ import re
 import shutil
 import sys
 import time
+import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 import select_group_slices as selector
 
 VERSION = "error-skill-extraction-v1"
+DEFAULT_USER_AGENT = "skill-extraction/1.0"
 HERE = Path(__file__).resolve().parent
 WORKSPACE = HERE.parents[2]
 ARMS = ("A-original", "B-selected", "C-context-collapsed")
+MALFORMED_RETRIES = 3
 STRING = {"type": "string", "minLength": 1}
-STRINGS = {"type": "array", "items": STRING}
 
 
 def obj(**properties):
@@ -34,56 +37,38 @@ def obj(**properties):
             "additionalProperties": False}
 
 
-def arr(schema, minimum=0):
-    return {"type": "array", "items": schema, "minItems": minimum}
-
-
-EVIDENCE_SCHEMA = obj(kind={"type": "string", "enum": ["problem", "action", "verification"]},
-    file_id=STRING, source_index={"type": "integer", "minimum": 0},
-    source_part_index={"type": ["integer", "null"], "minimum": 0}, quote=STRING, supports=STRING)
-SKILL_SCHEMA = obj(
-    title=STRING, name={"type": "string", "pattern": r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"},
-    description=obj(use_when=STRING, helps=STRING, requires=STRING, do_not_use_when=STRING),
-    goal=STRING, scope=obj(in_scope=arr(STRING, 1), out_of_scope=STRINGS),
-    inputs=arr(obj(name=STRING, type=STRING, source=STRING, required={"type": "boolean"},
-                  constraints=STRING, default_value=STRING)),
-    outputs=obj(artifacts=arr(obj(name=STRING, location=STRING, format=STRING)),
-                success_criteria=arr(STRING, 1), failure_criteria=arr(STRING, 1)),
-    preconditions=arr(STRING, 1),
-    procedure=arr(obj(title=STRING, actions=arr(STRING, 1), inputs=STRINGS, outputs=STRINGS,
-                      cautions=STRINGS, preserve=STRINGS, next_condition=STRING), 1),
-    decision_rules=arr(obj(when=STRING, actions=arr(STRING, 1)), 1), invariants=arr(STRING, 1),
-    common_failures=arr(obj(title=STRING, symptoms=STRINGS, causes=STRINGS, recovery=STRINGS)),
-    verification=arr(STRING, 1),
-    examples=arr(obj(title=STRING, input=STRING, procedure=STRING, expected_result=STRING,
-                     parameterized_values=STRINGS), 1),
-    evidence=arr(EVIDENCE_SCHEMA, 3))
-RESPONSE_SCHEMA = obj(skills=arr(SKILL_SCHEMA),
-    excluded_candidates=arr(obj(topic=STRING, reason=STRING, file_ids=STRINGS)))
+SECTION_TOOLS = {"write_goal": "Goal", "write_scope": "Scope", "write_inputs": "Inputs",
+                 "write_outputs": "Outputs", "write_preconditions": "Preconditions",
+                 "write_procedure": "Procedure", "write_decision_rules": "Decision Rules",
+                 "write_invariants": "Invariants", "write_common_failures": "Common Failures",
+                 "write_verification": "Verification", "write_examples": "Examples",
+                 "write_evidence": "Evidence"}
+TOOL_MARKUP = re.compile(r"<tool_call>|</tool_call>|<function=|<parameter=")
 TOOLS = [
     {"type": "function", "function": {"name": "read_trace", "description":
-     "Read an exact character page of an allowed input file. Follow next_offset for long content. "
-     "No hidden content or other arms can be read. Offsets are Unicode characters, not bytes.",
-     "parameters": obj(file_id=STRING, offset={"type": "integer", "minimum": 0},
-                       max_chars={"type": "integer", "minimum": 1, "maximum": 48000})}},
+     "Read the entire allowed input file without truncation. No hidden content or other arms can be read.",
+     "parameters": obj(file_id=STRING)}},
     {"type": "function", "function": {"name": "search_trace", "description":
-     "Search visible string values in raw records or slice events. Returns source indices and "
-     "short matching snippets, never hidden result/thinking payloads. start_match paginates results.",
-     "parameters": obj(file_id=STRING, pattern=STRING, regex={"type": "boolean"},
-                       start_match={"type": "integer", "minimum": 0},
-                       limit={"type": "integer", "minimum": 1, "maximum": 20})}},
+     "Search visible string values in raw records or slice events. Return every matching string in full "
+     "with all match positions and original source indices. Never restore hidden payloads.",
+     "parameters": obj(file_id=STRING, pattern=STRING, regex={"type": "boolean"})}},
     {"type": "function", "function": {"name": "read_event", "description":
      "Read a visible event/part by original zero-based source_index and source_part_index. "
-     "Use offset/next_offset to read long payloads. Does not restore collapsed content.",
+     "Return the complete event without truncation. Does not restore collapsed content.",
      "parameters": obj(file_id=STRING, source_index={"type": "integer", "minimum": 0},
-                       source_part_index={"type": ["integer", "null"], "minimum": 0},
-                       offset={"type": "integer", "minimum": 0},
-                       max_chars={"type": "integer", "minimum": 1, "maximum": 48000})}},
-    {"type": "function", "function": {"name": "response", "description":
-     "Submit the final complete Skill list using every section of the Agent Skill template. "
-     "Zero Skills is valid. Evidence needs exact visible quotes for problem, action and verification. "
-     "Successful submission ends this experiment; do not submit a draft.",
-     "parameters": RESPONSE_SCHEMA}},
+                       source_part_index={"type": ["integer", "null"], "minimum": 0})}},
+    {"type": "function", "function": {"name": "write_header", "description":
+     "Start one candidate Skill: write its SKILL.md frontmatter and title. Call this first for each Skill. "
+     "description is one line: 'Use when ... Helps the agent ... Requires ... Do not use when ....'",
+     "parameters": obj(name=STRING, title=STRING, description=STRING)}},
+    *[{"type": "function", "function": {"name": tool, "description":
+       f"Write the '## {title}' section of SKILL.md for skill `name`. Call once per section; "
+       f"calling again overwrites only this section.",
+       "parameters": obj(name=STRING, content=STRING)}} for tool, title in SECTION_TOOLS.items()],
+    {"type": "function", "function": {"name": "no_skill", "description":
+     "Declare that no reusable Skill can be extracted from this input, with the reason. "
+     "Use it instead of finishing without any SKILL.md.",
+     "parameters": obj(reason=STRING)}},
 ]
 
 
@@ -126,7 +111,7 @@ def validate_schema(value, schema, where="arguments"):
         if "pattern" in schema and not re.fullmatch(schema["pattern"], value):
             raise ValueError(f"{where}: invalid format")
     if type(value) is int:
-        if value < schema.get("minimum", value) or value > schema.get("maximum", value):
+        if value < schema.get("minimum", value):
             raise ValueError(f"{where}: outside range")
     if isinstance(value, list):
         if len(value) < schema.get("minItems", 0):
@@ -216,88 +201,34 @@ class ArmReader:
             self.parts[fid] = list(source_parts(self.file(fid)["path"], self.file(fid)["kind"]))
         return self.parts[fid]
 
-    def read(self, file_id, offset, max_chars):
+    def read(self, file_id):
         text = self.text(file_id)
-        if offset >= len(text) and text:
-            raise ValueError("offset is past end of file")
-        end = min(len(text), offset + max_chars)
         self.touched.add(file_id)
-        self.read_ranges[file_id].append([offset, end])
-        return {"file_id": file_id, "offset": offset, "end_offset": end, "total_chars": len(text),
-                "next_offset": end if end < len(text) else None, "content": text[offset:end]}
+        self.read_ranges[file_id].append([0, len(text)])
+        return {"file_id": file_id, "total_chars": len(text), "content": text}
 
-    def search(self, file_id, pattern, regex, start_match, limit):
+    def search(self, file_id, pattern, regex):
         expression = re.compile(pattern if regex else re.escape(pattern), re.IGNORECASE)
         matches = []
         for index, part, category, payload in self.events(file_id):
             for text in string_values(payload):
-                for match in expression.finditer(text):
+                positions = [[match.start(), match.end()] for match in expression.finditer(text)]
+                if positions:
                     matches.append({"source_index": index, "source_part_index": part, "category": category,
-                                    "snippet": text[max(0, match.start() - 160):match.end() + 240]})
-                    if len(matches) >= start_match + limit + 1:
-                        break
-                if len(matches) >= start_match + limit + 1:
-                    break
-            if len(matches) >= start_match + limit + 1:
-                break
+                                    "text": text, "match_spans": positions})
         self.touched.add(file_id)
-        return {"file_id": file_id, "matches": matches[start_match:start_match + limit],
-                "next_match": start_match + limit if len(matches) > start_match + limit else None}
+        return {"file_id": file_id, "matches": matches}
 
-    def read_event(self, file_id, source_index, source_part_index, offset, max_chars):
+    def read_event(self, file_id, source_index, source_part_index):
         selected = [{"source_index": i, "source_part_index": p, "category": c, "payload": v}
                     for i, p, c, v in self.events(file_id) if i == source_index and
                     (source_part_index is None or p == source_part_index)]
         if not selected:
             raise ValueError("Original source event is absent from this input file")
         text = json.dumps(selected, ensure_ascii=False)
-        if offset >= len(text):
-            raise ValueError("offset is past end of event")
-        end = min(len(text), offset + max_chars)
         self.touched.add(file_id)
         return {"file_id": file_id, "source_index": source_index, "source_part_index": source_part_index,
-                "offset": offset, "end_offset": end, "total_chars": len(text),
-                "next_offset": end if end < len(text) else None, "content": text[offset:end]}
-
-    def validate_response(self, result):
-        validate_schema(result, RESPONSE_SCHEMA)
-        if set(self.files) - self.touched:
-            raise ValueError("Inspect every input file before response: " + ", ".join(sorted(set(self.files) - self.touched)))
-        names = set()
-        for number, skill in enumerate(result["skills"]):
-            if skill["name"] in names:
-                raise ValueError("Duplicate Skill name within one experiment")
-            names.add(skill["name"])
-            kinds = set()
-            for ev in skill["evidence"]:
-                fid = ev["file_id"]
-                self.file(fid)
-                candidates = [(cat, payload) for index, part, cat, payload in self.events(fid)
-                    if index == ev["source_index"] and
-                    (ev["source_part_index"] is None or ev["source_part_index"] == part)]
-                matching = [(cat, payload) for cat, payload in candidates
-                            if any(ev["quote"] in text for text in string_values(payload))]
-                if not matching:
-                    raise ValueError(f"skills[{number}]: quote is absent from visible source event in {fid}")
-                if ev["kind"] == "verification":
-                    verified = False
-                    for cat, payload in matching:
-                        output = ({k: payload[k] for k in ("content", "output", "text", "error") if k in payload}
-                                  if cat == "tool_result" and not payload.get("collapsed_content") else {})
-                        if isinstance(payload.get("tool_result"), dict):
-                            output.update({k: payload["tool_result"][k] for k in ("output", "error")
-                                           if k in payload["tool_result"]})
-                        if any(ev["quote"] in text for text in string_values(output)):
-                            verified = True
-                    if not verified:
-                        raise ValueError("Verification needs a visible tool-result quote, not prose or collapsed metadata")
-                kinds.add(ev["kind"])
-            if kinds != {"problem", "action", "verification"}:
-                raise ValueError("Every Skill needs problem/action/verification source evidence")
-        for item in result["excluded_candidates"]:
-            for fid in item["file_ids"]:
-                self.file(fid)
-
+                "total_chars": len(text), "content": text}
 
 def file_entry(path, session_id, kind, content_mode):
     path = Path(path).resolve()
@@ -416,37 +347,57 @@ def endpoint(base_url):
 
 
 def load_config(path, require_credentials=True):
-    config = read_json(path)
+    # Only identity/connection settings are accepted. Old generation controls,
+    # token/round budgets, sampling controls and extra_body cannot reach the API.
+    original = read_json(path)
+    config = {k: v for k, v in original.items() if k in
+              {"api_key", "base_url", "model", "sessionHeader", "userAgent"}}
     for field in ("api_key", "base_url", "model"):
         if require_credentials and (not isinstance(config.get(field), str) or not config[field].strip()):
             raise ValueError(f"Fill {field} in your configuration before running API experiments")
     if config.get("base_url"):
         endpoint(config["base_url"])
-    for field in ("timeout_seconds", "max_requests", "max_output_tokens"):
-        if type(config.get(field)) is not int or config[field] < 1:
-            raise ValueError(f"{field} must be a positive integer")
-    if config.get("output_token_parameter", "max_tokens") not in {"max_tokens", "max_completion_tokens"}:
-        raise ValueError("output_token_parameter must be max_tokens or max_completion_tokens")
-    extra = config.get("extra_body", {})
-    if not isinstance(extra, dict) or set(extra) & {"api_key", "messages", "tools", "tool_choice", "model", "stream", "n", "max_tokens", "max_completion_tokens"}:
-        raise ValueError("extra_body cannot override transport, inputs, tools or output limits")
+    session_header = config.get("sessionHeader", "")
+    if not isinstance(session_header, str) or (session_header and (
+            not re.fullmatch(r"[!#$%&'*+.^_`|~0-9A-Za-z-]+", session_header) or
+            session_header.lower() in {"authorization", "content-type", "content-length", "host"})):
+        raise ValueError("sessionHeader must be a valid custom HTTP header name, or an empty string")
+    config.setdefault("userAgent", DEFAULT_USER_AGENT)
+    if not isinstance(config["userAgent"], str) or not config["userAgent"].strip() or any(
+            ord(c) < 32 or ord(c) > 126 for c in config["userAgent"]):
+        raise ValueError("userAgent must be nonempty printable ASCII HTTP header text")
     return config
 
 
 def public_config(config):
-    return {k: v for k, v in config.items() if k != "api_key"}
+    return {"userAgent": DEFAULT_USER_AGENT, **{k: v for k, v in config.items()
+            if k in {"base_url", "model", "sessionHeader", "userAgent"}}}
+
+
+def request_headers(config):
+    headers = {"Content-Type": "application/json", "Authorization": "Bearer " + config["api_key"],
+               "User-Agent": config.get("userAgent", DEFAULT_USER_AGENT)}
+    if config.get("sessionHeader"):
+        if not config.get("_session_id"):
+            raise ValueError("Missing per-experiment Session ID for sessionHeader")
+        headers[config["sessionHeader"]] = config["_session_id"]
+    return headers
 
 
 def api_request(payload, config):
     request = urllib.request.Request(endpoint(config["base_url"]),
         data=json.dumps(payload, ensure_ascii=False).encode("utf-8"), method="POST",
-        headers={"Content-Type": "application/json", "Authorization": "Bearer " + config["api_key"]})
+        headers=request_headers(config))
     try:
-        with urllib.request.urlopen(request, timeout=config["timeout_seconds"]) as reply:
+        with urllib.request.urlopen(request) as reply:
             return json.loads(reply.read().decode("utf-8"))
     except urllib.error.HTTPError as error:
-        # Do not archive provider bodies that could echo secrets or trigger enormous logs.
-        raise RuntimeError(f"API HTTP {error.code}; no automatic retry was made") from None
+        detail = error.read().decode("utf-8", errors="replace")
+        if config.get("api_key"):
+            detail = detail.replace(config["api_key"], "[REDACTED]")
+        detail = re.sub(r"(?i)(bearer\s+)[^\s\"'<>]+", r"\1[REDACTED]", detail)
+        detail = " ".join(detail.split())
+        raise RuntimeError(f"API HTTP {error.code}: {detail or 'empty error body'}; no automatic retry was made") from None
     except urllib.error.URLError:
         raise RuntimeError("API connection failed; provider may have processed the request; usage unknown") from None
 
@@ -470,44 +421,117 @@ def aggregate_usage(records):
                     "complete": all(r.get(field) is not None for r in records)} for field in fields}
 
 
-def render_skill(skill, files):
-    bullets = lambda values: "\n".join("- " + v for v in values) if values else "- 轨迹未提供。"
-    desc = skill["description"]
-    description = "Use when " + desc["use_when"] + ". Helps the agent " + desc["helps"] + ". Requires " + desc["requires"] + ". Do not use when " + desc["do_not_use_when"] + "."
-    text = ["# " + skill["title"], "```yaml\n---\nname: " + skill["name"] + "\ndescription: >\n  " +
-            description.replace("\n", "\n  ") + "\n---\n```", "## Goal", skill["goal"], "## Scope", "### In scope",
-            bullets(skill["scope"]["in_scope"]), "### Out of scope", bullets(skill["scope"]["out_of_scope"]), "## Inputs",
-            bullets([f"`{v['name']}`：{v['type']}；来源：{v['source']}；必需：{v['required']}；约束：{v['constraints']}；默认值：{v['default_value']}" for v in skill["inputs"]]),
-            "## Outputs", bullets([f"`{v['name']}`：{v['location']}；{v['format']}" for v in skill["outputs"]["artifacts"]]),
-            "成功标准：\n" + bullets(skill["outputs"]["success_criteria"]), "失败标准：\n" + bullets(skill["outputs"]["failure_criteria"]),
-            "## Preconditions", bullets(skill["preconditions"]), "前置条件不满足时，停止并报告具体原因。", "## Procedure"]
-    for i, step in enumerate(skill["procedure"], 1):
-        text += [f"### Step {i}: {step['title']}", bullets(step["actions"]), "输入：\n" + bullets(step["inputs"]),
-                 "产物：\n" + bullets(step["outputs"]), "注意：\n" + bullets(step["cautions"]),
-                 "保留：\n" + bullets(step["preserve"]), "下一步条件：" + step["next_condition"]]
-    text += ["## Decision Rules"]
-    for rule in skill["decision_rules"]:
-        text += ["### When " + rule["when"], bullets(rule["actions"])]
-    text += ["### When 条件不满足或信息缺失", "- 不猜测、不伪造数据；报告缺失信息，等待补充或安全退出。",
-             "## Invariants", bullets(skill["invariants"]), "## Common Failures"]
-    for failure in skill["common_failures"]:
-        text += ["### Failure: " + failure["title"], "症状：\n" + bullets(failure["symptoms"]),
-                 "原因：\n" + bullets(failure["causes"]), "恢复：\n" + bullets(failure["recovery"])]
-    if not skill["common_failures"]:
-        text.append("轨迹未提供。")
-    text += ["## Verification", "\n".join("- [ ] " + v for v in skill["verification"]),
-             "只有全部关键检查通过，才能报告成功。", "## Examples"]
-    for i, example in enumerate(skill["examples"], 1):
-        text += [f"### Example {i}: {example['title']}", "输入：\n\n```text\n" + example["input"] + "\n```",
-                 "处理：\n\n" + example["procedure"], "预期结果：\n\n" + example["expected_result"],
-                 "参数化值：\n" + bullets(example["parameterized_values"])]
-    text += ["## 来源证据", "状态：待审核候选；结构和原文引用校验不代表方法或因果关系已获独立验证。"]
-    for evidence in skill["evidence"]:
-        source = files[evidence["file_id"]]
-        text += [f"- {evidence['kind']} / {evidence['supports']}：Session `{source['session_id']}`，"
-                 f"文件 `{evidence['file_id']}`，source_index={evidence['source_index']}，"
-                 f"source_part_index={evidence['source_part_index']}。\n  原文：{evidence['quote']}"]
-    return "\n\n".join(text) + "\n"
+def log_round(directory, text):
+    with (directory / "rounds.log").open("a", encoding="utf-8") as log:
+        log.write(text + "\n")
+
+
+SKILL_SECTIONS = ["Goal", "Scope", "Inputs", "Outputs", "Preconditions", "Procedure",
+                  "Decision Rules", "Invariants", "Common Failures", "Verification", "Examples", "Evidence"]
+
+
+def check_name(name):
+    if not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", name):
+        raise ValueError("name must be lowercase letters, digits and hyphens")
+
+
+def skill_path(directory, name):
+    return directory / "skills" / name / "SKILL.md"
+
+
+def check_section(title, body):
+    problems = []
+    if len(re.sub(r"\s+", "", body)) < 20:
+        problems.append(f"'## {title}' has no real content")
+    if "TODO" in body or "待补充" in body:
+        problems.append(f"'## {title}' still contains a placeholder")
+    if title == "Procedure" and "### Step" not in body:
+        problems.append("Procedure needs at least one '### Step N' subsection")
+    if title == "Evidence":
+        for kind in ("problem", "action", "verification"):
+            if kind not in body.lower():
+                problems.append(f"Evidence lacks a '{kind}' entry")
+    return problems
+
+
+def check_skill(name, text):
+    frontmatter = re.match(r"---\n(.*?)\n---\n", text, re.S)
+    if not frontmatter:
+        return ["missing YAML frontmatter at the top"]
+    fields = dict(line.split(":", 1) for line in frontmatter.group(1).splitlines() if ":" in line)
+    problems = []
+    if fields.get("name", "").strip() != name:
+        problems.append(f"frontmatter name must be exactly '{name}'")
+    if "Use when" not in fields.get("description", ""):
+        problems.append("frontmatter description must contain 'Use when'")
+    if not re.search(r"^# \S", text, re.M):
+        problems.append("missing title line '# ...'")
+    headings = list(re.finditer(r"^## (.+)$", text, re.M))
+    for section in SKILL_SECTIONS:
+        match = next((h for h in headings if h.group(1).strip() == section), None)
+        if match is None:
+            problems.append(f"missing section '## {section}'")
+            continue
+        index = headings.index(match)
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(text)
+        problems += check_section(section, text[match.end():end])
+    return problems
+
+
+def valid_skills(directory):
+    return [path for path in sorted((directory / "skills").glob("*/SKILL.md"))
+            if not check_skill(path.parent.name, path.read_text(encoding="utf-8"))]
+
+
+def has_skill(directory):
+    return bool(valid_skills(directory))
+
+
+def render_skill_md(name, part):
+    lines = ["---", f"name: {name}", f"description: {part['description']}", "---", f"# {part['title']}", ""]
+    for title in SKILL_SECTIONS:
+        if title in part["sections"]:
+            lines += [f"## {title}", part["sections"][title], ""]
+    return "\n".join(lines)
+
+
+def parse_text_tool_calls(content, tools):
+    schemas = {tool["function"]["name"]: tool["function"]["parameters"]["properties"] for tool in tools}
+    calls = []
+    for block in re.findall(r"<tool_call>(.*?)</tool_call>", content, re.S):
+        found = re.search(r"<function=([^>\s]+)>(.*?)</function>", block, re.S)
+        if not found or found.group(1) not in schemas:
+            return []
+        arguments = {}
+        for key, raw in re.findall(r"<parameter=([^>\s]+)>(.*?)</parameter>", found.group(2), re.S):
+            kind = schemas[found.group(1)].get(key, {}).get("type")
+            kinds = kind if isinstance(kind, list) else [kind]
+            if "null" in kinds and raw.strip() == "null":
+                arguments[key] = None
+            elif "integer" in kinds and raw.strip().isdigit():
+                arguments[key] = int(raw.strip())
+            elif "boolean" in kinds and raw.strip().lower() in ("true", "false"):
+                arguments[key] = raw.strip().lower() == "true"
+            else:
+                arguments[key] = raw.strip("\n")
+        calls.append({"id": f"text-{len(calls) + 1}", "type": "function",
+                      "function": {"name": found.group(1), "arguments": json.dumps(arguments, ensure_ascii=False)}})
+    return calls
+
+
+def describe_round(index, sent, request_chars, message_count, response, record):
+    choice = (response.get("choices") or [{}])[0]
+    message = choice.get("message") or {}
+    lines = [f"=== request {index:04d} | sent {sent} | messages {message_count} | request_chars {request_chars} ===",
+             f"finish_reason: {choice.get('finish_reason')}",
+             f"usage: prompt={record['input_tokens']} cached={record['cached_input_tokens']} "
+             f"completion={record['output_tokens']} reasoning={record['reasoning_tokens']}",
+             "--- reasoning_content ---", str(message.get("reasoning_content") or ""),
+             "--- content ---", str(message.get("content") or "")]
+    for call in message.get("tool_calls") or []:
+        function = call.get("function") or {}
+        lines += [f"--- tool_call {call.get('id')}: {function.get('name')} ---", str(function.get("arguments"))]
+    return "\n".join(lines) + "\n"
 
 
 def initial_messages(prompt, inputs):
@@ -516,33 +540,43 @@ def initial_messages(prompt, inputs):
         # Paths do not confer filesystem access: tool file_id is the sole authority.
         entry.pop("path", None)
     return [{"role": "system", "content": prompt}, {"role": "user", "content":
-            "本次只分析以下输入文件。用 read_trace/search_trace 读取证据，再通过 response 提交结果。\n" +
+            "本次只分析以下输入文件。用 read_trace/search_trace/read_event 读取证据，再通过 write_header 和各章节工具逐节写出 SKILL.md；写完后直接回复总结结束。\n" +
             json.dumps(catalog, ensure_ascii=False)}]
 
 
 def extract_arm(directory, prompt, config, transport=api_request):
     inputs = read_json(directory / "input-manifest.json")
+    # One provider session per extraction attempt; tool rounds share that session.
+    request_config = dict(config)
+    session_id = str(uuid.uuid4()) if config.get("sessionHeader") else None
+    if session_id:
+        request_config["_session_id"] = session_id
+        save(directory / "api-session.json", {"header_name": config["sessionHeader"], "session_id": session_id,
+             "group_id": inputs["group_id"], "arm": inputs["arm"]})
     reader = ArmReader(inputs["files"])
     messages = initial_messages(prompt, inputs)
     records, accesses = [], []
     started, clock = now(), time.perf_counter()
-    accepted = None
+    parts = {}
+    declared = None
+    malformed_retries = 0
     error = None
     try:
-        for request_index in range(1, config["max_requests"] + 1):
+        request_index = 0
+        while True:
+            request_index += 1
             payload = {"model": config["model"], "messages": messages, "tools": TOOLS,
-                       "tool_choice": "auto", "stream": False,
-                       config.get("output_token_parameter", "max_tokens"): config["max_output_tokens"]}
-            payload.update(config.get("extra_body", {}))
-            if config.get("temperature") is not None:
-                payload["temperature"] = config["temperature"]
+                       "tool_choice": "auto", "stream": False}
             request_dir = directory / "requests" / f"{request_index:04d}"
             # Exact request body, no Authorization header/API key.
             save(request_dir / "request.json", payload)
             sent, api_clock = now(), time.perf_counter()
+            request_chars = len(json.dumps(payload, ensure_ascii=False))
             try:
-                response = transport(payload, config)
-            except Exception:
+                response = transport(payload, request_config)
+            except Exception as failure:
+                log_round(directory, f"=== request {request_index:04d} | sent {sent} | messages {len(messages)} | request_chars {request_chars} ===\n"
+                          f"TRANSPORT FAILED: {type(failure).__name__}: {failure}\n{traceback.format_exc()}")
                 records.append({"request_index": request_index, "sent_at": sent, "finished_at": now(),
                                 "api_seconds": time.perf_counter() - api_clock, **usage_record({}),
                                 "status": "transport_failed_usage_unknown"})
@@ -553,26 +587,55 @@ def extract_arm(directory, prompt, config, transport=api_request):
             save(request_dir / "response.json", response)
             # Persist usage as soon as an API response arrives, even on malformed output.
             save(directory / "request-costs.json", records)
+            log_round(directory, describe_round(request_index, sent, request_chars, len(messages), response, records[-1]))
             choice = response["choices"][0]
-            if choice.get("finish_reason") in {"length", "content_filter"}:
-                raise ValueError("Response was truncated or filtered; no Skills accepted")
+            if choice.get("finish_reason") == "content_filter":
+                raise ValueError("Provider filtered the response")
             message = choice["message"]
             calls = message.get("tool_calls") or []
+            if not calls and TOOL_MARKUP.search(message.get("content") or ""):
+                calls = parse_text_tool_calls(message["content"], TOOLS)
+                if calls:
+                    message["tool_calls"] = calls
+                    log_round(directory, f"RECOVERED: {len(calls)} tool call(s) parsed from content text; structured tool_calls was null")
+            malformed = None
+            if choice.get("finish_reason") == "tool_calls" and not calls:
+                malformed = "finish_reason is tool_calls but structured tool_calls is empty"
+            elif not calls and TOOL_MARKUP.search(message.get("content") or ""):
+                malformed = "Provider returned tool-call markup as text instead of structured tool_calls"
+            if malformed:
+                if malformed_retries < MALFORMED_RETRIES:
+                    malformed_retries += 1
+                    messages.append({"role": "user", "content": "上一条回复无效：" + malformed + "。需要调用工具时，请使用结构化的工具调用发出，不要把工具调用写成正文文本。请重新回复。"})
+                    log_round(directory, f"RETRY {malformed_retries}/{MALFORMED_RETRIES}: {malformed}; feedback sent to model")
+                    continue
+                raise ValueError(f"{malformed} (after {MALFORMED_RETRIES} retries)")
+            malformed_retries = 0
             assistant_message = {k: message[k] for k in ("role", "content", "tool_calls", "reasoning_content") if k in message}
             assistant_message.setdefault("role", "assistant")
             messages.append(assistant_message)
             if not calls:
-                messages.append({"role": "user", "content": "请使用工具读取输入并通过 response 提交完整结果；不要用正文代替工具。允许零个 Skill。"})
+                if declared is not None or has_skill(directory):
+                    break
+                pending = {name: [t for t in SKILL_SECTIONS if t not in part["sections"]] for name, part in parts.items()}
+                status = json.dumps(pending, ensure_ascii=False) if pending else "尚未调用 write_header"
+                messages.append({"role": "user", "content": "尚无完整的 SKILL.md。未完成的 Skill 及缺失章节：" + status +
+                                 "。请用结构化工具调用继续写；若确认没有可提取的 Skill，调用 no_skill 并写明原因，不要直接结束。"})
+                log_round(directory, f"BLOCKED: finish without a complete SKILL.md; pending={pending}")
                 continue
-            pending_result = None
             for call in calls:
                 name = call.get("function", {}).get("name")
+                tool = next((t for t in TOOLS if t["function"]["name"] == name), None)
                 tool_result = None
                 try:
-                    arguments = json.loads(call["function"]["arguments"])
-                    tool = next((t for t in TOOLS if t["function"]["name"] == name), None)
-                    if tool is None:
-                        raise ValueError("Unknown tool")
+                    if call.get("type") != "function" or tool is None:
+                        raise ValueError(f"unknown or invalid tool call: type={call.get('type')!r}, name={name!r}")
+                    try:
+                        arguments = json.loads(call["function"]["arguments"])
+                    except (KeyError, TypeError, ValueError):
+                        raise ValueError("tool call arguments are not valid JSON") from None
+                    if not isinstance(arguments, dict):
+                        raise ValueError("tool call arguments must be a JSON object")
                     validate_schema(arguments, tool["function"]["parameters"])
                     if name == "read_trace":
                         tool_result = reader.read(**arguments)
@@ -580,41 +643,48 @@ def extract_arm(directory, prompt, config, transport=api_request):
                         tool_result = reader.search(**arguments)
                     elif name == "read_event":
                         tool_result = reader.read_event(**arguments)
+                    elif name == "no_skill":
+                        declared = arguments["reason"]
+                        tool_result = {"declared": True}
+                    elif name == "write_header":
+                        check_name(arguments["name"])
+                        if "Use when" not in arguments["description"]:
+                            raise ValueError("description must contain 'Use when'")
+                        parts[arguments["name"]] = {"title": arguments["title"],
+                                                    "description": arguments["description"], "sections": {}}
+                        tool_result = {"accepted": True, "sections_to_write": SKILL_SECTIONS}
                     else:
-                        if len(calls) != 1:
-                            raise ValueError("response must be the only tool call in its final turn")
-                        reader.validate_response(arguments)
-                        pending_result = arguments
-                        tool_result = {"accepted": True, "skill_count": len(arguments["skills"])}
-                except (ValueError, TypeError, KeyError, re.error) as failure:
-                    tool_result = {"error": str(failure), "accepted": False}
+                        title = SECTION_TOOLS[name]
+                        check_name(arguments["name"])
+                        part = parts.get(arguments["name"])
+                        if part is None:
+                            raise ValueError("call write_header for this name first")
+                        problems = check_section(title, arguments["content"])
+                        if problems:
+                            raise ValueError("; ".join(problems))
+                        part["sections"][title] = arguments["content"].strip()
+                        path = skill_path(directory, arguments["name"])
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        path.write_text(render_skill_md(arguments["name"], part), encoding="utf-8")
+                        tool_result = {"written": str(path.resolve()),
+                                       "missing_sections": [t for t in SKILL_SECTIONS if t not in part["sections"]]}
+                except Exception as failure:
+                    tool_result = {"error": f"{type(failure).__name__}: {failure}", "accepted": False}
                 accesses.append({"request_index": request_index, "tool_call_id": call.get("id"),
                                  "name": name, "arguments": call.get("function", {}).get("arguments"),
                                  "result": tool_result})
-                messages.append({"role": "tool", "tool_call_id": call["id"],
+                log_round(directory, f"--- tool result {name}: chars={len(json.dumps(tool_result, ensure_ascii=False))} "
+                          f"accepted={tool_result.get('accepted')} error={tool_result.get('error')}")
+                messages.append({"role": "tool", "tool_call_id": call.get("id"),
                                  "content": json.dumps(tool_result, ensure_ascii=False)})
             save(directory / "tool-log.json", accesses)
-            if pending_result is not None:
-                accepted = pending_result
-                break
-        if accepted is None:
-            raise ValueError("max_requests reached without an accepted response")
-        save(directory / "response-arguments.json", accepted)
         exported = []
-        for skill in accepted["skills"]:
-            stable = hashlib.sha256((inputs["group_id"] + "/" + inputs["arm"] + "/" + skill["name"]).encode()).hexdigest()[:20]
-            sid = "skill-" + stable
-            markdown = directory / "skills" / sid / "SKILL.md"
-            markdown.parent.mkdir(parents=True, exist_ok=True)
-            markdown.write_text(render_skill(skill, reader.files), encoding="utf-8")
-            item = {"skill_id": sid, "status": "candidate_needs_review", "group_id": inputs["group_id"],
-                    "error_key": inputs["error_key"], "arm": inputs["arm"], "skill": skill,
-                    "run_directory": str(directory.parents[1].resolve()), "model": config["model"],
+        for path in valid_skills(directory):
+            item = {"status": "candidate_needs_review", "name": path.parent.name, "group_id": inputs["group_id"],
+                    "error_key": inputs["error_key"], "arm": inputs["arm"], "model": config["model"],
+                    "run_directory": str(directory.parents[1].resolve()), "markdown_path": str(path.resolve()),
                     "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
-                    "prompt_hash_convention": "UTF-8 text, CRLF normalized to LF",
-                    "source_session_ids": sorted({reader.file(e["file_id"])["session_id"] for e in skill["evidence"]}),
-                    "markdown_path": str(markdown.resolve()), "source_files": inputs["files"]}
-            save(markdown.parent / "skill.json", item)
+                    "source_files": inputs["files"]}
             exported.append(item)
         save(directory / "skills.json", exported)
     except (Exception, KeyboardInterrupt) as failure:
@@ -623,17 +693,19 @@ def extract_arm(directory, prompt, config, transport=api_request):
         key = config.get("api_key", "")
         if key:
             error = error.replace(key, "[REDACTED]")
+        log_round(directory, f"ERROR: {error}")
     finally:
         save(directory / "request-costs.json", records)
         save(directory / "tool-log.json", accesses)
         save(directory / "messages.json", messages)
-        summary = {"status": "completed" if accepted is not None and error is None else "failed", "error": error,
+        summary = {"status": "completed" if error is None else "failed", "error": error,
                    "group_id": inputs["group_id"], "error_key": inputs["error_key"], "arm": inputs["arm"],
+                   "session_header": config.get("sessionHeader") or None, "api_session_id": session_id,
                    "started_at": started, "finished_at": now(), "wall_seconds": time.perf_counter() - clock,
                    "api_seconds": sum(r["api_seconds"] for r in records), "request_count": len(records),
                    "usage": aggregate_usage(records), "ttft_seconds": None,
                    "ttft_note": "Nonstreaming transport; time to first token is unavailable",
-                   "skill_count": len(accepted["skills"]) if accepted is not None and error is None else None,
+                   "skill_count": len(valid_skills(directory)) if error is None else None,
                    "input_file_count": len(inputs["files"]), "inspected_file_ids": sorted(reader.touched),
                    "read_ranges": reader.read_ranges,
                    "coverage_note": "Inspected means read or searched. It does not mean the entire file was read.",
@@ -712,6 +784,36 @@ def archive_failed(directory):
             shutil.move(str(path), str(attempt / path.name))
 
 
+def reuse_completed(output, manifest, config):
+    public = public_config(config)
+    for experiment in manifest["experiments"]:
+        gid, arm = experiment["group_id"], experiment["arm"]
+        target = output / gid / arm
+        if (target / "summary.json").exists():
+            continue
+        wanted = sorted(f["sha256"] for f in read_json(experiment["input_manifest"])["files"])
+        for run in sorted(output.parent.iterdir(), reverse=True):
+            source = run / gid / arm
+            if run == output or not (source / "summary.json").exists() or not (run / "manifest.json").exists():
+                continue
+            old = read_json(run / "manifest.json")
+            if read_json(source / "summary.json")["status"] != "completed":
+                continue
+            if old.get("prompt_sha256") != manifest["prompt_sha256"] or old.get("api_config") != public:
+                continue
+            if sorted(f["sha256"] for f in read_json(source / "input-manifest.json")["files"]) != wanted:
+                continue
+            shutil.copytree(source, target, dirs_exist_ok=True,
+                            ignore=shutil.ignore_patterns("input-manifest.json", "requests", "attempts", "api-session.json"))
+            skills = read_json(target / "skills.json") if (target / "skills.json").exists() else []
+            for item in skills:
+                item["run_directory"] = str(output.resolve())
+                item["markdown_path"] = str((target / "skills" / item["name"] / "SKILL.md").resolve())
+            save(target / "skills.json", skills)
+            print(f"{gid} / {arm}: reused completed result from {run.name}", flush=True)
+            break
+
+
 def run_prepared(output, config, transport=api_request):
     manifest = read_json(output / "manifest.json")
     verify_prepared(output, manifest)
@@ -722,6 +824,7 @@ def run_prepared(output, config, transport=api_request):
     manifest["status"] = "running"
     save(output / "manifest.json", manifest)
     prompt = (output / "prompt.txt").read_text(encoding="utf-8-sig")
+    reuse_completed(output, manifest, config)
     for experiment in manifest["experiments"]:
         directory = Path(experiment["input_manifest"]).parent
         previous = directory / "summary.json"
@@ -752,6 +855,8 @@ def run_prepared(output, config, transport=api_request):
         result = extract_arm(directory, prompt, config, transport)
         summarize_run(output, manifest)
         print(f"  {result['status']}; skills={result['skill_count']}; requests={result['request_count']}; seconds={result['wall_seconds']:.2f}", flush=True)
+        if result["error"]:
+            print(f"  error: {result['error']}", flush=True)
         if result["error"] == "interrupted":
             break
     summary = summarize_run(output, manifest)

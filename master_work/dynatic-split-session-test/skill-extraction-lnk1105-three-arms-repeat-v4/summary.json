@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-14",
+  "group_id": "native-code-f3df951dc57a",
+  "status": "completed",
+  "same_inputs_and_prompt": true,
+  "skill_document_counts": {
+    "A-original": 5,
+    "B-selected": 2,
+    "C-context-collapsed": 6
+  },
+  "previous_counts": {
+    "A-original": 5,
+    "B-selected": 3,
+    "C-context-collapsed": 4
+  },
+  "current_costs": [
+    {
+      "arm": "A-original",
+      "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\14\\rollout-2026-10-14T10-53-19-01a13854-1cdf-7700-a82e-58abd6a58ab7.jsonl",
+      "agent_path": "/root/lnk_repeat_v4_a_original",
+      "model": "gpt-5.6-luna",
+      "input_tokens": 632854,
+      "cached_input_tokens": 580864,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 13857,
+      "reasoning_output_tokens": 1109,
+      "total_tokens": 646711,
+      "noncached_input_tokens": 51990,
+      "model_request_count": 11,
+      "duration_ms": 108816,
+      "time_to_first_token_ms": 5136
+    },
+    {
+      "arm": "B-selected",
+      "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\14\\rollout-2026-10-14T10-53-30-01a13854-49e2-7073-823b-fb67d365c214.jsonl",
+      "agent_path": "/root/lnk_repeat_v4_b_selected",
+      "model": "gpt-5.6-luna",
+      "input_tokens": 527647,
+      "cached_input_tokens": 484864,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 8702,
+      "reasoning_output_tokens": 911,
+      "total_tokens": 536349,
+      "noncached_input_tokens": 42783,
+      "model_request_count": 10,
+      "duration_ms": 76081,
+      "time_to_first_token_ms": 5701
+    },
+    {
+      "arm": "C-context-collapsed",
+      "session_file": "C:\\Users\\35153\\.codex\\sessions\\2026\\10\\14\\rollout-2026-10-14T10-53-37-01a13854-64ca-7ae1-bb85-0aa4e0fc0c5e.jsonl",
+      "agent_path": "/root/lnk_repeat_v4_c_collapsed",
+      "model": "gpt-5.6-luna",
+      "input_tokens": 1352742,
+      "cached_input_tokens": 1267456,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 15528,
+      "reasoning_output_tokens": 1585,
+      "total_tokens": 1368270,
+      "noncached_input_tokens": 85286,
+      "model_request_count": 17,
+      "duration_ms": 138610,
+      "time_to_first_token_ms": 5883
+    }
+  ],
+  "two_run_descriptive_means": [
+    {
+      "arm": "A-original",
+      "run_count": 2,
+      "mean_total_tokens": 1151192.5,
+      "mean_noncached_input_tokens": 75879.5,
+      "mean_duration_ms": 123624.0
+    },
+    {
+      "arm": "B-selected",
+      "run_count": 2,
+      "mean_total_tokens": 1056761.5,
+      "mean_noncached_input_tokens": 64988.5,
+      "mean_duration_ms": 133617.5
+    },
+    {
+      "arm": "C-context-collapsed",
+      "run_count": 2,
+      "mean_total_tokens": 1173993.0,
+      "mean_noncached_input_tokens": 83523.5,
+      "mean_duration_ms": 125393.0
+    }
+  ],
+  "current_cost_ratios": {
+    "C_vs_A_total_ratio": 2.11573639539145,
+    "C_vs_B_total_ratio": 2.551081478664079,
+    "C_vs_A_noncached_ratio": 1.6404308520869397,
+    "C_vs_B_noncached_ratio": 1.9934553444125003
+  },
+  "theme_comparison": {
+    "A-original": [
+      "PowerShell native exit code",
+      "two-pass first-argument index",
+      "large-object stack overflow",
+      "allocator and embedding isolation",
+      "bare eval and optional registration"
+    ],
+    "B-selected": [
+      "Windows build/test entry compatibility",
+      "locked test binary link recovery"
+    ],
+    "C-context-collapsed": [
+      "serialized compilation boundary",
+      "optional subsystem registration and dependency feedback",
+      "allocator lifecycle and runtime isolation",
+      "Windows harness shell and exit-code fixes",
+      "two-pass index and backtracking",
+      "large-object stack overflow"
+    ]
+  },
+  "quality_notes": [
+    "A has five concrete experience themes but source references and generalized conditions need correction",
+    "B has two bounded themes and is the only arm with a dedicated LNK1105 skill; process-list evidence is overstated and fixed suite counts are not general criteria",
+    "C covers the widest themes but several named slice references are wrong and some cited early verification payloads are hidden; later direct suite output remains available",
+    "C avoids the prior unsupported FFI skill and failed try/catch recommendation"
+  ],
+  "quality_improvement_rate": null,
+  "skill_loss_rate": null,
+  "baseline_decision": "Retain all three modes; C has broader context/coverage but did not reproduce a cost advantage. Do not treat C as a demonstrated stable overall winner.",
+  "report_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-lnk1105-three-arms-repeat-v4\\comparison.md"
+}

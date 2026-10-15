@@ -1,0 +1,617 @@
+{
+  "algorithm_version": "group-slice-selection-v2-batch",
+  "group_id": "exception-type-05b6f58afac2",
+  "group_key": "exception:CommandNotFoundException",
+  "session_ids": [
+    "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632",
+    "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+  ],
+  "session_count": 2,
+  "selection_strategy": "group-context",
+  "candidate_count": 13,
+  "selected_count": 2,
+  "excluded_count": 11,
+  "selected_slice_ids": [
+    "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06",
+    "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01"
+  ],
+  "selected_slices": [
+    {
+      "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-06.json",
+      "core_start_event": 1071,
+      "core_end_event": 1391,
+      "selection_evidence": [
+        {
+          "source_index": 1096,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1097/content/0",
+          "channel": "assistant_thinking"
+        },
+        {
+          "source_index": 1097,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1098/content/0",
+          "channel": "tool_call:PowerShell"
+        },
+        {
+          "source_index": 1098,
+          "source_part_index": 0,
+          "reason": "group_hit",
+          "json_pointer": "jsonl:1099/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 1098,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1099/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 1099,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1100/content/0",
+          "channel": "assistant_thinking"
+        },
+        {
+          "source_index": 1100,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1101/content/0",
+          "channel": "assistant_text"
+        },
+        {
+          "source_index": 1101,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1102/content/0",
+          "channel": "tool_call:Write"
+        },
+        {
+          "source_index": 1102,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1103/content/0",
+          "channel": "file-history-snapshot_text"
+        },
+        {
+          "source_index": 1356,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1357/content/0",
+          "channel": "assistant_text"
+        },
+        {
+          "source_index": 1357,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1358/content/0",
+          "channel": "tool_call:PowerShell"
+        },
+        {
+          "source_index": 1358,
+          "source_part_index": 0,
+          "reason": "group_hit",
+          "json_pointer": "jsonl:1359/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 1358,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1359/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 1359,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1360/content/0",
+          "channel": "file-history-snapshot_text"
+        },
+        {
+          "source_index": 1360,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1361/content/0",
+          "channel": "tool_call:Write"
+        },
+        {
+          "source_index": 1361,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1362/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 1362,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:1363/content/0",
+          "channel": "tool_call:PowerShell"
+        }
+      ],
+      "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632",
+      "output_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\group-slice-selection-batch-check-v2\\slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-06.json",
+      "sha256": "5886eb6888ebb08af9ae5bb361af5a280f6e5006d06f031d8fad807625f6fddb"
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-01.json",
+      "core_start_event": 1,
+      "core_end_event": 386,
+      "selection_evidence": [
+        {
+          "source_index": 50,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:51/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 51,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:52/content/0",
+          "channel": "tool_call:PowerShell"
+        },
+        {
+          "source_index": 52,
+          "source_part_index": 0,
+          "reason": "group_hit",
+          "json_pointer": "jsonl:53/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 52,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:53/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 53,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:54/content/0",
+          "channel": "tool_call:PowerShell"
+        },
+        {
+          "source_index": 54,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:55/content/0",
+          "channel": "tool_result"
+        },
+        {
+          "source_index": 55,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:56/content/0",
+          "channel": "attachment_text"
+        },
+        {
+          "source_index": 56,
+          "source_part_index": 0,
+          "reason": "stored_context",
+          "json_pointer": "jsonl:57/content/0",
+          "channel": "tool_call:PowerShell"
+        }
+      ],
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "output_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\group-slice-selection-batch-check-v2\\slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-01.json",
+      "sha256": "74b28f69d3f2bc820dc2fb33bd057e182d9e1b7e963d9d0e6db8da8b5077cd9d"
+    }
+  ],
+  "excluded_slices": [
+    {
+      "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-01",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-01.json",
+      "core_start_event": 1,
+      "core_end_event": 49,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632"
+    },
+    {
+      "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-02",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-02.json",
+      "core_start_event": 50,
+      "core_end_event": 110,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632"
+    },
+    {
+      "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-03",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-03.json",
+      "core_start_event": 111,
+      "core_end_event": 395,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632"
+    },
+    {
+      "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-04",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-04.json",
+      "core_start_event": 396,
+      "core_end_event": 740,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632"
+    },
+    {
+      "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-05.json",
+      "core_start_event": 741,
+      "core_end_event": 1070,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632"
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-02.json",
+      "core_start_event": 387,
+      "core_end_event": 526,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-03",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-03.json",
+      "core_start_event": 527,
+      "core_end_event": 563,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-04",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-04.json",
+      "core_start_event": 564,
+      "core_end_event": 617,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-05",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-05.json",
+      "core_start_event": 618,
+      "core_end_event": 683,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-06",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-06.json",
+      "core_start_event": 684,
+      "core_end_event": 781,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+    },
+    {
+      "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-07",
+      "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-07.json",
+      "core_start_event": 782,
+      "core_end_event": 1027,
+      "reason": "not_selected_by_strategy",
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+    }
+  ],
+  "unmapped_references": [],
+  "sessions": [
+    {
+      "algorithm_version": "group-slice-selection-v2-batch",
+      "group_id": "exception-type-05b6f58afac2",
+      "group_key": "exception:CommandNotFoundException",
+      "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632",
+      "selection_strategy": "group-context",
+      "candidate_count": 6,
+      "selected_count": 1,
+      "excluded_count": 5,
+      "selected_slices": [
+        {
+          "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-06",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-06.json",
+          "core_start_event": 1071,
+          "core_end_event": 1391,
+          "selection_evidence": [
+            {
+              "source_index": 1096,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1097/content/0",
+              "channel": "assistant_thinking"
+            },
+            {
+              "source_index": 1097,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1098/content/0",
+              "channel": "tool_call:PowerShell"
+            },
+            {
+              "source_index": 1098,
+              "source_part_index": 0,
+              "reason": "group_hit",
+              "json_pointer": "jsonl:1099/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 1098,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1099/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 1099,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1100/content/0",
+              "channel": "assistant_thinking"
+            },
+            {
+              "source_index": 1100,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1101/content/0",
+              "channel": "assistant_text"
+            },
+            {
+              "source_index": 1101,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1102/content/0",
+              "channel": "tool_call:Write"
+            },
+            {
+              "source_index": 1102,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1103/content/0",
+              "channel": "file-history-snapshot_text"
+            },
+            {
+              "source_index": 1356,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1357/content/0",
+              "channel": "assistant_text"
+            },
+            {
+              "source_index": 1357,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1358/content/0",
+              "channel": "tool_call:PowerShell"
+            },
+            {
+              "source_index": 1358,
+              "source_part_index": 0,
+              "reason": "group_hit",
+              "json_pointer": "jsonl:1359/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 1358,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1359/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 1359,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1360/content/0",
+              "channel": "file-history-snapshot_text"
+            },
+            {
+              "source_index": 1360,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1361/content/0",
+              "channel": "tool_call:Write"
+            },
+            {
+              "source_index": 1361,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1362/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 1362,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:1363/content/0",
+              "channel": "tool_call:PowerShell"
+            }
+          ],
+          "session_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632",
+          "output_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\group-slice-selection-batch-check-v2\\slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-06.json",
+          "sha256": "5886eb6888ebb08af9ae5bb361af5a280f6e5006d06f031d8fad807625f6fddb"
+        }
+      ],
+      "excluded_slices": [
+        {
+          "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-01",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-01.json",
+          "core_start_event": 1,
+          "core_end_event": 49,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-02",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-02.json",
+          "core_start_event": 50,
+          "core_end_event": 110,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-03",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-03.json",
+          "core_start_event": 111,
+          "core_end_event": 395,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-04",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-04.json",
+          "core_start_event": 396,
+          "core_end_event": 740,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632__segment-05",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__47d9fc04-420c-47bb-8ac0-85780af22632\\segment-05.json",
+          "core_start_event": 741,
+          "core_end_event": 1070,
+          "reason": "not_selected_by_strategy"
+        }
+      ],
+      "unmapped_references": [],
+      "original_trace_paths": [
+        "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl"
+      ],
+      "content_policy": "Copy original slice files unchanged; no hydration or event compression"
+    },
+    {
+      "algorithm_version": "group-slice-selection-v2-batch",
+      "group_id": "exception-type-05b6f58afac2",
+      "group_key": "exception:CommandNotFoundException",
+      "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "selection_strategy": "group-context",
+      "candidate_count": 7,
+      "selected_count": 1,
+      "excluded_count": 6,
+      "selected_slices": [
+        {
+          "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-01.json",
+          "core_start_event": 1,
+          "core_end_event": 386,
+          "selection_evidence": [
+            {
+              "source_index": 50,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:51/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 51,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:52/content/0",
+              "channel": "tool_call:PowerShell"
+            },
+            {
+              "source_index": 52,
+              "source_part_index": 0,
+              "reason": "group_hit",
+              "json_pointer": "jsonl:53/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 52,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:53/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 53,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:54/content/0",
+              "channel": "tool_call:PowerShell"
+            },
+            {
+              "source_index": 54,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:55/content/0",
+              "channel": "tool_result"
+            },
+            {
+              "source_index": 55,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:56/content/0",
+              "channel": "attachment_text"
+            },
+            {
+              "source_index": 56,
+              "source_part_index": 0,
+              "reason": "stored_context",
+              "json_pointer": "jsonl:57/content/0",
+              "channel": "tool_call:PowerShell"
+            }
+          ],
+          "session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+          "output_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\group-slice-selection-batch-check-v2\\slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-01.json",
+          "sha256": "74b28f69d3f2bc820dc2fb33bd057e182d9e1b7e963d9d0e6db8da8b5077cd9d"
+        }
+      ],
+      "excluded_slices": [
+        {
+          "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-02.json",
+          "core_start_event": 387,
+          "core_end_event": 526,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-03",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-03.json",
+          "core_start_event": 527,
+          "core_end_event": 563,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-04",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-04.json",
+          "core_start_event": 564,
+          "core_end_event": 617,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-05",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-05.json",
+          "core_start_event": 618,
+          "core_end_event": 683,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-06",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-06.json",
+          "core_start_event": 684,
+          "core_end_event": 781,
+          "reason": "not_selected_by_strategy"
+        },
+        {
+          "slice_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-07",
+          "source_path": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba\\segment-07.json",
+          "core_start_event": 782,
+          "core_end_event": 1027,
+          "reason": "not_selected_by_strategy"
+        }
+      ],
+      "unmapped_references": [],
+      "original_trace_paths": [
+        "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl"
+      ],
+      "content_policy": "Copy original slice files unchanged; no hydration or event compression"
+    }
+  ],
+  "original_trace_paths": [
+    "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+    "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl"
+  ],
+  "content_policy": "Copy original slice files unchanged; no hydration or event compression",
+  "inputs": {
+    "groups_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\error-clustering-v1\\sessions-30\\exception-type\\groups.json",
+    "slices_dir": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices"
+  }
+}

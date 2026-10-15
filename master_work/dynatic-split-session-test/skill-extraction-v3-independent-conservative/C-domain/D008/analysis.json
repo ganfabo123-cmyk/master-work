@@ -1,0 +1,19 @@
+{
+  "domain_id": "D008",
+  "read_slices": 24,
+  "skills": [
+    {
+      "skill_id": "C-D008-001",
+      "skill": "当 Android WebView 缺少 WebHID/WebUSB 能力时，用稳定的 DspTransport 接口隔离桌面 WebHID 与 Android NativeTransport，并通过真机握手验证。",
+      "trigger": "同一 DSP 控制界面需要从桌面浏览器迁移到 Android，而 Android WebView 无法直接使用 HID。",
+      "actions": ["保留 DspTransport 作为共同 seam", "在 Android 侧接入 NativeTransport/Kotlin bridge", "安装 release APK 并通过 USB-OTG 执行设备握手"],
+      "verification": "切片报告 v0.2.0 smoke test PASS：USB-OTG 握手 4x4MINIPRO V010、控件与路由矩阵 hydrated、无崩溃。",
+      "scope_limit": "限定于该 openDSP Android/WebView 与硬件 transport；不泛化为所有 Android WebView 通信方案。",
+      "sources": [{"slice_id": "segments__claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-05", "evidence": "Why a native shell (WebHID absent on Android, WebUSB blocks the HID class). The one seam — the DspTransport interface", "result_evidence": "v0.2.0 smoke test on the Pixel — PASS ... connected over USB-OTG ... handshake"}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "修正 Android 顶部/底部 inset", "reason": "是具体界面修复，虽然有真机验证，但不满足该领域 Skill 的独立抽象边界。"},
+    {"candidate": "发布 F-Droid recipe", "reason": "来源横跨发布流程与构建细节，当前候选无法仅凭 D008 成员切片稳定限定适用边界。"}
+  ]
+}

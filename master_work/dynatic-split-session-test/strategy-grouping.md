@@ -10,7 +10,7 @@
 python error_clustering_experiment.py --list-strategies
 ```
 
-当前已注册 `native-code`、`exception-type`、`message-template`。只运行前两种：
+当前已注册 `native-code`、`exception-type`、`message-template`、`test-case`、`stack-site`、`config-change`、`dependency-change`。只运行前两种错误策略：
 
 ```powershell
 python error_clustering_experiment.py `
@@ -77,4 +77,12 @@ STRATEGY_REGISTRY["new-strategy"] = strategy_new
 - 未选中的策略函数不会执行，也不会为其生成目录。
 - 使用新的 `--output` 目录进行对照，已有输出目录不会自动清除旧策略目录。因此同目录历史文件不能代替本次 `manifest.json` 的策略清单。
 
-本轮仅把三种现有错误策略迁入通用入口，未实现测试、调用栈、配置修改或依赖变化识别。
+初次改造仅迁入三种错误策略。2026-10-13 已追加并运行四种锚点策略，使用同一入口：
+
+```text
+--strategies test-case stack-site config-change dependency-change
+```
+
+产物位于 [四类实验记录](C:/Users/35153/PycharmProjects/master-work/dynamic-trace-segmentation-clustering/master_work/dynatic-split-session-test/strategy-grouping-four-anchors-v1/experiment-record.md)。
+
+简单策略的范围：测试只识别具名失败及改动文本中具名测试定义；调用栈只解析运行输出中的 Python/Java/JS 栈；配置只处理配置命名惯例的 JSON/JSONC/TOML、已有前后完整快照；依赖解析 npm、Cargo、PyPI 声明和 Gradle 坐标/插件版本。配置不从孤立片段猜完整键路径；依赖初次声明旧版本未知时标为 `declaration_old_unknown`，不冒充已经发生的版本变化。支持的文件/日志格式是解析规则，不是领域或 Skill 关键词词典。

@@ -1,0 +1,19 @@
+{
+  "domain_id": "D005",
+  "read_slices": 45,
+  "skills": [
+    {
+      "skill_id": "C-D005-001",
+      "skill": "固定卡片分页/滚动布局时，用与容器宽度绑定的自动列宽保证每页显示完整的固定数量卡片，避免露出半张卡片。",
+      "trigger": "三列网格与按列流布局冲突，出现 partial card peek 或卡片尺寸不一致。",
+      "actions": ["固定三列分页组", "让 grid-auto-columns 按容器宽度计算", "把滚动步长改为完整卡片组"],
+      "verification": "切片明确报告 always see exactly 3 full cards，滚动后 cleanly 显示下一组。",
+      "scope_limit": "限定于该页面的三列卡片分页布局；不推广为所有响应式网格的通用规则。",
+      "sources": [{"slice_id": "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-02", "evidence": "The grid auto-columns formula ensures every card ... is exactly 1/3 of the container width.", "result_evidence": "you always see exactly 3 full cards, scroll reveals the next set cleanly with no partial peek"}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "修复页面标题或数据集路由", "reason": "来源偏普通页面改读流程，未形成该领域独立、可迁移的判断闭环。"},
+    {"candidate": "恢复 Vercel source 配置", "reason": "虽有修复摘要，但领域切片未提供足够具体的最终验证证据。"}
+  ]
+}

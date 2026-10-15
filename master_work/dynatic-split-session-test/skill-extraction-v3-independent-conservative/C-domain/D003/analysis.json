@@ -1,0 +1,19 @@
+{
+  "domain_id": "D003",
+  "read_slices": 45,
+  "skills": [
+    {
+      "skill_id": "C-D003-001",
+      "skill": "当 Alpine 指令来自动态 screen 模板时，在 Alpine.start 前注入 HTML；不要依赖运行时 x-html 让新注入内容重新绑定。",
+      "trigger": "render() 返回的 Alpine 标记没有生效，或桌面图标点击区域不可用。",
+      "actions": ["让 core 在 Alpine.start 前注入各 screen 的 render HTML", "为图标补充尺寸布局", "让 SVG 子节点使用 pointer-events:none 以把点击交给父节点"],
+      "verification": "切片明确记录了 click not working 的根因及修复结果：图标具有显式宽高，SVG 点击穿透到父 div。",
+      "scope_limit": "适用于该 Alpine/动态 HTML 渲染链路，不扩展为所有前端框架的生命周期规则。",
+      "sources": [{"slice_id": "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02", "evidence": "x-html injects the SVG ... pointer-events on the SVG children blocking the click", "result_evidence": "Here's what was fixed: Click not working ... explicit width/height ... pointer-events: none"}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "把 RenderUI 改成 Alpine store", "reason": "切片主要是重构方案说明，未提供足够独立的最终验证闭环。"},
+    {"candidate": "把 taskbar 改成 pp-footer", "reason": "属于局部样式改动，来源没有明确问题到结果的可验证证据。"}
+  ]
+}

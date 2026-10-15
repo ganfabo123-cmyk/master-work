@@ -1,0 +1,2867 @@
+{
+  "corpus": {
+    "input_root": "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\error-clustering-v1\\sessions-30",
+    "raw_sessions_root": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions",
+    "strategies": [
+      "native-code",
+      "exception-type"
+    ],
+    "scope_note": "按用户最新范围变化停止 message-template，本次最终审查仅含 native-code 与 exception-type。"
+  },
+  "model": "gpt-5.6-luna",
+  "expected_group_count": 42,
+  "reviewed_group_count": 42,
+  "groups": [
+    {
+      "group_id": "native-code-782199a88f4c",
+      "strategy": "native-code",
+      "error_key": "exit-status:0x00000451",
+      "member_count": 4,
+      "distinct_session_count": 4,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+        "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 491,
+          "event_index": 491,
+          "json_pointer": "jsonl:492/content/0",
+          "short_quote": "clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 610,
+          "event_index": 610,
+          "json_pointer": "jsonl:611/content/0",
+          "short_quote": "clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 726,
+          "event_index": 726,
+          "json_pointer": "jsonl:727/content/0",
+          "short_quote": "clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 966,
+          "event_index": 966,
+          "json_pointer": "jsonl:967/content/0",
+          "short_quote": "make : clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1068,
+          "event_index": 1068,
+          "json_pointer": "jsonl:1069/content/0",
+          "short_quote": "make : clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\479c5e9f-a299-457f-8459-5948adf8aa8e.jsonl",
+          "source_index": 223,
+          "event_index": 223,
+          "json_pointer": "jsonl:224/content/0",
+          "short_quote": "clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\479c5e9f-a299-457f-8459-5948adf8aa8e.jsonl",
+          "source_index": 248,
+          "event_index": 248,
+          "json_pointer": "jsonl:249/content/0",
+          "short_quote": "\u001b[31;1mclang++: error: linker command failed with exit code 1105 (use -v to see invocation)\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 575,
+          "event_index": 575,
+          "json_pointer": "jsonl:576/content/0",
+          "short_quote": "clang: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 370,
+          "event_index": 370,
+          "json_pointer": "jsonl:371/content/0",
+          "short_quote": "\u001b[31;1mclang: error: linker command failed with exit code 1105 (use -v to see invocation)\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 532,
+          "event_index": 532,
+          "json_pointer": "jsonl:533/content/0",
+          "short_quote": "\u001b[31;1mclang: error: linker command failed with exit code 1105 (use -v to see invocation)\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 645,
+          "event_index": 645,
+          "json_pointer": "jsonl:646/content/0",
+          "short_quote": "\u001b[31;1mclang: error: linker command failed with exit code 1105 (use -v to see invocation)\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_parser.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_terms.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_unifier.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_variables.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1191,
+          "event_index": 1191,
+          "json_pointer": "jsonl:1192/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_atoms.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-f9479c34ae84",
+      "strategy": "native-code",
+      "error_key": "exit-status:0x00000460",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-c181c1.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_atoms.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-307aaf.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_lexer.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-c447af.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_parser.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-cf81b4.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_solver.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-ad2b66.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_terms.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-cb4d3a.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_unifier.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-5151f1.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_variables.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-847c28ada68a",
+      "strategy": "native-code",
+      "error_key": "exit-status:0xC00000FD",
+      "member_count": 2,
+      "distinct_session_count": 2,
+      "reviewed_member_ids": [
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\479c5e9f-a299-457f-8459-5948adf8aa8e.jsonl",
+          "source_index": 184,
+          "event_index": 184,
+          "json_pointer": "jsonl:185/content/0",
+          "short_quote": "Exit code `-1073741571` = `0xC00000FD` = stack overflow. The `ChoicePoint` struct is now massive — `CP_MAX_CANDIDATES = 320` `uint32_t`s = 1280 bytes per entry, and `CHOICE_STACK_CAPACITY = 256` entries, giving `256 * sizeof(ChoicePoint)` on the stack in the solver. Let me check:",
+          "evidence_kind": "reported_in_text"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 989,
+          "event_index": 989,
+          "json_pointer": "jsonl:990/content/0",
+          "short_quote": "Exit code `-1073741571` = `0xC000000D` = `STATUS_INVALID_PARAMETER` / stack overflow. These test binaries crash on startup — before any test runs. The static `ReplState` / `AtomTable` / `TermArena` structs are being instantiated at static-init time, and since `g_verbose` is now `inline` it may be getting its constructor called across TUs at the wrong time, or — more likely — the static `TokenList` in the tests is too large for the stack.",
+          "evidence_kind": "reported_in_text"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-c2d2ec92b28d",
+      "strategy": "native-code",
+      "error_key": "exit-status:0xC0000135",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 405,
+          "event_index": 405,
+          "json_pointer": "jsonl:406/content/0",
+          "short_quote": "Exit code `-1073741515` is `0xC0000135` — **DLL not found**. The `epilog.dll` isn't next to the executable. Let me check:",
+          "evidence_kind": "reported_in_text"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 409,
+          "event_index": 409,
+          "json_pointer": "jsonl:410/content/0",
+          "short_quote": "The DLL is already in `build\\` alongside the exe — so that's not it. The exit code `0xC0000135` means a dependency DLL is missing. Let me check which DLL it can't find:",
+          "evidence_kind": "reported_in_text"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 440,
+          "event_index": 440,
+          "json_pointer": "jsonl:441/content/0",
+          "short_quote": "- **No screen/output**: Exit code 0xC0000135 (DLL not found). `raylib.dll` was missing from `build/`. `build.bat` line 90 uses `%ODIN_ROOT%` env var which was not set; odin is at `D:\\Odin\\dist`. Fix: manually ran `Copy-Item \"D:\\Odin\\dist\\vendor\\raylib\\windows\\raylib.dll\" \"D:\\DMLS\\build\\raylib.dll\"`",
+          "evidence_kind": "reported_in_text"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 440,
+          "event_index": 440,
+          "json_pointer": "jsonl:441/content/0",
+          "short_quote": "The last thing worked on was diagnosing and fixing the \"no screen/output on running\" issue. The build succeeded (`build\\dmls.exe` was produced), but running the exe crashed silently with exit code `0xC0000135` (STATUS_DLL_NOT_FOUND). Investigation revealed `raylib.dll` was absent from `D:\\DMLS\\build\\` — only `epilog.dll` was present. `build.bat` line 90 attempts to copy raylib.dll using `%ODIN_ROOT%` which was not set in the environment. The fix was:",
+          "evidence_kind": "reported_in_text"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-f3df951dc57a",
+      "strategy": "native-code",
+      "error_key": "ms-linker:LNK1105",
+      "member_count": 5,
+      "distinct_session_count": 5,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+        "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+        "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 491,
+          "event_index": 491,
+          "json_pointer": "jsonl:492/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'bin\\yggdrasil.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 610,
+          "event_index": 610,
+          "json_pointer": "jsonl:611/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'bin\\yggdrasil.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 726,
+          "event_index": 726,
+          "json_pointer": "jsonl:727/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'bin\\yggdrasil.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 966,
+          "event_index": 966,
+          "json_pointer": "jsonl:967/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'bin\\yggdrasil.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1068,
+          "event_index": 1068,
+          "json_pointer": "jsonl:1069/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'bin\\yggdrasil.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\479c5e9f-a299-457f-8459-5948adf8aa8e.jsonl",
+          "source_index": 223,
+          "event_index": 223,
+          "json_pointer": "jsonl:224/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_indexing.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 575,
+          "event_index": 575,
+          "json_pointer": "jsonl:576/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\frost_smoke.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 453,
+          "event_index": 453,
+          "json_pointer": "jsonl:454/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'D:\\DMLS\\build\\dmls.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 456,
+          "event_index": 456,
+          "json_pointer": "jsonl:457/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'D:\\DMLS\\build\\dmls.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 974,
+          "event_index": 974,
+          "json_pointer": "jsonl:975/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'D:\\DMLS\\build\\dmls.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 977,
+          "event_index": 977,
+          "json_pointer": "jsonl:978/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'D:\\DMLS\\build\\dmls.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\a20a4070-6246-4e9e-adf6-f38b0c1dc3fa.jsonl",
+          "source_index": 984,
+          "event_index": 984,
+          "json_pointer": "jsonl:985/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'D:\\DMLS\\build\\dmls.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 370,
+          "event_index": 370,
+          "json_pointer": "jsonl:371/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'epilog.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 532,
+          "event_index": 532,
+          "json_pointer": "jsonl:533/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'epilog.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 645,
+          "event_index": 645,
+          "json_pointer": "jsonl:646/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'epilog.exe'; error code 1224",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_parser.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_terms.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_unifier.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1187,
+          "event_index": 1187,
+          "json_pointer": "jsonl:1188/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_variables.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 1191,
+          "event_index": 1191,
+          "json_pointer": "jsonl:1192/content/0",
+          "short_quote": "LINK : fatal error LNK1105: cannot close file 'build\\tests\\test_atoms.exe'; error code 1224 clang++: error: linker command failed with exit code 1105 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-c6460e120c75",
+      "strategy": "native-code",
+      "error_key": "ms-linker:LNK1107",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876"
+      ],
+      "error_alignment": "mixed",
+      "skill_evidence": "candidate",
+      "reason": "人工核对到同一错误的具体诊断和处理线索，但没有同一目标的真实成功验证。",
+      "experience_outline": "触发与诊断：The DLL built with clang++ on Linux (via MinGW/POSIX) isn't a proper PE DLL for MSVC linking. Let me rebuild it properly for Windows using clang with proper Windows targets:（原始行 228）；具体处理线索：clang++ -std=c++23 -O2 -DNDEBUG -target x86_64-pc-windows-msvc -shared ... -o epilog.dll; file epilog.dll（原始行 229）。同一目标的成功验证未在该证据子集内确认，因此只能列 candidate；适用范围限于该项目和触发条件。",
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4222016d-1932-4abb-94b3-463203bd8876.jsonl",
+          "source_index": 225,
+          "event_index": 225,
+          "json_pointer": "jsonl:226/content/0",
+          "short_quote": "d:\\dmls\\engine\\epilog\\epilog.dll : fatal error LNK1107: invalid or corrupt file: cannot read at 0x2F8",
+          "evidence_kind": "tool_output",
+          "diagnosis_evidence": {
+            "role": "diagnosis",
+            "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4222016d-1932-4abb-94b3-463203bd8876.jsonl",
+            "source_index": 228,
+            "json_pointer_line": 229,
+            "short_quote": "The DLL built with clang++ on Linux (via MinGW/POSIX) isn't a proper PE DLL for MSVC linking. Let me rebuild it properly for Windows using clang with proper Windows targets:"
+          },
+          "handling_evidence": {
+            "role": "action",
+            "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4222016d-1932-4abb-94b3-463203bd8876.jsonl",
+            "source_index": 229,
+            "json_pointer_line": 230,
+            "short_quote": "clang++ -std=c++23 -O2 -DNDEBUG -target x86_64-pc-windows-msvc -shared ... -o epilog.dll; file epilog.dll"
+          }
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4222016d-1932-4abb-94b3-463203bd8876.jsonl",
+          "source_index": 232,
+          "event_index": 232,
+          "json_pointer": "jsonl:233/content/0",
+          "short_quote": "d:\\dmls\\engine\\epilog\\epilog.dll : fatal error LNK1107: invalid or corrupt file: cannot read at 0x2F8",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4222016d-1932-4abb-94b3-463203bd8876.jsonl",
+          "source_index": 235,
+          "event_index": 235,
+          "json_pointer": "jsonl:236/content/0",
+          "short_quote": "d:\\dmls\\engine\\epilog\\epilog.dll : fatal error LNK1107: invalid or corrupt file: cannot read at 0x2F8",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4222016d-1932-4abb-94b3-463203bd8876.jsonl",
+          "source_index": 567,
+          "event_index": 567,
+          "json_pointer": "jsonl:568/content/0",
+          "short_quote": "- **Initial DLL was not a valid PE DLL**: Built via Bash (POSIX environment), `file` showed PE+ but `llvm-nm` showed no symbols and MSVC linker gave LNK1107. Fix: Rebuilt via PowerShell with `-target x86_64-pc-windows-msvc -Wl,/DEF:epilog.def`. This generates proper `epilog.lib` import library automatically.",
+          "evidence_kind": "reported_in_text"
+        }
+      ],
+      "issues": [
+        "具体处理尚缺同目标验证；不能升级为 usable。"
+      ]
+    },
+    {
+      "group_id": "native-code-48a19bccac70",
+      "strategy": "native-code",
+      "error_key": "ms-linker:LNK1120",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-c181c1.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_atoms.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-307aaf.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_lexer.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-c447af.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_parser.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-cf81b4.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_solver.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-ad2b66.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_terms.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-cb4d3a.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_unifier.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-5151f1.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_variables.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-2027c2e71ff3",
+      "strategy": "native-code",
+      "error_key": "ms-linker:LNK2019",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-c181c1.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_atoms.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-307aaf.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_lexer.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-c447af.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_parser.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-cf81b4.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_solver.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-ad2b66.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_terms.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-cb4d3a.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_unifier.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 975,
+          "event_index": 975,
+          "json_pointer": "jsonl:976/content/0",
+          "short_quote": "solver-5151f1.o : error LNK2019: unresolved external symbol \"int g_verbose\" (?g_verbose@@3HA) referenced in function \"void __cdecl vlog(char const *,char const *,...)\" (?vlog@@YAXPEBD0ZZ) build\\tests\\test_variables.exe : fatal error LNK1120: 1 unresolved externals clang++: error: linker command failed with exit code 1120 (use -v to see invocation)",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-c47569e002f2",
+      "strategy": "native-code",
+      "error_key": "symbolic-code:ECONNRESET",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\da5d32d6-547f-45ae-a5b5-4747ed06542f.jsonl",
+          "source_index": 686,
+          "event_index": 686,
+          "json_pointer": "jsonl:687/content/0",
+          "short_quote": "code: 'ECONNRESET'",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-f1bab2a489ba",
+      "strategy": "native-code",
+      "error_key": "symbolic-code:ENOTEMPTY",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 83,
+          "event_index": 83,
+          "json_pointer": "jsonl:84/content/0",
+          "short_quote": "code: 'ENOTEMPTY',",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-5c8ea24a92f4",
+      "strategy": "native-code",
+      "error_key": "symbolic-code:EPERM",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 97,
+          "event_index": 97,
+          "json_pointer": "jsonl:98/content/0",
+          "short_quote": "code: 'EPERM',",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 108,
+          "event_index": 108,
+          "json_pointer": "jsonl:109/content/0",
+          "short_quote": "Error: EPERM: operation not permitted, scandir 'd:\\IceBerg\\.react-router\\types\\app\\routes\\+types'",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 108,
+          "event_index": 108,
+          "json_pointer": "jsonl:109/content/0",
+          "short_quote": "code: 'EPERM',",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 122,
+          "event_index": 122,
+          "json_pointer": "jsonl:123/content/0",
+          "short_quote": "code: 'EPERM',",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-0843503c3e0b",
+      "strategy": "native-code",
+      "error_key": "typescript:TS1484",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__4130c9a7-ee88-443a-91b5-224accd13629"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/components/ui.tsx(1,10): error TS1484: 'CSSProperties' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/components/ui.tsx(1,25): error TS1484: 'ReactNode' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/components/ui.tsx(1,36): error TS1484: 'InputHTMLAttributes' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/components/ui.tsx(1,57): error TS1484: 'TextareaHTMLAttributes' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/components/ui.tsx(1,81): error TS1484: 'SelectHTMLAttributes' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/context/auth.tsx(1,58): error TS1484: 'ReactNode' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-29ae634ca181",
+      "strategy": "native-code",
+      "error_key": "typescript:TS2554",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__4130c9a7-ee88-443a-91b5-224accd13629"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/jobs/index.tsx(44,23): error TS2554: Expected 1 arguments, but got 0.",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "native-code-c721a0f8329f",
+      "strategy": "native-code",
+      "error_key": "typescript:TS6133",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__4130c9a7-ee88-443a-91b5-224accd13629"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/__root.tsx(1,23): error TS6133: 'Outlet' is declared but its value is never read.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/auth/register.tsx(4,42): error TS6133: 'Select' is declared but its value is never read.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/employer/post-job.tsx(31,9): error TS6133: 'user' is declared but its value is never read.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/jobs/$id.tsx(9,7): error TS6133: 'BASE_URL' is declared but its value is never read.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/jobs/$id.tsx(19,10): error TS6133: 'applied' is declared but its value is never read.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/jobs/index.tsx(1,27): error TS6133: 'Link' is declared but its value is never read.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4130c9a7-ee88-443a-91b5-224accd13629.jsonl",
+          "source_index": 217,
+          "event_index": 217,
+          "json_pointer": "jsonl:218/content/0",
+          "short_quote": "src/routes/jobs/index.tsx(28,9): error TS6133: 'navigate' is declared but its value is never read.",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-6aeeabc70f68",
+      "strategy": "exception-type",
+      "error_key": "exception:AttributeError",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__89cf9e13-a4bd-4cf9-9486-7c89737bec1b"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\89cf9e13-a4bd-4cf9-9486-7c89737bec1b.jsonl",
+          "source_index": 171,
+          "event_index": 171,
+          "json_pointer": "jsonl:172/content/0",
+          "short_quote": "AttributeError: 'NoneType' object has no attribute 'startswith'",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-6bcb03e30a18",
+      "strategy": "exception-type",
+      "error_key": "exception:CodeGenError",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6"
+      ],
+      "error_alignment": "false_positive",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 false_positive。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 801,
+          "event_index": 801,
+          "json_pointer": "jsonl:802/content/0",
+          "short_quote": "struct CodeGenError : std::runtime_error {",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-05b6f58afac2",
+      "strategy": "exception-type",
+      "error_key": "exception:CommandNotFoundException",
+      "member_count": 2,
+      "distinct_session_count": 2,
+      "reviewed_member_ids": [
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 1098,
+          "event_index": 1098,
+          "json_pointer": "jsonl:1099/content/0",
+          "short_quote": "+ CategoryInfo : ObjectNotFound: (grep:String) [], CommandNotFoundException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 1098,
+          "event_index": 1098,
+          "json_pointer": "jsonl:1099/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : CommandNotFoundException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 1358,
+          "event_index": 1358,
+          "json_pointer": "jsonl:1359/content/0",
+          "short_quote": "+ CategoryInfo : ObjectNotFound: (grep:String) [], CommandNotFoundException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 1358,
+          "event_index": 1358,
+          "json_pointer": "jsonl:1359/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : CommandNotFoundException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 52,
+          "event_index": 52,
+          "json_pointer": "jsonl:53/content/0",
+          "short_quote": "+ CategoryInfo : ObjectNotFound: (head:String) [], CommandNotFoundException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 52,
+          "event_index": 52,
+          "json_pointer": "jsonl:53/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : CommandNotFoundException",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-f2eaf897f803",
+      "strategy": "exception-type",
+      "error_key": "exception:FileNotFoundError",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\da5d32d6-547f-45ae-a5b5-4747ed06542f.jsonl",
+          "source_index": 1477,
+          "event_index": 1477,
+          "json_pointer": "jsonl:1478/content/0",
+          "short_quote": "FileNotFoundError: [Errno 2] No such file or directory: '/home/USER/.local/share/pipx/venvs/fdroidserver/bin/python'",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-7a6c11e8da23",
+      "strategy": "exception-type",
+      "error_key": "exception:IllegalCallerException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 185,
+          "event_index": 185,
+          "json_pointer": "jsonl:186/content/0",
+          "short_quote": "> `IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!` — at `PropertySelectionProxy:66`, from `_selectTableField`.",
+          "evidence_kind": "reported_in_text"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-b8a5be0cb083",
+      "strategy": "exception-type",
+      "error_key": "exception:InputValidationError",
+      "member_count": 4,
+      "distinct_session_count": 4,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8",
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876",
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd",
+        "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 967,
+          "event_index": 967,
+          "json_pointer": "jsonl:968/content/0",
+          "short_quote": "<tool_use_error>InputValidationError: AskUserQuestion failed due to the following issues:",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\4222016d-1932-4abb-94b3-463203bd8876.jsonl",
+          "source_index": 1176,
+          "event_index": 1176,
+          "json_pointer": "jsonl:1177/content/0",
+          "short_quote": "<tool_use_error>InputValidationError: [",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c99032e9-377b-4ae9-a9a9-ec7752b059cd.jsonl",
+          "source_index": 279,
+          "event_index": 279,
+          "json_pointer": "jsonl:280/content/0",
+          "short_quote": "<tool_use_error>InputValidationError: Read failed due to the following issue:",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\d4c4d47d-642c-4c26-a866-51ab85587896.jsonl",
+          "source_index": 100,
+          "event_index": 100,
+          "json_pointer": "jsonl:101/content/0",
+          "short_quote": "<tool_use_error>InputValidationError: Grep failed due to the following issue:",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-a7f9674cc5fa",
+      "strategy": "exception-type",
+      "error_key": "exception:LexError",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6"
+      ],
+      "error_alignment": "false_positive",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 false_positive。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 801,
+          "event_index": 801,
+          "json_pointer": "jsonl:802/content/0",
+          "short_quote": "struct LexError : std::runtime_error {",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-689f279882d8",
+      "strategy": "exception-type",
+      "error_key": "exception:MethodInvocationException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+          "source_index": 44,
+          "event_index": 44,
+          "json_pointer": "jsonl:45/content/0",
+          "short_quote": "\u001b[31;1mMethodInvocationException: \u001b[31;1mException calling \"Delete\" with \"2\" argument(s): \"Could not find a part of the path 'd:\\CFML\\dCFMLcfmldirectives'.\"\u001b[0m",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-26f591172a0f",
+      "strategy": "exception-type",
+      "error_key": "exception:ModuleNotFoundError",
+      "member_count": 4,
+      "distinct_session_count": 4,
+      "reviewed_member_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+        "claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+          "source_index": 314,
+          "event_index": 314,
+          "json_pointer": "jsonl:315/content/0",
+          "short_quote": "\u001b[31;1mModuleNotFoundError: No module named 'pygame'\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 929,
+          "event_index": 929,
+          "json_pointer": "jsonl:930/content/0",
+          "short_quote": "ModuleNotFoundError: No module named 'pypdf'",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a.jsonl",
+          "source_index": 169,
+          "event_index": 169,
+          "json_pointer": "jsonl:170/content/0",
+          "short_quote": "ModuleNotFoundError: No module named 'torch'",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\da5d32d6-547f-45ae-a5b5-4747ed06542f.jsonl",
+          "source_index": 1508,
+          "event_index": 1508,
+          "json_pointer": "jsonl:1509/content/0",
+          "short_quote": "ModuleNotFoundError: No module named 'fdroidserver'",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-70e920a2bb7b",
+      "strategy": "exception-type",
+      "error_key": "exception:NativeCommandError",
+      "member_count": 3,
+      "distinct_session_count": 3,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+      ],
+      "error_alignment": "mixed",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 mixed。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 432,
+          "event_index": 432,
+          "json_pointer": "jsonl:433/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "reported_in_text"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 500,
+          "event_index": 500,
+          "json_pointer": "jsonl:501/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 578,
+          "event_index": 578,
+          "json_pointer": "jsonl:579/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 619,
+          "event_index": 619,
+          "json_pointer": "jsonl:620/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 653,
+          "event_index": 653,
+          "json_pointer": "jsonl:654/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 669,
+          "event_index": 669,
+          "json_pointer": "jsonl:670/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 713,
+          "event_index": 713,
+          "json_pointer": "jsonl:714/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 749,
+          "event_index": 749,
+          "json_pointer": "jsonl:750/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 966,
+          "event_index": 966,
+          "json_pointer": "jsonl:967/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1060,
+          "event_index": 1060,
+          "json_pointer": "jsonl:1061/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1068,
+          "event_index": 1068,
+          "json_pointer": "jsonl:1069/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1388,
+          "event_index": 1388,
+          "json_pointer": "jsonl:1389/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 596,
+          "event_index": 596,
+          "json_pointer": "jsonl:597/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 1138,
+          "event_index": 1138,
+          "json_pointer": "jsonl:1139/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 42,
+          "event_index": 42,
+          "json_pointer": "jsonl:43/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 45,
+          "event_index": 45,
+          "json_pointer": "jsonl:46/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 83,
+          "event_index": 83,
+          "json_pointer": "jsonl:84/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 97,
+          "event_index": 97,
+          "json_pointer": "jsonl:98/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 102,
+          "event_index": 102,
+          "json_pointer": "jsonl:103/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 105,
+          "event_index": 105,
+          "json_pointer": "jsonl:106/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 108,
+          "event_index": 108,
+          "json_pointer": "jsonl:109/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 118,
+          "event_index": 118,
+          "json_pointer": "jsonl:119/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 122,
+          "event_index": 122,
+          "json_pointer": "jsonl:123/content/0",
+          "short_quote": "+ FullyQualifiedErrorId : NativeCommandError",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-1045c562262f",
+      "strategy": "exception-type",
+      "error_key": "exception:NoSuchMethodException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 551,
+          "event_index": 551,
+          "json_pointer": "jsonl:552/content/0",
+          "short_quote": "PROBE mref => NO-SL (NoSuchMethodException: jdk.proxy3.$Proxy25.writeReplace())",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 551,
+          "event_index": 551,
+          "json_pointer": "jsonl:552/content/0",
+          "short_quote": "PROBE deep => NO-SL (NoSuchMethodException: jdk.proxy3.$Proxy25.writeReplace())",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-0e2dff60ca37",
+      "strategy": "exception-type",
+      "error_key": "exception:NoSuchPathError",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\da5d32d6-547f-45ae-a5b5-4747ed06542f.jsonl",
+          "source_index": 1513,
+          "event_index": 1513,
+          "json_pointer": "jsonl:1514/content/0",
+          "short_quote": "2026-06-17 13:56:20,189 WARNING: NoSuchPathError: build/net.opendsp.x4x4",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-37cc9325642f",
+      "strategy": "exception-type",
+      "error_key": "exception:ParameterBindingException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 57,
+          "event_index": 57,
+          "json_pointer": "jsonl:58/content/0",
+          "short_quote": "+ CategoryInfo : InvalidArgument: (:) [Get-ChildItem], ParameterBindingException",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-061890ceff27",
+      "strategy": "exception-type",
+      "error_key": "exception:ParentContainsErrorRecordException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1079,
+          "event_index": 1079,
+          "json_pointer": "jsonl:1080/content/0",
+          "short_quote": "+ CategoryInfo : ParserError: (:) [], ParentContainsErrorRecordException",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-a3d3eaa4aede",
+      "strategy": "exception-type",
+      "error_key": "exception:ParseError",
+      "member_count": 2,
+      "distinct_session_count": 2,
+      "reviewed_member_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6"
+      ],
+      "error_alignment": "mixed",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 mixed。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+          "source_index": 134,
+          "event_index": 134,
+          "json_pointer": "jsonl:135/content/0",
+          "short_quote": "\u001b[31;1mParseError: [line 10] ParseError: unexpected token in expression: RBRACE (None)\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 801,
+          "event_index": 801,
+          "json_pointer": "jsonl:802/content/0",
+          "short_quote": "struct ParseError : std::runtime_error {",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 801,
+          "event_index": 801,
+          "json_pointer": "jsonl:802/content/0",
+          "short_quote": "- `error(msg)` : throw ParseError at current position",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-c06086a50727",
+      "strategy": "exception-type",
+      "error_key": "exception:ParseException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 379,
+          "event_index": 379,
+          "json_pointer": "jsonl:380/content/0",
+          "short_quote": "+ CategoryInfo : ParserError: (:) [], ParseException",
+          "evidence_kind": "reported_in_text"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-798d35a921e2",
+      "strategy": "exception-type",
+      "error_key": "exception:ParserError",
+      "member_count": 2,
+      "distinct_session_count": 2,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 379,
+          "event_index": 379,
+          "json_pointer": "jsonl:380/content/0",
+          "short_quote": "+ CategoryInfo : ParserError: (:) [], ParseException",
+          "evidence_kind": "reported_in_text"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1079,
+          "event_index": 1079,
+          "json_pointer": "jsonl:1080/content/0",
+          "short_quote": "+ CategoryInfo : ParserError: (:) [], ParentContainsErrorRecordException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\479c5e9f-a299-457f-8459-5948adf8aa8e.jsonl",
+          "source_index": 221,
+          "event_index": 221,
+          "json_pointer": "jsonl:222/content/0",
+          "short_quote": "\u001b[31;1mParserError: \u001b[0m",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-c6c0bd63aa9d",
+      "strategy": "exception-type",
+      "error_key": "exception:RemoteException",
+      "member_count": 3,
+      "distinct_session_count": 3,
+      "reviewed_member_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+        "claude_code__47d9fc04-420c-47bb-8ac0-85780af22632",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+      ],
+      "error_alignment": "mixed",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 mixed。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 432,
+          "event_index": 432,
+          "json_pointer": "jsonl:433/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...e name, got '/':String) [], RemoteException",
+          "evidence_kind": "reported_in_text"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 500,
+          "event_index": 500,
+          "json_pointer": "jsonl:501/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...r name, got '{':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 578,
+          "event_index": 578,
+          "json_pointer": "jsonl:579/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...e name, got '>':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 619,
+          "event_index": 619,
+          "json_pointer": "jsonl:620/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...ected token '<':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 653,
+          "event_index": 653,
+          "json_pointer": "jsonl:654/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...ected token '<':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 669,
+          "event_index": 669,
+          "json_pointer": "jsonl:670/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...e name, got '[':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 713,
+          "event_index": 713,
+          "json_pointer": "jsonl:714/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...d token 'await':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 749,
+          "event_index": 749,
+          "json_pointer": "jsonl:750/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (parse error at ...losed by </div>:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 966,
+          "event_index": 966,
+          "json_pointer": "jsonl:967/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (clang++: error:...see invocation):String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1060,
+          "event_index": 1060,
+          "json_pointer": "jsonl:1061/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (tests\\fixtures\\...e name, got '-':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1068,
+          "event_index": 1068,
+          "json_pointer": "jsonl:1069/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (clang++: error:...see invocation):String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1388,
+          "event_index": 1388,
+          "json_pointer": "jsonl:1389/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (yggdrasil.exe :...attribute value:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\39082932-131c-40a9-872d-1d3ac8ed1fd6.jsonl",
+          "source_index": 1388,
+          "event_index": 1388,
+          "json_pointer": "jsonl:1389/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (D:\\Yggdrasil\\te...attribute value:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 596,
+          "event_index": 596,
+          "json_pointer": "jsonl:597/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (wsl: Failed to ...studio\\Scripts':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\47d9fc04-420c-47bb-8ac0-85780af22632.jsonl",
+          "source_index": 1138,
+          "event_index": 1138,
+          "json_pointer": "jsonl:1139/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (wsl: Failed to ...studio\\Scripts':String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 42,
+          "event_index": 42,
+          "json_pointer": "jsonl:43/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (npm warn exec T...te-remix@2.17.4:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 45,
+          "event_index": 45,
+          "json_pointer": "jsonl:46/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (npm warn exec T...t-router@7.15.1:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 83,
+          "event_index": 83,
+          "json_pointer": "jsonl:84/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (node:internal/process/promises:394:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 97,
+          "event_index": 97,
+          "json_pointer": "jsonl:98/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (node:internal/process/promises:394:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 102,
+          "event_index": 102,
+          "json_pointer": "jsonl:103/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (d:\\IceBerg\\.rea...cess is denied.:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 105,
+          "event_index": 105,
+          "json_pointer": "jsonl:106/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (ERROR: File own...e file systems;:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 105,
+          "event_index": 105,
+          "json_pointer": "jsonl:106/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (Invalid parameter \"(OI)(CI)F\":String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 105,
+          "event_index": 105,
+          "json_pointer": "jsonl:106/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (d:\\IceBerg\\.rea...cess is denied.:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 108,
+          "event_index": 108,
+          "json_pointer": "jsonl:109/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (node:internal/fs/rimraf:291:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 118,
+          "event_index": 118,
+          "json_pointer": "jsonl:119/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (Access is denied.:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 122,
+          "event_index": 122,
+          "json_pointer": "jsonl:123/content/0",
+          "short_quote": "+ CategoryInfo : NotSpecified: (node:internal/process/promises:394:String) [], RemoteException",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-6e587837111b",
+      "strategy": "exception-type",
+      "error_key": "exception:RolldownError",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c84c0ad3-c368-40df-87b1-5ef9effe237a.jsonl",
+          "source_index": 240,
+          "event_index": 240,
+          "json_pointer": "jsonl:241/content/0",
+          "short_quote": "\u001b[31;1mRolldownError: C:/Users/USER/Documents/MyDatabase/frontend/src/lib/components/PageView.svelte:171:2 Expected a valid CSS identifier\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\c84c0ad3-c368-40df-87b1-5ef9effe237a.jsonl",
+          "source_index": 240,
+          "event_index": 240,
+          "json_pointer": "jsonl:241/content/0",
+          "short_quote": "\u001b[31;1mRolldownError: C:/Users/USER/Documents/MyDatabase/frontend/src/lib/components/PageList.svelte:106:2 Expected a valid CSS identifier\u001b[0m",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-c9afbe50532d",
+      "strategy": "exception-type",
+      "error_key": "exception:TypeError",
+      "member_count": 4,
+      "distinct_session_count": 4,
+      "reviewed_member_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+        "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+        "claude_code__89cf9e13-a4bd-4cf9-9486-7c89737bec1b",
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "candidate",
+      "reason": "人工核对到同一错误的具体诊断和处理线索，但没有同一目标的真实成功验证。",
+      "experience_outline": "触发与诊断：The `line` field has a default but subclass fields don't — dataclass inheritance ordering issue. Fix ... make `line` keyword-only:（原始行 127）；具体处理线索：The file d:\\CFML\\cfml\\ast_nodes.py has been updated successfully.（原始行 129）。同一目标的成功验证未在该证据子集内确认，因此只能列 candidate；适用范围限于该项目和触发条件。",
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+          "source_index": 126,
+          "event_index": 126,
+          "json_pointer": "jsonl:127/content/0",
+          "short_quote": "\u001b[31;1mTypeError: non-default argument 'version' follows default argument 'line'\u001b[0m",
+          "evidence_kind": "tool_output",
+          "diagnosis_evidence": {
+            "role": "diagnosis",
+            "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+            "source_index": 127,
+            "json_pointer_line": 128,
+            "short_quote": "The `line` field has a default but subclass fields don't — dataclass inheritance ordering issue. Fix ... make `line` keyword-only:"
+          },
+          "handling_evidence": {
+            "role": "action",
+            "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+            "source_index": 129,
+            "json_pointer_line": 130,
+            "short_quote": "The file d:\\CFML\\cfml\\ast_nodes.py has been updated successfully."
+          }
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+          "source_index": 169,
+          "event_index": 169,
+          "json_pointer": "jsonl:170/content/0",
+          "short_quote": "\u001b[31;1mTypeError: _PrecomputedNode.__init__() takes 2 positional arguments but 3 were given\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 321,
+          "event_index": 321,
+          "json_pointer": "jsonl:322/content/0",
+          "short_quote": "FAIL T1/arithmetic: eval(1 + 2) => error: TypeError: eval is not supported",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 321,
+          "event_index": 321,
+          "json_pointer": "jsonl:322/content/0",
+          "short_quote": "FAIL T1/typeof-undefined: eval(typeof undefined) => error: TypeError: eval is not supported",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 321,
+          "event_index": 321,
+          "json_pointer": "jsonl:322/content/0",
+          "short_quote": "FAIL T1/boolean: eval(true && false) => error: TypeError: eval is not supported",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 321,
+          "event_index": 321,
+          "json_pointer": "jsonl:322/content/0",
+          "short_quote": "FAIL T1/null-literal: eval(null) => error: TypeError: eval is not supported",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 321,
+          "event_index": 321,
+          "json_pointer": "jsonl:322/content/0",
+          "short_quote": "FAIL T1/throw-catch: eval((function(){ try { throw 42; } catch(e) { return e === 42; } })()) => error: TypeError: eval is not supported",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\6a7964ed-6f92-4eee-ae5e-3f91a6445833.jsonl",
+          "source_index": 333,
+          "event_index": 333,
+          "json_pointer": "jsonl:334/content/0",
+          "short_quote": "eval rc=-1 err=TypeError: eval is not supported",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\89cf9e13-a4bd-4cf9-9486-7c89737bec1b.jsonl",
+          "source_index": 151,
+          "event_index": 151,
+          "json_pointer": "jsonl:152/content/0",
+          "short_quote": "TypeError: fetch failed",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\da5d32d6-547f-45ae-a5b5-4747ed06542f.jsonl",
+          "source_index": 1513,
+          "event_index": 1513,
+          "json_pointer": "jsonl:1514/content/0",
+          "short_quote": "TypeError: str expected, not NoneType",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "具体处理尚缺同目标验证；不能升级为 usable。"
+      ]
+    },
+    {
+      "group_id": "exception-type-e34a737b03fe",
+      "strategy": "exception-type",
+      "error_key": "exception:UnicodeEncodeError",
+      "member_count": 2,
+      "distinct_session_count": 2,
+      "reviewed_member_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+        "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\07b57159-218e-4330-a64e-0ec4b4355056.jsonl",
+          "source_index": 283,
+          "event_index": 283,
+          "json_pointer": "jsonl:284/content/0",
+          "short_quote": "\u001b[31;1mUnicodeEncodeError: 'charmap' codec can't encode character '\\U0001f308' in position 5: character maps to <undefined>\u001b[0m",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\860618e1-0cf6-43c6-81cf-fe67123082ba.jsonl",
+          "source_index": 947,
+          "event_index": 947,
+          "json_pointer": "jsonl:948/content/0",
+          "short_quote": "UnicodeEncodeError: 'charmap' codec can't encode character '\\u22ef' in position 55: character maps to <undefined>",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-b5e7d3b42ad0",
+      "strategy": "exception-type",
+      "error_key": "exception:groovy.lang.MissingPropertyException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "usable",
+      "reason": "该组的一个完整证据子集闭合了错误→诊断→实际修改→同目标测试验证；其他成员/后续全套结果不替代这条链。",
+      "experience_outline": "触发：campaign 与 maps 测试报告 MissingPropertyException，具体为找不到 User/GameMap（错误事件 source_index=1140）；诊断：助手定位为测试规格缺少值类型导入（1142）；处理：实际命令把测试中的 User/GameMap 改为 app.models.User/app.models.GameMap，并修正 GameMap 的 createTablesFor 参数（1143）；验证：同一 campaign/models/maps 测试得到 tests=31、failures=0、errors=0（1167）。适用范围：仅支持该 Groovy 测试规格的类型导入/限定名问题；不能推广为所有 MissingPropertyException 的通用修复。",
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1140,
+          "event_index": 1140,
+          "json_pointer": "jsonl:1141/content/0",
+          "short_quote": "groovy.lang.MissingPropertyException: No such property: User for class: campaign.CampaignViewModel_Spec",
+          "evidence_kind": "tool_output",
+          "diagnosis_evidence": {
+            "role": "diagnosis",
+            "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+            "source_index": 1142,
+            "json_pointer_line": 1143,
+            "short_quote": "The value classes need imports in those specs — simplest is to fully-qualify them. Let me fix:"
+          },
+          "handling_evidence": {
+            "role": "action",
+            "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+            "source_index": 1143,
+            "json_pointer_line": 1144,
+            "short_quote": "perl -pi 修改测试规格中的 User/GameMap 引用为 app.models.User/app.models.GameMap，并修正 createTablesFor 的 GameMap 类型。"
+          },
+          "validation_evidence": {
+            "role": "verification",
+            "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+            "source_index": 1167,
+            "json_pointer_line": 1168,
+            "short_quote": "campaign/models/maps tests=31 failures=0 errors=0"
+          }
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1140,
+          "event_index": 1140,
+          "json_pointer": "jsonl:1141/content/0",
+          "short_quote": "groovy.lang.MissingPropertyException: No such property: GameMap for class: maps.MapWorlds_Spec",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1140,
+          "event_index": 1140,
+          "json_pointer": "jsonl:1141/content/0",
+          "short_quote": "groovy.lang.MissingPropertyException: No such property: User for class: campaign.CampaignService_Spec",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1140,
+          "event_index": 1140,
+          "json_pointer": "jsonl:1141/content/0",
+          "short_quote": "groovy.lang.MissingPropertyException: No such property: User for class: models.sheet.CharacterSheetOnCharacter_Spec",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": []
+    },
+    {
+      "group_id": "exception-type-00d7b185c4de",
+      "strategy": "exception-type",
+      "error_key": "exception:java.lang.ClassCastException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 878,
+          "event_index": 878,
+          "json_pointer": "jsonl:879/content/0",
+          "short_quote": "java.lang.ClassCastException: class dal.values.Circle cannot be cast to class dal.api.Model (dal.values.Circle and dal.api.Model are in unnamed module of loader 'app')",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-9f967e5475d1",
+      "strategy": "exception-type",
+      "error_key": "exception:java.lang.ClassNotFoundException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 425,
+          "event_index": 425,
+          "json_pointer": "jsonl:426/content/0",
+          "short_quote": "Caused by: java.lang.ClassNotFoundException: CFProbe",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-554ec18aefd8",
+      "strategy": "exception-type",
+      "error_key": "exception:java.lang.IllegalArgumentException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 74,
+          "event_index": 74,
+          "json_pointer": "jsonl:75/content/0",
+          "short_quote": "java.lang.IllegalArgumentException at DataBase_Querying_Values_In_Models_Spec.groovy:96",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 79,
+          "event_index": 79,
+          "json_pointer": "jsonl:80/content/0",
+          "short_quote": "message=\"java.lang.IllegalArgumentException: The return type of creationDate() must be a tuple, primitive or Value\"",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 79,
+          "event_index": 79,
+          "json_pointer": "jsonl:80/content/0",
+          "short_quote": "<failure message=\"java.lang.IllegalArgumentException: The return type of creationDate() must be a tuple, primitive or Value\" type=\"java.lang.IllegalArgumentException\">java.lang.IllegalArgumentException: The return type of creationDate() must be a tuple, primitive or Value",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 364,
+          "event_index": 364,
+          "json_pointer": "jsonl:365/content/0",
+          "short_quote": "java.lang.IllegalArgumentException: Unsupported class file major version 69",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 898,
+          "event_index": 898,
+          "json_pointer": "jsonl:899/content/0",
+          "short_quote": "FAIL: A list (Vars) of polymorphic shapes round-trips in orde | java.lang.IllegalArgumentException: The type arguments of return type of the method shapes must be a class!",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1120,
+          "event_index": 1120,
+          "json_pointer": "jsonl:1121/content/0",
+          "short_quote": "java.lang.IllegalArgumentException: Cannot establish table field for method 'state()' for value type 'app.models.GameMapModel', because the return type of the method is a property referencing another value called 'app.models.GameMap', which is however not known by the database,",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL campaign.CampaignViewModel_Spec :: Adding a character grows the roster, selects i | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL campaign.CampaignViewModel_Spec :: Editing the selected character sheet through t | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL campaign.CampaignViewModel_Spec :: An existing campaign loads its characters into | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL maps.MapWorlds_Spec :: The generator reflects the parameters stored o | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL maps.MapWorlds_Spec :: A world can be built from a map. | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL maps.MapWorlds_Spec :: Terrain is a pure function of the seed: same s | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL campaign.CampaignService_Spec :: gameMasterOf finds-or-creates exactly one game | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL campaign.CampaignService_Spec :: createCampaign links the campaign to its game | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1149,
+          "event_index": 1149,
+          "json_pointer": "jsonl:1150/content/0",
+          "short_quote": "FAIL campaign.CampaignService_Spec :: createCharacter initializes the sheet, links b | java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 1153,
+          "event_index": 1153,
+          "json_pointer": "jsonl:1154/content/0",
+          "short_quote": "java.lang.IllegalArgumentException: Lens getter must not throw an exception",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-abfd971ec48b",
+      "strategy": "exception-type",
+      "error_key": "exception:java.lang.IllegalCallerException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 178,
+          "event_index": 178,
+          "json_pointer": "jsonl:179/content/0",
+          "short_quote": "1 message=\"Condition failed with Exception:&#10;&#10;db.select(ProductModel).where(ProductModel::createDate).is(DAY1) .asList().collect { it.name().get() } == [&quot;bicycle&quot;]&#10;| | | | |&#10;| | | | interface dal.models.ProductModel&#10;| | | java.lang.IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!&#10;| | | &#9;at dal.impl.PropertySelectionProxy.invoke(PropertySelectionProxy.java:66)&#10;| | | &#9;at groovy.lang.Closur",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 178,
+          "event_index": 178,
+          "json_pointer": "jsonl:179/content/0",
+          "short_quote": "1 message=\"Condition failed with Exception:&#10;&#10;db.select(ProductModel).where(ProductModel::name).in(&quot;bicycle&quot;, &quot;scooter&quot;) .asList().collect { it.name().get() } as Set == [&quot;bicycle&quot;, &quot;scooter&quot;] as Set&#10;| | | | |&#10;| | | | interface dal.models.ProductModel&#10;| | | java.lang.IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!&#10;| | | &#9;at dal.impl.PropertySelectionProxy.invoke(Pr",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 178,
+          "event_index": 178,
+          "json_pointer": "jsonl:179/content/0",
+          "short_quote": "1 message=\"Condition failed with Exception:&#10;&#10;db.select(ProductModel).where(ProductModel::name).is(&quot;bicycle&quot;).exists()&#10;| | | | |&#10;| | | | interface dal.models.ProductModel&#10;| | | java.lang.IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!&#10;| | | &#9;at dal.impl.PropertySelectionProxy.invoke(PropertySelectionProxy.java:66)&#10;| | | &#9;at groovy.lang.Closure.call(Closure.java:433)&#10;| | | &#9;at dal",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 178,
+          "event_index": 178,
+          "json_pointer": "jsonl:179/content/0",
+          "short_quote": "1 message=\"Condition failed with Exception:&#10;&#10;db.select(ProductModel).where(ProductModel::name).is(&quot;bicycle&quot;) .expectOne().name().get() == &quot;bicycle&quot;&#10;| | | | |&#10;| | | | interface dal.models.ProductModel&#10;| | | java.lang.IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!&#10;| | | &#9;at dal.impl.PropertySelectionProxy.invoke(PropertySelectionProxy.java:66)&#10;| | | &#9;at groovy.lang.Closure.cal",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 178,
+          "event_index": 178,
+          "json_pointer": "jsonl:179/content/0",
+          "short_quote": "1 message=\"Condition failed with Exception:&#10;&#10;db.select(ProductModel).where(ProductModel::price).greaterThanOrEqual(0.0).count() == 4&#10;| | | | |&#10;| | | | interface dal.models.ProductModel&#10;| | | java.lang.IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!&#10;| | | &#9;at dal.impl.PropertySelectionProxy.invoke(PropertySelectionProxy.java:66)&#10;| | | &#9;at groovy.lang.Closure.call(Closure.java:433)&#10;| | | &#9;a",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 178,
+          "event_index": 178,
+          "json_pointer": "jsonl:179/content/0",
+          "short_quote": "1 message=\"Condition failed with Exception:&#10;&#10;db.select(ProductModel).where(ProductModel::price).lessThan(100.0) .asList().collect { it.name().get() } as Set == [&quot;scooter&quot;, &quot;skateboard&quot;] as Set&#10;| | | | |&#10;| | | | interface dal.models.ProductModel&#10;| | | java.lang.IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!&#10;| | | &#9;at dal.impl.PropertySelectionProxy.invoke(PropertySelectionProxy.java",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 178,
+          "event_index": 178,
+          "json_pointer": "jsonl:179/content/0",
+          "short_quote": "7 message=\"java.lang.IllegalCallerException: This is a selector proxy for selecting properties only, you can't call other methods on it!\"",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 235,
+          "event_index": 235,
+          "json_pointer": "jsonl:236/content/0",
+          "short_quote": "| | | java.lang.IllegalCallerException: Illegal selection 'ProductModel.name() : Var' on a property selector for 'dal.models.ProductModel'.",
+          "evidence_kind": "tool_output"
+        },
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 237,
+          "event_index": 237,
+          "json_pointer": "jsonl:238/content/0",
+          "short_quote": "java.lang.IllegalCallerException: Illegal selection 'ProductModel.name() : Var' on a",
+          "evidence_kind": "reported_in_text"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-840d73e87e87",
+      "strategy": "exception-type",
+      "error_key": "exception:java.lang.NullPointerException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\3be5ba0c-62b2-4645-8589-9216be0c10d8.jsonl",
+          "source_index": 79,
+          "event_index": 79,
+          "json_pointer": "jsonl:80/content/0",
+          "short_quote": "Suppressed: java.lang.NullPointerException: Cannot invoke method close() on null object",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    },
+    {
+      "group_id": "exception-type-50840b92511c",
+      "strategy": "exception-type",
+      "error_key": "exception:java.net.UnknownHostException",
+      "member_count": 1,
+      "distinct_session_count": 1,
+      "reviewed_member_ids": [
+        "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f"
+      ],
+      "error_alignment": "consistent",
+      "skill_evidence": "unsupported",
+      "reason": "人工逐组核对命中内容与原始 Session；归组判断为 consistent。未找到能把该错误、针对性处理和同一目标真实验证闭合起来的充分证据，因此不提取可用经验。",
+      "experience_outline": null,
+      "source_evidence": [
+        {
+          "role": "error",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\sessions\\claude_code\\da5d32d6-547f-45ae-a5b5-4747ed06542f.jsonl",
+          "source_index": 395,
+          "event_index": 395,
+          "json_pointer": "jsonl:396/content/0",
+          "short_quote": "06-17 11:34:28.895 D/Pushy (20559): Connect exception: (0) - java.net.UnknownHostException: mqtt-1781692463.pushy.io",
+          "evidence_kind": "tool_output"
+        }
+      ],
+      "issues": [
+        "未找到与该错误同一目标的完整处理→验证链；附近其他项目、文档或不同测试结果不计入。"
+      ]
+    }
+  ],
+  "summary": {
+    "total_groups": 42,
+    "by_strategy": {
+      "native-code": {
+        "group_count": 14,
+        "error_alignment": {
+          "consistent": 13,
+          "mixed": 1
+        },
+        "skill_evidence": {
+          "unsupported": 13,
+          "candidate": 1
+        },
+        "usable_ratio": {
+          "numerator": 0,
+          "denominator": 14
+        },
+        "candidate_ratio": {
+          "numerator": 1,
+          "denominator": 14
+        }
+      },
+      "exception-type": {
+        "group_count": 28,
+        "error_alignment": {
+          "consistent": 23,
+          "false_positive": 2,
+          "mixed": 3
+        },
+        "skill_evidence": {
+          "unsupported": 26,
+          "candidate": 1,
+          "usable": 1
+        },
+        "usable_ratio": {
+          "numerator": 1,
+          "denominator": 28
+        },
+        "candidate_ratio": {
+          "numerator": 1,
+          "denominator": 28
+        }
+      }
+    },
+    "semantic_duplicates_and_limits": "本次最终范围只有 native-code 与 exception-type，共42组；message-template 已停止且不计入分母。不同策略可能重复命中同一根因，组数不等于 Skill 数。附近出现的其他修复、README 文本或不同测试目标的通过结果不作为本组经验证据。"
+  }
+}

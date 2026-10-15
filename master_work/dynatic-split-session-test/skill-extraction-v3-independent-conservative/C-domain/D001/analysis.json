@@ -1,0 +1,19 @@
+{
+  "domain_id": "D001",
+  "read_slices": 65,
+  "skills": [
+    {
+      "skill_id": "C-D001-001",
+      "skill": "在反向执行语句时，先按正向顺序预计算赋值结果，再按反向顺序执行，以保持值求值顺序与执行顺序分离。",
+      "trigger": "反向执行导致后置赋值尚未执行，但前置日志或读取已经需要该值。",
+      "actions": ["识别反向执行中的赋值依赖", "增加预计算节点/预计算过程", "在反向执行阶段使用已计算值"],
+      "verification": "同一切片中记录了 pre-compute 修复后重新运行全部测试并报告 All passing。",
+      "scope_limit": "仅适用于该 CFML 解释器的 reverse 语义；不推广为所有反向遍历都需要预计算。",
+      "sources": [{"slice_id": "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03", "evidence": "The pre-compute pass evaluates values but doesn't actually store assignments ... The pre-compute pass needs to also execute the assignments", "result_evidence": "Now run all tests in one pass to confirm nothing regressed: All passing."}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "创建 PROJECT.md 和里程碑", "reason": "来源主要是计划/里程碑与普通文件创建，没有足够的具体问题闭环。"},
+    {"candidate": "支持 Python 3.7", "reason": "虽有兼容性讨论，但该领域切片没有完整、可独立验证的结果证据。"}
+  ]
+}

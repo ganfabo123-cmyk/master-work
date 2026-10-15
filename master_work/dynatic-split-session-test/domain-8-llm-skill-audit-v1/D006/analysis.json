@@ -1,0 +1,773 @@
+{
+  "audit_version": "domain-8-llm-skill-audit-v1",
+  "domain_id": "D006",
+  "method": "逐领域独立读取 domains.json 当前领域 members 指定的切片；按切片中实际出现的 user_text、assistant_text、thinking/reasoning、tool_call 和可定位事件证据判断。允许单切片、单 Session 和单来源 Skill；不以现有聚类候选作语义门槛，不做领域间去重，不调用 embedding。",
+  "read_scope": {
+    "slice_directory": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices",
+    "domain_members_declared": 36,
+    "actual_read_slice_count": 36,
+    "actual_read_session_count": 16,
+    "actual_read_slice_ids": [
+      "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+      "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01",
+      "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02",
+      "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03",
+      "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04",
+      "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05",
+      "segments__claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f__segment-01",
+      "segments__claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01",
+      "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04",
+      "segments__claude_code__4130c9a7-ee88-443a-91b5-224accd13629__segment-01",
+      "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02",
+      "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-03",
+      "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-04",
+      "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-01",
+      "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-02",
+      "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03",
+      "segments__claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-01",
+      "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01",
+      "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02",
+      "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03",
+      "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01",
+      "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+      "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-03",
+      "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-06",
+      "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-07",
+      "segments__claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-02",
+      "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-01",
+      "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-02",
+      "segments__claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-01",
+      "segments__claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-02",
+      "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-01",
+      "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-02",
+      "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-03",
+      "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04",
+      "segments__claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-05",
+      "segments__claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-07"
+    ],
+    "actual_read_session_ids": [
+      "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+      "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+      "claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f",
+      "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2",
+      "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+      "claude_code__4130c9a7-ee88-443a-91b5-224accd13629",
+      "claude_code__4222016d-1932-4abb-94b3-463203bd8876",
+      "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+      "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+      "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa",
+      "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a",
+      "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd",
+      "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896",
+      "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f"
+    ],
+    "missing_file_count": 0,
+    "missing_files": []
+  },
+  "skills": [
+    {
+      "skill_id": "D006-001",
+      "title": "把多阶段需求转成明确的本轮范围与排除项",
+      "skill": "收到包含多个 milestone 的需求时，先写清本轮要完成、明确跳过和未来分支，再按范围实现；用户改变阶段时重新读取当前状态，只扩展到新授权阶段。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02",
+          "source_session_id": "claude_code__4222016d-1932-4abb-94b3-463203bd8876",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__4222016d-1932-4abb-94b3-463203bd8876\\segment-02.json",
+          "event_index": 270,
+          "key_evidence": "continue complete M1, create a README.MD"
+        }
+      ],
+      "applicability": "有路线图或阶段表，且阶段排除项可从用户或项目文档确定。",
+      "quality_rationale": "证据同时包含阶段目标、跳过项和继续扩展，能把自然语言范围变成可验收边界。"
+    },
+    {
+      "skill_id": "D006-002",
+      "title": "用阶段专属测试套件证明阶段完成后再更新文档",
+      "skill": "实现阶段性能力时，先让阶段专属测试和既有回归都通过，再把 README/计划表标记为完成；若失败来自旧进程、锁文件或工具链噪声，先隔离环境问题再判断代码结果。",
+      "source_slice_count": 2,
+      "source_slice_ids": [
+        "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04",
+        "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02"
+      ],
+      "source_session_count": 2,
+      "source_session_ids": [
+        "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04",
+          "source_session_id": "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6\\segment-04.json",
+          "event_index": 1433,
+          "key_evidence": "48/48 + 17/17. Now update the README and add the LICENSE:"
+        },
+        {
+          "source_slice_id": "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02",
+          "source_session_id": "claude_code__4222016d-1932-4abb-94b3-463203bd8876",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__4222016d-1932-4abb-94b3-463203bd8876\\segment-02.json",
+          "event_index": 270,
+          "key_evidence": "continue complete M1, create a README.MD"
+        }
+      ],
+      "applicability": "有独立阶段测试入口的编译器、运行时、游戏或应用工程。",
+      "quality_rationale": "轨迹把测试证据、环境噪声隔离和交付文档绑定成完整闭环。"
+    },
+    {
+      "skill_id": "D006-003",
+      "title": "把可嵌入库与 CLI 分离并提供窄的纯 C ABI",
+      "skill": "需要被另一语言或运行时嵌入时，把核心 lexer/parser/codegen 和批处理逻辑放进库，让 CLI 只处理参数、文件和输出；跨 C/C++ 边界只暴露纯 C 结构、句柄和错误结果。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03",
+          "source_session_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e\\segment-03.json",
+          "event_index": 123,
+          "key_evidence": "Now implement the C FFI layer. This is a clean `extern \"C\"` wrapper over the engine — opaque handles, no C++ headers exposed:"
+        }
+      ],
+      "applicability": "编译器、解释器或数据工具需要被其他语言嵌入。",
+      "quality_rationale": "轨迹明确拆分库/CLI，并采用 opaque handle、extern C 和不暴露 C++ 类型的 ABI 边界。"
+    },
+    {
+      "skill_id": "D006-004",
+      "title": "用对象大小和拷贝路径定位启动期栈溢出",
+      "skill": "测试程序启动即崩溃且主体尚未执行时，先检查大型结构体是否按值声明或被隐式复制；改为引用/指针后先跑最小测试，再跑全套测试确认因果。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03",
+          "source_session_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e\\segment-03.json",
+          "event_index": 123,
+          "key_evidence": "Now implement the C FFI layer. This is a clean `extern \"C\"` wrapper over the engine — opaque handles, no C++ headers exposed:"
+        }
+      ],
+      "applicability": "C/C++ 启动崩溃、有限栈空间或大型状态对象。",
+      "quality_rationale": "轨迹从固定退出码定位到 1MB AtomTable 按值复制，并以 17 个测试通过完成因果验证。"
+    },
+    {
+      "skill_id": "D006-005",
+      "title": "用路由事实和请求生命周期排查前端 404",
+      "skill": "排查文件路由 404 时，先核对实际目录参数名和请求生命周期中的环境变量可见性；如果后端地址只在服务端请求期可用，增加同源 proxy route，让 loader 使用相对路径，再用真实 HTTP 200 验证。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-02.json",
+          "event_index": 307,
+          "key_evidence": "Server is up. API route 404 means Manic isn't picking up nested API directories. Per AGENTS.md: `app/api/hello/index.ts → /api/hello` — but we have `app/api/reddit/user/index.ts` which would mount at `/api/reddit/user`. Let me check if d..."
+        }
+      ],
+      "applicability": "文件路由、SSR loader 和后端 API 代理组合。",
+      "quality_rationale": "同一诊断链把环境变量作用域、实际参数名和代理后的 200 结果分开验证。"
+    },
+    {
+      "skill_id": "D006-006",
+      "title": "用户指出本地字体后先检查资产和编译路径",
+      "skill": "用户说明字体已在仓库中时，先读取字体目录和现有 SCSS token，用 @font-face 与正确相对产物路径接入本地字体；只有本地资产不存在时才考虑远程字体，并检查编译 CSS 的加载路径。",
+      "source_slice_count": 2,
+      "source_slice_ids": [
+        "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01",
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01"
+      ],
+      "source_session_count": 2,
+      "source_session_ids": [
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01",
+          "source_session_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-01.json",
+          "event_index": 51,
+          "key_evidence": "brother I have fonts in the fonts directory, use your eyes"
+        },
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-01.json",
+          "event_index": 13,
+          "key_evidence": "Base directory for this skill: C:\\Users\\USER\\.claude\\skills\\material-3 # Material Design 3 This skill guides implementation of Google's Material Design 3 (MD3) — a personal, adaptive, expressive design system. MD3 uses dynamic color, ton..."
+        }
+      ],
+      "applicability": "前端字体迁移和设计系统接入。",
+      "quality_rationale": "它以资产事实纠正了远程字体初始方案，并保留了编译路径检查。"
+    },
+    {
+      "skill_id": "D006-007",
+      "title": "用新数组引用触发响应式系统更新",
+      "skill": "数据源内容已变化但 UI 不刷新时，检查响应式系统是否只比较引用；刷新时复制成新数组对象再赋值 store，并用实际界面刷新确认。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05",
+          "source_session_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-05.json",
+          "event_index": 557,
+          "key_evidence": ""
+        }
+      ],
+      "applicability": "Alpine、React store 或其他按引用检测变化的 UI。",
+      "quality_rationale": "证据把同一引用不触发更新的机制与 spread 复制修复直接关联。"
+    },
+    {
+      "skill_id": "D006-008",
+      "title": "让窗口打开和进程清理具备幂等生命周期",
+      "skill": "把 open、close、createProcess 和 terminateProcess 视为一个生命周期：重复打开已存在窗口时直接返回且不创建新进程，关闭窗口必须通过 onClose 清理，最后检查重复点击和关闭后的进程表。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05",
+          "source_session_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d\\segment-05.json",
+          "event_index": 557,
+          "key_evidence": ""
+        }
+      ],
+      "applicability": "桌面式 Web UI、窗口管理器和有资源副作用的 open/close。",
+      "quality_rationale": "同时覆盖幂等入口、资源创建、释放和可观察的泄漏检查。"
+    },
+    {
+      "skill_id": "D006-009",
+      "title": "用同源代理消除前端运行时后端地址分歧",
+      "skill": "当前端 loader 对后端地址的读取时机不一致时，把请求收敛到同源 server proxy，由 proxy 负责转发；页面只依赖相对 URL，并用开发服务器实际返回码和构建结果验证。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-02.json",
+          "event_index": 307,
+          "key_evidence": "Server is up. API route 404 means Manic isn't picking up nested API directories. Per AGENTS.md: `app/api/hello/index.ts → /api/hello` — but we have `app/api/reddit/user/index.ts` which would mount at `/api/reddit/user`. Let me check if d..."
+        }
+      ],
+      "applicability": "SSR 与浏览器请求路径不同、存在端口或环境差异的前端。",
+      "quality_rationale": "它解决的是请求生命周期和部署地址分歧，而非简单改一个 URL。"
+    },
+    {
+      "skill_id": "D006-010",
+      "title": "把多分辨率界面布局变成运行时几何而非编译期常量",
+      "skill": "支持多种屏幕尺寸时，定义允许的分辨率选项和运行时 ScreenConfig，用当前宽高派生网格、侧栏和 cell size；渲染容量可保留最大值，但布局按 viewport 合成，并为每种尺寸运行构建或烟测。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__4222016d-1932-4abb-94b3-463203bd8876"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02",
+          "source_session_id": "claude_code__4222016d-1932-4abb-94b3-463203bd8876",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__4222016d-1932-4abb-94b3-463203bd8876\\segment-02.json",
+          "event_index": 270,
+          "key_evidence": "continue complete M1, create a README.MD"
+        }
+      ],
+      "applicability": "游戏或桌面 UI 需要支持多个固定分辨率。",
+      "quality_rationale": "轨迹把屏幕选项、几何派生、比例和构建验证连成具体实现策略。"
+    },
+    {
+      "skill_id": "D006-011",
+      "title": "对高影响操作实施分层开关、精确确认和公开警告",
+      "skill": "会消耗硬件、启动外部进程或产生不可逆成本的功能，默认由 dangerous/feature flag 阻断；解锁后再要求 CLI 精确确认字符串，确认前展示影响范围；非确认输入必须 no-op 且可测试 abort path。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+          "source_session_id": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__07b57159-218e-4330-a64e-0ec4b4355056\\segment-02.json",
+          "event_index": 537,
+          "key_evidence": "now time for milestone 7"
+        }
+      ],
+      "applicability": "线程风暴、矿机、删除、发布等高影响操作。",
+      "quality_rationale": "同时具备默认阻断、二次确认、公开警告和 no-op 验证，安全边界具体可审计。"
+    },
+    {
+      "skill_id": "D006-012",
+      "title": "把不同部署/政策要求隔离为独立实现并保留切换边界",
+      "skill": "同一功能在不同部署目标上受不同政策约束时，维护独立实现文件/模块和明确选择点；共享入口只选择实现，不把目标规则揉进模糊分支。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+          "source_session_id": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__07b57159-218e-4330-a64e-0ec4b4355056\\segment-02.json",
+          "event_index": 537,
+          "key_evidence": "now time for milestone 7"
+        }
+      ],
+      "applicability": "同一产品有多个发布渠道、合规政策或运营环境。",
+      "quality_rationale": "GitHub-safe 与 Codeberg 版本被分别实现，切换边界清晰且可审计。"
+    },
+    {
+      "skill_id": "D006-013",
+      "title": "清理工程时只删除可证明的派生物并同步构建入口",
+      "skill": "整理目录前列出候选文件的来源和是否仍被构建入口引用，只删除旧输出、重复源码和测试产物；删除后检查树、构建脚本和资源路径，并更新 README/.gitignore 防止下一次构建重新污染仓库。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__07b57159-218e-4330-a64e-0ec4b4355056"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02",
+          "source_session_id": "claude_code__07b57159-218e-4330-a64e-0ec4b4355056",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__07b57159-218e-4330-a64e-0ec4b4355056\\segment-02.json",
+          "event_index": 537,
+          "key_evidence": "now time for milestone 7"
+        }
+      ],
+      "applicability": "有源码、生成物、参考资料和构建缓存混在一起的工程。",
+      "quality_rationale": "轨迹展示了先列清单、移动参考资源、修复加载路径、再写忽略规则的顺序。"
+    },
+    {
+      "skill_id": "D006-014",
+      "title": "按阶段建立提取边界并以不变量约束低级运行时",
+      "skill": "对大型 C 运行时做模块提取时，先把每个阶段的边界、不变量和允许的资源策略写入计划；例如禁止初始化后动态分配、固定循环上限、无递归，再以阶段测试和构建结果确认边界。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-01"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-01",
+          "source_session_id": "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833\\segment-01.json",
+          "event_index": 8,
+          "key_evidence": "Let me start by reading the memory index and any existing project context before planning."
+        }
+      ],
+      "applicability": "解释器/运行时拆分、内核模块化或安全关键 C 子系统提取。",
+      "quality_rationale": "证据把阶段拆分与 JPL 风格的可静态审计不变量绑定，具有明确工程前提。"
+    },
+    {
+      "skill_id": "D006-015",
+      "title": "用索引调试过程中的数据结构不变量和旧二进制隔离",
+      "skill": "新增索引或缓存后，先打印桶数量、起始偏移和候选位置等不变量；若测试无输出或退出码异常，先排除旧二进制/文件锁，再定位布局错误，修复后重建全部测试。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03",
+          "source_session_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e\\segment-03.json",
+          "event_index": 123,
+          "key_evidence": "Now implement the C FFI layer. This is a clean `extern \"C\"` wrapper over the engine — opaque handles, no C++ headers exposed:"
+        }
+      ],
+      "applicability": "手写索引、缓存、choice table 或二进制测试产物的 C/C++ 项目。",
+      "quality_rationale": "轨迹从栈溢出、旧 binary 干扰到桶布局错位逐层缩小问题，最后用完整套件验证。"
+    },
+    {
+      "skill_id": "D006-016",
+      "title": "Windows 文件路由异常时用最小扁平入口规避并验证真实挂载路径",
+      "skill": "在 Windows 上发现框架把反斜杠和 index 文件名错误拼进 API 路由时，先从生成的 OpenAPI/实际 HTTP 路径确认转换结果，再把嵌套路由收敛到一个扁平入口，重启服务并直接请求验证。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-02.json",
+          "event_index": 307,
+          "key_evidence": "Server is up. API route 404 means Manic isn't picking up nested API directories. Per AGENTS.md: `app/api/hello/index.ts → /api/hello` — but we have `app/api/reddit/user/index.ts` which would mount at `/api/reddit/user`. Let me check if d..."
+        }
+      ],
+      "applicability": "跨平台文件扫描生成路由、插件或资源路径。",
+      "quality_rationale": "证据从反斜杠转换事实到扁平 `app/api/reddit.ts` workaround，并以 500/路由行为继续验证。"
+    },
+    {
+      "skill_id": "D006-017",
+      "title": "先读取外部 API 的真实 payload 再建模和渲染",
+      "skill": "接入第三方 API 的图片、缩略图和 Markdown 内容时，先打印/检查真实 JSON 结构，再建立最小接口和共享解析器；处理 HTML 编码 URL、分辨率回退和不同文本字段后才改组件。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-03.json",
+          "event_index": 597,
+          "key_evidence": "Now I have everything I need. The structure is clear: - `preview.images[0].source.url` — full res (HTML-encoded `&amp;`) - `preview.images[0].resolutions` — pick the largest (last entry) - `body` / `selftext` — markdown text for comments..."
+        }
+      ],
+      "applicability": "第三方 JSON 结构不稳定或文档不足的前端集成。",
+      "quality_rationale": "轨迹具体识别了 preview.images.source/resolutions、selftext/body 和 HTML 编码，并把解析逻辑共享化。"
+    },
+    {
+      "skill_id": "D006-018",
+      "title": "用游标和 IntersectionObserver 实现可恢复的分页加载",
+      "skill": "外部 feed 有 `after` 游标时，把游标、items、loading 状态封装到共享 hook；在列表底部放 sentinel，用 IntersectionObserver 的 rootMargin 提前触发请求，追加下一页并对 user/subreddit 两条路由复用。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-03",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-03.json",
+          "event_index": 597,
+          "key_evidence": "Now I have everything I need. The structure is clear: - `preview.images[0].source.url` — full res (HTML-encoded `&amp;`) - `preview.images[0].resolutions` — pick the largest (last entry) - `body` / `selftext` — markdown text for comments..."
+        }
+      ],
+      "applicability": "有 cursor/after 分页的长列表或 feed。",
+      "quality_rationale": "轨迹同时给出状态字段、sentinel、200px rootMargin 和两个消费者的完整接线。"
+    },
+    {
+      "skill_id": "D006-019",
+      "title": "静态部署项目先核对构建输出目录和托管根目录",
+      "skill": "部署无 bundling 依赖的静态项目时，先检查 package build 实际写入的目录和 index/assets 所在位置；若平台自动探测会把 root site 当成 dist，显式设置空 buildCommand 和正确 outputDirectory，再部署后检查真实页面。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01",
+          "source_session_id": "claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2\\segment-01.json",
+          "event_index": 53,
+          "key_evidence": "`main.js` has no imports — esbuild bundling is unnecessary. The real issue is `vercel.json` has no `buildCommand` or `outputDirectory`, so Vercel auto-detects the `package.json` build script (which outputs to `dist/main.js`) while `index..."
+        }
+      ],
+      "applicability": "Vercel 等根据 package.json 自动探测构建的静态站点。",
+      "quality_rationale": "证据明确找到了 root/dist 不一致这一实际原因，并在部署结果中验证修复。"
+    },
+    {
+      "skill_id": "D006-020",
+      "title": "固定高度内容面板打开时暂时隐藏装饰区以释放滚动空间",
+      "skill": "对带固定对话区、sprite/装饰区和内容面板的窄屏 UI，内容页打开时让装饰区隐藏、内容面板占满可滚动高度；关闭时恢复装饰，避免 ABOUT 等长内容被裁切。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f__segment-01"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f__segment-01",
+          "source_session_id": "claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__0ca72c0c-ac42-400a-8ca6-cc31a787225f\\segment-01.json",
+          "event_index": 79,
+          "key_evidence": "Now also hide the sprite area when any section opens (and restore on close), so the content panel gets the full battle box height:"
+        }
+      ],
+      "applicability": "复古对话框、游戏 UI 或固定 viewport 的内容型面板。",
+      "quality_rationale": "证据展示了问题、状态切换和恢复动作，策略具体到可直接复用的布局状态。"
+    },
+    {
+      "skill_id": "D006-021",
+      "title": "用真实 HTTP 状态和 Cookie 事实区分浏览器请求与服务端请求",
+      "skill": "第三方接口在服务端返回 403、浏览器返回 200 时，不继续猜 header spoofing；用 curl/DevTools 对比状态、Origin/Referer 和 cookie，确认 bot/会话边界，再选择官方 OAuth、带授权 cookie 的受控 proxy 或浏览器端请求，并记录 cookie 过期处理。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-02.json",
+          "event_index": 307,
+          "key_evidence": "Server is up. API route 404 means Manic isn't picking up nested API directories. Per AGENTS.md: `app/api/hello/index.ts → /api/hello` — but we have `app/api/reddit/user/index.ts` which would mount at `/api/reddit/user`. Let me check if d..."
+        }
+      ],
+      "applicability": "受 bot detection、cookie、Origin 或登录态影响的第三方 API。",
+      "quality_rationale": "轨迹用 403/200 对照排除了单纯 User-Agent 伪装，并明确了可行方案与会话过期边界。"
+    },
+    {
+      "skill_id": "D006-022",
+      "title": "用生成清单和实际 HTTP 状态校验文件路由，不把自动生成文件当黑盒",
+      "skill": "动态路由或 API 文件生成异常时，检查生成清单中的真实 route key/import path，再对照源码目录和运行时 HTTP 状态；自动生成文件被 formatter 改写时，先修生成器/忽略策略，不把手工修补当长期架构。",
+      "source_slice_count": 2,
+      "source_slice_ids": [
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01",
+        "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-01.json",
+          "event_index": 13,
+          "key_evidence": "Base directory for this skill: C:\\Users\\USER\\.claude\\skills\\material-3 # Material Design 3 This skill guides implementation of Google's Material Design 3 (MD3) — a personal, adaptive, expressive design system. MD3 uses dynamic color, ton..."
+        },
+        {
+          "source_slice_id": "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02",
+          "source_session_id": "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3\\segment-02.json",
+          "event_index": 307,
+          "key_evidence": "Server is up. API route 404 means Manic isn't picking up nested API directories. Per AGENTS.md: `app/api/hello/index.ts → /api/hello` — but we have `app/api/reddit/user/index.ts` which would mount at `/api/reddit/user`. Let me check if d..."
+        }
+      ],
+      "applicability": "有自动生成 routes manifest、格式化钩子和动态路径的前端框架。",
+      "quality_rationale": "证据把 route manifest、formatter 和开发服务器行为联系起来，能避免反复手改生成文件。"
+    },
+    {
+      "skill_id": "D006-023",
+      "title": "把固定资源约束写成可检查的不变量并将大型工作区移出栈",
+      "skill": "在遵循 NASA/JPL 风格的 C/C++ 代码中，用固定上限、无递归、初始化后无 malloc 等不变量限制实现；若这些固定数组让测试栈溢出，把非重入的工作区移到静态/显式存储，并以全套测试确认。",
+      "source_slice_count": 1,
+      "source_slice_ids": [
+        "segments__claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-02"
+      ],
+      "source_session_count": 1,
+      "source_session_ids": [
+        "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd"
+      ],
+      "sources": [
+        {
+          "source_slice_id": "segments__claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-02",
+          "source_session_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd",
+          "source_file": "C:\\Users\\35153\\PycharmProjects\\master-work\\vibecoding-trace-data-bundle\\dynatic-split-session-test\\calibrated-confidence-length-banded-v3-slices\\claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd\\segment-02.json",
+          "event_index": 71,
+          "key_evidence": ""
+        }
+      ],
+      "applicability": "安全关键、实时或需要静态资源上界的 C/C++ 子系统。",
+      "quality_rationale": "轨迹把代码规范、数据结构大小、栈溢出诊断和 10/10 套件通过放在同一闭环中。"
+    }
+  ],
+  "rejected_or_weak": [
+    {
+      "source_slice_id": "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02",
+      "source_session_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-03",
+      "source_session_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04",
+      "source_session_id": "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__4130c9a7-ee88-443a-91b5-224accd13629__segment-01",
+      "source_session_id": "claude_code__4130c9a7-ee88-443a-91b5-224accd13629",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-03",
+      "source_session_id": "claude_code__4222016d-1932-4abb-94b3-463203bd8876",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-04",
+      "source_session_id": "claude_code__4222016d-1932-4abb-94b3-463203bd8876",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-01",
+      "source_session_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-02",
+      "source_session_id": "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-01",
+      "source_session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-02",
+      "source_session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-03",
+      "source_session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-06",
+      "source_session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba__segment-07",
+      "source_session_id": "claude_code__860618e1-0cf6-43c6-81cf-fe67123082ba",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa__segment-02",
+      "source_session_id": "claude_code__a20a4070-6246-4e9e-adf6-f38b0c1dc3fa",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-01",
+      "source_session_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-02",
+      "source_session_id": "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd__segment-01",
+      "source_session_id": "claude_code__c99032e9-377b-4ae9-a9a9-ec7752b059cd",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-01",
+      "source_session_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-02",
+      "source_session_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-03",
+      "source_session_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__d4c4d47d-642c-4c26-a866-51ab85587896__segment-04",
+      "source_session_id": "claude_code__d4c4d47d-642c-4c26-a866-51ab85587896",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-05",
+      "source_session_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    },
+    {
+      "source_slice_id": "segments__claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-07",
+      "source_session_id": "claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f",
+      "reason": "存在操作或项目描述，但在本领域独立审阅中未形成足够具体的决策链、边界条件或验证闭环；保留为弱结果。"
+    }
+  ],
+  "stats": {
+    "skill_count": 23,
+    "rejected_or_weak_count": 23,
+    "covered_slice_count": 13,
+    "covered_session_count": 10,
+    "single_source_slice_skills_retained": 20
+  }
+}

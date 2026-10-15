@@ -1,0 +1,77 @@
+{
+  "scope": "native-code and exception-type only; message-template review cancelled by user",
+  "model": "gpt-5.6-luna, two independent agents",
+  "checks": {
+    "sessions-30": {
+      "expected_group_count": 42,
+      "reviewed_group_count": 42,
+      "all_group_ids_match": true,
+      "all_member_ids_match": true,
+      "source_reference_count": 222,
+      "referenced_files_exist": true,
+      "by_strategy": {
+        "native-code": {
+          "group_count": 14,
+          "luna_error_alignment": {
+            "consistent": 13,
+            "mixed": 1
+          },
+          "luna_skill_evidence": {
+            "unsupported": 13,
+            "candidate": 1
+          }
+        },
+        "exception-type": {
+          "group_count": 28,
+          "luna_error_alignment": {
+            "consistent": 23,
+            "false_positive": 2,
+            "mixed": 3
+          },
+          "luna_skill_evidence": {
+            "unsupported": 26,
+            "candidate": 1,
+            "usable": 1
+          }
+        }
+      }
+    },
+    "slices-97": {
+      "expected_group_count": 42,
+      "reviewed_group_count": 42,
+      "all_group_ids_match": true,
+      "all_member_ids_match": true,
+      "source_reference_count": 334,
+      "referenced_files_exist": true,
+      "by_strategy": {
+        "native-code": {
+          "group_count": 14,
+          "luna_error_alignment": {
+            "mixed": 2,
+            "consistent": 10,
+            "insufficient": 2
+          },
+          "luna_skill_evidence": {
+            "usable": 4,
+            "unsupported": 3,
+            "candidate": 7
+          }
+        },
+        "exception-type": {
+          "group_count": 28,
+          "luna_error_alignment": {
+            "consistent": 21,
+            "insufficient": 2,
+            "mixed": 5
+          },
+          "luna_skill_evidence": {
+            "unsupported": 9,
+            "candidate": 15,
+            "usable": 4
+          }
+        }
+      }
+    }
+  },
+  "semantic_verification": "Parent found false error/action/verification associations in drafts and requested revisions. Structural checks do not prove all final associations correct. Skill usability counts remain reviewer judgments, not a validated quality metric or a raw-versus-slice ranking."
+}

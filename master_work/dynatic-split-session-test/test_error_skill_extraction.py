@@ -1,5 +1,6 @@
 """Offline tests: no provider, API key or live model is used."""
 import copy
+import io
 import json
 import tempfile
 import unittest
@@ -42,8 +43,7 @@ def skill(fid):
 
 def config():
     return {"api_key": "test-secret-not-a-real-key", "base_url": "https://fixture.invalid/v1", "model": "fixture-model",
-            "timeout_seconds": 1, "max_requests": 5, "max_output_tokens": 1000,
-            "temperature": None, "extra_body": {}}
+            "userAgent": "skill-extraction/1.0"}
 
 
 def completion(calls, usage=True):
@@ -94,7 +94,7 @@ def stub(payload, api_config):
     catalog = json.loads(payload["messages"][1]["content"].split("\n", 1)[1])
     files = catalog["files"]
     if len(payload["messages"]) == 2:
-        return completion([("read_trace", {"file_id": f["file_id"], "offset": 0, "max_chars": 48000}) for f in files])
+        return completion([("read_trace", {"file_id": f["file_id"]}) for f in files])
     return completion([("response", {"skills": [skill(files[0]["file_id"])], "excluded_candidates": []})])
 
 
@@ -108,12 +108,71 @@ class ExtractionTests(unittest.TestCase):
             def read(self):
                 return json.dumps(completion([])).encode()
         with patch.object(runner.urllib.request, "urlopen", return_value=Reply()) as opened:
-            result = runner.api_request({"model": "fixture-model", "tools": runner.TOOLS, "messages": []}, config())
+            result = runner.api_request({"model": "fixture-model", "tools": runner.TOOLS, "messages": []},
+                config() | {"sessionHeader": "x-opencode-session", "_session_id": "fixture-api-session"})
         request = opened.call_args.args[0]
         self.assertEqual(request.full_url, "https://fixture.invalid/v1/chat/completions")
         self.assertEqual(request.get_header("Authorization"), "Bearer " + config()["api_key"])
+        self.assertEqual(request.get_header("X-opencode-session"), "fixture-api-session")
+        self.assertEqual(request.get_header("User-agent"), "skill-extraction/1.0")
+        self.assertEqual(opened.call_args.kwargs, {})
         self.assertEqual(json.loads(request.data)["tools"][-1]["function"]["name"], "response")
         self.assertEqual(result["usage"]["total_tokens"], 120)
+
+    def test_custom_user_agent_and_redacted_http_error_detail(self):
+        settings = config() | {"userAgent": "fixture-agent/2.0"}
+        headers = runner.request_headers(settings)
+        self.assertEqual(headers["User-Agent"], "fixture-agent/2.0")
+        error = runner.urllib.error.HTTPError("https://fixture.invalid", 403, "Forbidden", {},
+            io.BytesIO(("denied " + settings["api_key"] + " Bearer another-secret").encode()))
+        with patch.object(runner.urllib.request, "urlopen", side_effect=error):
+            with self.assertRaises(RuntimeError) as raised:
+                runner.api_request({"messages": []}, settings)
+        message = str(raised.exception)
+        self.assertIn("API HTTP 403: denied", message)
+        self.assertNotIn(settings["api_key"], message)
+        self.assertNotIn("another-secret", message)
+
+    def test_user_agent_defaults_without_editing_config(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.json"
+            original = {k: v for k, v in config().items() if k != "userAgent"}
+            runner.save(path, original)
+            loaded = runner.load_config(path)
+            self.assertEqual(loaded["userAgent"], "skill-extraction/1.0")
+            self.assertEqual(runner.read_json(path), original)
+            runner.save(path, original | {"userAgent": "bad\r\nheader"})
+            with self.assertRaises(ValueError):
+                runner.load_config(path)
+
+    def test_provider_session_shared_within_arm_and_isolated_between_arms(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output, _ = make_inputs(Path(tmp))
+            seen = []
+            def capture(payload, settings):
+                seen.append(settings["_session_id"])
+                return stub(payload, settings)
+            settings = config() | {"sessionHeader": "x-opencode-session"}
+            result = runner.run_prepared(output, settings, capture)
+            self.assertEqual(result["candidate_count"], 3)
+            self.assertEqual(len(seen), 6)
+            self.assertEqual(len(set(seen)), 3)
+            for index, arm in enumerate(runner.ARMS):
+                self.assertEqual(seen[2 * index], seen[2 * index + 1])
+                recorded = runner.read_json(output / GID / arm / "api-session.json")
+                self.assertEqual(recorded["session_id"], seen[2 * index])
+                self.assertEqual(recorded["header_name"], "x-opencode-session")
+            self.assertNotIn("_session_id", settings)
+
+    def test_invalid_session_header_rejected_and_missing_id_not_silently_omitted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.json"
+            for header in ("bad\nheader", "Authorization", "content-type", 123):
+                runner.save(path, config() | {"sessionHeader": header})
+                with self.assertRaises(ValueError):
+                    runner.load_config(path)
+        with self.assertRaisesRegex(ValueError, "Missing per-experiment Session"):
+            runner.api_request({}, config() | {"sessionHeader": "x-opencode-session"})
 
     def test_config_blank_and_endpoint_validation(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -122,8 +181,7 @@ class ExtractionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 runner.load_config(path)
             runner.save(path, config() | {"extra_body": {"messages": []}})
-            with self.assertRaises(ValueError):
-                runner.load_config(path)
+            self.assertNotIn("extra_body", runner.load_config(path))
         self.assertEqual(runner.endpoint("https://example.com/v1/"), "https://example.com/v1/chat/completions")
         self.assertEqual(runner.endpoint("https://example.com/v1/chat/completions"), "https://example.com/v1/chat/completions")
         with self.assertRaises(ValueError):
@@ -179,7 +237,7 @@ class ExtractionTests(unittest.TestCase):
             inputs = runner.read_json(output / GID / "B-selected" / "input-manifest.json")
             reader = runner.ArmReader(inputs["files"])
             fid = inputs["files"][0]["file_id"]
-            reader.read(fid, 0, 48000)
+            reader.read(fid)
             valid = {"skills": [skill(fid)], "excluded_candidates": []}
             reader.validate_response(valid)
             invalid = copy.deepcopy(valid)
@@ -197,21 +255,21 @@ class ExtractionTests(unittest.TestCase):
             inputs = runner.read_json(output / GID / "C-context-collapsed" / "input-manifest.json")
             reader = runner.ArmReader(inputs["files"])
             fid = inputs["files"][1]["file_id"]
-            self.assertEqual(reader.search(fid, "HIDDEN SECRET BODY", False, 0, 10)["matches"], [])
-            self.assertNotIn("HIDDEN SECRET BODY", reader.read_event(fid, 3, 0, 0, 48000)["content"])
+            self.assertEqual(reader.search(fid, "HIDDEN SECRET BODY", False)["matches"], [])
+            self.assertNotIn("HIDDEN SECRET BODY", reader.read_event(fid, 3, 0)["content"])
             with self.assertRaises(ValueError):
-                reader.read("C:/arbitrary-path.json", 0, 100)
+                reader.read("C:/arbitrary-path.json")
             with self.assertRaises(ValueError):
-                reader.read_event(fid, 2, 0, 0, 48000)
+                reader.read_event(fid, 2, 0)
 
     def test_failed_attempts_resume_keep_spent_costs(self):
         with tempfile.TemporaryDirectory() as tmp:
             output, _ = make_inputs(Path(tmp))
-            def truncated(*args):
+            def filtered(*args):
                 response = completion([])
-                response["choices"][0]["finish_reason"] = "length"
+                response["choices"][0]["finish_reason"] = "content_filter"
                 return response
-            first = runner.run_prepared(output, config(), truncated)
+            first = runner.run_prepared(output, config(), filtered)
             self.assertEqual(first["usage"]["total_tokens"]["known_sum"], 360)
             self.assertEqual(first["arms"]["A-original"]["failed"], 1)
             repeated = runner.run_prepared(output, config(), stub)
@@ -275,19 +333,59 @@ class ExtractionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             runner.validate_schema(value, runner.RESPONSE_SCHEMA)
 
-    def test_submission_requires_all_files_inspected_and_request_limit_explicit(self):
+    def test_submission_requires_all_files_inspected_and_has_no_round_limit(self):
         with tempfile.TemporaryDirectory() as tmp:
             output, _ = make_inputs(Path(tmp))
             inputs = runner.read_json(output / GID / "C-context-collapsed/input-manifest.json")
             reader = runner.ArmReader(inputs["files"])
             with self.assertRaisesRegex(ValueError, "Inspect every"):
                 reader.validate_response({"skills": [], "excluded_candidates": []})
+            count = 0
             def prose_only(*args):
+                nonlocal count
+                count += 1
+                if count == 102:
+                    raise KeyboardInterrupt()
                 return completion([])
-            result = runner.extract_arm(output / GID / "A-original", "fixture", config() | {"max_requests": 1}, prose_only)
+            result = runner.extract_arm(output / GID / "A-original", "fixture", config(), prose_only)
             self.assertEqual(result["status"], "failed")
-            self.assertIn("max_requests", result["error"])
+            self.assertEqual(result["error"], "interrupted")
+            self.assertEqual(result["request_count"], 102)
             self.assertIsNone(result["skill_count"])
+
+    def test_no_generation_controls_sent_even_with_legacy_config(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output, _ = make_inputs(Path(tmp))
+            legacy = config() | {"timeout_seconds": 1, "max_requests": 1, "max_output_tokens": 1,
+                "max_tokens": 1, "max_input_tokens": 1, "temperature": 0,
+                "output_token_parameter": "max_tokens", "extra_body": {"stop": ["x"], "max_completion_tokens": 1}}
+            path = Path(tmp) / "config.json"
+            runner.save(path, legacy)
+            loaded = runner.load_config(path)
+            self.assertEqual(loaded, config())
+            def capture(payload, settings):
+                self.assertEqual(set(payload), {"model", "messages", "tools", "tool_choice", "stream"})
+                response = stub(payload, settings)
+                if len(payload["messages"]) > 2:
+                    response["choices"][0]["finish_reason"] = "length"
+                return response
+            result = runner.extract_arm(output / GID / "A-original", "fixture", legacy, capture)
+            self.assertEqual(result["status"], "completed")
+
+    def test_full_file_event_and_all_search_matches_without_size_caps(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "large.json"
+            text = "needle" + "x" * 60000
+            runner.save(path, {"events": [{"source_index": i, "source_part_index": 0,
+                "category": "tool_result", "content": text} for i in range(25)]})
+            entry = runner.file_entry(path, SID, "slice", "full")
+            reader = runner.ArmReader([entry])
+            fid = entry["file_id"]
+            self.assertEqual(reader.read(fid)["content"], path.read_text(encoding="utf-8"))
+            self.assertIn(text, reader.read_event(fid, 24, 0)["content"])
+            matches = reader.search(fid, "needle", False)["matches"]
+            self.assertEqual(len(matches), 25)
+            self.assertTrue(all(m["text"] == text for m in matches))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,98 @@
+{
+  "experiment": "A-session",
+  "input_root": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions",
+  "manifest": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/index.json",
+  "input_session_count": 30,
+  "input_segment_count": 117,
+  "method": "Independent conservative extraction from complete original sessions. A candidate is retained only when the trajectory contains a concrete trigger, action/decision, observable verification or completion condition, explicit boundary, and direct source evidence. Overlapping/near-duplicate candidates were merged.",
+  "retained_count": 6,
+  "discarded_count": 24,
+  "skills": [
+    {
+      "skill_id": "A-S01",
+      "skill": "Repair a reactive UI by locating the rendering boundary that prevents framework initialization, moving stateful views into framework-owned components/stores, and explicitly initializing dynamically inserted trees.",
+      "trigger": "Interactive elements rendered through raw HTML injection do not respond or framework directives are inert.",
+      "actions": ["Inspect the render path and identify that x-html/raw strings bypass Alpine compilation.", "Move screens and window/taskbar state into Alpine components/stores.", "After dynamic insertion, call Alpine.initTree and then run icon replacement."],
+      "verification": "The direct evidence reports the click target working after explicit dimensions and pointer-event fixes, Alpine window content initializing, and feather replacement completing after Alpine.nextTick.",
+      "scope_limit": "Applies to Alpine-style reactive DOM insertion and this class of lifecycle bug; does not prescribe a framework-independent UI rewrite.",
+      "sources": [{"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02.json", "evidence": "The real remaining issue was pointer-events on the SVG children blocking the click, which is now fixed in CSS."}, {"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-02.json", "evidence": "x-data inside x-html is dead HTML until you explicitly call Alpine.initTree(el). Added Alpine.nextTick(() => Alpine.initTree(el)) after the window opens."}]
+    },
+    {
+      "skill_id": "A-S02",
+      "skill": "Make UI process lifecycle idempotent: refuse duplicate process creation for an already-open window and attach cleanup to the window close lifecycle.",
+      "trigger": "Repeated open clicks create leaked process records, or closing a window leaves its process-manager entry alive.",
+      "actions": ["Guard app open with windows.isOpen().", "Add an onClose callback to the window entry.", "Call terminateProcess from the close callback and capture stable store references for taskbar handlers."],
+      "verification": "The trajectory explicitly identifies the duplicate-create leak and missing cleanup, then reports both guards and onClose cleanup as fixed; it also reports the taskbar context fix.",
+      "scope_limit": "Applies to the observed window/process manager integration; it does not generalize to arbitrary resource lifetimes without an equivalent close event.",
+      "sources": [{"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04.json", "evidence": "Apps were calling createProcess() unconditionally on every open click ... leaking processes every click. Now each app guards with windows.isOpen() first."}, {"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-04.json", "evidence": "windows.close() never called the app's cleanup ... Added an onClose callback to WindowEntry that the store calls on close."}]
+    },
+    {
+      "skill_id": "A-S03",
+      "skill": "Align static-site deployment configuration with the actual asset layout before deploying: disable an inferred build and serve the repository root when the build output would otherwise be empty.",
+      "trigger": "A deployment platform auto-detects a build directory that does not contain the site's root HTML/assets.",
+      "actions": ["Inspect package/build configuration and the actual asset tree.", "Confirm whether the entry JavaScript has imports requiring bundling.", "Set buildCommand to empty and outputDirectory to the root when justified, then deploy."],
+      "verification": "The trajectory reports production deployment success and gives a live URL after adding buildCommand \"\" and outputDirectory \".\"; it ties the fix to the observed dist/root mismatch.",
+      "scope_limit": "Specific to static hosting with this root-versus-dist failure mode; it does not imply that bundling should be disabled for projects with imports.",
+      "sources": [{"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01.json", "evidence": "main.js has no imports — esbuild bundling is unnecessary. The real issue was vercel.json has no buildCommand or outputDirectory ... serve the root directly."}, {"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__11ef2190-67e2-4707-8212-ab12ebffdbc2__segment-01.json", "evidence": "Deployed successfully. ... Added \"buildCommand\": \"\" and \"outputDirectory\": \".\" to vercel.json."}]
+    },
+    {
+      "skill_id": "A-S04",
+      "skill": "Preserve a legacy rendering path while adding a framebuffer path by routing shared drawing through an abstraction and selecting the path from boot-time capability data.",
+      "trigger": "A kernel feature works through VGA text memory but must also run under UEFI/GOP without direct VGA writes.",
+      "actions": ["Parse the GOP capability from the Multiboot 2 tag.", "Keep MB1/VGA fallback and MB2/GOP as separate boot paths.", "Route shared printing/cell drawing through syscalls or the dual-path VGA abstraction and add the GOP object/build/run wiring."],
+      "verification": "The trajectory reports both headers retained, MB2/GOP primary plus MB1/VGA fallback, direct VGA writes removed from snake, and clean compilation/build checks.",
+      "scope_limit": "Applies to this boot/rendering compatibility boundary; it does not claim that every hardware path can share the same implementation without capability-specific code.",
+      "sources": [{"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-03.json", "evidence": "Carries both headers ... MB2 ... and MB1 ... as the legacy fallback. Both entry paths converge at the same _start."}, {"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04.json", "evidence": "Removed all VGA_ADDR direct writes from snake ... All cell drawing goes through SYS_PUTCELL ... works on both VGA text and GOP."}]
+    },
+    {
+      "skill_id": "A-S05",
+      "skill": "Turn invalid domain selections into actionable diagnostics by reporting the exact attempted call, target type, rejection reason, and selectable alternatives in the thrown error.",
+      "trigger": "A query/property selector rejects a derived or non-persisted property and a generic exception does not explain how to correct it.",
+      "actions": ["Include the attempted method/property and argument shape.", "Name the target model/type and why the selection is unsupported.", "List selectable persisted alternatives and apply the same treatment to sibling invalid calls."],
+      "verification": "The trajectory reports the exact call, target type, reason, selectable properties, and matching treatment for the sibling get/zoom rejection; later evidence reports the full dal suite passing after the feature work.",
+      "scope_limit": "Applies to selector/query validation diagnostics; it does not replace the underlying feature implementation or authorize guessing support for computed lenses.",
+      "sources": [{"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-02.json", "evidence": "Task 1 is done. The exception now reports the exact call, the target type, why it failed, and what is selectable."}, {"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__3be5ba0c-62b2-4645-8589-9216be0c10d8__segment-03.json", "evidence": "All 89 dal.* tests pass (65 base + 15 zoom + 9 nested)."}]
+    },
+    {
+      "skill_id": "A-S06",
+      "skill": "Validate an installable mobile app with complementary static and on-device evidence, and verify suspected findings before reporting them.",
+      "trigger": "A package review needs both manifest/code risk evidence and behavioral evidence that static inspection cannot reveal.",
+      "actions": ["Scan permissions, trackers, network hosts, version and recipe consistency.", "Install and exercise the app when device access is available.", "Separate confirmed findings from unavailable tests and re-check apparent positives before posting a factual report."],
+      "verification": "The session reports successful launch and interaction for multiple apps, distinguishes a transitive firebase-encoders false positive from active trackers, and reports the self-updater only after observing it on-device.",
+      "scope_limit": "Applies to the observed F-Droid/mobile review workflow; it does not treat static or device evidence as interchangeable, and it stops device claims when access is denied.",
+      "sources": [{"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-09.json", "evidence": "Important catch — that Firebase was a false positive: precise inspection shows only firebase-encoders ... no active tracker."}, {"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-09.json", "evidence": "Launched cleanly ... It works — a clean offline expense tracker ... The add-expense dialog works fully."}, {"file": "C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/context-expanded-sessions/claude_code__da5d32d6-547f-45ae-a5b5-4747ed06542f__segment-09.json", "evidence": "ScenePeek shows an Update available dialog ... That is a built-in self-updater — an F-Droid anti-feature concern that static analysis wouldn't surface."}]
+    }
+  ],
+  "discarded": [
+    {"candidate": "Generic inspect-read-edit-test workflow", "reason": "Ordinary development sequence without a distinctive reusable decision rule or sufficient boundary."},
+    {"candidate": "Project milestone summaries and stage plans", "reason": "Plan/milestone text is not a demonstrated skill result."},
+    {"candidate": "Generic compiler/parser implementation", "reason": "Domain-specific feature work; evidence does not establish a portable skill beyond ordinary coding."},
+    {"candidate": "Run a full test suite after changes", "reason": "Verification habit alone is explicitly insufficient under the extraction rule."},
+    {"candidate": "Fix PowerShell syntax for an older shell", "reason": "One-off compatibility repair with no demonstrated reusable boundary beyond the project."},
+    {"candidate": "Add a model catalog entry", "reason": "Routine data edit; no distinctive trigger/action/verification skill retained."},
+    {"candidate": "Write project documentation", "reason": "Documentation summary without a standalone trigger and concrete decision rule."},
+    {"candidate": "Add a theme toggle", "reason": "Feature implementation lacks a reusable rule and is ordinary UI work."},
+    {"candidate": "Install a package or plugin", "reason": "Installation action alone is not a skill and lacks a bounded verification protocol."},
+    {"candidate": "Create a static HTML demo", "reason": "Creation task with no sufficiently distinctive reusable procedure."},
+    {"candidate": "Add compiler pragma/JSX features", "reason": "Project-specific feature expansion; generic test evidence does not make it a portable skill."},
+    {"candidate": "Batch transpilation/thread pool", "reason": "Feature implementation is too domain-specific and evidence is primarily a completion summary."},
+    {"candidate": "Refactor model classes", "reason": "Large project refactor; candidate is a project outcome rather than a bounded general skill."},
+    {"candidate": "Runtime sentinel reflection proposal", "reason": "The trajectory contains a recommendation/brainstorm, not enough direct implementation evidence for the proposed method itself."},
+    {"candidate": "Kernel shutdown port changes", "reason": "Hardware/project-specific patch; evidence does not establish a reusable skill independent of this kernel."},
+    {"candidate": "Add a JS REPL and exec command", "reason": "Concrete project feature, but no portable trigger and verification contract beyond ordinary implementation."},
+    {"candidate": "F-Droid metadata recipe submission", "reason": "External workflow outcome; candidate overlaps the stronger static/on-device review skill and was merged/discarded to avoid duplication."},
+    {"candidate": "Watch a long-running CI job", "reason": "Monitoring action without a distinct remediation rule; insufficient as a standalone skill."},
+    {"candidate": "Fix CSS layout overflow", "reason": "One-off styling fix; lacks a reusable bounded procedure in the trace."},
+    {"candidate": "Replace icon library", "reason": "Dependency migration is ordinary implementation and has no independently justified scope boundary."},
+    {"candidate": "Generate launcher assets", "reason": "Asset production task; evidence is not a general skill with a trigger and verification contract."},
+    {"candidate": "Search web sources for model facts", "reason": "Research summary lacks a domain-independent action/result contract and is not retained as a coding skill."},
+    {"candidate": "Commit/branch/push changes", "reason": "Repository mechanics alone are not a user-facing skill and are ordinary workflow steps."},
+    {"candidate": "Add security headers/cache headers", "reason": "Specific deployment configuration edit without enough evidence for a separate reusable skill; covered by deployment-layout skill where applicable."}
+  ],
+  "self_check": {
+    "all_source_files_exist": true,
+    "every_retained_skill_has_nonempty_direct_evidence": true,
+    "near_duplicate_skills_merged": true,
+    "code_modified": false
+  }
+}

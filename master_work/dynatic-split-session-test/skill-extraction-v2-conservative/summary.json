@@ -1,0 +1,392 @@
+{
+  "experiment": "skill-extraction-v2-conservative",
+  "prompt": "你是一个 Skill 提取器。请只根据当前提供的轨迹内容，提取少量但真正可用的 Skill。目标不是覆盖尽可能多的内容，而是只保留能够指导其他类似任务的具体经验。一个 Skill 只有同时满足：轨迹有明确问题/触发条件/约束；有具体判断/决策/解决动作；不是简单读取/修改/运行/测试流水线；有可核对结果/验证方式/完成条件；去掉项目名、文件名和技术栈专有名词后仍可迁移。",
+  "embedding_used": false,
+  "cross_group_dedup": false,
+  "groups": {
+    "A-session": {
+      "raw_skill_count": 12,
+      "discarded_count": 21,
+      "actual_read_count": 30,
+      "missing_file_count": 0,
+      "coverage": {
+        "source_count": 11,
+        "skill_source_count": 34
+      },
+      "source_distribution": {
+        "by_source_id": {
+          "07b57159-218e-4330-a64e-0ec4b4355056": 9,
+          "09d9abe9-0a02-4bd1-8129-3b864695079d": 2,
+          "17c2cf98-e64a-43c6-932e-fa7efcade358": 3,
+          "4222016d-1932-4abb-94b3-463203bd8876": 2,
+          "479c5e9f-a299-457f-8459-5948adf8aa8e": 2,
+          "92833a43-c30d-4b44-8447-c32ee17d6e6e": 2,
+          "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a": 4,
+          "c84c0ad3-c368-40df-87b1-5ef9effe237a": 3,
+          "c99032e9-377b-4ae9-a9a9-ec7752b059cd": 2,
+          "d4c4d47d-642c-4c26-a866-51ab85587896": 2,
+          "f93127ef-dec9-4d58-964b-ee660964ec4d": 3
+        },
+        "by_session_id": {
+          "07b57159-218e-4330-a64e-0ec4b4355056": 9,
+          "09d9abe9-0a02-4bd1-8129-3b864695079d": 2,
+          "17c2cf98-e64a-43c6-932e-fa7efcade358": 3,
+          "4222016d-1932-4abb-94b3-463203bd8876": 2,
+          "479c5e9f-a299-457f-8459-5948adf8aa8e": 2,
+          "92833a43-c30d-4b44-8447-c32ee17d6e6e": 2,
+          "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a": 4,
+          "c84c0ad3-c368-40df-87b1-5ef9effe237a": 3,
+          "c99032e9-377b-4ae9-a9a9-ec7752b059cd": 2,
+          "d4c4d47d-642c-4c26-a866-51ab85587896": 2,
+          "f93127ef-dec9-4d58-964b-ee660964ec4d": 3
+        },
+        "by_slice_id": {
+          "07b57159-218e-4330-a64e-0ec4b4355056": 9,
+          "09d9abe9-0a02-4bd1-8129-3b864695079d": 2,
+          "17c2cf98-e64a-43c6-932e-fa7efcade358": 3,
+          "4222016d-1932-4abb-94b3-463203bd8876": 2,
+          "479c5e9f-a299-457f-8459-5948adf8aa8e": 2,
+          "92833a43-c30d-4b44-8447-c32ee17d6e6e": 2,
+          "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a": 4,
+          "c84c0ad3-c368-40df-87b1-5ef9effe237a": 3,
+          "c99032e9-377b-4ae9-a9a9-ec7752b059cd": 2,
+          "d4c4d47d-642c-4c26-a866-51ab85587896": 2,
+          "f93127ef-dec9-4d58-964b-ee660964ec4d": 3
+        }
+      },
+      "actual_read_range": "读取 manifest 中全部 30 个 Session，并逐个读取其 context-expanded-sessions 下全部 118 个 JSON 文件（117 个 segment-*.json 与 1 个 index/元数据文件）；未读取其他实验组输入。",
+      "actual_read_file_count": 118,
+      "read_segment_file_count": 117
+    },
+    "B-slice": {
+      "raw_skill_count": 16,
+      "discarded_count": 34,
+      "actual_read_count": 97,
+      "missing_file_count": 0,
+      "coverage": {
+        "source_count": 20,
+        "skill_source_count": 32
+      },
+      "source_distribution": {
+        "by_source_id": {
+          "claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-01.json": 4,
+          "claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-02.json": 2,
+          "claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-03.json": 2,
+          "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d/segment-05.json": 2,
+          "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358/segment-02.json": 1,
+          "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358/segment-04.json": 1,
+          "claude_code__2965219c-42ad-45af-889c-4581ecbe0103/segment-01.json": 2,
+          "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6/segment-04.json": 1,
+          "claude_code__4222016d-1932-4abb-94b3-463203bd8876/segment-02.json": 2,
+          "claude_code__4222016d-1932-4abb-94b3-463203bd8876/segment-05.json": 1,
+          "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-03.json": 2,
+          "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833/segment-03.json": 1,
+          "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3/segment-02.json": 1,
+          "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e/segment-01.json": 1,
+          "claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a/segment-01.json": 1,
+          "claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a/segment-02.json": 3,
+          "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a/segment-04.json": 1,
+          "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a/segment-05.json": 1,
+          "claude_code__comparia-voting-fields-anon/segment-01.json": 1,
+          "claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d/segment-02.json": 2
+        },
+        "by_session_id": {
+          "07b57159-218e-4330-a64e-0ec4b4355056": 8,
+          "09d9abe9-0a02-4bd1-8129-3b864695079d": 2,
+          "17c2cf98-e64a-43c6-932e-fa7efcade358": 2,
+          "2965219c-42ad-45af-889c-4581ecbe0103": 2,
+          "39082932-131c-40a9-872d-1d3ac8ed1fd6": 1,
+          "4222016d-1932-4abb-94b3-463203bd8876": 3,
+          "479c5e9f-a299-457f-8459-5948adf8aa8e": 2,
+          "6a7964ed-6f92-4eee-ae5e-3f91a6445833": 1,
+          "7563bddf-c1a0-4c3e-86ee-062bf288e6d3": 1,
+          "92833a43-c30d-4b44-8447-c32ee17d6e6e": 1,
+          "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a": 4,
+          "c84c0ad3-c368-40df-87b1-5ef9effe237a": 2,
+          "comparia-voting-fields-anon": 1,
+          "f93127ef-dec9-4d58-964b-ee660964ec4d": 2
+        },
+        "by_slice_id": {
+          "claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-01.json": 4,
+          "claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-02.json": 2,
+          "claude_code__07b57159-218e-4330-a64e-0ec4b4355056/segment-03.json": 2,
+          "claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d/segment-05.json": 2,
+          "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358/segment-02.json": 1,
+          "claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358/segment-04.json": 1,
+          "claude_code__2965219c-42ad-45af-889c-4581ecbe0103/segment-01.json": 2,
+          "claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6/segment-04.json": 1,
+          "claude_code__4222016d-1932-4abb-94b3-463203bd8876/segment-02.json": 2,
+          "claude_code__4222016d-1932-4abb-94b3-463203bd8876/segment-05.json": 1,
+          "claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e/segment-03.json": 2,
+          "claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833/segment-03.json": 1,
+          "claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3/segment-02.json": 1,
+          "claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e/segment-01.json": 1,
+          "claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a/segment-01.json": 1,
+          "claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a/segment-02.json": 3,
+          "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a/segment-04.json": 1,
+          "claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a/segment-05.json": 1,
+          "claude_code__comparia-voting-fields-anon/segment-01.json": 1,
+          "claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d/segment-02.json": 2
+        }
+      },
+      "actual_read_range": "递归逐个读取 97 个 segment-*.json（声明 97）；所属 Session 目录 30 个；不读取完整 Session 或领域输入。"
+    },
+    "C-domain": {
+      "raw_skill_count": 43,
+      "discarded_count": 327,
+      "actual_read_count": 314,
+      "missing_file_count": 0,
+      "coverage": {
+        "domain_count": 8,
+        "covered_domains": 8
+      },
+      "source_distribution": {
+        "by_domain": {
+          "D001": {
+            "by_source_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 1,
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02": 1,
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03": 1,
+              "segments__claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-01": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 1,
+              "segments__claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01": 1,
+              "segments__claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02": 1
+            },
+            "by_session_id": {
+              "07b57159-218e-4330-a64e-0ec4b4355056": 3,
+              "2965219c-42ad-45af-889c-4581ecbe0103": 1,
+              "479c5e9f-a299-457f-8459-5948adf8aa8e": 1,
+              "7563bddf-c1a0-4c3e-86ee-062bf288e6d3": 1,
+              "92833a43-c30d-4b44-8447-c32ee17d6e6e": 1,
+              "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a": 1
+            },
+            "by_slice_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 1,
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02": 1,
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-03": 1,
+              "segments__claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-01": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 1,
+              "segments__claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01": 1,
+              "segments__claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02": 1
+            }
+          },
+          "D002": {
+            "by_source_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 1,
+              "segments__claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02": 1,
+              "segments__claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d__segment-02": 1
+            },
+            "by_session_id": {
+              "07b57159-218e-4330-a64e-0ec4b4355056": 1,
+              "17c2cf98-e64a-43c6-932e-fa7efcade358": 2,
+              "479c5e9f-a299-457f-8459-5948adf8aa8e": 1,
+              "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a": 1,
+              "f93127ef-dec9-4d58-964b-ee660964ec4d": 1
+            },
+            "by_slice_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 1,
+              "segments__claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02": 1,
+              "segments__claude_code__f93127ef-dec9-4d58-964b-ee660964ec4d__segment-02": 1
+            }
+          },
+          "D003": {
+            "by_source_id": {
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-05": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 2,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04": 1
+            },
+            "by_session_id": {
+              "09d9abe9-0a02-4bd1-8129-3b864695079d": 1,
+              "4222016d-1932-4abb-94b3-463203bd8876": 2,
+              "7563bddf-c1a0-4c3e-86ee-062bf288e6d3": 3,
+              "c84c0ad3-c368-40df-87b1-5ef9effe237a": 1
+            },
+            "by_slice_id": {
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-05": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 2,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04": 1
+            }
+          },
+          "D004": {
+            "by_source_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02": 1,
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01": 1,
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 2,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04": 1,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-05": 2
+            },
+            "by_session_id": {
+              "07b57159-218e-4330-a64e-0ec4b4355056": 1,
+              "09d9abe9-0a02-4bd1-8129-3b864695079d": 2,
+              "7563bddf-c1a0-4c3e-86ee-062bf288e6d3": 3,
+              "c84c0ad3-c368-40df-87b1-5ef9effe237a": 3
+            },
+            "by_slice_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-02": 1,
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-01": 1,
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 2,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04": 1,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-05": 2
+            }
+          },
+          "D005": {
+            "by_source_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 2,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 1,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04": 1,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-05": 1
+            },
+            "by_session_id": {
+              "07b57159-218e-4330-a64e-0ec4b4355056": 1,
+              "17c2cf98-e64a-43c6-932e-fa7efcade358": 2,
+              "39082932-131c-40a9-872d-1d3ac8ed1fd6": 1,
+              "4222016d-1932-4abb-94b3-463203bd8876": 1,
+              "479c5e9f-a299-457f-8459-5948adf8aa8e": 2,
+              "7563bddf-c1a0-4c3e-86ee-062bf288e6d3": 1,
+              "c84c0ad3-c368-40df-87b1-5ef9effe237a": 2
+            },
+            "by_slice_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-02": 1,
+              "segments__claude_code__17c2cf98-e64a-43c6-932e-fa7efcade358__segment-04": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 2,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 1,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-04": 1,
+              "segments__claude_code__c84c0ad3-c368-40df-87b1-5ef9effe237a__segment-05": 1
+            }
+          },
+          "D006": {
+            "by_source_id": {
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05": 2,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 2
+            },
+            "by_session_id": {
+              "09d9abe9-0a02-4bd1-8129-3b864695079d": 2,
+              "4222016d-1932-4abb-94b3-463203bd8876": 1,
+              "479c5e9f-a299-457f-8459-5948adf8aa8e": 1,
+              "7563bddf-c1a0-4c3e-86ee-062bf288e6d3": 2
+            },
+            "by_slice_id": {
+              "segments__claude_code__09d9abe9-0a02-4bd1-8129-3b864695079d__segment-05": 2,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-02": 2
+            }
+          },
+          "D007": {
+            "by_source_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 2,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-01": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 2,
+              "segments__claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-03": 1,
+              "segments__claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01": 1
+            },
+            "by_session_id": {
+              "07b57159-218e-4330-a64e-0ec4b4355056": 2,
+              "39082932-131c-40a9-872d-1d3ac8ed1fd6": 3,
+              "4222016d-1932-4abb-94b3-463203bd8876": 1,
+              "479c5e9f-a299-457f-8459-5948adf8aa8e": 2,
+              "6a7964ed-6f92-4eee-ae5e-3f91a6445833": 1,
+              "92833a43-c30d-4b44-8447-c32ee17d6e6e": 1
+            },
+            "by_slice_id": {
+              "segments__claude_code__07b57159-218e-4330-a64e-0ec4b4355056__segment-01": 2,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-01": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-04": 1,
+              "segments__claude_code__4222016d-1932-4abb-94b3-463203bd8876__segment-02": 1,
+              "segments__claude_code__479c5e9f-a299-457f-8459-5948adf8aa8e__segment-03": 2,
+              "segments__claude_code__6a7964ed-6f92-4eee-ae5e-3f91a6445833__segment-03": 1,
+              "segments__claude_code__92833a43-c30d-4b44-8447-c32ee17d6e6e__segment-01": 1
+            }
+          },
+          "D008": {
+            "by_source_id": {
+              "segments__claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-01": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01": 1,
+              "segments__claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02": 2
+            },
+            "by_session_id": {
+              "2965219c-42ad-45af-889c-4581ecbe0103": 1,
+              "39082932-131c-40a9-872d-1d3ac8ed1fd6": 1,
+              "7563bddf-c1a0-4c3e-86ee-062bf288e6d3": 1,
+              "ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a": 2
+            },
+            "by_slice_id": {
+              "segments__claude_code__2965219c-42ad-45af-889c-4581ecbe0103__segment-01": 1,
+              "segments__claude_code__39082932-131c-40a9-872d-1d3ac8ed1fd6__segment-02": 1,
+              "segments__claude_code__7563bddf-c1a0-4c3e-86ee-062bf288e6d3__segment-01": 1,
+              "segments__claude_code__ba1b4916-b581-4e05-9a5c-c1d8ffc9b50a__segment-02": 2
+            }
+          }
+        }
+      },
+      "actual_read_range": "D001-D008 分别读取各自 domains.json members；不跨领域合并输入或去重。"
+    }
+  },
+  "totals": {
+    "raw_skill_count": 71,
+    "discarded_count": 382
+  },
+  "artifacts": {
+    "A-session": [
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\A-session\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\A-session\\analysis.md"
+    ],
+    "B-slice": [
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\B-slice\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\B-slice\\analysis.md"
+    ],
+    "C-domain": [
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\summary.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\summary.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D001\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D001\\analysis.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D002\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D002\\analysis.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D003\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D003\\analysis.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D004\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D004\\analysis.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D005\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D005\\analysis.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D006\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D006\\analysis.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D007\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D007\\analysis.md",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D008\\analysis.json",
+      "C:\\Users\\35153\\PycharmProjects\\master-work\\dynamic-trace-segmentation-clustering\\master_work\\dynatic-split-session-test\\skill-extraction-v2-conservative\\C-domain\\D008\\analysis.md"
+    ]
+  }
+}
