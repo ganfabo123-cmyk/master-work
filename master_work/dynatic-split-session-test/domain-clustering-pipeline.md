@@ -312,3 +312,45 @@ python master_work/dynatic-split-session-test/apply_llm_domain_normalization.py 
 - `mixed_or_unresolved` 是否被保留，而不是被静默丢弃。
 
 参数变化时，输出目录应使用新版本号，不能覆盖 `unsupervised-domain-complete-v6` 或 `llm-assisted-domain-v3`，以便比较覆盖率、簇数和卡片质量。
+
+## 10. 目标与执行逻辑聚类
+
+领域层之后，可以对 8 个数学细领域分别进行行为聚类：
+
+```powershell
+python master_work/dynatic-split-session-test/behavior_logic_clustering.py `
+  --slices-dir ..\vibecoding-trace-data-bundle\dynatic-split-session-test\calibrated-confidence-length-banded-v3-slices `
+  --domains master_work/dynatic-split-session-test/unsupervised-domain-complete-v6/domains.json `
+  --feature-cards master_work/dynatic-split-session-test/domain-feature-cards-v2/domain-feature-cards.json `
+  --output master_work/dynatic-split-session-test/behavior-logic-clustering-v1
+```
+
+该步骤只使用 `user_text`、`assistant_text`、`assistant_thinking`、`assistant_reasoning` 和 `tool_call:*`。`record`、`tool_result` 和元数据不会进入行为表示。工具调用的大段 `Write/Edit` 内容会被丢弃，只保留工具、操作、文件类型、目标和短描述。
+
+每个细领域输出两套独立结果：
+
+- `target-clusters.json`：以 User Text 为主，描述轨迹想完成的目标；
+- `logic-clusters.json`：以 Tool Call 和 Assistant Text 为主，使用操作 n-gram、角色序列和 LCS 保留先后关系；
+- `cannot-link.jsonl`：目标和逻辑相似度同时处于低尾部、且操作序列不重叠的高可靠不可同类边；
+- `compatible-groups.json`：没有已知 cannot-link 冲突的候选组，不代表组内轨迹已经被证明等价；
+- `representations.jsonl`：每条轨迹的事件计数、操作序列、首个 User Text 和证据词。
+
+当前 97 条切片的可行性结果位于 `behavior-logic-clustering-v1/summary.json`。8 个细领域共生成 100 个目标簇、26 个逻辑簇和 57 条 cannot-link 边。目标视图保留 287/314 个领域成员，逻辑视图保留 310/314 个领域成员；D007 C++/Parser/Lexer 示例中得到 9 个目标簇和 4 个逻辑簇。由于数学领域成员允许重叠，D007 中仍可看到 Android 或 Web 轨迹，这是领域层重叠带来的可审计边界，不应误读为行为算法把它们判成同一目标。
+
+## 11. 反向不能同类分组
+
+上面的 `compatible-groups.json` 只是正向实验的辅助产物，不是反向聚类本身。反向实验改成以“哪些轨迹不能放在一起”为唯一约束：
+
+1. 在每个细领域、每个视图内单独计算相似度分布；
+2. 取该视图相似度的低 10% 尾部作为 `cannot-link` 候选；
+3. 逻辑视图还要求操作二元组/三元组没有共享，避免仅因正文不同就把同一套操作判成冲突；
+4. 对 cannot-link 图做确定性的 DSATUR 图着色，用颜色数自动决定反向包的数量；
+5. 用低相似度优先的 farthest-first 种子和均衡容量把轨迹主动压进这些多样性包，所有轨迹恰好进入一个包。
+
+因此反向组的语义是“把已经有低相似度证据的轨迹主动放进同一个信息包”，允许目标或行为逻辑混杂，重点是让每个包覆盖差异而不是只保留单一目标，不宣称组内已经正向相似。结果位于 `behavior-logic-clustering-anti-v1/`：
+
+- `target-reverse-clusters.json`：目标低相似轨迹组成的多样性包；
+- `logic-reverse-clusters.json`：执行逻辑低相似轨迹组成的多样性包；
+- `target-reverse-cannot-link.jsonl`、`logic-reverse-cannot-link.jsonl`：分组边界的具体证据。
+
+本轮结果为 8 个领域共 34 个目标 anti-cluster、18 个逻辑 anti-cluster。314 条领域成员全部覆盖，没有 residual；目标包规模为 5～13（D002/D004 有 7～8 的尾包），逻辑包规模为 12～23。D007 目标反向分为 3 包（9、9、9），逻辑反向分为 2 包（14、13）。它与旧版的兼容分组不同：旧版把 cannot-link 边分开，而本版把低相似轨迹主动压在一起，再用均衡容量保证每个包都能承载完整差异信息。

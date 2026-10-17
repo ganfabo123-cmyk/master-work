@@ -76,6 +76,81 @@ class ErrorGroupingTests(unittest.TestCase):
             self.assertEqual(events[0]['text'], 'TypeError: bad')
 
 
+class FourAnchorStrategyTests(unittest.TestCase):
+    def unit(self, source, cwd='C:/project'):
+        events = []
+        for i, event in enumerate(source):
+            events.append(experiment.project(event | {'cwd': cwd}, Path('/input.json'), i, i))
+        return {'unit_id': 'a', 'session_id': 's', 'source_paths': ['/input.json'], 'events': events}
+
+    def test_failures_and_written_test_names_but_not_suite_pass(self):
+        u = self.unit([
+            {'category': 'tool_result', 'tool_name': 'Bash', 'text': 'PASS T1/ok\nFAIL T1/repeated_destroy: bad\nFAIL tests/test_x.cpp:32 bad'},
+            {'category': 'tool_call:Write', 'tool_name': 'Write', 'arguments': {'file_path': 'C:/project/tests/test_life.cpp', 'content': 'TEST("destroy twice") { }'}}])
+        hits = list(experiment.strategy_test_case(u))
+        self.assertEqual({h['test_name'] for h in hits}, {'T1/repeated_destroy', 'destroy twice'})
+
+    def test_same_test_name_other_project_not_merged(self):
+        event = {'category': 'tool_result', 'text': 'FAILED tests/test_x.py::test_same - failed'}
+        a = list(experiment.strategy_test_case(self.unit([event], 'C:/one')))
+        b = list(experiment.strategy_test_case(self.unit([event], 'C:/two')))
+        self.assertNotEqual(a[0]['group_key'], b[0]['group_key'])
+
+    def test_absolute_file_identity_survives_cwd_change(self):
+        a = self.unit([{'category': 'assistant_text'}], 'C:/project')
+        b = self.unit([{'category': 'assistant_text'}], 'C:/project/tests')
+        self.assertEqual(experiment._file_identity(a, 0, 'C:/project/tests/test_x.py'),
+                         experiment._file_identity(b, 0, 'C:/project/tests/test_x.py'))
+        self.assertEqual(experiment._file_identity(a, 0, 'tests/test_x.py'),
+                         experiment._file_identity(b, 0, 'test_x.py'))
+
+    def test_stack_site_python_and_java_direction(self):
+        python = 'Traceback (most recent call last):\n  File "C:/project/main.py", line 1, in outer\n  File "C:/project/parser.py", line 9, in parse\nTypeError: bad'
+        java = 'java.lang.IllegalArgumentException: bad\n at lib.Parser.parse(Parser.java:9)\n at app.Main.run(Main.java:1)'
+        a = list(experiment.strategy_stack_site(self.unit([{'category': 'tool_result', 'text': python}])))
+        b = list(experiment.strategy_stack_site(self.unit([{'category': 'tool_result', 'text': java}])))
+        self.assertEqual(a[0]['throw_site']['function'], 'parse')
+        self.assertEqual(b[0]['throw_site']['function'], 'lib.Parser.parse')
+
+    def test_expected_exception_and_read_source_not_runtime_stack(self):
+        text = 'TypeError: expected\n at lib.Test.run(Test.java:2)\nResults: 10 passed, 0 failed'
+        self.assertEqual(list(experiment.strategy_stack_site(self.unit([{'category': 'tool_result', 'text': text}]))), [])
+        self.assertEqual(list(experiment.strategy_stack_site(self.unit([{'category': 'tool_result', 'tool_name': 'Read', 'text': text}]))), [])
+
+    def test_config_snapshot_edit_complete_path(self):
+        u = self.unit([
+            {'category': 'tool_call:Read', 'tool_name': 'Read', 'arguments': {'file_path': 'C:/project/settings.json'}},
+            {'category': 'tool_result', 'tool_name': 'Read', 'text': '1\t{"nested":{"timeout":10}}'},
+            {'category': 'tool_call:Edit', 'tool_name': 'Edit', 'arguments': {'file_path': 'C:/project/settings.json', 'old_string': '10', 'new_string': '20'}}])
+        hits = list(experiment.strategy_config_change(u))
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0]['key_path'], ['nested', 'timeout'])
+        self.assertEqual((hits[0]['old_value'], hits[0]['new_value']), (10, 20))
+
+    def test_arbitrary_data_and_unknown_config_before_not_classified(self):
+        events = [
+            {'category': 'tool_call:Write', 'arguments': {'file_path': 'C:/project/settings.json', 'content': '{"x":1}'}},
+            {'category': 'tool_call:Write', 'arguments': {'file_path': 'C:/project/data.json', 'content': '{"x":1}'}},
+            {'category': 'tool_call:Write', 'arguments': {'file_path': 'C:/project/data.json', 'content': '{"x":2}'}}]
+        self.assertEqual(list(experiment.strategy_config_change(self.unit(events))), [])
+
+    def test_dependencies_change_and_unknown_baseline_distinguished(self):
+        import json
+        u = self.unit([
+            {'category': 'tool_call:Write', 'arguments': {'file_path': 'C:/project/package.json', 'content': json.dumps({'dependencies': {'unknown-package': '1'}})}},
+            {'category': 'tool_call:Edit', 'arguments': {'file_path': 'C:/project/package.json', 'old_string': '"1"', 'new_string': '"2"'}}])
+        hits = list(experiment.strategy_dependency_change(u))
+        self.assertEqual(hits[0]['operation'], 'declaration_old_unknown')
+        self.assertFalse(hits[0]['old_version_known'])
+        self.assertEqual(hits[1]['operation'], 'version_changed')
+        self.assertEqual((hits[1]['old_version'], hits[1]['new_version']), ('1', '2'))
+
+    def test_config_jsonc_strings_not_destroyed(self):
+        d = experiment._structured('{"url":"https://example.com", "value":",}", /* comment */ "flag":true,}', 'x.json')
+        self.assertEqual(d['url'], 'https://example.com')
+        self.assertEqual(d['value'], ',}')
+
+
 class StrategyPipelineTests(unittest.TestCase):
     def register(self, name, function):
         experiment.STRATEGY_REGISTRY[name] = function

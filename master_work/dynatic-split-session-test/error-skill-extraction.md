@@ -13,6 +13,8 @@
   "api_key": "",
   "base_url": "",
   "model": "",
+  "sessionHeader": "x-opencode-session",
+  "userAgent": "skill-extraction/1.0",
   "timeout_seconds": 600,
   "max_requests": 100,
   "max_output_tokens": 16000,
@@ -23,6 +25,10 @@
 ```
 
 本地配置文件已加入 Git 忽略规则；可共享的空白模板是 [config.example.json](./error_skill_extraction.config.example.json)。接口协议是 OpenAI 兼容的 Chat Completions，`base_url` 填服务商提供的 API 根地址（例如包含 `/v1`），脚本追加 `/chat/completions`。也可直接填完整 `/chat/completions` 地址。服务必须支持 `tools`、`tool_calls`、`role=tool` 和 `tool_choice=auto`；不把正文 JSON 当作工具调用退路。
+
+`sessionHeader` 指定请求头名称：配置为 `x-opencode-session` 时，脚本会为每个“错误类 × 输入方案”的提取尝试生成独立 UUID，并通过该 HTTP 头发送；同组各轮请求使用同一个值，各组之间隔离。名称和值记录在 `api-session.json` 和组摘要中，不放进请求 JSON body。续跑失败实验会归档原 Session 记录，新尝试生成新 ID。服务不需要该头时可以删除字段或设为 `""`；不会影响没有此字段的旧配置。
+
+正式提取请求默认发送 `User-Agent: skill-extraction/1.0`；配置中没有 `userAgent` 时也自动使用该值，无需修改现有配置。可用该字段指定自己的客户端名称。服务端 HTTP 错误会打印到终端并保存在失败摘要中，正文最多 4096 字节、经过 key/Bearer 脱敏，不再只显示 `failed`。
 
 填写后，在仓库根目录执行：
 
@@ -130,6 +136,7 @@ common_failures[], verification[], examples[], evidence[]
     selection-C/selection.json, slices/...
     A-original/                   B-selected/、C-context-collapsed/结构相同
       input-manifest.json
+      api-session.json            使用 sessionHeader 时记录该组请求头名和 Session ID
       requests/0001/request.json  实际发送的 body，不含 Authorization
       requests/0001/response.json 服务返回原文（含 usage）
       messages.json, tool-log.json
@@ -141,7 +148,7 @@ common_failures[], verification[], examples[], evidence[]
       attempts/attempt-NNN/...    续跑保留旧失败成本
 ```
 
-目录名由脚本哈希生成，不把模型给出的名称当文件路径。既有用户产物不覆盖。API key 只用于 HTTP Authorization，不写入产物，HTTP 错误不归档可能回显 secret 的服务错误正文。
+目录名由脚本哈希生成，不把模型给出的名称当文件路径。既有用户产物不覆盖。API key 只用于 HTTP Authorization，不写入产物，HTTP 错误正文经脱敏和限长后写入失败摘要。
 
 ## token 和时间口径
 
@@ -164,3 +171,24 @@ python -X utf8 -m unittest test_error_skill_extraction test_select_group_slices 
 [14 类 / 42 实验的输入清单](C:/Users/35153/PycharmProjects/master-work/skill-runs/error-code-preflight-v2/manifest.json)。包含此前 LNK1105 的 5/9/20 文件三组。该目录只准备输入，尚未生成真实模型 Skill。
 
 协议依据：[OpenAI Chat Completions 官方文档](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)。实际第三方接口兼容程度由用户服务决定。
+
+## 单独探活（不运行提取实验）
+
+[probe_skill_api.py](./probe_skill_api.py) 读取同一本地配置，默认用 `skill-extraction-probe/1.0` 标识客户端、保留 Session 请求头，只发送“Reply exactly OK.”，输出上限 128 token。保存 HTTP 状态、经过 key 脱敏的错误正文/正常响应、usage 和耗时；不发送轨迹，不自动重试，不改业务提取程序或用户配置。
+
+```powershell
+python -X utf8 master_work/dynatic-split-session-test/probe_skill_api.py
+python -X utf8 master_work/dynatic-split-session-test/probe_skill_api.py --list-models
+```
+
+第二条仅 GET `/models`，不会请求模型生成。`--user-agent` 可明确指定客户端标识用于对照；`--timeout`、`--max-output-tokens`、`--config`、`--output` 可设置单次探活参数。
+
+2026-10-14 实测：Python 默认标识返回 HTTP 403 / Cloudflare 1010；自有探活客户端标识返回 HTTP 400 / `Model is unavailable`；模型列表 GET 返回 HTTP 200，其中没有配置的 `mimo-v2.6`，有 `mimo-v2.6-flash` 与 `mimo-v2.6-pro`。没有替用户更换模型，也没有重新运行三组提取。OpenCode Go [官方说明](https://opencode.ai/v2/docs/console/go/) 要求客户端发送自己的 User-Agent 和稳定 Session ID。
+
+探活记录：
+
+- [默认 urllib 失败](C:/Users/35153/PycharmProjects/master-work/skill-runs/api-probe-urllib-v1.json)。
+- [自有客户端标识，模型不可用](C:/Users/35153/PycharmProjects/master-work/skill-runs/api-probe-client-agent-v1.json)。
+- [接口返回的模型列表](C:/Users/35153/PycharmProjects/master-work/skill-runs/api-probe-model-list-v1.json)。
+
+随后用户将模型改为 `mimo-v2.6-flash`，正式程序仍因未发送自有 User-Agent 而返回 403。已补全正式请求默认客户端标识，并让探活器复用正式请求头构造函数。使用当前配置及 `skill-extraction/1.0` 再探活，HTTP 200，正文 `OK`，输入 11 / 输出 14 / 总 25 token，耗时约 2.21 秒。18 项提取器本地测试通过；没有启动 42 个实验。记录：[正式请求头的最小成功请求](C:/Users/35153/PycharmProjects/master-work/skill-runs/api-probe-formal-headers-v1.json)。

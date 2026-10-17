@@ -17,15 +17,13 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import copy
+import hashlib
 from collections import Counter
 from pathlib import Path
 
-import numpy as np
-
-import frozen_message_segmentation as frozen
-
-
 def load_embeddings(path: Path) -> dict[str, np.ndarray]:
+    import numpy as np
     grouped: dict[str, list[tuple[int, list[float]]]] = {}
     with path.open("r", encoding="utf-8") as handle:
         for line in handle:
@@ -41,12 +39,14 @@ def load_embeddings(path: Path) -> dict[str, np.ndarray]:
 
 
 def robust_location_scale(values: np.ndarray) -> tuple[float, float]:
+    import numpy as np
     median = float(np.median(values))
     mad = float(np.median(np.abs(values - median)))
     return median, max(1.4826 * mad, 1e-6)
 
 
 def benjamini_hochberg(p_values: np.ndarray) -> np.ndarray:
+    import numpy as np
     order = np.argsort(p_values)
     ordered = p_values[order]
     n = len(ordered)
@@ -83,6 +83,8 @@ def boundary_evidence(
     min_segment: int,
 ) -> list[dict]:
     """Compute embedding divergence, null-calibrated p/q, and stability."""
+    import numpy as np
+    import frozen_message_segmentation as frozen
     n = len(events)
     if len(vectors) != n or n < 2 * max(windows) + min_segment:
         return []
@@ -229,11 +231,138 @@ def materialize_segments(events: list[dict], boundaries: list[int], overlap: int
     return result
 
 
+def load_raw_parts(path: Path) -> dict[tuple[int, int], dict]:
+    """Index original parts without changing the segmentation event sequence."""
+    parts = {}
+    if path.suffix == ".json":
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+        for index, message in enumerate(data["messages"]):
+            for offset, part in enumerate(message.get("parts", [])):
+                if isinstance(part, dict):
+                    parts[index, offset] = part
+    else:
+        for index, line in enumerate(path.read_text(encoding="utf-8-sig").splitlines()):
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            message = record.get("message", {})
+            content = message.get("content", [])
+            if isinstance(content, list):
+                for offset, part in enumerate(content):
+                    if isinstance(part, dict):
+                        parts[index, offset] = part
+    return parts
+
+
+def restore_event_payload(event: dict, parts: dict[tuple[int, int], dict]) -> dict:
+    """Restore hidden payloads after cutting; never insert or reorder events."""
+    result = copy.deepcopy(event)
+    category = event.get("category", "")
+    target = category == "tool_result" or category.endswith(("_thinking", "_reasoning"))
+    # OpenCode stores the call and its result together in a single tool part.
+    target = target or (event.get("part_type") == "tool" and category.startswith("tool_call:"))
+    if not target:
+        return result
+    key = (event.get("source_index"), event.get("source_part_index", 0))
+    part = parts.get(key)
+    if part is None or part.get("type") != event.get("part_type"):
+        raise ValueError(f"Original part missing or mismatched: {key}, {category}")
+    result["payload_restored"] = True
+    if category == "tool_result":
+        # Preserve result metadata without duplicating the long body.
+        for field, value in part.items():
+            if field not in {"type", "content", "output"}:
+                result[field] = copy.deepcopy(value)
+        result["content"] = copy.deepcopy(part.get("content", part.get("output", "")))
+        if "is_error" in part:
+            result["is_error"] = part["is_error"]
+    elif category.endswith(("_thinking", "_reasoning")):
+        result["text"] = part.get("thinking", part.get("text", ""))
+        for field, value in part.items():
+            if field not in {"type", "thinking", "text"}:
+                result[field] = copy.deepcopy(value)
+    else:
+        # Keep this on the existing event rather than changing event coordinates.
+        result["tool_result"] = copy.deepcopy(part.get("state", {}))
+    return result
+
+
+def restore_session_segments(session: dict, path: Path) -> dict:
+    parts = load_raw_parts(path)
+    restored = set()
+    for segment in session["segments"]:
+        events = []
+        for event in segment["events"]:
+            full = restore_event_payload(event, parts)
+            if full.get("payload_restored"):
+                restored.add((full["source_index"], full.get("source_part_index", 0), full["category"]))
+            events.append(full)
+        segment["events"] = events
+    return {"source_path": str(path.resolve()), "source_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "restored_unique_parts": len(restored)}
+
+
+def source_paths(report_path: Path, raw_root: Path) -> dict[tuple[str, str], Path]:
+    report = json.loads(report_path.read_text(encoding="utf-8-sig"))
+    paths = {}
+    root = raw_root.resolve()
+    for source in report["sessions"]:
+        path = (root / source["source_file"]).resolve()
+        if root not in path.parents or not path.is_file():
+            raise ValueError(f"Invalid or missing original trace: {path}")
+        paths[source["harness"], source["session_id"]] = path
+    return paths
+
+
+def write_slices(session: dict, output_dir: Path) -> None:
+    directory = output_dir / f"{session['harness']}__{session['session_id']}"
+    directory.mkdir(parents=True, exist_ok=True)
+    for segment in session["segments"]:
+        (directory / f"segment-{segment['segment_index']:02d}.json").write_text(
+            json.dumps(segment, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (directory / "index.json").write_text(json.dumps({
+        "session_id": session["session_id"], "event_count": session["event_count"],
+        "boundaries_after_event": session["boundaries_after_event"],
+        "segment_count": len(session["segments"]),
+        "formula_version": "calibrated-confidence-length-banded-v3",
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def reuse_and_restore(segments_path: Path, report_path: Path, raw_root: Path,
+                     output_path: Path, output_dir: Path) -> dict:
+    """Export frozen boundaries with original payloads; no numeric dependencies."""
+    if output_path.exists() or output_dir.exists():
+        raise ValueError("Use new output paths; existing segmentation artifacts are preserved")
+    data = json.loads(segments_path.read_text(encoding="utf-8-sig"))
+    if data.get("formula", {}).get("version") != "calibrated-confidence-length-banded-v3":
+        raise ValueError("Expected calibrated-confidence-length-banded-v3 segments")
+    paths = source_paths(report_path, raw_root)
+    stats = []
+    for session in data["sessions"]:
+        path = paths[session["harness"], session["session_id"]]
+        stats.append({"harness": session["harness"], "session_id": session["session_id"],
+                      **restore_session_segments(session, path)})
+    data["payload_restoration"] = {"mode": "after_segmentation_original_parts",
+        "source_segments": str(segments_path.resolve()), "source_report": str(report_path.resolve()),
+        "embedding_calls": 0, "boundaries_recomputed": False,
+        "restored_unique_parts": sum(s["restored_unique_parts"] for s in stats), "sessions": stats}
+    for session in data["sessions"]:
+        write_slices(session, output_dir)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (output_dir / "payload-restoration.json").write_text(
+        json.dumps(data["payload_restoration"], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return data
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     base = Path(__file__).resolve().parent
     parser.add_argument("--input", type=Path, default=base / "message-trajectories.json")
     parser.add_argument("--embeddings", type=Path, default=base / "message-embeddings.jsonl")
+    parser.add_argument("--reuse-segments", type=Path, help="Reuse saved v3 boundaries; no embeddings are read")
+    parser.add_argument("--raw-sessions-root", type=Path, help="Restore original hidden payloads after cutting")
+    parser.add_argument("--source-report", type=Path, help="toolcall-report.json mapping Session IDs to original files")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--windows", default="13,25,37")
@@ -245,6 +374,22 @@ def main() -> int:
     parser.add_argument("--max-splits", type=int, default=100)
     parser.add_argument("--length-bands", default="0:0.10,500:0.30,800:0.45")
     args = parser.parse_args()
+    if bool(args.raw_sessions_root) != bool(args.source_report):
+        parser.error("--raw-sessions-root and --source-report must be supplied together")
+    if args.reuse_segments:
+        if not args.raw_sessions_root:
+            parser.error("--reuse-segments requires --raw-sessions-root and --source-report")
+        try:
+            output = reuse_and_restore(args.reuse_segments, args.source_report, args.raw_sessions_root,
+                                      args.output, args.output_dir)
+        except (ValueError, OSError, KeyError) as error:
+            parser.error(str(error))
+        print(f"sessions={output['session_count']}")
+        print(f"segments={output['total_segments']}")
+        print(f"restored_parts={output['payload_restoration']['restored_unique_parts']}")
+        print("embedding_calls=0; boundaries_recomputed=False")
+        print(f"output={args.output.resolve()}")
+        return 0
     windows = tuple(sorted({int(item) for item in args.windows.split(",") if item.strip()}))
     if (
         not windows or min(windows) < 1 or not 0 < args.fdr < 1
@@ -258,6 +403,7 @@ def main() -> int:
 
     source = json.loads(args.input.resolve().read_text(encoding="utf-8"))
     embeddings = load_embeddings(args.embeddings.resolve())
+    originals = source_paths(args.source_report, args.raw_sessions_root) if args.raw_sessions_root else None
     args.output_dir.mkdir(parents=True, exist_ok=True)
     sessions = []
     for session in source["trajectories"]:
@@ -271,6 +417,8 @@ def main() -> int:
         )
         boundaries = [row["boundary_after_event"] for row in selected]
         segments = materialize_segments(events, boundaries, args.overlap_events)
+        if originals:
+            restore_session_segments({"segments": segments}, originals[session.get("harness"), session_id])
         session_dir = args.output_dir / f"{session.get('harness', 'unknown')}__{session_id}"
         session_dir.mkdir(parents=True, exist_ok=True)
         for segment in segments:
