@@ -3,6 +3,28 @@ import unittest
 from pathlib import Path
 
 import error_clustering_experiment as experiment
+import strategy_clustering as canonical
+
+
+class CanonicalEntryPointTests(unittest.TestCase):
+    def test_canonical_entry_point_reuses_strategy_pipeline(self):
+        self.assertIs(canonical.run, experiment.run)
+        self.assertIs(canonical.scan, experiment.scan)
+        self.assertIs(canonical.group, experiment.group)
+        self.assertIs(canonical.STRATEGY_REGISTRY, experiment.STRATEGY_REGISTRY)
+
+    def test_canonical_cli_lists_all_registered_strategies(self):
+        import subprocess
+        import sys
+
+        result = subprocess.run(
+            [sys.executable, str(Path(canonical.__file__)), '--list-strategies'],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for name in ('native-code', 'stack-site', 'test-case', 'config-change', 'dependency-change'):
+            self.assertIn(name + ':', result.stdout)
 
 
 class ErrorGroupingTests(unittest.TestCase):

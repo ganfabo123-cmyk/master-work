@@ -79,13 +79,15 @@ python -X utf8 master_work/experiments/trace-segmentation/dynatic-split-session-
 → skills.json + 每 Skill 的 SKILL.md/skill.json + 全局索引 + token/时间日志
 ```
 
+上游聚类主入口是同目录的 `strategy_clustering.py`；错误码只是当前用于 Skill 提取的典型分组策略。
+
 默认输入：
 
 - 分组：`master_work/experiments/trace-segmentation/dynatic-split-session-test/error-clustering-v1/sessions-30/native-code/groups.json`。
 - 原始：`C:/Users/35153/PycharmProjects/master-work/sessions/`。
 - 完整恢复切片：`C:/Users/35153/PycharmProjects/master-work/vibecoding-trace-data-bundle/dynatic-split-session-test/calibrated-confidence-length-banded-v3-full-content-slices/`。
 
-默认路径由脚本位置推导，不依赖终端当前目录；可用 `--groups`、`--sessions-dir`、`--slices-dir` 修改。入口只接受原始 `native-code` 类，不能误用切片分组。单会话类全部保留，允许零 Skill，不设两 Session 门槛。
+默认路径由脚本位置推导，不依赖终端当前目录；可用 `--groups`、`--sessions-dir`、`--slices-dir` 修改。入口接受完整轨迹上的策略分组（例如 `native-code-*`、`stack-site-*`），不能误用切片分组。单会话类全部保留，允许零 Skill，不设两 Session 门槛。
 
 复用 [select_group_slices.py](./select_group_slices.py) 的 `group-context`，根据原始 source_index/source_part_index 和分组已保存的附近上下文选择切片。本轮没有改切片或分组算法，不重新 embedding。若恢复清单存在，核对原始文件哈希与切片来源哈希；若核心错误事件无法映射，准备阶段报错，不悄悄丢掉某一类。没有匹配到的附近上下文记录在清单中。
 

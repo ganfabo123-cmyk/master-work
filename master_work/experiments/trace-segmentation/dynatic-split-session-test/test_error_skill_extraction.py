@@ -197,6 +197,22 @@ class ExtractionTests(unittest.TestCase):
             self.assertNotIn("HIDDEN SECRET BODY", Path(c["files"][1]["path"]).read_text())
             runner.verify_prepared(output, manifest)
 
+    def test_prepare_accepts_generic_group_and_selected_arm(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output, _ = make_inputs(Path(tmp))
+            groups_path = Path(tmp) / "groups.json"
+            groups = runner.read_json(groups_path)
+            groups[0].pop("error_key")
+            groups[0]["group_id"] = "stack-site-abc123"
+            groups[0]["group_key"] = "stack:ValueError::fixture.py::run"
+            runner.save(groups_path, groups)
+            selected_output = Path(tmp) / "selected-out"
+            manifest = runner.prepare(groups_path, Path(tmp) / "slices", Path(tmp) / "sessions",
+                                      selected_output, Path(tmp) / "prompt.txt", arms=("A-original",))
+            self.assertEqual(manifest["arms"], ["A-original"])
+            self.assertEqual(manifest["experiment_count"], 1)
+            self.assertTrue((selected_output / "stack-site-abc123" / "A-original" / "input-manifest.json").is_file())
+
     def test_mock_end_to_end_export_template_costs_and_resume(self):
         with tempfile.TemporaryDirectory() as tmp:
             output, _ = make_inputs(Path(tmp))

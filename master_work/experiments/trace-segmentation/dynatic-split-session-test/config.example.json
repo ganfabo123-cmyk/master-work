@@ -1,0 +1,43 @@
+{
+  "input": "../../../data/raw/agent-traces/sessions",
+  "output": "./runs/trajectory-to-skills",
+  "embedding": {
+    "ratio": 1.0,
+    "seed": 42,
+    "api_key": "填入 Embedding 服务 API Key",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3.7-text-embedding",
+    "dimensions": null,
+    "batch_size": 20,
+    "timeout": 120,
+    "retries": 4,
+    "sleep_seconds": 2.0,
+    "resume": false
+  },
+  "segmentation": {
+    "windows": [13, 25, 37],
+    "fdr": 0.1,
+    "min_stability": 0.6666666667,
+    "min_gap": 30,
+    "min_segment": 30,
+    "overlap_events": 25,
+    "max_splits": 100,
+    "length_bands": "0:0.10,500:0.30,800:0.45"
+  },
+  "clustering": {
+    "strategy": "native-code"
+  },
+  "extraction": {
+    "inputs": ["A", "B", "C"],
+    "primary_input": "C",
+    "selection_strategy": "group-context",
+    "prepare_only": false,
+    "prompt": "./error-skill-extraction-prompt.txt",
+    "api": {
+      "api_key": "填入 Skill 提取模型 API Key",
+      "base_url": "https://example.invalid/v1",
+      "model": "填写 Skill 提取模型名称",
+      "userAgent": "trajectory-to-skills/1.0"
+    }
+  }
+}

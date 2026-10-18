@@ -6,6 +6,8 @@
 
 - `data/raw/agent-traces/`：Hugging Face 下载的原始轨迹数据。作为输入只读保留。
 - `experiments/trace-segmentation/dynatic-split-session-test/`：动态切片、聚类分析代码、测试、方法说明及其历史版本结果。为保留旧脚本和产物之间已有的相对引用，项目内部结果目录保持原位；项目整体已从根目录归入切片与聚类主题区。
+- 当前聚类主入口：`experiments/trace-segmentation/dynatic-split-session-test/strategy_clustering.py`。它按可插拔策略提取 `group_key` 后分组；错误码是默认典型策略，调用栈、测试用例、配置变化和依赖变化等策略通过同一入口选择。旧的 `error_clustering_experiment.py` 仅作为兼容模块保留。
+- 当前端到端入口：`experiments/trace-segmentation/dynatic-split-session-test/trajectory_to_skills.py`。复制同目录的 `config.example.json` 为 `config.json` 后，直接运行 `python trajectory_to_skills.py`，结果写入配置的 `skills/` 输出目录。
 - `experiments/trace-segmentation/runs/behavior-clustering/`：原来散落在根目录的聚类参数、候选和图版本结果；保留原目录名以对应旧记录。
 - `experiments/trace-segmentation/imported/20261017/`：压缩包中的其他分支聚类实验数据，单独导入。
 - `experiments/skill-management/`：`dynamic-retrieval-test/`（通用检索入口和 35 个 B 组 Skill）、`skill-management-system/`（管理系统源码与当前状态）、`runs/`（每个 fixture 独立的管理数据和配置）。检索程序与管理系统保持同级，配置中的相对路径仍有效。

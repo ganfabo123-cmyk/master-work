@@ -248,15 +248,23 @@ def raw_path(root, session_id):
     return matches[0]
 
 
-def prepare(groups_path, slices_dir, sessions_dir, output, prompt_path, selection_strategy="group-context"):
+def prepare(groups_path, slices_dir, sessions_dir, output, prompt_path, selection_strategy="group-context", arms=None):
+    selected_arms = tuple(ARMS if arms is None else arms)
+    unknown_arms = [arm for arm in selected_arms if arm not in ARMS]
+    if not selected_arms or unknown_arms:
+        raise ValueError(f"arms must be a nonempty subset of {ARMS}: {unknown_arms}")
     groups = read_json(groups_path)
     if not isinstance(groups, list) or not groups:
         raise ValueError("Expected nonempty original error-code groups.json")
     if output.exists():
         raise ValueError("Output already exists: use --resume or a new --output")
-    group_ids = [g["group_id"] for g in groups]
-    if len(set(group_ids)) != len(groups) or any(not re.fullmatch(r"native-code-[a-z0-9]+", gid) for gid in group_ids):
-        raise ValueError("This runner accepts original native-code groups only")
+    group_ids = [g.get("group_id") for g in groups]
+    if (any(not isinstance(gid, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", gid)
+            for gid in group_ids) or len(set(group_ids)) != len(groups)):
+        raise ValueError("Each group must have a unique, path-safe group_id")
+    if any(not isinstance(g.get("member_session_ids"), list) or not g["member_session_ids"]
+           or not isinstance(g.get("evidence"), list) for g in groups):
+        raise ValueError("Each group must contain member_session_ids and evidence")
     ids = sorted({sid for g in groups for sid in g["member_session_ids"]})
     originals = {sid: raw_path(sessions_dir, sid) for sid in ids}
     # Preflight all mappings before producing a partially prepared experiment.
@@ -306,7 +314,7 @@ def prepare(groups_path, slices_dir, sessions_dir, output, prompt_path, selectio
             "C-context-collapsed": [file_entry(s["output_path"], s["session_id"], "slice", s["content_mode"])
                                     for s in collapsed["exported_slices"]],
         }
-        for arm in ARMS:
+        for arm in selected_arms:
             directory = output / gid / arm
             manifest = {"group_id": gid, "error_key": group.get("error_key", group.get("group_key")),
                         "arm": arm, "session_ids": sorted(group["member_session_ids"]), "files": arm_files[arm],
@@ -318,7 +326,7 @@ def prepare(groups_path, slices_dir, sessions_dir, output, prompt_path, selectio
             experiments.append({"group_id": gid, "arm": arm, "input_manifest": str((directory / "input-manifest.json").resolve()),
                                 "input_manifest_sha256": digest(directory / "input-manifest.json")})
     manifest = {"version": VERSION, "created_at": now(), "status": "prepared", "group_count": len(groups),
-                "experiment_count": len(experiments), "arms": list(ARMS), "experiments": experiments,
+                "experiment_count": len(experiments), "arms": list(selected_arms), "experiments": experiments,
                 "inputs": {"groups": str(groups_path.resolve()), "slices_dir": str(slices_dir.resolve()),
                            "sessions_dir": str(sessions_dir.resolve())}, "groups_sha256": digest(output / "groups.json"),
                 "prompt_sha256": digest(output / "prompt.txt"), "tools_sha256": digest(output / "tools.json"),
@@ -333,7 +341,7 @@ def prepare(groups_path, slices_dir, sessions_dir, output, prompt_path, selectio
                 "full_file_count": sum(f["content_mode"] == "full" for f in arm_input["files"]),
                 "collapsed_file_count": sum(f["content_mode"] == "collapsed" for f in arm_input["files"]),
                 "unmapped_context_count": len(arm_input["unmapped_context_references"])}
-                for arm in ARMS for arm_input in [read_json(output / g["group_id"] / arm / "input-manifest.json")]}}
+                for arm in selected_arms for arm_input in [read_json(output / g["group_id"] / arm / "input-manifest.json")]}}
             for g in sorted(groups, key=lambda g: g["group_id"])]})
     return manifest
 

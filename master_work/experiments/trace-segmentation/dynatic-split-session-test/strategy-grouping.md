@@ -1,19 +1,19 @@
 # 通用策略分组入口
 
-实现文件仍是 [error_clustering_experiment.py](D:/PycharmProjects/CodeHarness/master_work/experiments/trace-segmentation/dynatic-split-session-test/error_clustering_experiment.py)，保留历史名称与调用接口。后续测试、调用栈、配置、依赖策略都在这个文件中增加函数，不另起实验脚本。
+正式入口是 [strategy_clustering.py](./strategy_clustering.py)。它使用错误分组实验中已经验证的通用策略管线；[error_clustering_experiment.py](./error_clustering_experiment.py) 保留为历史兼容模块和旧命令入口。后续测试、调用栈、配置、依赖策略都在同一策略注册表中，不另起实验脚本。
 
 ## 选择策略
 
 从脚本所在目录执行：
 
 ```powershell
-python error_clustering_experiment.py --list-strategies
+python strategy_clustering.py --list-strategies
 ```
 
 当前已注册 `native-code`、`exception-type`、`message-template`、`test-case`、`stack-site`、`config-change`、`dependency-change`。只运行前两种错误策略：
 
 ```powershell
-python error_clustering_experiment.py `
+python strategy_clustering.py `
   --expanded-sessions-dir C:\Users\35153\PycharmProjects\master-work\vibecoding-trace-data-bundle\dynatic-split-session-test\context-expanded-sessions `
   --slices-dir C:\Users\35153\PycharmProjects\master-work\vibecoding-trace-data-bundle\dynatic-split-session-test\calibrated-confidence-length-banded-v3-slices `
   --raw-sessions-root C:\Users\35153\PycharmProjects\master-work\sessions `
@@ -47,7 +47,7 @@ def strategy_new(unit):
 STRATEGY_REGISTRY["new-strategy"] = strategy_new
 ```
 
-实现后即可使用 `--strategies new-strategy`。不需要修改 `scan()`、`group()`、`run()` 或命令行参数定义。上面仅是扩展接口说明，没有注册空壳测试/调用栈策略。
+实现后即可使用 `--strategies new-strategy`。不需要修改 `scan()`、`group()`、`run()` 或命令行参数定义。测试、调用栈、配置、依赖策略都已通过注册表提供；新增策略仍只需实现函数并注册。
 
 必需字段是 `group_key`、`event_position`、`evidence_line`。`event_position` 是列表位置，不是原始事件索引。函数可额外返回旧值、新值、版本、栈帧等 JSON 可序列化证据，通用流程会保留。
 

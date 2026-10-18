@@ -1,8 +1,10 @@
-"""Strategy grouping of Session/slice evidence, selected by --strategies.
+"""Implementation for the canonical strategy-based clustering entry point.
 
-Add a function accepting one projected unit and register it in STRATEGY_REGISTRY.
-The shared pipeline supplies source context and groups its matches by group_key.
-Existing error strategies and the historical filename remain compatible.
+The public CLI is ``strategy_clustering.py``. This historical module name is
+kept import- and CLI-compatible so existing experiments and consumers remain
+reproducible. Add a function accepting one projected unit and register it in
+``STRATEGY_REGISTRY``; the shared pipeline supplies source context and groups
+matches by ``group_key``.
 """
 from __future__ import annotations
 
