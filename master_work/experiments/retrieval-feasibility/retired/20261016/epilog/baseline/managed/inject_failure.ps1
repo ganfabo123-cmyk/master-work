@@ -1,0 +1,5 @@
+$ErrorActionPreference = 'Continue'
+Write-Error 'LINK : fatal error LNK1105: cannot close file build\epilog.exe'
+Write-Error 'LINK : fatal error LNK1105: cannot close file build\epilog.exe, error code 1224'
+Write-Output 'The output file is still mapped by another process.'
+Write-Output 'The same build command was attempted repeatedly before stopping the process.'

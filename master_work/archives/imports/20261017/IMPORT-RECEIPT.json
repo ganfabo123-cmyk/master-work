@@ -1,0 +1,102 @@
+{
+  "repository_extracted_path": "experiments/trace-segmentation/imported/20261017/repository-data",
+  "repository_zip_sha256": "297895dc32d28e514ff2a24367c2443c4b1c548da6e6666466623491ddbf8fd9",
+  "skill_run_manifest_file_count": 2128,
+  "skill_run_extracted_path": "experiments/skill-extraction/imported/20261017/skill-runs",
+  "imported_at": "2026-10-17",
+  "repository_manifest_file_count": 3402,
+  "skill_run_manifest_uncompressed_bytes": 507144753,
+  "repository_manifest_uncompressed_bytes": 518338443,
+  "skill_run_zip_sha256": "d91024fab1cbaf1db0494cfc82e8dce9303e1dc1d2da7f1654b78d6b8993966d",
+  "original_rar_sha256": "86146586b90a9fb18c9e144c5fa172a6e20086bc0227b558b69d4e1428651ef4",
+  "local_vs_imported_skill_run": {
+    "local_path": "experiments/skill-extraction/runs/20261014-210632-local",
+    "imported_path": "experiments/skill-extraction/imported/20261017/skill-runs/20261014-210632",
+    "local_files": 2128,
+    "imported_files": 2128,
+    "matching_relative_paths": 2128,
+    "same_sha256": 2128,
+    "different_sha256": 0,
+    "local_only": 0,
+    "imported_only": 0,
+    "byte_for_byte_identical": true
+  },
+  "local_vs_imported_repository": {
+    "local_path": "experiments/trace-segmentation/dynatic-split-session-test",
+    "imported_path": "experiments/trace-segmentation/imported/20261017/repository-data",
+    "local_files": 2493,
+    "imported_files": 3402,
+    "same_relative_path_same_sha256": 599,
+    "same_relative_path_different_sha256": 9,
+    "local_only": 1885,
+    "imported_only": 2794,
+    "conflicting_paths": [
+      {
+        "relative_path": ".env.example",
+        "local_sha256": "bc905e742d1323b1d0b4765a167e275d9eccb8483eaa5f633fea82f6c6ce9cf1",
+        "imported_sha256": "a5baf33e92577733fa07de076adf6d6de08865fda7c6369cf39d970ae661b086"
+      },
+      {
+        "relative_path": ".gitignore",
+        "local_sha256": "dbfc5f7a06d2264e9c9611ff15a0ac46afa72d86ac98063a2cb305ac8b49f7ee",
+        "imported_sha256": "f2ec862b570fefc9cf6174514d73c818d654324bb243a84cba15d90b3ee76f7a"
+      },
+      {
+        "relative_path": "cluster-v0/quality-audit.md",
+        "local_sha256": "2aa1754dab80ce32fab343e62f4de7bb17498ec1fde6675dabfe97180cf0f9cc",
+        "imported_sha256": "c06d61a1feb1e1ff5c6fb156efbf43f37c26fae263e56673a3a46b3e51e42657"
+      },
+      {
+        "relative_path": "event-behavior-signals/README.md",
+        "local_sha256": "334d1eef4ab0b271354f66716d5d85760102409ee57efee06e0eda62830aa55f",
+        "imported_sha256": "66d4c895eae593a0814284e1b47b074f69e5deb297f13c98b0b115ef8d496485"
+      },
+      {
+        "relative_path": "llm-domain-normalization-v1/normalized-domains.json",
+        "local_sha256": "804a0a6c2ceacba3d5617a3e467faea72b7bc6f91e9aecc4516157b63b7abe82",
+        "imported_sha256": "541a26dcd0f63c482079b0d5de31ce30e6e469368fdc5bf820729529be190471"
+      },
+      {
+        "relative_path": "llm-domain-normalization-v2/normalized-domains.json",
+        "local_sha256": "4133b04804da3087708655dfb49d86d9156e72b4c62c02a49716edfcc3b3836a",
+        "imported_sha256": "89d5f76c28f617d65ee3c38b5b27aaff9e3c68bc75375e851154a97f3ba3ea19"
+      },
+      {
+        "relative_path": "llm-domain-normalization-v3/normalized-domains.json",
+        "local_sha256": "7acf98bf0aeb6e2e8f9962730fb7cccbd544452fb5472cef8c1d2b8c1a02ec24",
+        "imported_sha256": "11316f4eeae6945b254e1e0108007191a0feea6f70b09c7187923d17e5abe517"
+      },
+      {
+        "relative_path": "slice-features-token-stats/slice-features.jsonl",
+        "local_sha256": "3d6d63286771f212e8810478024b521623aa6b18ba5ca326186bc722d7623eb3",
+        "imported_sha256": "b04970e882aa24dd474e38c76dafac92c440c545d690f35dc5429f6923346c6c"
+      },
+      {
+        "relative_path": "slice-opening-analysis/slice-opening-analysis.csv",
+        "local_sha256": "7155a8b540ccbdfeab515aa6268c35097fdb87c8c5d34753dec0fa85f229a085",
+        "imported_sha256": "2837dda27a8070a8548ce364d21d09ac1187c1e3179896759fd38bdca30a0f0a"
+      }
+    ]
+  },
+  "deduplication": {
+    "date": "2026-10-18",
+    "removed": [
+      {
+        "path": "experiments/skill-extraction/imported/20261017/skill-runs/20261014-210632",
+        "files": 2128,
+        "bytes": 507144753,
+        "identical_to": "experiments/skill-extraction/runs/20261014-210632-local",
+        "retained_archive": "archives/imports/20261017/source/skill-run-20261014-210632.zip"
+      },
+      {
+        "path": "archives/imports/20261017/duplicate-staging",
+        "files": 3,
+        "bytes": 224663805,
+        "identical_to": "archives/imports/20261017/source",
+        "note": "All staged files were identical same-path files in source."
+      }
+    ],
+    "total_bytes_removed": 731808558,
+    "verification": "SHA-256 checked before deletion; source archives and manifests retained."
+  }
+}

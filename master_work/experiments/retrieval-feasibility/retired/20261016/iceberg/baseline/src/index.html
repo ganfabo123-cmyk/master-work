@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portfolio of Uriel — full-stack engineer and interface designer building calm, fast web products.">
+  <meta name="color-scheme" content="dark light">
+  <title>Uriel · Portfolio</title>
+  <style>
+    :root {
+      --bg: #0b0e14;
+      --bg-soft: #11151f;
+      --card: #161b27;
+      --border: #232a3a;
+      --text: #e6e9f0;
+      --muted: #98a2b8;
+      --accent: #6ea8ff;
+      --accent-2: #9c7bff;
+      --shadow: 0 18px 40px rgba(0, 0, 0, .35);
+      --radius: 14px;
+      --maxw: 1040px;
+    }
+    [data-theme="light"] {
+      --bg: #f6f7fb;
+      --bg-soft: #ffffff;
+      --card: #ffffff;
+      --border: #e2e6f0;
+      --text: #171c28;
+      --muted: #5b6478;
+      --accent: #2f6bdd;
+      --accent-2: #7148d8;
+      --shadow: 0 14px 30px rgba(23, 28, 40, .10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(900px 480px at 85% -10%, rgba(110, 168, 255, .16), transparent 60%),
+        radial-gradient(760px 420px at -10% 20%, rgba(156, 123, 255, .14), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+    .wrap { width: min(var(--maxw), 92%); margin-inline: auto; }
+
+    /* ---------- header / nav ---------- */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(10px);
+      background: color-mix(in srgb, var(--bg) 78%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex; align-items: center; gap: 18px;
+      padding: 14px 0;
+    }
+    .brand {
+      font-weight: 700; letter-spacing: .02em; text-decoration: none; color: var(--text);
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .brand .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
+    }
+    .nav-links {
+      display: flex; gap: 4px; margin-left: auto; list-style: none; padding: 0;
+    }
+    .nav-links a {
+      display: block; padding: 8px 12px; border-radius: 10px;
+      color: var(--muted); text-decoration: none; font-size: .95rem;
+      transition: color .18s ease, background .18s ease;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg-soft); }
+    .nav-links a.active { color: var(--text); background: var(--card); box-shadow: inset 0 0 0 1px var(--border); }
+    .nav-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      border: 1px solid var(--border); background: var(--card); color: var(--text);
+      width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .menu-btn { display: none; }
+
+    /* ---------- hero ---------- */
+    .hero { padding: clamp(56px, 9vw, 110px) 0 clamp(40px, 6vw, 72px); }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .82rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--border); background: var(--card);
+      padding: 6px 12px; border-radius: 999px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5.6vw, 3.6rem);
+      line-height: 1.12; margin: 20px 0 12px; letter-spacing: -.02em;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p.lede { font-size: 1.12rem; color: var(--muted); max-width: 62ch; margin: 0 0 28px; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 20px; border-radius: 12px; text-decoration: none;
+      font-weight: 600; font-size: .95rem; border: 1px solid transparent;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff; box-shadow: var(--shadow);
+    }
+    .btn-ghost { border-color: var(--border); background: var(--card); color: var(--text); }
+    .stats {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px; margin-top: 44px; max-width: 640px;
+    }
+    .stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+    }
+    .stat b { display: block; font-size: 1.5rem; letter-spacing: -.02em; }
+    .stat span { color: var(--muted); font-size: .88rem; }
+
+    /* ---------- sections ---------- */
+    section { padding: clamp(44px, 7vw, 84px) 0; }
+    .section-head { margin-bottom: 30px; }
+    .section-head h2 { font-size: clamp(1.5rem, 3.2vw, 2rem); margin: 6px 0 8px; letter-spacing: -.01em; }
+    .section-head p { color: var(--muted); margin: 0; max-width: 64ch; }
+    .kicker {
+      font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* about */
+    .about-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .panel p { color: var(--muted); margin: 0 0 12px; }
+    .panel p:last-child { margin-bottom: 0; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+    .tags li {
+      font-size: .85rem; color: var(--muted);
+      border: 1px solid var(--border); background: var(--bg-soft);
+      padding: 5px 11px; border-radius: 999px;
+    }
+
+    /* skills */
+    .skill-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .skill-card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+    .skill-card p { color: var(--muted); margin: 0 0 14px; font-size: .92rem; }
+
+    /* work */
+    .work-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .project {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 12px;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .project:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); box-shadow: var(--shadow); }
+    .project header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .project h3 { margin: 0; font-size: 1.15rem; }
+    .project .year { color: var(--muted); font-size: .85rem; white-space: nowrap; }
+    .project p { color: var(--muted); margin: 0; font-size: .95rem; }
+    .project .tags li { background: var(--card); }
+    .project .links { margin-top: auto; display: flex; gap: 14px; font-size: .9rem; }
+    .project .links a { text-decoration: none; font-weight: 600; }
+    .project .links a:hover { text-decoration: underline; }
+
+    /* contact */
+    .contact-panel {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;
+    }
+    .contact-panel p { margin: 6px 0 0; color: var(--muted); }
+    .email-chip {
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 1px solid var(--border); background: var(--bg-soft);
+      padding: 10px 14px; border-radius: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .92rem; cursor: pointer; color: var(--text);
+    }
+    .email-chip:hover { border-color: var(--accent); }
+    .socials { display: flex; gap: 10px; list-style: none; padding: 0; margin: 18px 0 0; }
+    .socials a {
+      text-decoration: none; color: var(--muted); font-size: .92rem;
+      border: 1px solid var(--border); background: var(--card);
+      padding: 8px 14px; border-radius: 10px;
+    }
+    .socials a:hover { color: var(--text); border-color: var(--accent); }
+
+    /* footer */
+    footer.site-footer {
+      border-top: 1px solid var(--border); padding: 26px 0 40px; color: var(--muted); font-size: .88rem;
+    }
+    footer.site-footer .wrap { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+
+    /* toast */
+    .toast {
+      position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+      background: var(--card); border: 1px solid var(--border); color: var(--text);
+      padding: 10px 18px; border-radius: 12px; box-shadow: var(--shadow);
+      opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; font-size: .92rem;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* responsive */
+    @media (max-width: 860px) {
+      .skill-grid { grid-template-columns: 1fr; }
+      .work-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .menu-btn { display: inline-flex; margin-left: auto; }
+      .nav-links {
+        display: none; position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; gap: 2px; padding: 10px 4% 16px;
+        background: var(--bg-soft); border-bottom: 1px solid var(--border);
+      }
+      .nav-links.open { display: flex; }
+      .nav-actions { margin-left: 0; }
+      .stats { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .btn:hover, .project:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="#home" aria-label="Uriel — home"><span class="dot" aria-hidden="true"></span>Uriel</a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="icon-btn menu-btn" id="menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">☰</button>
+        <button class="icon-btn" id="theme-btn" aria-label="Toggle color theme">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- hero -->
+    <section class="hero" id="home" aria-label="Introduction">
+      <div class="wrap">
+        <span class="eyebrow">Available for select projects · 2025</span>
+        <h1>Hi, I'm <span class="grad">Uriel</span>.<br>I build calm, fast web products.</h1>
+        <p class="lede">
+          Full-stack engineer and interface designer. I turn fuzzy ideas into
+          accessible, well-tested interfaces — from design systems and dashboards
+          to developer tools that people actually enjoy using.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#work">View my work</a>
+          <a class="btn btn-ghost" href="#contact">Get in touch</a>
+        </div>
+        <div class="stats" role="list">
+          <div class="stat reveal" role="listitem"><b>8+</b><span>years shipping web apps</span></div>
+          <div class="stat reveal" role="listitem"><b>30+</b><span>production projects delivered</span></div>
+          <div class="stat reveal" role="listitem"><b>12</b><span>open-source libraries published</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- about -->
+    <section id="about" aria-labelledby="about-title">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="kicker">About</span>
+          <h2 id="about-title">Engineering depth, design sensibility</h2>
+          <p>I care about the whole path a product takes: the architecture behind it, the pixels on top, and the docs that make it last.</p>
+        </div>
+        <div class="about-grid">
+          <div class="panel reveal">
+            <p>
+              I started out writing internal tools and never really stopped. Today I
+              work with product teams to design and build web applications —
+              shaping data models, crafting component libraries, and squeezing
+              milliseconds out of render paths.
+            </p>
+            <p>
+              My favourite work sits at the intersection of performance and
+              ergonomics: real-time dashboards, editor-like interfaces, and
+              anything where a spinner is not an acceptable answer.
+            </p>
+          </div>
+          <div class="panel reveal">
+            <h3 style="margin-top:0;font-size:1rem;">Off the clock</h3>
+            <p>Trail running, film photography, and slowly restoring a 1980s synthesizer.</p>
+            <ul class="tags" aria-label="Interests">
+              <li>Accessibility</li><li>Design systems</li><li>Web performance</li><li>DX tooling</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- skills -->
+    <section id="skills" aria-labelledby="skills-title">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="kicker">Skills</span>
+          <h2 id="skills-title">What I work with</h2>
+          <p>A pragmatic stack, chosen per problem — not per hype cycle.</p>
+        </div>
+        <div class="skill-grid">
+          <article class="panel skill-card reveal">
+            <h3>Frontend</h3>
+            <p>Reactive UIs, design tokens, and accessible components that survive contact with real content.</p>
+            <ul class="tags"><li>TypeScript</li><li>SolidJS</li><li>React</li><li>CSS architecture</li></ul>
+          </article>
+          <article class="panel skill-card reveal">
+            <h3>Backend</h3>
+            <p>Small, observable services with boring, reliable data layers.</p>
+            <ul class="tags"><li>Node.js</li><li>PostgreSQL</li><li>REST &amp; tRPC</li><li>Redis</li></ul>
+          </article>
+          <article class="panel skill-card reveal">
+            <h3>Craft</h3>
+            <p>The unglamorous work that keeps products healthy over years.</p>
+            <ul class="tags"><li>Testing</li><li>CI/CD</li><li>Perf profiling</li><li>Technical writing</li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- work -->
+    <section id="work" aria-labelledby="work-title">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="kicker">Selected work</span>
+          <h2 id="work-title">Projects I'm proud of</h2>
+          <p>A few things I've designed, built, and maintained recently.</p>
+        </div>
+        <div class="work-grid">
+          <article class="project reveal">
+            <header><h3>Nimbus Analytics</h3><span class="year">2025</span></header>
+            <p>Real-time analytics dashboard streaming millions of events per hour, with sub-100ms chart updates and shareable saved views.</p>
+            <ul class="tags"><li>SolidJS</li><li>WebSocket</li><li>ClickHouse</li></ul>
+            <div class="links"><a href="#work">Case study</a><a href="#work">Source</a></div>
+          </article>
+          <article class="project reveal">
+            <header><h3>Terra Atlas</h3><span class="year">2024</span></header>
+            <p>A storytelling map engine that lets journalists compose scroll-driven narratives over vector maps — no code required.</p>
+            <ul class="tags"><li>Mapbox GL</li><li>D3</li><li>TypeScript</li></ul>
+            <div class="links"><a href="#work">Case study</a><a href="#work">Demo</a></div>
+          </article>
+          <article class="project reveal">
+            <header><h3>Cadence</h3><span class="year">2024</span></header>
+            <p>An offline-first practice tracker with sample-accurate scheduling, built on the Web Audio API and a local-first sync layer.</p>
+            <ul class="tags"><li>Web Audio</li><li>IndexedDB</li><li>PWA</li></ul>
+            <div class="links"><a href="#work">Case study</a><a href="#work">Source</a></div>
+          </article>
+          <article class="project reveal">
+            <header><h3>Loop Scheduler</h3><span class="year">2023</span></header>
+            <p>A calendar engine powering recurring-event scheduling across time zones, with a property-based test suite covering 40k edge cases.</p>
+            <ul class="tags"><li>Node.js</li><li>Temporal API</li><li>Testing</li></ul>
+            <div class="links"><a href="#work">Write-up</a><a href="#work">Source</a></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- contact -->
+    <section id="contact" aria-labelledby="contact-title">
+      <div class="wrap">
+        <div class="panel contact-panel reveal">
+          <div>
+            <span class="kicker">Contact</span>
+            <h2 id="contact-title" style="margin:6px 0 0;">Let's build something together</h2>
+            <p>Open to freelance work, consulting, and interesting full-time roles.</p>
+          </div>
+          <div>
+            <button class="email-chip" id="email-chip" data-email="uriel@example.com" aria-label="Copy email address to clipboard">
+              <span aria-hidden="true">✉</span><span id="email-text">uriel@example.com</span>
+            </button>
+            <ul class="socials" aria-label="Social profiles">
+              <li><a href="#contact">GitHub</a></li>
+              <li><a href="#contact">LinkedIn</a></li>
+              <li><a href="#contact">Bluesky</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span id="year">2025</span> Uriel. All rights reserved.</span>
+      <span>Built by hand — no frameworks, 1 file.</span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // current year
+      document.getElementById('year').textContent = String(new Date().getFullYear());
+
+      // theme toggle (persisted)
+      var root = document.documentElement;
+      var themeBtn = document.getElementById('theme-btn');
+      var saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (e) { /* storage unavailable */ }
+      if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+      themeBtn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) { /* ignore */ }
+      });
+
+      // mobile menu
+      var menuBtn = document.getElementById('menu-btn');
+      var navLinks = document.getElementById('nav-links');
+      menuBtn.addEventListener('click', function () {
+        var open = navLinks.classList.toggle('open');
+        menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      navLinks.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') {
+          navLinks.classList.remove('open');
+          menuBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // scroll-spy: highlight the section in view
+      var links = Array.prototype.slice.call(navLinks.querySelectorAll('a'));
+      var sections = links
+        .map(function (a) { return document.querySelector(a.getAttribute('href')); })
+        .filter(Boolean);
+      if ('IntersectionObserver' in window) {
+        var spy = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            links.forEach(function (a) {
+              a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+            });
+          });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        sections.forEach(function (s) { spy.observe(s); });
+
+        // reveal-on-scroll
+        var reveal = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in');
+              reveal.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(function (el) { reveal.observe(el); });
+      } else {
+        document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      }
+
+      // copy email
+      var toast = document.getElementById('toast');
+      var toastTimer = null;
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2000);
+      }
+      var chip = document.getElementById('email-chip');
+      chip.addEventListener('click', function () {
+        var email = chip.getAttribute('data-email');
+        function fallback() {
+          var ta = document.createElement('textarea');
+          ta.value = email;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); showToast('Email copied — ' + email); }
+          catch (e) { showToast(email); }
+          document.body.removeChild(ta);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email)
+            .then(function () { showToast('Email copied — ' + email); })
+            .catch(fallback);
+        } else {
+          fallback();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

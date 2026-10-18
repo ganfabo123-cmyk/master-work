@@ -1,0 +1,40 @@
+{
+  "version": "v0.2",
+  "task_top_k": 20,
+  "candidate_posting_limit": 1000,
+  "candidate_posting_fraction": 0.25,
+  "weights": {
+    "task": 0.5,
+    "action_object": 0.15,
+    "operation_file": 0.25,
+    "operation_type": 0.1
+  },
+  "minimum_joint_similarity": 0.18,
+  "minimum_task_similarity_same_session": 0.23,
+  "minimum_task_similarity_cross_session": 0.1,
+  "secondary_minima": {
+    "action_object": 0.1,
+    "operation_file": 0.05,
+    "operation_type": 0.25
+  },
+  "cross_session_secondary_minima": {
+    "action_object": 0.2,
+    "operation_file": 0.25
+  },
+  "minimum_cluster_size": 2,
+  "minimum_distinct_sessions": 2,
+  "cluster_rule": "maximal clique of accepted pair edges; slice may belong to multiple clusters",
+  "evidence_score": {
+    "task_weight": 0.35,
+    "concrete_operation_weight": 0.35,
+    "joint_weight": 0.2,
+    "cross_session_weight": 0.1,
+    "task_saturation": 0.3,
+    "operation_file_saturation": 0.3,
+    "action_object_saturation": 0.25,
+    "joint_saturation": 0.3,
+    "aggregation": "minimum pair score within cluster",
+    "threshold": 0.75,
+    "interpretation": "heuristic evidence gate, not a calibrated probability"
+  }
+}

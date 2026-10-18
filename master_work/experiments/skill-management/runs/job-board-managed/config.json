@@ -1,0 +1,57 @@
+{
+  "corpus_root": "D:\\PycharmProjects\\CodeHarness\\master_work\\experiments\\skill-management\\dynamic-retrieval-test\\skills_b",
+  "index_path": "D:\\PycharmProjects\\CodeHarness\\master_work\\experiments\\skill-management\\dynamic-retrieval-test\\skills_b\\index.jsonl",
+  "embedding_cache": "D:\\PycharmProjects\\CodeHarness\\master_work\\experiments\\skill-management\\dynamic-retrieval-test\\embedding_cache.json",
+  "embedding_model": "text-embedding-v4",
+  "embedding_dimension": 1024,
+  "data_dir": "D:\\PycharmProjects\\CodeHarness\\master_work\\experiments\\skill-management\\runs\\job-board-managed\\data",
+  "maintenance": {
+    "min_feedback_samples": 20,
+    "good_wilson_lower": 0.65,
+    "low_usability": 0.5,
+    "relative_margin": 0.1,
+    "move_margin": 0.03,
+    "dual_min_similarity": 0.55,
+    "dual_max_gap": 0.04,
+    "orphan_similarity": 0.45,
+    "max_moves_per_window": 3,
+    "max_splits_per_window": 1,
+    "cooldown_windows": 2,
+    "min_new_feedback": 5,
+    "min_window_seconds": 3600,
+    "route_window_queries": 20,
+    "route_drop": 0.1,
+    "route_recall_target": 0.95
+  },
+  "signatures": {
+    "min_samples": 20,
+    "promotion_threshold": 0.95,
+    "rollback_threshold": 0.9,
+    "window_size": 100,
+    "min_support": 3,
+    "min_ngram_words": 3,
+    "max_ngram_words": 8,
+    "max_other_query_fraction": 0.05,
+    "max_candidates": 50
+  },
+  "feedback": {
+    "min_feedback_samples": 20,
+    "wilson_z": 1.96,
+    "target_recall": 0.95
+  },
+  "clustering": {
+    "seed": 42,
+    "max_iterations": 50,
+    "k_candidates": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      8
+    ],
+    "bootstrap_rounds": 4,
+    "min_stability": 0.5,
+    "assign_max_cosine_distance": 0.15
+  }
+}
