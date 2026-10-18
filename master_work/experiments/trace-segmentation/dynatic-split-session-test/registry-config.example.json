@@ -1,0 +1,15 @@
+{
+  "source_output": "./runs/trajectory-to-skills",
+  "manager_config": "../../skill-management/skill-management-system/config.json",
+  "registry_root": "../../skill-management/registered",
+  "activate_manager_config": true,
+  "manager_python": null,
+  "default_triggers": [],
+  "manager_embedding": {
+    "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "api_key_env": "DASHSCOPE_API_KEY",
+    "batch_size": 32,
+    "timeout_seconds": 120,
+    "use_system_proxy": false
+  }
+}

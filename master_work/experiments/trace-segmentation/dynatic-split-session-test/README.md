@@ -14,6 +14,17 @@ python trajectory_to_skills.py
 
 不再从命令行传参数；运行时配置全部来自 `config.json`。配置文件已被 `.gitignore` 忽略，避免把密钥提交进仓库。
 
+生成完成后，注册到管理系统：
+
+1. 复制 `registry-config.example.json` 为 `registry-config.json`，确认上游输出目录、管理系统配置和 embedding 密钥环境变量。
+2. 执行：
+
+```powershell
+python register_skills.py
+```
+
+注册器会在 `registered/runs/<batch-id>/` 中构造独立语料、索引、description 向量缓存和管理快照；`initialize`、`cluster`、`verify` 全部成功后，才激活管理系统配置。失败批次保留在该目录中，不切换当前管理快照。
+
 ## 流水线与 A/B/C
 
 原始轨迹先被归一化为事件，再按 `embedding.ratio` 和固定 `seed` 选择轨迹并完成 embedding。随后动态切片读取这些 embedding，策略聚类对完整轨迹和切片分别运行，生成可回溯的分组证据。最后，聚类组进入 Skill 提取，主结果写入输出目录的 `skills/`。
